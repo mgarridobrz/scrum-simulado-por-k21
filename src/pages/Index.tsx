@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import Header from '@/components/Header';
@@ -6,7 +7,9 @@ import StartScreen from '@/components/StartScreen';
 import QuizQuestion from '@/components/QuizQuestion';
 import QuizProgress from '@/components/QuizProgress';
 import QuizResult from '@/components/QuizResult';
-import { getRandomQuestions, getCategoryStats, QuestionWithCategory } from '@/data/quizData';
+import { getRandomQuestions, getCategoryStats, QuestionWithCategory, getApprovedQuestions } from '@/data/quizData';
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Info } from "lucide-react";
 
 const Index = () => {
   const [status, setStatus] = useState<'ready' | 'playing' | 'finished'>('ready');
@@ -14,6 +17,13 @@ const Index = () => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [userAnswers, setUserAnswers] = useState<Record<number, string>>({});
   const [quizSize, setQuizSize] = useState<number>(5);
+  const [approvedQuestionsCount, setApprovedQuestionsCount] = useState<number>(0);
+
+  useEffect(() => {
+    // Get count of approved questions
+    const approvedQuestions = getApprovedQuestions();
+    setApprovedQuestionsCount(approvedQuestions.length);
+  }, []);
 
   const handleStart = () => {
     const selectedQuestions = getRandomQuestions(quizSize);
@@ -64,6 +74,23 @@ const Index = () => {
       <div className="container mx-auto px-4 py-8 flex-1 flex flex-col">
         {status === 'ready' && (
           <>
+            {approvedQuestionsCount === 0 ? (
+              <Alert className="mb-6">
+                <Info className="h-4 w-4" />
+                <AlertTitle>Atenção</AlertTitle>
+                <AlertDescription>
+                  Nenhuma questão foi aprovada ainda. Todas as questões serão utilizadas no quiz.
+                </AlertDescription>
+              </Alert>
+            ) : (
+              <Alert className="mb-6">
+                <Info className="h-4 w-4" />
+                <AlertTitle>Informação</AlertTitle>
+                <AlertDescription>
+                  {approvedQuestionsCount} questões foram aprovadas e serão utilizadas no quiz.
+                </AlertDescription>
+              </Alert>
+            )}
             <StartScreen 
               onStart={handleStart} 
               onSizeChange={handleSizeChange} 

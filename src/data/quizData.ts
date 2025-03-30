@@ -13,14 +13,39 @@ export const quizQuestions: QuestionWithCategory[] = [
   ...artifactsQuestions,
 ];
 
+// Function to get approved questions from localStorage
+export function getApprovedQuestionIds(): number[] {
+  const savedApprovedQuestions = localStorage.getItem('approvedQuestions');
+  if (savedApprovedQuestions) {
+    return JSON.parse(savedApprovedQuestions);
+  }
+  return [];
+}
+
+// Filter questions by their approval status
+export function getApprovedQuestions(): QuestionWithCategory[] {
+  const approvedIds = getApprovedQuestionIds();
+  
+  // If no questions are approved yet, return the full set
+  // This prevents the exam from having no questions if none have been approved
+  if (approvedIds.length === 0) {
+    return quizQuestions;
+  }
+  
+  return quizQuestions.filter(question => approvedIds.includes(question.id));
+}
+
 // Function to get a specified number of random questions from the question pool
 export function getRandomQuestions(count: number): QuestionWithCategory[] {
-  if (count >= quizQuestions.length) {
-    return [...quizQuestions]; // Return all questions if count is greater than available questions
+  // Get only approved questions for the quiz
+  const approvedQuestions = getApprovedQuestions();
+  
+  if (count >= approvedQuestions.length) {
+    return [...approvedQuestions]; // Return all approved questions if count is greater than available
   }
   
   // Create a copy of the original array to avoid modifying it
-  const questionsCopy = [...quizQuestions];
+  const questionsCopy = [...approvedQuestions];
   
   // Shuffle the array using Fisher-Yates algorithm
   for (let i = questionsCopy.length - 1; i > 0; i--) {

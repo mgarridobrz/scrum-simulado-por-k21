@@ -7,10 +7,11 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Check, Edit, X, ChevronRight, ChevronLeft, Save } from 'lucide-react';
+import { Check, Edit, X, ChevronRight, ChevronLeft, Save, AlertCircle } from 'lucide-react';
 import { QuestionWithCategory } from '@/data/quizData';
 import { quizQuestions } from '@/data/quizData';
 import { useToast } from "@/components/ui/use-toast";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 const QuestionValidation = () => {
   const navigate = useNavigate();
@@ -107,10 +108,18 @@ const QuestionValidation = () => {
       setApprovedQuestions(newApprovedQuestions);
       toast({
         title: "Questão aprovada",
-        description: "A questão foi marcada como aprovada e será salva.",
+        description: "A questão foi marcada como aprovada e será usada no quiz oficial.",
+      });
+    } else {
+      // Remove from approved if already approved (toggle functionality)
+      const newApprovedQuestions = approvedQuestions.filter(id => id !== currentQuestion.id);
+      setApprovedQuestions(newApprovedQuestions);
+      toast({
+        title: "Aprovação removida",
+        description: "A questão não será mais usada no quiz oficial.",
+        variant: "destructive"
       });
     }
-    goToNextQuestion();
   };
 
   const isQuestionApproved = (questionId: number) => {
@@ -139,6 +148,14 @@ const QuestionValidation = () => {
           </Button>
         </div>
       </div>
+
+      <Alert className="mb-6">
+        <AlertCircle className="h-4 w-4" />
+        <AlertTitle>Importante</AlertTitle>
+        <AlertDescription>
+          Apenas questões aprovadas serão exibidas no quiz oficial. Total de questões aprovadas: {approvedQuestions.length} de {quizQuestions.length}.
+        </AlertDescription>
+      </Alert>
 
       <div className="mb-4 flex justify-between items-center">
         <p className="text-sm text-muted-foreground">
