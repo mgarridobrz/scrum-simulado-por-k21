@@ -28,9 +28,21 @@ const QuestionValidation = () => {
   const [currentQuestion, setCurrentQuestion] = useState<QuestionWithCategory | null>(null);
   const [filter, setFilter] = useState<string>('all');
   const [approvedQuestions, setApprovedQuestions] = useState<number[]>([]);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [password, setPassword] = useState('');
+
+  // Check if user is authenticated via localStorage
+  useEffect(() => {
+    const authStatus = localStorage.getItem('validationPageAuthenticated');
+    if (authStatus === 'true') {
+      setIsAuthenticated(true);
+    }
+  }, []);
 
   // Load questions, edited versions, and approvals when component mounts
   useEffect(() => {
+    if (!isAuthenticated) return;
+    
     // Get the base questions
     let baseQuestions = [...quizQuestions];
     
@@ -52,10 +64,12 @@ const QuestionValidation = () => {
     if (updatedQuestions.length > 0) {
       setCurrentQuestion(updatedQuestions[0]);
     }
-  }, []);
+  }, [isAuthenticated]);
 
   // Effect to update when filter changes
   useEffect(() => {
+    if (!isAuthenticated) return;
+    
     const filteredQuestions = filter === 'all' 
       ? questions 
       : questions.filter(q => q.category === filter);
@@ -66,12 +80,36 @@ const QuestionValidation = () => {
       setCurrentQuestion(filteredQuestions[0]);
       setEditMode(false);
     }
-  }, [filter, questions]);
+  }, [filter, questions, isAuthenticated]);
 
   // Save approved questions to localStorage whenever it changes
   useEffect(() => {
     saveApprovedQuestionIds(approvedQuestions);
   }, [approvedQuestions]);
+
+  // Handle password validation
+  const handlePasswordSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    // Simple hashing function to avoid storing plaintext passwords
+    const hashedPassword = btoa(password); // This is a basic encoding, not secure encryption
+    const correctHash = btoa('120703'); // Encoded version of the password
+    
+    if (hashedPassword === correctHash) {
+      localStorage.setItem('validationPageAuthenticated', 'true');
+      setIsAuthenticated(true);
+      toast({
+        title: "Acesso autorizado",
+        description: "Bem-vindo à página de validação de questões.",
+      });
+    } else {
+      toast({
+        title: "Senha incorreta",
+        description: "Por favor, tente novamente.",
+        variant: "destructive"
+      });
+    }
+  };
 
   // Computed filtered questions
   const filteredQuestions = filter === 'all' 
@@ -153,6 +191,8 @@ const QuestionValidation = () => {
       title: "Alterações salvas",
       description: "As alterações na questão foram salvas com sucesso.",
     });
+    
+    // DON'T reset the current index - this is the key change
   };
 
   // Approve question (mark as validated)
@@ -191,6 +231,48 @@ const QuestionValidation = () => {
     return approvedQuestions.includes(questionId);
   };
 
+  // Handle logout
+  const handleLogout = () => {
+    localStorage.removeItem('validationPageAuthenticated');
+    setIsAuthenticated(false);
+    setPassword('');
+  };
+
+  // If not authenticated, show login screen
+  if (!isAuthenticated) {
+    return (
+      <div className="container mx-auto py-8 max-w-md flex flex-col items-center justify-center min-h-[70vh]">
+        <Card className="w-full">
+          <CardHeader>
+            <CardTitle className="text-xl text-center">Acesso Restrito</CardTitle>
+            <CardDescription className="text-center">
+              Digite a senha para acessar a validação de questões
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handlePasswordSubmit} className="space-y-4">
+              <div className="space-y-2">
+                <Input
+                  type="password"
+                  placeholder="Digite a senha"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="w-full"
+                />
+              </div>
+              <Button type="submit" className="w-full">Entrar</Button>
+            </form>
+          </CardContent>
+          <CardFooter className="flex justify-center">
+            <Button variant="outline" onClick={() => navigate('/')} className="mt-2">
+              Voltar para início
+            </Button>
+          </CardFooter>
+        </Card>
+      </div>
+    );
+  }
+
   // If there are no questions or current question is null, show loading or error message
   if (!currentQuestion) {
     return (
@@ -220,6 +302,9 @@ const QuestionValidation = () => {
           </Select>
           <Button variant="outline" onClick={() => navigate('/')}>
             Voltar para início
+          </Button>
+          <Button variant="destructive" size="sm" onClick={handleLogout}>
+            Sair
           </Button>
         </div>
       </div>
