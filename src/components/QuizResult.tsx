@@ -1,17 +1,24 @@
 
 import React from 'react';
 import { Button } from "@/components/ui/button";
-import { QuestionType } from './QuizQuestion';
+import { QuestionWithCategory } from '@/data/quizData';
 import { Card } from '@/components/ui/card';
 import QuizQuestion from './QuizQuestion';
+import { Progress } from '@/components/ui/progress';
+
+interface CategoryStats {
+  correct: number;
+  total: number;
+}
 
 interface QuizResultProps {
   userAnswers: Record<number, string>;
-  questions: QuestionType[];
+  questions: QuestionWithCategory[];
+  categoryStats: Record<string, CategoryStats>;
   onRestart: () => void;
 }
 
-const QuizResult = ({ userAnswers, questions, onRestart }: QuizResultProps) => {
+const QuizResult = ({ userAnswers, questions, categoryStats, onRestart }: QuizResultProps) => {
   const correctAnswers = questions.filter(
     (question) => userAnswers[question.id] === question.correctAnswer
   ).length;
@@ -23,6 +30,16 @@ const QuizResult = ({ userAnswers, questions, onRestart }: QuizResultProps) => {
     if (score >= 85) return "text-green-500";
     if (score >= 70) return "text-k21-gold";
     return "text-red-500";
+  };
+
+  const getCategoryLabel = (category: string): string => {
+    switch(category) {
+      case 'fundamentals': return 'Fundamentos do Scrum';
+      case 'roles': return 'Papéis do Scrum';
+      case 'events': return 'Eventos do Scrum';
+      case 'artifacts': return 'Artefatos do Scrum';
+      default: return category;
+    }
   };
 
   return (
@@ -48,6 +65,26 @@ const QuizResult = ({ userAnswers, questions, onRestart }: QuizResultProps) => {
           ) : (
             <p className="text-red-500 font-medium">Continue praticando para melhorar sua pontuação.</p>
           )}
+        </div>
+      </div>
+      
+      <div className="space-y-6">
+        <h2 className="text-xl font-semibold text-k21-black border-b pb-2">Desempenho por Categoria</h2>
+        <div className="grid gap-4">
+          {Object.entries(categoryStats).map(([category, stats]) => {
+            const categoryScore = stats.total > 0 ? (stats.correct / stats.total) * 100 : 0;
+            return (
+              <div key={category} className="space-y-2">
+                <div className="flex justify-between items-center">
+                  <span className="font-medium text-k21-black">{getCategoryLabel(category)}</span>
+                  <span className={`${getScoreColor()} font-medium`}>
+                    {stats.correct} / {stats.total} ({Math.round(categoryScore)}%)
+                  </span>
+                </div>
+                <Progress value={categoryScore} className="h-2" />
+              </div>
+            );
+          })}
         </div>
       </div>
       

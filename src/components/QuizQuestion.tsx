@@ -11,6 +11,7 @@ export interface QuestionType {
     text: string;
   }[];
   correctAnswer: string;
+  explanation?: string;
 }
 
 interface QuizQuestionProps {
@@ -28,6 +29,8 @@ const QuizQuestion = ({
   showResult = false,
   className,
 }: QuizQuestionProps) => {
+  const isIncorrect = showResult && selectedOption && selectedOption !== question.correctAnswer;
+  
   return (
     <div className={cn("space-y-4", className)}>
       <h3 className="text-lg font-medium text-k21-black mb-6">{question.question}</h3>
@@ -44,6 +47,13 @@ const QuizQuestion = ({
           />
         ))}
       </div>
+      
+      {showResult && isIncorrect && question.explanation && (
+        <div className="mt-4 p-4 bg-amber-50 border border-amber-200 rounded-md">
+          <h4 className="font-medium text-amber-800 mb-1">Explicação:</h4>
+          <p className="text-sm text-amber-700">{question.explanation}</p>
+        </div>
+      )}
     </div>
   );
 };
