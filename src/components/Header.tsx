@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { cn } from "@/lib/utils";
-import { NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger } from "@/components/ui/navigation-menu";
+import { NavigationMenu, NavigationMenuLink, NavigationMenuList, NavigationMenuItem } from "@/components/ui/navigation-menu";
 
 interface HeaderProps {
   className?: string;
@@ -9,8 +9,8 @@ interface HeaderProps {
 
 const Header = ({ className }: HeaderProps) => {
   return (
-    <header className={cn("w-full py-4 bg-white shadow-sm", className)}>
-      <div className="container flex items-center justify-between">
+    <header className={cn("w-full bg-white shadow-sm", className)}>
+      <div className="container flex items-center justify-between py-4">
         <div className="flex items-center gap-2">
           <div className="flex flex-col">
             <span className="font-bold text-xl text-k21-black">
@@ -52,6 +52,41 @@ const Header = ({ className }: HeaderProps) => {
               className="h-10 w-auto" 
             />
           </div>
+        </div>
+      </div>
+      
+      {/* New static submenu */}
+      <div className="border-t border-gray-100 bg-gray-50">
+        <div className="container">
+          <nav className="flex items-center py-2">
+            <ul className="flex space-x-8">
+              <li>
+                <a href="/" className="text-sm font-medium text-k21-black hover:text-k21-teal transition-colors flex items-center py-1 border-b-2 border-k21-teal">
+                  Simulado CSM
+                </a>
+              </li>
+              <li>
+                <a href="https://br.k21.global/certificacoes/csm" target="_blank" className="text-sm font-medium text-k21-black hover:text-k21-teal transition-colors flex items-center py-1">
+                  Sobre o CSM
+                </a>
+              </li>
+              <li>
+                <a href="https://br.k21.global/certificacoes" target="_blank" className="text-sm font-medium text-k21-black hover:text-k21-teal transition-colors flex items-center py-1">
+                  Outras Certificações
+                </a>
+              </li>
+              <li>
+                <a href="https://br.k21.global/blog/tag/Scrum" target="_blank" className="text-sm font-medium text-k21-black hover:text-k21-teal transition-colors flex items-center py-1">
+                  Blog Scrum
+                </a>
+              </li>
+              <li>
+                <a href="https://br.k21.global/contato" target="_blank" className="text-sm font-medium text-k21-black hover:text-k21-teal transition-colors flex items-center py-1">
+                  Contato
+                </a>
+              </li>
+            </ul>
+          </nav>
         </div>
       </div>
     </header>
