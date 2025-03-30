@@ -1,3 +1,4 @@
+
 import { QuestionType } from "@/components/QuizQuestion";
 
 export type QuizCategory = 'fundamentals' | 'roles' | 'events' | 'artifacts';
@@ -548,4 +549,482 @@ export const quizQuestions: QuestionWithCategory[] = [
     options: [
       { id: "a", text: "O Scrum Master decide a prioridade final" },
       { id: "b", text: "A decisão é levada aos stakeholders para resolução" },
-      { id: "c",
+      { id: "c", text: "A decisão do Product Owner prevalece" },
+      { id: "d", text: "A equipe de desenvolvimento tem a palavra final" }
+    ],
+    correctAnswer: "c",
+    explanation: "No Scrum, o Product Owner é o único responsável por gerenciar o Product Backlog, incluindo seu conteúdo e ordenação. A decisão final sobre prioridades é dele, embora ele possa considerar o feedback dos Desenvolvedores e stakeholders."
+  },
+  {
+    id: 43,
+    category: 'events',
+    question: "Quanto tempo deve durar o Sprint Planning para uma Sprint de duas semanas?",
+    options: [
+      { id: "a", text: "Não mais que 4 horas" },
+      { id: "b", text: "Exatamente 4 horas" },
+      { id: "c", text: "Não mais que 8 horas" },
+      { id: "d", text: "O tempo que for necessário" }
+    ],
+    correctAnswer: "a",
+    explanation: "O Sprint Planning é limitado a um máximo de oito horas para uma Sprint de um mês. Para Sprints mais curtas, como de duas semanas, o evento geralmente é mais curto, geralmente não mais que 4 horas."
+  },
+  {
+    id: 44,
+    category: 'fundamentals',
+    question: "O que significa autogerenciamento no Scrum?",
+    options: [
+      { id: "a", text: "Cada membro da equipe decide individualmente o que trabalhar" },
+      { id: "b", text: "A equipe decide internamente quem faz o quê, quando e como" },
+      { id: "c", text: "O Scrum Master gerencia as tarefas para a equipe" },
+      { id: "d", text: "Os desenvolvedores trabalham sem supervisão" }
+    ],
+    correctAnswer: "b",
+    explanation: "Times Scrum são autogerenciados, escolhendo quem faz o quê, quando e como. Eles são unidades coesas onde os membros se responsabilizam coletivamente e decidem internamente como atingir seus objetivos."
+  },
+  {
+    id: 45,
+    category: 'artifacts',
+    question: "Quem deve participar do Product Backlog Refinement?",
+    options: [
+      { id: "a", text: "Apenas o Product Owner" },
+      { id: "b", text: "Apenas os Desenvolvedores" },
+      { id: "c", text: "O Time Scrum" },
+      { id: "d", text: "O Product Owner e os stakeholders" }
+    ],
+    correctAnswer: "c",
+    explanation: "O Product Backlog Refinement é uma atividade colaborativa onde o Time Scrum (Product Owner, Scrum Master e Desenvolvedores) analisa, estima e detalha itens do Product Backlog. Embora o Product Owner seja o responsável final pelo backlog, o refinamento é uma atividade de todo o Time Scrum."
+  },
+  {
+    id: 46,
+    category: 'roles',
+    question: "Qual é o limite máximo recomendado de membros para um Time Scrum?",
+    options: [
+      { id: "a", text: "7 membros" },
+      { id: "b", text: "9 membros" },
+      { id: "c", text: "10 membros" },
+      { id: "d", text: "12 membros" }
+    ],
+    correctAnswer: "c",
+    explanation: "De acordo com o Guia do Scrum, os Times Scrum são tipicamente compostos por 10 ou menos pessoas. Times menores geralmente se comunicam melhor e são mais produtivos."
+  },
+  {
+    id: 47,
+    category: 'events',
+    question: "O que acontece durante o Sprint Review?",
+    options: [
+      { id: "a", text: "A equipe planeja a próxima Sprint" },
+      { id: "b", text: "O Time Scrum apresenta os resultados do trabalho para os stakeholders" },
+      { id: "c", text: "A equipe discute como melhorar seus processos" },
+      { id: "d", text: "O Product Owner atualiza o Product Backlog sozinho" }
+    ],
+    correctAnswer: "b",
+    explanation: "Durante o Sprint Review, o Time Scrum apresenta os resultados do seu trabalho para os stakeholders e discute o progresso em direção à Meta do Produto. Este é um momento para inspecionar o incremento e adaptar o Product Backlog, se necessário."
+  },
+  {
+    id: 48,
+    category: 'artifacts',
+    question: "Quem é responsável por monitorar o progresso em direção à Meta da Sprint?",
+    options: [
+      { id: "a", text: "O Product Owner exclusivamente" },
+      { id: "b", text: "O Scrum Master exclusivamente" },
+      { id: "c", text: "Os Desenvolvedores exclusivamente" },
+      { id: "d", text: "Todo o Time Scrum" }
+    ],
+    correctAnswer: "d",
+    explanation: "Todo o Time Scrum é responsável por monitorar o progresso em direção à Meta da Sprint durante a Sprint. Os Desenvolvedores acompanham diariamente o trabalho restante, o Product Owner acompanha o progresso em relação ao valor de negócio, e o Scrum Master ajuda todos a entenderem o progresso."
+  },
+  {
+    id: 49,
+    category: 'fundamentals',
+    question: "Qual é uma das principais vantagens da estrutura timeboxed do Scrum?",
+    options: [
+      { id: "a", text: "Permite adicionar mais trabalho quando a equipe termina mais cedo" },
+      { id: "b", text: "Reduz a complexidade limitando o tempo e quantidade de trabalho" },
+      { id: "c", text: "Elimina a necessidade de planejamento detalhado" },
+      { id: "d", text: "Garante que todo o trabalho planejado seja concluído" }
+    ],
+    correctAnswer: "b",
+    explanation: "A estrutura timeboxed do Scrum (Sprints de duração fixa e eventos com tempos máximos definidos) reduz a complexidade limitando a quantidade de trabalho em andamento e o tempo dedicado a cada parte do processo, minimizando desperdícios e focando no que é essencial."
+  },
+  {
+    id: 50,
+    category: 'events',
+    question: "Quanto tempo deve durar a Daily Scrum?",
+    options: [
+      { id: "a", text: "15 minutos ou menos" },
+      { id: "b", text: "30 minutos" },
+      { id: "c", text: "O tempo necessário para que todos falem" },
+      { id: "d", text: "1 hora" }
+    ],
+    correctAnswer: "a",
+    explanation: "A Daily Scrum é limitada a 15 minutos. Este timebox é estabelecido para garantir que a reunião seja concisa e focada no objetivo de criar um plano para as próximas 24 horas."
+  },
+  {
+    id: 51,
+    category: 'roles',
+    question: "Qual é o papel do Product Owner em relação aos stakeholders?",
+    options: [
+      { id: "a", text: "Seguir todas as instruções dos stakeholders" },
+      { id: "b", text: "Isolar a equipe das solicitações dos stakeholders" },
+      { id: "c", text: "Representar os interesses dos stakeholders no Product Backlog" },
+      { id: "d", text: "Delegar decisões do produto aos stakeholders" }
+    ],
+    correctAnswer: "c",
+    explanation: "O Product Owner representa os interesses dos stakeholders no Product Backlog. Ele é responsável por maximizar o valor do produto, o que requer entender e equilibrar as necessidades de diversos stakeholders, mas mantendo a autoridade final sobre o Product Backlog."
+  },
+  {
+    id: 52,
+    category: 'artifacts',
+    question: "Como o conceito de 'transparência' se aplica aos artefatos do Scrum?",
+    options: [
+      { id: "a", text: "Todos os artefatos devem ser visíveis apenas para o Time Scrum" },
+      { id: "b", text: "Os artefatos devem ser compreensíveis e baseados em padrões compartilhados" },
+      { id: "c", text: "Apenas o Product Backlog precisa ser transparente" },
+      { id: "d", text: "A transparência significa documentar detalhadamente todos os artefatos" }
+    ],
+    correctAnswer: "b",
+    explanation: "No Scrum, a transparência dos artefatos significa que eles devem ser compreensíveis por todos e baseados em padrões compartilhados. Todos os observadores devem ter um entendimento comum do que está sendo visto, como a Definição de Pronto para o Incremento."
+  },
+  {
+    id: 53,
+    category: 'fundamentals',
+    question: "O que significa dizer que o Scrum é 'simples de entender, difícil de dominar'?",
+    options: [
+      { id: "a", text: "Seu framework é minimalista, mas sua implementação eficaz exige prática" },
+      { id: "b", text: "É mais fácil aprender do que outras metodologias ágeis" },
+      { id: "c", text: "É simples para iniciantes, mas muito complexo para profissionais" },
+      { id: "d", text: "O Guia do Scrum é curto, mas a certificação é difícil" }
+    ],
+    correctAnswer: "a",
+    explanation: "O Scrum é 'simples de entender' porque seu framework tem poucas regras, papéis e artefatos. Porém, é 'difícil de dominar' porque sua implementação eficaz requer prática, adaptação cultural e compreensão profunda dos princípios empíricos em que se baseia."
+  },
+  {
+    id: 54,
+    category: 'events',
+    question: "O que deve acontecer se uma equipe consistentemente não consegue completar o trabalho planejado dentro da Sprint?",
+    options: [
+      { id: "a", text: "Aumentar a duração da Sprint" },
+      { id: "b", text: "Adicionar mais pessoas à equipe" },
+      { id: "c", text: "Reavaliar a capacidade da equipe no planejamento" },
+      { id: "d", text: "Permitir que o trabalho continue na próxima Sprint" }
+    ],
+    correctAnswer: "c",
+    explanation: "Se uma equipe consistentemente não consegue completar o trabalho planejado, isto é um sinal de que precisa reavaliar sua capacidade durante o Sprint Planning. As estimativas devem melhorar com o tempo, à medida que a equipe aprende sobre sua velocidade real."
+  },
+  {
+    id: 55,
+    category: 'roles',
+    question: "O que o Scrum Master NÃO deve fazer?",
+    options: [
+      { id: "a", text: "Facilitar eventos Scrum" },
+      { id: "b", text: "Remover impedimentos" },
+      { id: "c", text: "Atribuir tarefas aos Desenvolvedores" },
+      { id: "d", text: "Coaching em práticas Scrum" }
+    ],
+    correctAnswer: "c",
+    explanation: "O Scrum Master não deve atribuir tarefas aos Desenvolvedores, pois isso viola o princípio de autogerenciamento. Os Desenvolvedores decidem como transformar itens do Product Backlog em Incrementos e gerenciam seu próprio trabalho, não recebendo tarefas atribuídas pelo Scrum Master ou qualquer outra pessoa."
+  },
+  {
+    id: 56,
+    category: 'artifacts',
+    question: "Qual é o papel dos 'compromissos' em relação aos artefatos Scrum?",
+    options: [
+      { id: "a", text: "São promessas que o Time Scrum faz aos stakeholders" },
+      { id: "b", text: "Aumentam a transparência e fornecem foco para medir o progresso" },
+      { id: "c", text: "São requisitos contratuais para a entrega do produto" },
+      { id: "d", text: "Definem penalidades para metas não atingidas" }
+    ],
+    correctAnswer: "b",
+    explanation: "Cada artefato do Scrum contém um 'compromisso' que aumenta sua transparência e fornece um foco para medir o progresso: o Product Backlog tem a Meta do Produto, o Sprint Backlog tem a Meta da Sprint, e o Incremento tem a Definição de Pronto."
+  },
+  {
+    id: 57,
+    category: 'fundamentals',
+    question: "Qual é a base filosófica do Scrum?",
+    options: [
+      { id: "a", text: "Planejamento e previsibilidade" },
+      { id: "b", text: "Empirismo e pensamento Lean" },
+      { id: "c", text: "Eficiência e minimização de custos" },
+      { id: "d", text: "Documentação e processos" }
+    ],
+    correctAnswer: "b",
+    explanation: "O Scrum é fundamentado no empirismo (conhecimento vem da experiência e decisões baseadas na observação) e no pensamento Lean (foco na redução de desperdícios e maximização de valor). Juntos, esses princípios enfatizam adaptabilidade, observação e melhoria contínua."
+  },
+  {
+    id: 58,
+    category: 'events',
+    question: "Qual é o propósito do Sprint Planning em relação ao Sprint Backlog?",
+    options: [
+      { id: "a", text: "Criar uma lista completa e detalhada de todas as tarefas" },
+      { id: "b", text: "Selecionar itens do Product Backlog e criar um plano para entregá-los" },
+      { id: "c", text: "Atribuir itens específicos a desenvolvedores específicos" },
+      { id: "d", text: "Estimar com precisão quanto tempo cada tarefa levará" }
+    ],
+    correctAnswer: "b",
+    explanation: "O propósito do Sprint Planning em relação ao Sprint Backlog é selecionar quais itens do Product Backlog serão trabalhados durante a Sprint e criar um plano inicial para entregá-los. O Sprint Backlog é composto pela Meta da Sprint, os itens selecionados e o plano de entrega."
+  },
+  {
+    id: 59,
+    category: 'roles',
+    question: "Como os Desenvolvedores devem responder a uma solicitação de mudança de escopo durante a Sprint?",
+    options: [
+      { id: "a", text: "Sempre rejeitar qualquer mudança durante a Sprint" },
+      { id: "b", text: "Aceitar todas as solicitações para satisfazer os stakeholders" },
+      { id: "c", text: "Direcionar a solicitação ao Product Owner para negociação" },
+      { id: "d", text: "Implementar mudanças se tiverem capacidade extra" }
+    ],
+    correctAnswer: "c",
+    explanation: "Os Desenvolvedores devem direcionar solicitações de mudança de escopo ao Product Owner, que é responsável por gerenciar o Product Backlog. O Product Owner pode então negociar a mudança, possivelmente removendo outros itens de igual tamanho para manter o foco na Meta da Sprint, ou adicionando a solicitação ao Product Backlog para Sprints futuras."
+  },
+  {
+    id: 60,
+    category: 'artifacts',
+    question: "Por que os itens do Product Backlog devem ser ordenados?",
+    options: [
+      { id: "a", text: "Para facilitar a documentação do produto" },
+      { id: "b", text: "Para otimizar o valor e maximizar a eficiência no trabalho" },
+      { id: "c", text: "Porque o Scrum exige que tudo seja priorizado" },
+      { id: "d", text: "Para agradar aos stakeholders" }
+    ],
+    correctAnswer: "b",
+    explanation: "Os itens do Product Backlog são ordenados para otimizar o valor entregue e maximizar a eficiência do trabalho do Time Scrum. Os itens mais importantes, valiosos, urgentes ou com maior risco geralmente ficam no topo, garantindo que o trabalho mais valioso seja feito primeiro."
+  },
+  {
+    id: 61,
+    category: 'fundamentals',
+    question: "Qual é a diferença entre 'inspeção' e 'adaptação' no Scrum?",
+    options: [
+      { id: "a", text: "Inspeção é feita pelo Scrum Master, adaptação pelos Desenvolvedores" },
+      { id: "b", text: "Inspeção ocorre nos eventos, adaptação apenas após a Sprint" },
+      { id: "c", text: "Inspeção é observar o progresso, adaptação é ajustar baseado nessa observação" },
+      { id: "d", text: "Inspeção é testar o produto, adaptação é corrigir bugs" }
+    ],
+    correctAnswer: "c",
+    explanation: "Inspeção no Scrum refere-se a examinar regularmente artefatos e progresso para detectar variações indesejáveis. Adaptação é o processo de ajustar o processo ou os artefatos quando a inspeção determina que algo está fora dos limites aceitáveis e o resultado seria inaceitável."
+  },
+  {
+    id: 62,
+    category: 'events',
+    question: "Qual afirmação sobre o cancelamento de uma Sprint é correta?",
+    options: [
+      { id: "a", text: "Uma Sprint nunca deve ser cancelada" },
+      { id: "b", text: "Qualquer stakeholder pode cancelar uma Sprint" },
+      { id: "c", text: "Apenas o Product Owner pode cancelar uma Sprint" },
+      { id: "d", text: "O Time Scrum deve votar para cancelar uma Sprint" }
+    ],
+    correctAnswer: "c",
+    explanation: "Apenas o Product Owner tem a autoridade para cancelar uma Sprint. Isto pode ocorrer se a Meta da Sprint se tornar obsoleta, o que pode acontecer devido a mudanças nas condições de negócio, tecnologia ou mercado."
+  },
+  {
+    id: 63,
+    category: 'roles',
+    question: "Como o Scrum Master apoia os Desenvolvedores?",
+    options: [
+      { id: "a", text: "Garantindo que completem todas as tarefas atribuídas" },
+      { id: "b", text: "Coaching em autogerenciamento e cross-funcionalidade" },
+      { id: "c", text: "Reportando o desempenho aos gerentes" },
+      { id: "d", text: "Fornecendo soluções técnicas para problemas" }
+    ],
+    correctAnswer: "b",
+    explanation: "O Scrum Master apoia os Desenvolvedores fazendo coaching em autogerenciamento e cross-funcionalidade, ajudando-os a criar produtos de alto valor, removendo impedimentos, facilitando eventos Scrum quando solicitado ou necessário, e ajudando-os a focar na Meta da Sprint."
+  },
+  {
+    id: 64,
+    category: 'artifacts',
+    question: "Qual é o propósito da Meta do Produto?",
+    options: [
+      { id: "a", text: "Definir exatamente como o produto final será" },
+      { id: "b", text: "Especificar todos os requisitos do produto" },
+      { id: "c", text: "Comunicar o objetivo que o produto busca alcançar" },
+      { id: "d", text: "Servir como contrato entre o Time Scrum e stakeholders" }
+    ],
+    correctAnswer: "c",
+    explanation: "A Meta do Produto descreve o estado futuro do produto e serve como alvo para o Time Scrum planejar. Ela comunica o objetivo maior que o produto busca alcançar, criando coerência e foco. Está contida no Product Backlog, e o progresso em direção a ela pode ser medido através do Product Backlog."
+  },
+  {
+    id: 65,
+    category: 'fundamentals',
+    question: "Qual é a relação entre 'Done' (Pronto) e 'valor' no Scrum?",
+    options: [
+      { id: "a", text: "São conceitos independentes" },
+      { id: "b", text: "Um incremento só tem valor quando atende à Definição de Pronto" },
+      { id: "c", text: "Valor é determinado pelo Product Owner, Pronto pelos Desenvolvedores" },
+      { id: "d", text: "Pronto é mais importante que valor" }
+    ],
+    correctAnswer: "b",
+    explanation: "No Scrum, um incremento só tem valor quando atende à Definição de Pronto. Se um incremento não atender à Definição de Pronto, ele não pode ser liberado nem mesmo apresentado na Sprint Review, o que significa que não gera valor. A transparência, inspeção e adaptação dependem de incrementos 'Prontos'."
+  },
+  {
+    id: 66,
+    category: 'events',
+    question: "Qual é o objetivo principal da Sprint Retrospective?",
+    options: [
+      { id: "a", text: "Revisar o incremento do produto" },
+      { id: "b", text: "Planejar melhorias na qualidade e eficácia" },
+      { id: "c", text: "Atualizar o Product Backlog" },
+      { id: "d", text: "Avaliar o desempenho individual dos membros" }
+    ],
+    correctAnswer: "b",
+    explanation: "O objetivo da Sprint Retrospective é planejar maneiras de aumentar a qualidade e a eficácia. O Time Scrum inspeciona como foi a última Sprint em relação a indivíduos, interações, processos, ferramentas e sua Definição de Pronto, identificando melhorias para implementar na próxima Sprint."
+  },
+  {
+    id: 67,
+    category: 'roles',
+    question: "Qual é a responsabilidade do Time Scrum em relação à Definição de Pronto?",
+    options: [
+      { id: "a", text: "Seguir a Definição de Pronto estabelecida pela organização" },
+      { id: "b", text: "Permitir que o Product Owner defina o que é Pronto" },
+      { id: "c", text: "Criar e respeitar sua própria Definição de Pronto se a organização não tiver uma" },
+      { id: "d", text: "Deixar cada Desenvolvedor definir seu próprio critério de Pronto" }
+    ],
+    correctAnswer: "c",
+    explanation: "Se a organização não tiver uma Definição de Pronto estabelecida, o Time Scrum deve criar sua própria Definição de Pronto apropriada para o produto. Os Desenvolvedores devem seguir a Definição de Pronto, e se houver múltiplos Times Scrum trabalhando no mesmo produto, eles devem definir e seguir a mesma definição."
+  },
+  {
+    id: 68,
+    category: 'artifacts',
+    question: "O que acontece com o Sprint Backlog durante a Sprint?",
+    options: [
+      { id: "a", text: "Permanece fixo do início ao fim da Sprint" },
+      { id: "b", text: "Pode ser expandido, mas nunca reduzido" },
+      { id: "c", text: "É atualizado conforme os Desenvolvedores aprendem mais" },
+      { id: "d", text: "Só pode ser alterado pelo Product Owner" }
+    ],
+    correctAnswer: "c",
+    explanation: "O Sprint Backlog é atualizado ao longo da Sprint conforme os Desenvolvedores aprendem mais sobre o trabalho necessário para atingir a Meta da Sprint. Quando novo trabalho é necessário, os Desenvolvedores o adicionam ao Sprint Backlog, e o trabalho é atualizado ou removido à medida que é executado."
+  },
+  {
+    id: 69,
+    category: 'fundamentals',
+    question: "Qual é o propósito do autogerenciamento no Scrum?",
+    options: [
+      { id: "a", text: "Reduzir a necessidade de gerentes" },
+      { id: "b", text: "Permitir que cada pessoa trabalhe como preferir" },
+      { id: "c", text: "Aumentar a criatividade, produtividade e capacidade de resolver problemas complexos" },
+      { id: "d", text: "Eliminar a responsabilidade da liderança organizacional" }
+    ],
+    correctAnswer: "c",
+    explanation: "O autogerenciamento no Scrum visa aumentar a criatividade, produtividade e a capacidade dos profissionais de resolver problemas complexos. Times autogerenciados decidem quem faz o quê, quando e como, o que melhora seu engajamento, responsabilidade e eficácia."
+  },
+  {
+    id: 70,
+    category: 'events',
+    question: "O que NÃO deve ocorrer durante a Daily Scrum?",
+    options: [
+      { id: "a", text: "Planejamento detalhado para o dia" },
+      { id: "b", text: "Discussões técnicas prolongadas sobre implementações" },
+      { id: "c", text: "Identificação de impedimentos" },
+      { id: "d", text: "Adaptar o Sprint Backlog" }
+    ],
+    correctAnswer: "b",
+    explanation: "Discussões técnicas prolongadas sobre implementações não devem ocorrer durante a Daily Scrum. Esses detalhes técnicos devem ser discutidos em reuniões separadas. A Daily Scrum deve ser focada e concisa, servindo para inspecionar o progresso e criar um plano para as próximas 24 horas."
+  },
+  {
+    id: 71,
+    category: 'roles',
+    question: "O que significa dizer que o Product Owner é 'uma pessoa, não um comitê'?",
+    options: [
+      { id: "a", text: "O Product Owner nunca deve consultar outras pessoas" },
+      { id: "b", text: "Uma única pessoa deve ter a autoridade final sobre o Product Backlog" },
+      { id: "c", text: "O Product Owner não deve fazer parte de um comitê de produto" },
+      { id: "d", text: "O Product Owner não pode representar os desejos de stakeholders" }
+    ],
+    correctAnswer: "b",
+    explanation: "Dizer que o Product Owner é 'uma pessoa, não um comitê' significa que uma única pessoa deve ter a autoridade final sobre o Product Backlog. Embora o Product Owner possa representar os desejos de muitos stakeholders e delegar o trabalho a outros, ele continua sendo o único responsável pelo valor do produto e pelas decisões do Product Backlog."
+  },
+  {
+    id: 72,
+    category: 'artifacts',
+    question: "Qual característica deve ter um item do Product Backlog para ser selecionado para o Sprint Planning?",
+    options: [
+      { id: "a", text: "Ser aprovado por todos os stakeholders" },
+      { id: "b", text: "Ter uma estimativa de story points" },
+      { id: "c", text: "Ser considerado 'Pronto para Seleção'" },
+      { id: "d", text: "Ter especificações técnicas detalhadas" }
+    ],
+    correctAnswer: "c",
+    explanation: "Para ser selecionado durante o Sprint Planning, um item do Product Backlog deve ser considerado 'Pronto para Seleção' (Ready), ou seja, suficientemente refinado para que os Desenvolvedores possam completá-lo dentro de uma Sprint. Itens com maior ordenação no Product Backlog geralmente são mais claros e detalhados."
+  },
+  {
+    id: 73,
+    category: 'fundamentals',
+    question: "Como o Scrum trata a previsibilidade em projetos complexos?",
+    options: [
+      { id: "a", text: "Exige planejamento detalhado antes da execução" },
+      { id: "b", text: "Usa abordagem empírica para maximizar previsibilidade e controlar riscos" },
+      { id: "c", text: "Elimina a necessidade de previsibilidade em favor da adaptabilidade" },
+      { id: "d", text: "Deixa toda previsibilidade a cargo do Product Owner" }
+    ],
+    correctAnswer: "b",
+    explanation: "O Scrum usa uma abordagem empírica para maximizar a previsibilidade e controlar riscos. Ele reconhece que em trabalhos complexos, o que acontecerá no futuro é incerto. Em vez de planejar detalhadamente com antecedência, o Scrum usa ciclos curtos de inspeção e adaptação para otimizar a previsibilidade dentro desses limites."
+  },
+  {
+    id: 74,
+    category: 'events',
+    question: "O que diferencia a Sprint Retrospective de outros eventos Scrum?",
+    options: [
+      { id: "a", text: "É o único evento onde os stakeholders estão presentes" },
+      { id: "b", text: "É focada no processo e pessoas, não no produto" },
+      { id: "c", text: "É o único evento que o Scrum Master conduz" },
+      { id: "d", text: "É o único evento opcional no Scrum" }
+    ],
+    correctAnswer: "b",
+    explanation: "A Sprint Retrospective diferencia-se por ser focada no processo e nas pessoas, não no produto. Enquanto outros eventos (como Sprint Planning, Daily Scrum e Sprint Review) concentram-se no produto e no trabalho, a Retrospective examina como o Time Scrum trabalhou junto, suas interações, ferramentas e processos."
+  },
+  {
+    id: 75,
+    category: 'roles',
+    question: "Qual é o papel do Scrum Master em relação à remoção de impedimentos?",
+    options: [
+      { id: "a", text: "Resolver pessoalmente todos os impedimentos da equipe" },
+      { id: "b", text: "Apenas documentar impedimentos para futura resolução" },
+      { id: "c", text: "Treinar a equipe para resolver seus próprios impedimentos" },
+      { id: "d", text: "Ajudar a remover impedimentos quando os Desenvolvedores não conseguem" }
+    ],
+    correctAnswer: "d",
+    explanation: "O Scrum Master ajuda a remover impedimentos quando os Desenvolvedores não conseguem resolvê-los sozinhos. Um bom Scrum Master não resolve todos os problemas pessoalmente, mas capacita a equipe a resolver muitos de seus próprios impedimentos, intervindo quando os obstáculos estão além da influência ou capacidade dos Desenvolvedores."
+  }
+];
+
+// Function to get a specified number of random questions from the question pool
+export function getRandomQuestions(count: number): QuestionWithCategory[] {
+  if (count >= quizQuestions.length) {
+    return [...quizQuestions]; // Return all questions if count is greater than available questions
+  }
+  
+  // Create a copy of the original array to avoid modifying it
+  const questionsCopy = [...quizQuestions];
+  
+  // Shuffle the array using Fisher-Yates algorithm
+  for (let i = questionsCopy.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [questionsCopy[i], questionsCopy[j]] = [questionsCopy[j], questionsCopy[i]];
+  }
+  
+  // Return the first 'count' questions
+  return questionsCopy.slice(0, count);
+}
+
+// Function to calculate category-based statistics
+export function getCategoryStats(
+  userAnswers: Record<number, string>,
+  questions: QuestionWithCategory[]
+): Record<string, { correct: number; total: number }> {
+  const stats: Record<string, { correct: number; total: number }> = {};
+  
+  // Initialize stats for each category
+  questions.forEach(question => {
+    if (!stats[question.category]) {
+      stats[question.category] = { correct: 0, total: 0 };
+    }
+    
+    stats[question.category].total += 1;
+    
+    // Check if the answer is correct
+    if (userAnswers[question.id] === question.correctAnswer) {
+      stats[question.category].correct += 1;
+    }
+  });
+  
+  return stats;
+}
