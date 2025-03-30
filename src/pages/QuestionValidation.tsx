@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -10,14 +10,30 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Check, Edit, X, ChevronRight, ChevronLeft, Save } from 'lucide-react';
 import { QuestionWithCategory } from '@/data/quizData';
 import { quizQuestions } from '@/data/quizData';
+import { useToast } from "@/components/ui/use-toast";
 
 const QuestionValidation = () => {
   const navigate = useNavigate();
+  const { toast } = useToast();
   const [questions, setQuestions] = useState<QuestionWithCategory[]>(quizQuestions);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [editMode, setEditMode] = useState(false);
   const [currentQuestion, setCurrentQuestion] = useState<QuestionWithCategory>(questions[0]);
   const [filter, setFilter] = useState<string>('all');
+  const [approvedQuestions, setApprovedQuestions] = useState<number[]>([]);
+
+  // Load approved questions from localStorage when component mounts
+  useEffect(() => {
+    const savedApprovedQuestions = localStorage.getItem('approvedQuestions');
+    if (savedApprovedQuestions) {
+      setApprovedQuestions(JSON.parse(savedApprovedQuestions));
+    }
+  }, []);
+
+  // Save approved questions to localStorage whenever it changes
+  useEffect(() => {
+    localStorage.setItem('approvedQuestions', JSON.stringify(approvedQuestions));
+  }, [approvedQuestions]);
 
   const filteredQuestions = filter === 'all' 
     ? questions 
@@ -78,13 +94,27 @@ const QuestionValidation = () => {
     );
     setQuestions(updatedQuestions);
     setEditMode(false);
+    toast({
+      title: "Alterações salvas",
+      description: "As alterações na questão foram salvas com sucesso.",
+    });
   };
 
   // Approve question (mark as validated)
   const approveQuestion = () => {
-    // In a real app, you might send this to an API or mark it in some way
-    // For now, we'll just navigate to the next question
+    if (!approvedQuestions.includes(currentQuestion.id)) {
+      const newApprovedQuestions = [...approvedQuestions, currentQuestion.id];
+      setApprovedQuestions(newApprovedQuestions);
+      toast({
+        title: "Questão aprovada",
+        description: "A questão foi marcada como aprovada e será salva.",
+      });
+    }
     goToNextQuestion();
+  };
+
+  const isQuestionApproved = (questionId: number) => {
+    return approvedQuestions.includes(questionId);
   };
 
   return (
@@ -159,8 +189,13 @@ const QuestionValidation = () => {
                   <Button onClick={() => setEditMode(true)} variant="outline" size="sm">
                     <Edit size={16} className="mr-1" /> Editar
                   </Button>
-                  <Button onClick={approveQuestion} variant="default" size="sm">
-                    <Check size={16} className="mr-1" /> Aprovar
+                  <Button 
+                    onClick={approveQuestion} 
+                    variant={isQuestionApproved(currentQuestion.id) ? "secondary" : "default"} 
+                    size="sm"
+                  >
+                    <Check size={16} className="mr-1" /> 
+                    {isQuestionApproved(currentQuestion.id) ? "Aprovada" : "Aprovar"}
                   </Button>
                 </>
               )}
@@ -255,6 +290,13 @@ const QuestionValidation = () => {
             </div>
           </CardContent>
           <CardFooter className="flex justify-between">
+            <p className="text-sm text-muted-foreground">
+              Status: {isQuestionApproved(currentQuestion.id) ? (
+                <span className="text-green-600 font-medium">Aprovada</span>
+              ) : (
+                <span className="text-amber-600 font-medium">Pendente de aprovação</span>
+              )}
+            </p>
             <p className="text-sm text-muted-foreground">
               Última atualização: {new Date().toLocaleDateString()}
             </p>
