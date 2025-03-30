@@ -1,123 +1,110 @@
-
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
 import Header from '@/components/Header';
+import StartScreen from '@/components/StartScreen';
 import QuizQuestion from '@/components/QuizQuestion';
 import QuizProgress from '@/components/QuizProgress';
 import QuizResult from '@/components/QuizResult';
-import { Button } from '@/components/ui/button';
 import { getRandomQuestions, getCategoryStats, QuestionWithCategory } from '@/data/quizData';
-import { Card } from '@/components/ui/card';
-import StartScreen from '@/components/StartScreen';
-import { ArrowRight } from 'lucide-react';
-
-type QuizState = 'start' | 'in-progress' | 'completed';
 
 const Index = () => {
-  const [quizState, setQuizState] = useState<QuizState>('start');
+  const [status, setStatus] = useState<'ready' | 'playing' | 'finished'>('ready');
+  const [questions, setQuestions] = useState<QuestionWithCategory[]>([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [userAnswers, setUserAnswers] = useState<Record<number, string>>({});
-  const [quizQuestions, setQuizQuestions] = useState<QuestionWithCategory[]>([]);
+  const [quizSize, setQuizSize] = useState<number>(5);
 
-  const currentQuestion = quizQuestions[currentQuestionIndex];
-  const totalQuestions = quizQuestions.length;
-  const isLastQuestion = currentQuestionIndex === totalQuestions - 1;
-  const hasAnsweredCurrentQuestion = currentQuestion && userAnswers[currentQuestion.id] !== undefined;
-
-  const handleStartQuiz = (questionsCount: number) => {
-    // Get random questions based on selected count
-    const randomQuestions = getRandomQuestions(questionsCount);
-    setQuizQuestions(randomQuestions);
-    setQuizState('in-progress');
+  const handleStart = () => {
+    const selectedQuestions = getRandomQuestions(quizSize);
+    setQuestions(selectedQuestions);
     setCurrentQuestionIndex(0);
     setUserAnswers({});
+    setStatus('playing');
   };
 
-  const handleSelectOption = (optionId: string) => {
-    if (!currentQuestion) return;
-    
-    setUserAnswers((prev) => ({
-      ...prev,
-      [currentQuestion.id]: optionId,
+  const handleAnswer = (questionId: number, answer: string) => {
+    setUserAnswers(prevAnswers => ({
+      ...prevAnswers,
+      [questionId]: answer,
     }));
   };
 
   const handleNextQuestion = () => {
-    if (isLastQuestion) {
-      setQuizState('completed');
+    if (currentQuestionIndex < questions.length - 1) {
+      setCurrentQuestionIndex(currentQuestionIndex + 1);
     } else {
-      setCurrentQuestionIndex((prev) => prev + 1);
+      setStatus('finished');
     }
   };
 
-  const handleRestartQuiz = () => {
-    setQuizState('start');
-    setCurrentQuestionIndex(0);
-    setUserAnswers({});
-    setQuizQuestions([]);
+  const handleSizeChange = (size: number) => {
+    setQuizSize(size);
   };
 
-  if (quizState === 'start') {
-    return (
-      <div className="min-h-screen bg-gray-50">
-        <Header />
-        <main className="container py-10">
-          <StartScreen onStart={handleStartQuiz} />
-        </main>
-      </div>
-    );
-  }
+  const handleRestart = () => {
+    setStatus('ready');
+  };
 
-  if (quizState === 'completed') {
-    const categoryStats = getCategoryStats(userAnswers, quizQuestions);
-    
-    return (
-      <div className="min-h-screen bg-gray-50">
-        <Header />
-        <main className="container py-10">
-          <QuizResult
-            userAnswers={userAnswers}
-            questions={quizQuestions}
-            categoryStats={categoryStats}
-            onRestart={handleRestartQuiz}
-          />
-        </main>
-      </div>
-    );
-  }
+  const currentQuestion = questions[currentQuestionIndex];
+  const isLastQuestion = currentQuestionIndex === questions.length - 1;
+  const showResult = status === 'finished';
+
+  const categoryStats = showResult
+    ? getCategoryStats(userAnswers, questions)
+    : null;
+
+  const correctAnswersCount = showResult
+    ? questions.filter(question => userAnswers[question.id] === question.correctAnswer).length
+    : 0;
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 flex flex-col">
       <Header />
-      <main className="container py-10">
-        <div className="max-w-3xl mx-auto">
-          <QuizProgress
-            currentQuestion={currentQuestionIndex + 1}
-            totalQuestions={totalQuestions}
-            className="mb-8"
+      <div className="container mx-auto px-4 py-8 flex-1 flex flex-col">
+        {status === 'ready' && (
+          <>
+            <StartScreen 
+              onStart={handleStart} 
+              onSizeChange={handleSizeChange} 
+              quizSize={quizSize}
+            />
+            <div className="mt-4 text-center">
+              <Link to="/validate-questions">
+                <Button variant="outline">Validar Perguntas (Especialistas)</Button>
+              </Link>
+            </div>
+          </>
+        )}
+        
+        {status === 'playing' && currentQuestion && (
+          <>
+            <QuizProgress
+              currentQuestion={currentQuestionIndex + 1}
+              totalQuestions={questions.length}
+            />
+            <QuizQuestion
+              question={currentQuestion}
+              selectedOption={userAnswers[currentQuestion.id] || null}
+              onSelectOption={(optionId) => handleAnswer(currentQuestion.id, optionId)}
+            />
+            <div className="flex justify-end mt-4">
+              <Button onClick={handleNextQuestion} disabled={!userAnswers[currentQuestion.id]}>
+                {isLastQuestion ? 'Ver Resultados' : 'Próxima Pergunta'}
+              </Button>
+            </div>
+          </>
+        )}
+
+        {status === 'finished' && categoryStats && (
+          <QuizResult
+            categoryStats={categoryStats}
+            correctAnswers={correctAnswersCount}
+            totalQuestions={questions.length}
+            onRestart={handleRestart}
           />
-          
-          {currentQuestion && (
-            <Card className="p-8 shadow-sm animate-fade-in">
-              <QuizQuestion
-                question={currentQuestion}
-                selectedOption={userAnswers[currentQuestion.id] || null}
-                onSelectOption={handleSelectOption}
-              />
-              
-              <div className="mt-8 flex justify-end">
-                <Button
-                  onClick={handleNextQuestion}
-                  disabled={!hasAnsweredCurrentQuestion}
-                  className="bg-k21-teal hover:bg-k21-teal/90 text-white"
-                >
-                  {isLastQuestion ? 'Finalizar' : 'Próxima'}
-                  {!isLastQuestion && <ArrowRight className="ml-2 h-4 w-4" />}
-                </Button>
-              </div>
-            </Card>
-          )}
-        </div>
-      </main>
+        )}
+      </div>
     </div>
   );
 };
