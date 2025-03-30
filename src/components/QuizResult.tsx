@@ -1,10 +1,11 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { QuestionWithCategory } from '@/data/quizData';
 import { Card } from '@/components/ui/card';
 import QuizQuestion from './QuizQuestion';
 import { Progress } from '@/components/ui/progress';
+import { ChevronDown, ChevronUp } from 'lucide-react';
 
 interface CategoryStats {
   correct: number;
@@ -28,6 +29,7 @@ const QuizResult = ({
   totalQuestions, 
   onRestart 
 }: QuizResultProps) => {
+  const [showQuestions, setShowQuestions] = useState(false);
   const score = (correctAnswers / totalQuestions) * 100;
   const formattedScore = score.toFixed(0);
   
@@ -95,19 +97,36 @@ const QuizResult = ({
       
       {questions && userAnswers && (
         <div className="space-y-4">
-          <h2 className="text-xl font-semibold text-k21-black border-b pb-2">Revisão das Questões</h2>
-          <div className="space-y-6">
-            {questions.map((question) => (
-              <Card key={question.id} className="p-6">
-                <QuizQuestion
-                  question={question}
-                  selectedOption={userAnswers[question.id]}
-                  onSelectOption={() => {}}
-                  showResult={true}
-                />
-              </Card>
-            ))}
+          <div className="flex justify-between items-center border-b pb-2">
+            <h2 className="text-xl font-semibold text-k21-black">Revisão das Questões</h2>
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              onClick={() => setShowQuestions(!showQuestions)}
+              className="flex items-center gap-1"
+            >
+              {showQuestions ? (
+                <>Ocultar Questões <ChevronUp size={16} /></>
+              ) : (
+                <>Mostrar Questões <ChevronDown size={16} /></>
+              )}
+            </Button>
           </div>
+          
+          {showQuestions && (
+            <div className="space-y-6">
+              {questions.map((question) => (
+                <Card key={question.id} className="p-6">
+                  <QuizQuestion
+                    question={question}
+                    selectedOption={userAnswers[question.id]}
+                    onSelectOption={() => {}}
+                    showResult={true}
+                  />
+                </Card>
+              ))}
+            </div>
+          )}
         </div>
       )}
       

@@ -16,9 +16,10 @@ const Index = () => {
   const [questions, setQuestions] = useState<QuestionWithCategory[]>([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [userAnswers, setUserAnswers] = useState<Record<number, string>>({});
-  const [quizSize, setQuizSize] = useState<number>(5);
+  const [quizSize, setQuizSize] = useState<number>(10);
   const [approvedQuestionsCount, setApprovedQuestionsCount] = useState<number>(0);
 
+  // Carregar contagem de questões aprovadas ao iniciar o componente
   useEffect(() => {
     // Get count of approved questions
     const approvedQuestions = getApprovedQuestions();
@@ -26,6 +27,7 @@ const Index = () => {
   }, []);
 
   const handleStart = () => {
+    // Certifica-se de obter apenas as questões aprovadas
     const selectedQuestions = getRandomQuestions(quizSize);
     setQuestions(selectedQuestions);
     setCurrentQuestionIndex(0);
@@ -54,6 +56,9 @@ const Index = () => {
 
   const handleRestart = () => {
     setStatus('ready');
+    // Recarregar a contagem de questões aprovadas ao reiniciar
+    const approvedQuestions = getApprovedQuestions();
+    setApprovedQuestionsCount(approvedQuestions.length);
   };
 
   const currentQuestion = questions[currentQuestionIndex];
@@ -129,6 +134,8 @@ const Index = () => {
             correctAnswers={correctAnswersCount}
             totalQuestions={questions.length}
             onRestart={handleRestart}
+            questions={questions}
+            userAnswers={userAnswers}
           />
         )}
       </div>
