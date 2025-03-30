@@ -8,53 +8,72 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Check, Edit, X, ChevronRight, ChevronLeft, Save, AlertCircle } from 'lucide-react';
-import { QuestionWithCategory } from '@/data/quizData';
-import { quizQuestions, saveEditedQuestion } from '@/data/quizData';
+import { 
+  QuestionWithCategory, 
+  quizQuestions, 
+  saveEditedQuestion, 
+  getApprovedQuestionIds,
+  getEditedQuestions,
+  saveApprovedQuestionIds 
+} from '@/data/quizData';
 import { useToast } from "@/components/ui/use-toast";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 const QuestionValidation = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const [questions, setQuestions] = useState<QuestionWithCategory[]>(quizQuestions);
+  const [questions, setQuestions] = useState<QuestionWithCategory[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [editMode, setEditMode] = useState(false);
-  const [currentQuestion, setCurrentQuestion] = useState<QuestionWithCategory>(questions[0]);
+  const [currentQuestion, setCurrentQuestion] = useState<QuestionWithCategory | null>(null);
   const [filter, setFilter] = useState<string>('all');
   const [approvedQuestions, setApprovedQuestions] = useState<number[]>([]);
 
-  // Load approved questions from localStorage when component mounts
+  // Load questions, edited versions, and approvals when component mounts
   useEffect(() => {
-    const savedApprovedQuestions = localStorage.getItem('approvedQuestions');
-    if (savedApprovedQuestions) {
-      setApprovedQuestions(JSON.parse(savedApprovedQuestions));
-    }
+    // Get the base questions
+    let baseQuestions = [...quizQuestions];
     
-    // Load edited questions to update the UI with existing edits
-    const savedEditedQuestions = localStorage.getItem('editedQuestions');
-    if (savedEditedQuestions) {
-      const editedQuestions = JSON.parse(savedEditedQuestions);
-      // Update the questions array with the edited versions
-      const updatedQuestions = questions.map(q => {
-        if (editedQuestions[q.id]) {
-          return editedQuestions[q.id];
-        }
-        return q;
-      });
-      setQuestions(updatedQuestions);
-      
-      // Update current question if it's edited
-      if (editedQuestions[currentQuestion.id]) {
-        setCurrentQuestion(editedQuestions[currentQuestion.id]);
-      }
+    // Load approved questions from localStorage
+    const savedApprovedIds = getApprovedQuestionIds();
+    setApprovedQuestions(savedApprovedIds);
+    
+    // Load edited questions
+    const editedQuestionsMap = getEditedQuestions();
+    
+    // Apply edited versions to the base questions
+    const updatedQuestions = baseQuestions.map(q => 
+      editedQuestionsMap[q.id] ? editedQuestionsMap[q.id] : q
+    );
+    
+    setQuestions(updatedQuestions);
+    
+    // Set the current question if questions array is not empty
+    if (updatedQuestions.length > 0) {
+      setCurrentQuestion(updatedQuestions[0]);
     }
   }, []);
 
+  // Effect to update when filter changes
+  useEffect(() => {
+    const filteredQuestions = filter === 'all' 
+      ? questions 
+      : questions.filter(q => q.category === filter);
+      
+    // Reset index and update current question when filter changes
+    if (filteredQuestions.length > 0) {
+      setCurrentIndex(0);
+      setCurrentQuestion(filteredQuestions[0]);
+      setEditMode(false);
+    }
+  }, [filter, questions]);
+
   // Save approved questions to localStorage whenever it changes
   useEffect(() => {
-    localStorage.setItem('approvedQuestions', JSON.stringify(approvedQuestions));
+    saveApprovedQuestionIds(approvedQuestions);
   }, [approvedQuestions]);
 
+  // Computed filtered questions
   const filteredQuestions = filter === 'all' 
     ? questions 
     : questions.filter(q => q.category === filter);
@@ -78,37 +97,47 @@ const QuestionValidation = () => {
 
   // Handle edits to the current question
   const handleQuestionChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setCurrentQuestion({
-      ...currentQuestion,
-      question: e.target.value
-    });
+    if (currentQuestion) {
+      setCurrentQuestion({
+        ...currentQuestion,
+        question: e.target.value
+      });
+    }
   };
 
   const handleOptionChange = (id: string, text: string) => {
-    setCurrentQuestion({
-      ...currentQuestion,
-      options: currentQuestion.options.map(option => 
-        option.id === id ? { ...option, text } : option
-      )
-    });
+    if (currentQuestion) {
+      setCurrentQuestion({
+        ...currentQuestion,
+        options: currentQuestion.options.map(option => 
+          option.id === id ? { ...option, text } : option
+        )
+      });
+    }
   };
 
   const handleCorrectAnswerChange = (value: string) => {
-    setCurrentQuestion({
-      ...currentQuestion,
-      correctAnswer: value
-    });
+    if (currentQuestion) {
+      setCurrentQuestion({
+        ...currentQuestion,
+        correctAnswer: value
+      });
+    }
   };
 
   const handleExplanationChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setCurrentQuestion({
-      ...currentQuestion,
-      explanation: e.target.value
-    });
+    if (currentQuestion) {
+      setCurrentQuestion({
+        ...currentQuestion,
+        explanation: e.target.value
+      });
+    }
   };
 
   // Save changes to the question
   const saveChanges = () => {
+    if (!currentQuestion) return;
+    
     // Update the questions array with the edited version
     const updatedQuestions = questions.map(q => 
       q.id === currentQuestion.id ? currentQuestion : q
@@ -116,7 +145,7 @@ const QuestionValidation = () => {
     
     setQuestions(updatedQuestions);
     
-    // Also save the edited question to localStorage
+    // Save the edited question to localStorage
     saveEditedQuestion(currentQuestion);
     
     setEditMode(false);
@@ -128,6 +157,8 @@ const QuestionValidation = () => {
 
   // Approve question (mark as validated)
   const approveQuestion = () => {
+    if (!currentQuestion) return;
+    
     if (!approvedQuestions.includes(currentQuestion.id)) {
       // Save any pending edits before approving
       if (editMode) {
@@ -159,6 +190,16 @@ const QuestionValidation = () => {
   const isQuestionApproved = (questionId: number) => {
     return approvedQuestions.includes(questionId);
   };
+
+  // If there are no questions or current question is null, show loading or error message
+  if (!currentQuestion) {
+    return (
+      <div className="container mx-auto py-8 text-center">
+        <h1 className="text-2xl font-bold mb-4">Carregando perguntas...</h1>
+        <Button onClick={() => navigate('/')}>Voltar para início</Button>
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto py-8 max-w-4xl">
@@ -215,145 +256,143 @@ const QuestionValidation = () => {
         </div>
       </div>
 
-      {currentQuestion && (
-        <Card className="mb-6">
-          <CardHeader className="flex flex-row items-start justify-between space-y-0">
-            <div>
-              <CardTitle className="text-xl">
-                Categoria: {currentQuestion.category === 'fundamentals' 
-                  ? 'Fundamentos' 
-                  : currentQuestion.category === 'roles' 
-                  ? 'Papéis' 
-                  : currentQuestion.category === 'events' 
-                  ? 'Eventos' 
-                  : 'Artefatos'}
-              </CardTitle>
-              <CardDescription>ID: {currentQuestion.id}</CardDescription>
-            </div>
-            <div className="flex gap-2">
-              {editMode ? (
-                <Button onClick={saveChanges} variant="default" size="sm">
-                  <Save size={16} className="mr-1" /> Salvar
+      <Card className="mb-6">
+        <CardHeader className="flex flex-row items-start justify-between space-y-0">
+          <div>
+            <CardTitle className="text-xl">
+              Categoria: {currentQuestion.category === 'fundamentals' 
+                ? 'Fundamentos' 
+                : currentQuestion.category === 'roles' 
+                ? 'Papéis' 
+                : currentQuestion.category === 'events' 
+                ? 'Eventos' 
+                : 'Artefatos'}
+            </CardTitle>
+            <CardDescription>ID: {currentQuestion.id}</CardDescription>
+          </div>
+          <div className="flex gap-2">
+            {editMode ? (
+              <Button onClick={saveChanges} variant="default" size="sm">
+                <Save size={16} className="mr-1" /> Salvar
+              </Button>
+            ) : (
+              <>
+                <Button onClick={() => setEditMode(true)} variant="outline" size="sm">
+                  <Edit size={16} className="mr-1" /> Editar
                 </Button>
+                <Button 
+                  onClick={approveQuestion} 
+                  variant={isQuestionApproved(currentQuestion.id) ? "secondary" : "default"} 
+                  size="sm"
+                >
+                  <Check size={16} className="mr-1" /> 
+                  {isQuestionApproved(currentQuestion.id) ? "Aprovada" : "Aprovar"}
+                </Button>
+              </>
+            )}
+          </div>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            <div>
+              <h3 className="text-sm font-medium mb-2">Pergunta:</h3>
+              {editMode ? (
+                <Textarea 
+                  value={currentQuestion.question} 
+                  onChange={handleQuestionChange} 
+                  className="min-h-[80px]"
+                />
               ) : (
-                <>
-                  <Button onClick={() => setEditMode(true)} variant="outline" size="sm">
-                    <Edit size={16} className="mr-1" /> Editar
-                  </Button>
-                  <Button 
-                    onClick={approveQuestion} 
-                    variant={isQuestionApproved(currentQuestion.id) ? "secondary" : "default"} 
-                    size="sm"
-                  >
-                    <Check size={16} className="mr-1" /> 
-                    {isQuestionApproved(currentQuestion.id) ? "Aprovada" : "Aprovar"}
-                  </Button>
-                </>
+                <p className="p-3 bg-muted rounded-md">{currentQuestion.question}</p>
               )}
             </div>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              <div>
-                <h3 className="text-sm font-medium mb-2">Pergunta:</h3>
-                {editMode ? (
-                  <Textarea 
-                    value={currentQuestion.question} 
-                    onChange={handleQuestionChange} 
-                    className="min-h-[80px]"
-                  />
-                ) : (
-                  <p className="p-3 bg-muted rounded-md">{currentQuestion.question}</p>
-                )}
-              </div>
 
-              <div>
-                <h3 className="text-sm font-medium mb-2">Opções:</h3>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead className="w-[100px]">ID</TableHead>
-                      <TableHead>Texto</TableHead>
-                      <TableHead className="w-[100px]">Correta</TableHead>
+            <div>
+              <h3 className="text-sm font-medium mb-2">Opções:</h3>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="w-[100px]">ID</TableHead>
+                    <TableHead>Texto</TableHead>
+                    <TableHead className="w-[100px]">Correta</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {currentQuestion.options.map((option) => (
+                    <TableRow key={option.id}>
+                      <TableCell>{option.id}</TableCell>
+                      <TableCell>
+                        {editMode ? (
+                          <Input 
+                            value={option.text} 
+                            onChange={(e) => handleOptionChange(option.id, e.target.value)} 
+                          />
+                        ) : (
+                          option.text
+                        )}
+                      </TableCell>
+                      <TableCell>
+                        {editMode ? (
+                          <Select 
+                            value={currentQuestion.correctAnswer} 
+                            onValueChange={handleCorrectAnswerChange}
+                          >
+                            <SelectTrigger>
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {currentQuestion.options.map(o => (
+                                <SelectItem key={o.id} value={o.id}>
+                                  {o.id}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        ) : (
+                          option.id === currentQuestion.correctAnswer ? (
+                            <span className="flex items-center text-green-600">
+                              <Check size={16} className="mr-1" /> Sim
+                            </span>
+                          ) : (
+                            <span className="flex items-center text-muted-foreground">
+                              <X size={16} className="mr-1" /> Não
+                            </span>
+                          )
+                        )}
+                      </TableCell>
                     </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {currentQuestion.options.map((option) => (
-                      <TableRow key={option.id}>
-                        <TableCell>{option.id}</TableCell>
-                        <TableCell>
-                          {editMode ? (
-                            <Input 
-                              value={option.text} 
-                              onChange={(e) => handleOptionChange(option.id, e.target.value)} 
-                            />
-                          ) : (
-                            option.text
-                          )}
-                        </TableCell>
-                        <TableCell>
-                          {editMode ? (
-                            <Select 
-                              value={currentQuestion.correctAnswer} 
-                              onValueChange={handleCorrectAnswerChange}
-                            >
-                              <SelectTrigger>
-                                <SelectValue />
-                              </SelectTrigger>
-                              <SelectContent>
-                                {currentQuestion.options.map(o => (
-                                  <SelectItem key={o.id} value={o.id}>
-                                    {o.id}
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
-                          ) : (
-                            option.id === currentQuestion.correctAnswer ? (
-                              <span className="flex items-center text-green-600">
-                                <Check size={16} className="mr-1" /> Sim
-                              </span>
-                            ) : (
-                              <span className="flex items-center text-muted-foreground">
-                                <X size={16} className="mr-1" /> Não
-                              </span>
-                            )
-                          )}
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </div>
-
-              <div>
-                <h3 className="text-sm font-medium mb-2">Explicação:</h3>
-                {editMode ? (
-                  <Textarea 
-                    value={currentQuestion.explanation || ''} 
-                    onChange={handleExplanationChange} 
-                    className="min-h-[120px]"
-                  />
-                ) : (
-                  <p className="p-3 bg-muted rounded-md">{currentQuestion.explanation || 'Sem explicação'}</p>
-                )}
-              </div>
+                  ))}
+                </TableBody>
+              </Table>
             </div>
-          </CardContent>
-          <CardFooter className="flex justify-between">
-            <p className="text-sm text-muted-foreground">
-              Status: {isQuestionApproved(currentQuestion.id) ? (
-                <span className="text-green-600 font-medium">Aprovada</span>
+
+            <div>
+              <h3 className="text-sm font-medium mb-2">Explicação:</h3>
+              {editMode ? (
+                <Textarea 
+                  value={currentQuestion.explanation || ''} 
+                  onChange={handleExplanationChange} 
+                  className="min-h-[120px]"
+                />
               ) : (
-                <span className="text-amber-600 font-medium">Pendente de aprovação</span>
+                <p className="p-3 bg-muted rounded-md">{currentQuestion.explanation || 'Sem explicação'}</p>
               )}
-            </p>
-            <p className="text-sm text-muted-foreground">
-              Última atualização: {new Date().toLocaleDateString()}
-            </p>
-          </CardFooter>
-        </Card>
-      )}
+            </div>
+          </div>
+        </CardContent>
+        <CardFooter className="flex justify-between">
+          <p className="text-sm text-muted-foreground">
+            Status: {isQuestionApproved(currentQuestion.id) ? (
+              <span className="text-green-600 font-medium">Aprovada</span>
+            ) : (
+              <span className="text-amber-600 font-medium">Pendente de aprovação</span>
+            )}
+          </p>
+          <p className="text-sm text-muted-foreground">
+            Última atualização: {new Date().toLocaleDateString()}
+          </p>
+        </CardFooter>
+      </Card>
     </div>
   );
 };

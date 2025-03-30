@@ -17,7 +17,12 @@ export const quizQuestions: QuestionWithCategory[] = [
 export function getApprovedQuestionIds(): number[] {
   const savedApprovedQuestions = localStorage.getItem('approvedQuestions');
   if (savedApprovedQuestions) {
-    return JSON.parse(savedApprovedQuestions);
+    try {
+      return JSON.parse(savedApprovedQuestions);
+    } catch (error) {
+      console.error("Error parsing approved questions:", error);
+      return [];
+    }
   }
   return [];
 }
@@ -26,16 +31,34 @@ export function getApprovedQuestionIds(): number[] {
 export function saveEditedQuestion(question: QuestionWithCategory): void {
   const editedQuestions = getEditedQuestions();
   editedQuestions[question.id] = question;
-  localStorage.setItem('editedQuestions', JSON.stringify(editedQuestions));
+  try {
+    localStorage.setItem('editedQuestions', JSON.stringify(editedQuestions));
+  } catch (error) {
+    console.error("Error saving edited question:", error);
+  }
 }
 
 // Function to get all edited questions from localStorage
 export function getEditedQuestions(): Record<number, QuestionWithCategory> {
   const savedEditedQuestions = localStorage.getItem('editedQuestions');
   if (savedEditedQuestions) {
-    return JSON.parse(savedEditedQuestions);
+    try {
+      return JSON.parse(savedEditedQuestions);
+    } catch (error) {
+      console.error("Error parsing edited questions:", error);
+      return {};
+    }
   }
   return {};
+}
+
+// Function to save approved question IDs to localStorage
+export function saveApprovedQuestionIds(ids: number[]): void {
+  try {
+    localStorage.setItem('approvedQuestions', JSON.stringify(ids));
+  } catch (error) {
+    console.error("Error saving approved question IDs:", error);
+  }
 }
 
 // Filter questions by their approval status and use edited versions when available
