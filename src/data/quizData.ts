@@ -58,3 +58,4 @@ export function getCategoryStats(
 
 // Export specific category questions for direct access if needed
 export { fundamentalsQuestions, rolesQuestions, eventsQuestions, artifactsQuestions };
+export { QuestionWithCategory } from './types';
