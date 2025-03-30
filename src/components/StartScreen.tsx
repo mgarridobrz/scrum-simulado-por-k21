@@ -17,6 +17,11 @@ const StartScreen = ({ onStart, onSizeChange, quizSize }: StartScreenProps) => {
     setShowSizeSelector(true);
   };
 
+  const handleSizeSelection = (size: number) => {
+    onSizeChange(size);
+    onStart();
+  };
+
   return (
     <div className="max-w-2xl mx-auto text-center space-y-6 animate-fade-in">
       <h1 className="text-3xl font-bold text-k21-black">
@@ -84,7 +89,7 @@ const StartScreen = ({ onStart, onSizeChange, quizSize }: StartScreenProps) => {
           </Button>
         </>
       ) : (
-        <QuizSizeSelector onSelectSize={onSizeChange} />
+        <QuizSizeSelector onSelectSize={handleSizeSelection} />
       )}
       
       <p className="text-xs text-muted-foreground">
