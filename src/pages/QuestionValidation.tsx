@@ -9,7 +9,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Check, Edit, X, ChevronRight, ChevronLeft, Save, AlertCircle } from 'lucide-react';
 import { QuestionWithCategory } from '@/data/quizData';
-import { quizQuestions } from '@/data/quizData';
+import { quizQuestions, saveEditedQuestion } from '@/data/quizData';
 import { useToast } from "@/components/ui/use-toast";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
@@ -28,6 +28,25 @@ const QuestionValidation = () => {
     const savedApprovedQuestions = localStorage.getItem('approvedQuestions');
     if (savedApprovedQuestions) {
       setApprovedQuestions(JSON.parse(savedApprovedQuestions));
+    }
+    
+    // Load edited questions to update the UI with existing edits
+    const savedEditedQuestions = localStorage.getItem('editedQuestions');
+    if (savedEditedQuestions) {
+      const editedQuestions = JSON.parse(savedEditedQuestions);
+      // Update the questions array with the edited versions
+      const updatedQuestions = questions.map(q => {
+        if (editedQuestions[q.id]) {
+          return editedQuestions[q.id];
+        }
+        return q;
+      });
+      setQuestions(updatedQuestions);
+      
+      // Update current question if it's edited
+      if (editedQuestions[currentQuestion.id]) {
+        setCurrentQuestion(editedQuestions[currentQuestion.id]);
+      }
     }
   }, []);
 
@@ -90,10 +109,16 @@ const QuestionValidation = () => {
 
   // Save changes to the question
   const saveChanges = () => {
+    // Update the questions array with the edited version
     const updatedQuestions = questions.map(q => 
       q.id === currentQuestion.id ? currentQuestion : q
     );
+    
     setQuestions(updatedQuestions);
+    
+    // Also save the edited question to localStorage
+    saveEditedQuestion(currentQuestion);
+    
     setEditMode(false);
     toast({
       title: "Alterações salvas",
@@ -104,8 +129,17 @@ const QuestionValidation = () => {
   // Approve question (mark as validated)
   const approveQuestion = () => {
     if (!approvedQuestions.includes(currentQuestion.id)) {
+      // Save any pending edits before approving
+      if (editMode) {
+        saveChanges();
+      }
+      
       const newApprovedQuestions = [...approvedQuestions, currentQuestion.id];
       setApprovedQuestions(newApprovedQuestions);
+      
+      // Also save the edited question to ensure the approved version is the edited one
+      saveEditedQuestion(currentQuestion);
+      
       toast({
         title: "Questão aprovada",
         description: "A questão foi marcada como aprovada e será usada no quiz oficial.",

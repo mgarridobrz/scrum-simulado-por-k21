@@ -13,7 +13,7 @@ export const quizQuestions: QuestionWithCategory[] = [
   ...artifactsQuestions,
 ];
 
-// Function to get approved questions from localStorage
+// Function to get approved questions IDs from localStorage
 export function getApprovedQuestionIds(): number[] {
   const savedApprovedQuestions = localStorage.getItem('approvedQuestions');
   if (savedApprovedQuestions) {
@@ -22,9 +22,26 @@ export function getApprovedQuestionIds(): number[] {
   return [];
 }
 
-// Filter questions by their approval status
+// Function to save edited questions to localStorage
+export function saveEditedQuestion(question: QuestionWithCategory): void {
+  const editedQuestions = getEditedQuestions();
+  editedQuestions[question.id] = question;
+  localStorage.setItem('editedQuestions', JSON.stringify(editedQuestions));
+}
+
+// Function to get all edited questions from localStorage
+export function getEditedQuestions(): Record<number, QuestionWithCategory> {
+  const savedEditedQuestions = localStorage.getItem('editedQuestions');
+  if (savedEditedQuestions) {
+    return JSON.parse(savedEditedQuestions);
+  }
+  return {};
+}
+
+// Filter questions by their approval status and use edited versions when available
 export function getApprovedQuestions(): QuestionWithCategory[] {
   const approvedIds = getApprovedQuestionIds();
+  const editedQuestions = getEditedQuestions();
   
   // If no questions are approved yet, return the full set
   // This prevents the exam from having no questions if none have been approved
@@ -32,7 +49,16 @@ export function getApprovedQuestions(): QuestionWithCategory[] {
     return quizQuestions;
   }
   
-  return quizQuestions.filter(question => approvedIds.includes(question.id));
+  // Filter approved questions and replace with edited versions when available
+  return quizQuestions
+    .filter(question => approvedIds.includes(question.id))
+    .map(question => {
+      // If there's an edited version of this question, use it
+      if (editedQuestions[question.id]) {
+        return editedQuestions[question.id];
+      }
+      return question;
+    });
 }
 
 // Function to get a specified number of random questions from the question pool
