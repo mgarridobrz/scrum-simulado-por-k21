@@ -12,18 +12,23 @@ interface CategoryStats {
 }
 
 interface QuizResultProps {
-  userAnswers: Record<number, string>;
-  questions: QuestionWithCategory[];
   categoryStats: Record<string, CategoryStats>;
+  correctAnswers: number;
+  totalQuestions: number;
   onRestart: () => void;
+  userAnswers?: Record<number, string>;
+  questions?: QuestionWithCategory[];
 }
 
-const QuizResult = ({ userAnswers, questions, categoryStats, onRestart }: QuizResultProps) => {
-  const correctAnswers = questions.filter(
-    (question) => userAnswers[question.id] === question.correctAnswer
-  ).length;
-  
-  const score = (correctAnswers / questions.length) * 100;
+const QuizResult = ({ 
+  userAnswers, 
+  questions, 
+  categoryStats, 
+  correctAnswers, 
+  totalQuestions, 
+  onRestart 
+}: QuizResultProps) => {
+  const score = (correctAnswers / totalQuestions) * 100;
   const formattedScore = score.toFixed(0);
   
   const getScoreColor = () => {
@@ -53,7 +58,7 @@ const QuizResult = ({ userAnswers, questions, categoryStats, onRestart }: QuizRe
         <div className="w-40 h-40 rounded-full flex items-center justify-center bg-muted mx-auto border-4 border-k21-gold">
           <div className="text-center">
             <div className={`text-4xl font-bold ${getScoreColor()}`}>{formattedScore}%</div>
-            <div className="text-sm text-muted-foreground">{correctAnswers} de {questions.length}</div>
+            <div className="text-sm text-muted-foreground">{correctAnswers} de {totalQuestions}</div>
           </div>
         </div>
         
@@ -88,21 +93,23 @@ const QuizResult = ({ userAnswers, questions, categoryStats, onRestart }: QuizRe
         </div>
       </div>
       
-      <div className="space-y-4">
-        <h2 className="text-xl font-semibold text-k21-black border-b pb-2">Revisão das Questões</h2>
-        <div className="space-y-6">
-          {questions.map((question) => (
-            <Card key={question.id} className="p-6">
-              <QuizQuestion
-                question={question}
-                selectedOption={userAnswers[question.id]}
-                onSelectOption={() => {}}
-                showResult={true}
-              />
-            </Card>
-          ))}
+      {questions && userAnswers && (
+        <div className="space-y-4">
+          <h2 className="text-xl font-semibold text-k21-black border-b pb-2">Revisão das Questões</h2>
+          <div className="space-y-6">
+            {questions.map((question) => (
+              <Card key={question.id} className="p-6">
+                <QuizQuestion
+                  question={question}
+                  selectedOption={userAnswers[question.id]}
+                  onSelectOption={() => {}}
+                  showResult={true}
+                />
+              </Card>
+            ))}
+          </div>
         </div>
-      </div>
+      )}
       
       <div className="flex justify-center pt-4">
         <Button

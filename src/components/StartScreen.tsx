@@ -5,10 +5,12 @@ import { Card } from "@/components/ui/card";
 import QuizSizeSelector from './QuizSizeSelector';
 
 interface StartScreenProps {
-  onStart: (questionsCount: number) => void;
+  onStart: () => void;
+  onSizeChange: (size: number) => void;
+  quizSize: number;
 }
 
-const StartScreen = ({ onStart }: StartScreenProps) => {
+const StartScreen = ({ onStart, onSizeChange, quizSize }: StartScreenProps) => {
   const [showSizeSelector, setShowSizeSelector] = useState(false);
   
   const handleStartClick = () => {
@@ -82,7 +84,7 @@ const StartScreen = ({ onStart }: StartScreenProps) => {
           </Button>
         </>
       ) : (
-        <QuizSizeSelector onSelectSize={onStart} />
+        <QuizSizeSelector onSelectSize={onSizeChange} />
       )}
       
       <p className="text-xs text-muted-foreground">
