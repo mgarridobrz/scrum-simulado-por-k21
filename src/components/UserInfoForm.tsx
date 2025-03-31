@@ -63,7 +63,7 @@ const UserInfoForm = ({ onSubmit, selectedSize }: UserInfoFormProps) => {
               name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Email (opcional)</FormLabel>
+                  <FormLabel>Email</FormLabel>
                   <FormControl>
                     <Input placeholder="seu@email.com" {...field} />
                   </FormControl>

@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -7,7 +6,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Check, Edit, X, ChevronRight, ChevronLeft, Save, AlertCircle } from 'lucide-react';
+import { Check, Edit, X, ChevronRight, ChevronLeft, Save, AlertCircle, FileText } from 'lucide-react';
 import { 
   QuestionWithCategory, 
   quizQuestions, 
@@ -18,6 +17,8 @@ import {
 } from '@/data/quizData';
 import { useToast } from "@/components/ui/use-toast";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { getTrackedQuizAttempts } from '@/utils/quizTracking';
 
 const QuestionValidation = () => {
   const navigate = useNavigate();
@@ -30,6 +31,8 @@ const QuestionValidation = () => {
   const [approvedQuestions, setApprovedQuestions] = useState<number[]>([]);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [password, setPassword] = useState('');
+  const [showAttemptsDialog, setShowAttemptsDialog] = useState(false);
+  const [quizAttempts, setQuizAttempts] = useState<string[]>([]);
 
   // Check if user is authenticated via localStorage
   useEffect(() => {
@@ -191,8 +194,6 @@ const QuestionValidation = () => {
       title: "Alterações salvas",
       description: "As alterações na questão foram salvas com sucesso.",
     });
-    
-    // DON'T reset the current index - this is the key change
   };
 
   // Approve question (mark as validated)
@@ -236,6 +237,22 @@ const QuestionValidation = () => {
     localStorage.removeItem('validationPageAuthenticated');
     setIsAuthenticated(false);
     setPassword('');
+  };
+
+  // Function to open the attempts dialog
+  const handleOpenAttemptsDialog = () => {
+    const attempts = getTrackedQuizAttempts();
+    setQuizAttempts(attempts);
+    setShowAttemptsDialog(true);
+  };
+
+  // Format date from ISO string
+  const formatDate = (isoString: string) => {
+    try {
+      return new Date(isoString).toLocaleString('pt-BR');
+    } catch (e) {
+      return isoString;
+    }
   };
 
   // If not authenticated, show login screen
@@ -288,6 +305,15 @@ const QuestionValidation = () => {
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">Validação de Perguntas do Quiz</h1>
         <div className="flex gap-2">
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={handleOpenAttemptsDialog}
+            className="flex items-center gap-1"
+          >
+            <FileText size={16} />
+            Listar Tentativas
+          </Button>
           <Select value={filter} onValueChange={setFilter}>
             <SelectTrigger className="w-[180px]">
               <SelectValue placeholder="Filtrar por categoria" />
@@ -478,6 +504,44 @@ const QuestionValidation = () => {
           </p>
         </CardFooter>
       </Card>
+
+      <Dialog open={showAttemptsDialog} onOpenChange={setShowAttemptsDialog}>
+        <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Registros de Tentativas do Simulado</DialogTitle>
+          </DialogHeader>
+          
+          {quizAttempts.length > 0 ? (
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Nome</TableHead>
+                  <TableHead>Email</TableHead>
+                  <TableHead>Tamanho</TableHead>
+                  <TableHead>Data/Hora</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {quizAttempts.map((attempt, index) => {
+                  const [name, email, size, timestamp] = attempt.split(',');
+                  return (
+                    <TableRow key={index}>
+                      <TableCell>{name}</TableCell>
+                      <TableCell>{email}</TableCell>
+                      <TableCell>{size} questões</TableCell>
+                      <TableCell>{formatDate(timestamp)}</TableCell>
+                    </TableRow>
+                  );
+                })}
+              </TableBody>
+            </Table>
+          ) : (
+            <div className="text-center py-8 text-muted-foreground">
+              Nenhuma tentativa registrada ainda.
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
