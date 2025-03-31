@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
@@ -20,7 +19,6 @@ const QuestionEditor = ({ question, isApproved, onSave, onApprove }: QuestionEdi
   const [editMode, setEditMode] = useState(false);
   const [currentQuestion, setCurrentQuestion] = useState<QuestionWithCategory>(question);
 
-  // Update local state when props change
   useEffect(() => {
     setCurrentQuestion(question);
   }, [question]);
@@ -79,9 +77,9 @@ const QuestionEditor = ({ question, isApproved, onSave, onApprove }: QuestionEdi
       <CardHeader className="flex flex-row items-start justify-between space-y-0">
         <div>
           <CardTitle className="text-xl">
-            Categoria: {getCategoryName(currentQuestion.category)}
+            Categoria: {getCategoryName(question.category)}
           </CardTitle>
-          <CardDescription>ID: {currentQuestion.id}</CardDescription>
+          <CardDescription>ID: {question.id}</CardDescription>
         </div>
         <QuestionHeaderActions 
           editMode={editMode}

@@ -8,22 +8,33 @@ import AttemptsList from '@/components/question-validation/AttemptsList';
 import { useQuestionValidation } from '@/hooks/useQuestionValidation';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Info } from 'lucide-react';
+import { getQuizAttempts } from '@/utils/quizTracking';
 
 const QuestionValidation = () => {
   const [authenticated, setAuthenticated] = useState(false);
   const [activeTab, setActiveTab] = useState('fundamentals');
   const [showAttempts, setShowAttempts] = useState(false);
+  const [attempts, setAttempts] = useState<string[]>([]);
   
   const {
-    questions,
-    loading,
-    addQuestion,
-    removeQuestion,
-    updateQuestion,
+    currentQuestion,
+    currentIndex,
+    filteredQuestions,
+    filter,
+    isLoading,
+    approvedQuestions,
+    setFilter,
+    goToNextQuestion,
+    goToPreviousQuestion,
     approveQuestion,
-    disapproveQuestion,
-    error,
-  } = useQuestionValidation(activeTab);
+    isQuestionApproved,
+    updateQuestion
+  } = useQuestionValidation();
+
+  React.useEffect(() => {
+    // Load attempts data
+    setAttempts(getQuizAttempts());
+  }, []);
 
   const handleAuth = (password: string) => {
     if (password === 'k21admin') {
@@ -42,46 +53,53 @@ const QuestionValidation = () => {
     }
   }, []);
 
+  const handleAttemptsCleared = () => {
+    setAttempts([]);
+  };
+
   if (!authenticated) {
-    return <AuthScreen onAuth={handleAuth} />;
+    return <AuthScreen onAuthenticated={handleAuth} />;
   }
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
       <NavigationBar 
-        activeTab={activeTab} 
-        setActiveTab={setActiveTab} 
+        currentIndex={currentIndex}
+        totalQuestions={filteredQuestions.length}
+        filter={filter}
+        onFilterChange={setFilter}
+        onNavigatePrevious={goToPreviousQuestion}
+        onNavigateNext={goToNextQuestion}
         onShowAttempts={() => setShowAttempts(!showAttempts)}
-        showingAttempts={showAttempts}
+        onLogout={() => {
+          localStorage.removeItem('validationPageAuthenticated');
+          setAuthenticated(false);
+        }}
+        onNavigateHome={() => window.location.href = '/'}
       />
       
       <div className="container mx-auto px-4 py-8 flex-1">
-        {error && (
-          <Alert variant="destructive" className="mb-6">
-            <Info className="h-4 w-4" />
-            <AlertTitle>Erro</AlertTitle>
-            <AlertDescription>{error}</AlertDescription>
-          </Alert>
-        )}
-
         {/* Add Global Stats Counter */}
         <div className="mb-6">
           <GlobalStatsCounter />
         </div>
 
         {showAttempts ? (
-          <AttemptsList />
-        ) : (
-          <QuestionEditor
-            questions={questions}
-            loading={loading}
-            onAddQuestion={addQuestion}
-            onRemoveQuestion={removeQuestion}
-            onUpdateQuestion={updateQuestion}
-            onApproveQuestion={approveQuestion}
-            onDisapproveQuestion={disapproveQuestion}
-            category={activeTab}
+          <AttemptsList 
+            open={showAttempts}
+            onOpenChange={setShowAttempts}
+            attempts={attempts}
+            onAttemptsCleared={handleAttemptsCleared}
           />
+        ) : (
+          currentQuestion && (
+            <QuestionEditor
+              question={currentQuestion}
+              isApproved={isQuestionApproved(currentQuestion.id)}
+              onSave={updateQuestion}
+              onApprove={approveQuestion}
+            />
+          )
         )}
       </div>
     </div>
