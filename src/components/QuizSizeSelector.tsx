@@ -15,11 +15,6 @@ const QuizSizeSelector = ({ onSelectSize }: QuizSizeSelectorProps) => {
     { size: 50, title: "Simulado completo", time: "Aprox. 50 minutos" }
   ];
 
-  const handleSizeSelection = (size: number) => {
-    console.log(`QuizSizeSelector - Selected size: ${size}`);
-    onSelectSize(size);
-  };
-
   return (
     <div className="space-y-6">
       <h2 className="text-xl font-semibold text-center text-k21-black">
@@ -31,13 +26,17 @@ const QuizSizeSelector = ({ onSelectSize }: QuizSizeSelectorProps) => {
           <Card 
             key={option.size}
             className="p-6 text-center cursor-pointer border-2 hover:border-k21-teal transition-colors"
+            onClick={() => onSelectSize(option.size)}
           >
             <h3 className="text-2xl font-bold text-k21-black mb-2">{option.size}</h3>
             <p className="text-sm text-muted-foreground">{option.title}</p>
             <p className="text-xs text-muted-foreground mt-1">{option.time}</p>
             <Button 
               className="mt-4 bg-k21-teal hover:bg-k21-teal/90 w-full"
-              onClick={() => handleSizeSelection(option.size)}
+              onClick={(e) => {
+                e.stopPropagation();
+                onSelectSize(option.size);
+              }}
             >
               Iniciar
             </Button>

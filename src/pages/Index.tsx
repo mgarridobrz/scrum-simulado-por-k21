@@ -10,6 +10,12 @@ import QuizResult from '@/components/QuizResult';
 import { getRandomQuestions, getCategoryStats, QuestionWithCategory, getApprovedQuestions } from '@/data/quizData';
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Info } from "lucide-react";
+import { trackQuizAttempt } from '@/utils/quizTracking';
+
+interface UserData {
+  name: string;
+  email: string;
+}
 
 const Index = () => {
   const [status, setStatus] = useState<'ready' | 'playing' | 'finished'>('ready');
@@ -17,6 +23,7 @@ const Index = () => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [userAnswers, setUserAnswers] = useState<Record<number, string>>({});
   const [approvedQuestionsCount, setApprovedQuestionsCount] = useState<number>(0);
+  const [userData, setUserData] = useState<UserData | null>(null);
 
   // Carregar contagem de questões aprovadas ao iniciar o componente
   useEffect(() => {
@@ -25,9 +32,17 @@ const Index = () => {
     setApprovedQuestionsCount(approvedQuestions.length);
   }, []);
 
-  // Combined function to handle quiz start with size selection
-  const handleStartWithSize = (selectedSize: number) => {
+  // Combined function to handle quiz start with size selection and user data
+  const handleStartWithSize = (selectedSize: number, userInfo?: UserData) => {
     console.log(`Index - Starting quiz with size: ${selectedSize}`);
+    console.log("User data:", userInfo);
+    
+    if (userInfo) {
+      setUserData(userInfo);
+      
+      // Track this quiz attempt
+      trackQuizAttempt(userInfo.name, userInfo.email, selectedSize);
+    }
     
     // Get random questions based on the selected quiz size
     const selectedQuestions = getRandomQuestions(selectedSize);
@@ -57,6 +72,7 @@ const Index = () => {
 
   const handleRestart = () => {
     setStatus('ready');
+    setUserData(null);
     // Recarregar a contagem de questões aprovadas ao reiniciar
     const approvedQuestions = getApprovedQuestions();
     setApprovedQuestionsCount(approvedQuestions.length);

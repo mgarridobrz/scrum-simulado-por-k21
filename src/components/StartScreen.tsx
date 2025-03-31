@@ -3,13 +3,15 @@ import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import QuizSizeSelector from './QuizSizeSelector';
+import UserInfoForm from './UserInfoForm';
 
 interface StartScreenProps {
-  onStart: (size: number) => void;
+  onStart: (size: number, userData?: { name: string; email: string }) => void;
 }
 
 const StartScreen = ({ onStart }: StartScreenProps) => {
   const [showSizeSelector, setShowSizeSelector] = useState(false);
+  const [selectedSize, setSelectedSize] = useState<number | null>(null);
   
   const handleStartClick = () => {
     setShowSizeSelector(true);
@@ -17,8 +19,14 @@ const StartScreen = ({ onStart }: StartScreenProps) => {
 
   const handleSizeSelection = (size: number) => {
     console.log("StartScreen - Size selected:", size);
-    // Directly pass the size to onStart
-    onStart(size);
+    setSelectedSize(size);
+  };
+  
+  const handleUserInfoSubmit = (userData: { name: string; email: string }) => {
+    console.log("StartScreen - User info submitted:", userData);
+    if (selectedSize) {
+      onStart(selectedSize, userData);
+    }
   };
 
   return (
@@ -87,6 +95,8 @@ const StartScreen = ({ onStart }: StartScreenProps) => {
             Iniciar Simulado
           </Button>
         </>
+      ) : selectedSize ? (
+        <UserInfoForm onSubmit={handleUserInfoSubmit} selectedSize={selectedSize} />
       ) : (
         <QuizSizeSelector onSelectSize={handleSizeSelection} />
       )}
