@@ -6,45 +6,45 @@
 @layer base {
   :root {
     --background: 0 0% 100%;
-    --foreground: 0 0% 0%; /* Increased contrast to pure black */
+    --foreground: 0 0% 0%; /* Pure black for maximum contrast */
 
     --card: 0 0% 100%;
-    --card-foreground: 0 0% 0%; /* Increased contrast */
+    --card-foreground: 0 0% 0%; /* Pure black */
 
     --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 0%; /* Increased contrast */
+    --popover-foreground: 0 0% 0%; /* Pure black */
 
     --primary: 37 64% 55%;
-    --primary-foreground: 0 0% 0%; /* Increased contrast */
+    --primary-foreground: 0 0% 0%; /* Pure black */
 
     --secondary: 185 31% 50%;
-    --secondary-foreground: 0 0% 0%; /* Increased contrast */
+    --secondary-foreground: 0 0% 0%; /* Pure black */
 
     --muted: 0 0% 96.1%;
-    --muted-foreground: 0 0% 25%; /* Increased contrast for muted text */
+    --muted-foreground: 0 0% 15%; /* Increased contrast further from 25% to 15% */
 
     --accent: 0 0% 96.1%;
-    --accent-foreground: 0 0% 0%; /* Increased contrast */
+    --accent-foreground: 0 0% 0%; /* Pure black */
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
 
-    --border: 0 0% 80%; /* Increased contrast for better visibility */
-    --input: 0 0% 80%; /* Increased contrast for inputs */
+    --border: 0 0% 65%; /* Increased contrast further from 80% to 65% */
+    --input: 0 0% 65%; /* Increased contrast further from 80% to 65% */
     --ring: 37 64% 55%;
 
     --radius: 0.5rem;
   }
 
   .dark {
-    --background: 0 0% 3.9%;
-    --foreground: 0 0% 100%; /* Increased contrast to pure white */
+    --background: 0 0% 0%; /* Changed from 3.9% to 0% for pure black */
+    --foreground: 0 0% 100%; /* Pure white */
 
-    --card: 0 0% 3.9%;
-    --card-foreground: 0 0% 100%; /* Increased contrast */
+    --card: 0 0% 0%; /* Pure black */
+    --card-foreground: 0 0% 100%; /* Pure white */
 
-    --popover: 0 0% 3.9%;
-    --popover-foreground: 0 0% 100%; /* Increased contrast */
+    --popover: 0 0% 0%; /* Pure black */
+    --popover-foreground: 0 0% 100%; /* Pure white */
 
     --primary: 37 64% 55%;
     --primary-foreground: 0 0% 0%;
@@ -52,17 +52,17 @@
     --secondary: 185 31% 50%;
     --secondary-foreground: 0 0% 0%;
 
-    --muted: 0 0% 14.9%;
-    --muted-foreground: 0 0% 80%; /* Increased contrast for muted text */
+    --muted: 0 0% 10%; /* Darkened from 14.9% to 10% */
+    --muted-foreground: 0 0% 90%; /* Increased from 80% to 90% */
 
-    --accent: 0 0% 14.9%;
-    --accent-foreground: 0 0% 100%; /* Increased contrast */
+    --accent: 0 0% 10%; /* Darkened from 14.9% to 10% */
+    --accent-foreground: 0 0% 100%; /* Pure white */
 
     --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 100%; /* Increased contrast */
+    --destructive-foreground: 0 0% 100%; /* Pure white */
 
-    --border: 0 0% 25%; /* Increased contrast for better visibility */
-    --input: 0 0% 25%; /* Increased contrast for inputs */
+    --border: 0 0% 35%; /* Increased contrast from 25% to 35% */
+    --input: 0 0% 35%; /* Increased contrast from 25% to 35% */
     --ring: 37 64% 55%;
   }
 }
