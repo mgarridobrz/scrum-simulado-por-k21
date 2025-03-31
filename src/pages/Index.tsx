@@ -28,6 +28,7 @@ const Index = () => {
 
   const handleStart = () => {
     // Get random questions based on the selected quiz size
+    console.log(`Generating quiz with size: ${quizSize}`);
     const selectedQuestions = getRandomQuestions(quizSize);
     console.log(`Starting quiz with ${quizSize} questions, got ${selectedQuestions.length} questions`);
     setQuestions(selectedQuestions);
