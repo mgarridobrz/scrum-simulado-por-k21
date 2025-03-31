@@ -8,6 +8,11 @@ interface QuizSizeSelectorProps {
 }
 
 const QuizSizeSelector = ({ onSelectSize }: QuizSizeSelectorProps) => {
+  const handleSizeSelection = (size: number) => {
+    console.log(`QuizSizeSelector - Selected size: ${size}`);
+    onSelectSize(size);
+  };
+
   return (
     <div className="space-y-6">
       <h2 className="text-xl font-semibold text-center text-k21-black">
@@ -23,7 +28,7 @@ const QuizSizeSelector = ({ onSelectSize }: QuizSizeSelectorProps) => {
           <p className="text-xs text-muted-foreground mt-1">Aprox. 10 minutos</p>
           <Button 
             className="mt-4 bg-k21-teal hover:bg-k21-teal/90 w-full"
-            onClick={() => onSelectSize(10)}
+            onClick={() => handleSizeSelection(10)}
           >
             Iniciar
           </Button>
@@ -37,7 +42,7 @@ const QuizSizeSelector = ({ onSelectSize }: QuizSizeSelectorProps) => {
           <p className="text-xs text-muted-foreground mt-1">Aprox. 25 minutos</p>
           <Button 
             className="mt-4 bg-k21-teal hover:bg-k21-teal/90 w-full"
-            onClick={() => onSelectSize(25)}
+            onClick={() => handleSizeSelection(25)}
           >
             Iniciar
           </Button>
@@ -51,7 +56,7 @@ const QuizSizeSelector = ({ onSelectSize }: QuizSizeSelectorProps) => {
           <p className="text-xs text-muted-foreground mt-1">Aprox. 50 minutos</p>
           <Button 
             className="mt-4 bg-k21-teal hover:bg-k21-teal/90 w-full"
-            onClick={() => onSelectSize(50)}
+            onClick={() => handleSizeSelection(50)}
           >
             Iniciar
           </Button>

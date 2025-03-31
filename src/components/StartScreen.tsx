@@ -18,8 +18,12 @@ const StartScreen = ({ onStart, onSizeChange, quizSize }: StartScreenProps) => {
   };
 
   const handleSizeSelection = (size: number) => {
+    console.log("StartScreen - Size selected:", size);
     onSizeChange(size);
-    onStart();
+    // We need to delay the onStart call to ensure the state is updated
+    setTimeout(() => {
+      onStart();
+    }, 0);
   };
 
   return (
