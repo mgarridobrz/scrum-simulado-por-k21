@@ -1,4 +1,3 @@
-
 import { QuestionWithCategory } from "./types";
 import { fundamentalsQuestions } from "./fundamentalsQuestions";
 import { rolesQuestions } from "./rolesQuestions";
@@ -151,24 +150,31 @@ export function getRandomQuestions(count: number): QuestionWithCategory[] {
 export function getCategoryStats(
   userAnswers: Record<number, string>,
   questions: QuestionWithCategory[]
-): Record<string, { correct: number; total: number }> {
-  const stats: Record<string, { correct: number; total: number }> = {};
+): { category: string; correctCount: number; totalCount: number }[] {
+  const statsObj: Record<string, { correct: number; total: number }> = {};
   
   // Initialize stats for each category
   questions.forEach(question => {
-    if (!stats[question.category]) {
-      stats[question.category] = { correct: 0, total: 0 };
+    if (!statsObj[question.category]) {
+      statsObj[question.category] = { correct: 0, total: 0 };
     }
     
-    stats[question.category].total += 1;
+    statsObj[question.category].total += 1;
     
     // Check if the answer is correct
     if (userAnswers[question.id] === question.correctAnswer) {
-      stats[question.category].correct += 1;
+      statsObj[question.category].correct += 1;
     }
   });
   
-  return stats;
+  // Convert the object to an array format that can be mapped over in the UI
+  const statsArray = Object.entries(statsObj).map(([category, data]) => ({
+    category,
+    correctCount: data.correct,
+    totalCount: data.total
+  }));
+  
+  return statsArray;
 }
 
 // Export specific category questions for direct access if needed

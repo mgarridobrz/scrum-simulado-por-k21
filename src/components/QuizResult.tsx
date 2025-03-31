@@ -104,7 +104,7 @@ const QuizResult = ({
           <div>
             <h3 className="font-medium text-gray-800 mb-3">Desempenho por Categoria</h3>
             <div className="space-y-3">
-              {categoryStats.map((stat, index) => (
+              {Array.isArray(categoryStats) && categoryStats.map((stat, index) => (
                 <div key={index} className="flex justify-between items-center">
                   <div className="text-sm font-medium text-gray-600">{stat.category}</div>
                   <div className="flex items-center gap-2">

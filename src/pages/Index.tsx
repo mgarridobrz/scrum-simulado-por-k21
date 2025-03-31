@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -100,7 +99,7 @@ const Index = () => {
 
   const categoryStats = showResult
     ? getCategoryStats(userAnswers, questions)
-    : null;
+    : [];
 
   const correctAnswersCount = showResult
     ? questions.filter(question => userAnswers[question.id] === question.correctAnswer).length
