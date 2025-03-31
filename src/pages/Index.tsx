@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -8,7 +9,7 @@ import QuizProgress from '@/components/QuizProgress';
 import QuizResult from '@/components/QuizResult';
 import { getRandomQuestions, getCategoryStats, QuestionWithCategory, getApprovedQuestions } from '@/data/quizData';
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Info } from "lucide-react";
+import { Info, Lock } from "lucide-react";
 
 interface UserData {
   name: string;
@@ -22,6 +23,7 @@ const Index = () => {
   const [userAnswers, setUserAnswers] = useState<Record<number, string>>({});
   const [approvedQuestionsCount, setApprovedQuestionsCount] = useState<number>(0);
   const [userData, setUserData] = useState<UserData | null>(null);
+  const [canProceed, setCanProceed] = useState(false);
 
   useEffect(() => {
     const approvedQuestions = getApprovedQuestions();
@@ -42,19 +44,26 @@ const Index = () => {
     setQuestions(selectedQuestions);
     setCurrentQuestionIndex(0);
     setUserAnswers({});
+    setCanProceed(false);
     setStatus('playing');
   };
 
   const handleAnswer = (questionId: number, answer: string) => {
-    setUserAnswers(prevAnswers => ({
-      ...prevAnswers,
-      [questionId]: answer,
-    }));
+    // Only set answer if not already answered
+    if (!userAnswers[questionId]) {
+      setUserAnswers(prevAnswers => ({
+        ...prevAnswers,
+        [questionId]: answer,
+      }));
+      // Enable proceed button after answering
+      setCanProceed(true);
+    }
   };
 
   const handleNextQuestion = () => {
     if (currentQuestionIndex < questions.length - 1) {
       setCurrentQuestionIndex(currentQuestionIndex + 1);
+      setCanProceed(false);
     } else {
       setStatus('finished');
     }
@@ -82,7 +91,16 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
       <Header />
-      <div className="container mx-auto px-4 py-8 flex-1 flex flex-col">
+      <div className="container mx-auto px-4 py-8 flex-1 flex flex-col relative">
+        {/* Admin Lock Button - Positioned on right side */}
+        <div className="absolute top-0 right-0 mt-2">
+          <Link to="/validate-questions">
+            <Button variant="ghost" size="icon" className="text-gray-400 hover:text-gray-600" title="Área administrativa">
+              <Lock size={20} />
+            </Button>
+          </Link>
+        </div>
+        
         {status === 'ready' && (
           <>
             {approvedQuestionsCount === 0 ? (
@@ -103,11 +121,6 @@ const Index = () => {
               </Alert>
             )}
             <StartScreen onStart={handleStartWithSize} />
-            <div className="mt-4 text-center">
-              <Link to="/validate-questions">
-                <Button variant="outline">Validar Perguntas (Especialistas)</Button>
-              </Link>
-            </div>
           </>
         )}
         
@@ -121,12 +134,8 @@ const Index = () => {
               question={currentQuestion}
               selectedOption={userAnswers[currentQuestion.id] || null}
               onSelectOption={(optionId) => handleAnswer(currentQuestion.id, optionId)}
+              onContinue={canProceed ? handleNextQuestion : undefined}
             />
-            <div className="flex justify-end mt-4">
-              <Button onClick={handleNextQuestion} disabled={!userAnswers[currentQuestion.id]}>
-                {isLastQuestion ? 'Ver Resultados' : 'Próxima Pergunta'}
-              </Button>
-            </div>
           </>
         )}
 

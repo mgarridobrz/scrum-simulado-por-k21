@@ -13,7 +13,6 @@ import AuthScreen from '@/components/question-validation/AuthScreen';
 import QuestionEditor from '@/components/question-validation/QuestionEditor';
 import AttemptsList from '@/components/question-validation/AttemptsList';
 import NavigationBar from '@/components/question-validation/NavigationBar';
-import QuestionFilters from '@/components/question-validation/QuestionFilters';
 import { useToast } from "@/hooks/use-toast";
 import { useQuestionValidation } from '@/hooks/useQuestionValidation';
 
@@ -56,10 +55,18 @@ const QuestionValidation = () => {
     setIsAuthenticated(false);
   };
 
-  const handleOpenAttemptsDialog = () => {
+  const loadAttempts = () => {
     const attempts = getTrackedQuizAttempts();
     setQuizAttempts(attempts);
+  };
+
+  const handleOpenAttemptsDialog = () => {
+    loadAttempts();
     setShowAttemptsDialog(true);
+  };
+
+  const handleAttemptsCleared = () => {
+    loadAttempts(); // Reload the (now empty) attempts list
   };
 
   const saveQuestionChanges = (editedQuestion: QuestionWithCategory) => {
@@ -132,6 +139,7 @@ const QuestionValidation = () => {
         open={showAttemptsDialog}
         onOpenChange={setShowAttemptsDialog}
         attempts={quizAttempts}
+        onAttemptsCleared={handleAttemptsCleared}
       />
     </div>
   );

@@ -2,9 +2,10 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Download } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
+import { Download, Trash2 } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
+import { clearQuizAttempts } from '@/utils/quizTracking';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 
@@ -12,9 +13,10 @@ interface AttemptsListProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   attempts: string[];
+  onAttemptsCleared?: () => void;
 }
 
-const AttemptsList = ({ open, onOpenChange, attempts }: AttemptsListProps) => {
+const AttemptsList = ({ open, onOpenChange, attempts, onAttemptsCleared }: AttemptsListProps) => {
   const { toast } = useToast();
   
   const formatDate = (isoString: string) => {
@@ -80,14 +82,49 @@ const AttemptsList = ({ open, onOpenChange, attempts }: AttemptsListProps) => {
     });
   };
 
+  const handleClearAttempts = () => {
+    if (attempts.length === 0) {
+      toast({
+        title: "Sem dados para limpar",
+        description: "Não há tentativas registradas para limpar.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    if (window.confirm("Tem certeza que deseja limpar todos os registros de tentativas? Esta ação não pode ser desfeita.")) {
+      clearQuizAttempts();
+      toast({
+        title: "Dados limpos",
+        description: "Todos os registros de tentativas foram removidos.",
+      });
+      if (onAttemptsCleared) {
+        onAttemptsCleared();
+      }
+    }
+  };
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Registros de Tentativas do Simulado</DialogTitle>
+          <DialogDescription>
+            Esta lista mostra todas as tentativas registradas do simulado.
+          </DialogDescription>
         </DialogHeader>
         
-        <div className="mb-4 flex justify-end">
+        <div className="mb-4 flex justify-between">
+          <Button 
+            variant="destructive" 
+            size="sm" 
+            onClick={handleClearAttempts}
+            className="flex items-center gap-1"
+          >
+            <Trash2 size={16} />
+            Limpar dados
+          </Button>
+          
           <Button 
             variant="outline" 
             size="sm" 

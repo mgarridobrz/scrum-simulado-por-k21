@@ -2,6 +2,7 @@
 import React from 'react';
 import QuizOption from './QuizOption';
 import { cn } from '@/lib/utils';
+import { Button } from '@/components/ui/button';
 
 export interface QuestionType {
   id: number;
@@ -20,6 +21,7 @@ interface QuizQuestionProps {
   onSelectOption: (id: string) => void;
   showResult?: boolean;
   className?: string;
+  onContinue?: () => void;
 }
 
 const QuizQuestion = ({
@@ -28,8 +30,10 @@ const QuizQuestion = ({
   onSelectOption,
   showResult = false,
   className,
+  onContinue,
 }: QuizQuestionProps) => {
-  const isIncorrect = showResult && selectedOption && selectedOption !== question.correctAnswer;
+  const isCorrect = selectedOption === question.correctAnswer;
+  const isIncorrect = selectedOption && selectedOption !== question.correctAnswer;
   
   return (
     <div className={cn("space-y-4", className)}>
@@ -42,16 +46,28 @@ const QuizQuestion = ({
             label={option.text}
             isSelected={selectedOption === option.id}
             isCorrect={option.id === question.correctAnswer}
-            showResult={showResult}
+            showResult={!!selectedOption || showResult}
             onSelect={onSelectOption}
           />
         ))}
       </div>
       
-      {showResult && isIncorrect && question.explanation && (
+      {selectedOption && (
         <div className="mt-4 p-4 bg-amber-50 border border-amber-200 rounded-md">
-          <h4 className="font-medium text-amber-800 mb-1">Explicação:</h4>
-          <p className="text-sm text-amber-700">{question.explanation}</p>
+          <h4 className="font-medium text-amber-800 mb-1">
+            {isCorrect ? "Correto!" : "Incorreto!"} Explicação:
+          </h4>
+          <p className="text-sm text-amber-700">
+            {question.explanation || "Não há explicação disponível para esta questão."}
+          </p>
+          
+          {onContinue && (
+            <div className="mt-4 flex justify-end">
+              <Button onClick={onContinue}>
+                Continuar
+              </Button>
+            </div>
+          )}
         </div>
       )}
     </div>
