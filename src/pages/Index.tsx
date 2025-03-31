@@ -29,6 +29,7 @@ const Index = () => {
   const handleStart = () => {
     // Get random questions based on the selected quiz size
     const selectedQuestions = getRandomQuestions(quizSize);
+    console.log(`Starting quiz with ${quizSize} questions, got ${selectedQuestions.length} questions`);
     setQuestions(selectedQuestions);
     setCurrentQuestionIndex(0);
     setUserAnswers({});
@@ -51,6 +52,7 @@ const Index = () => {
   };
 
   const handleSizeChange = (size: number) => {
+    console.log(`Quiz size changed to: ${size}`);
     setQuizSize(size);
   };
 

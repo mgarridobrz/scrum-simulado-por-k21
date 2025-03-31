@@ -89,9 +89,8 @@ export function getRandomQuestions(count: number): QuestionWithCategory[] {
   // Get only approved questions for the quiz
   const approvedQuestions = getApprovedQuestions();
   
-  if (count >= approvedQuestions.length) {
-    return [...approvedQuestions]; // Return all approved questions if count is greater than available
-  }
+  // Log information for debugging
+  console.log(`Requested ${count} questions, ${approvedQuestions.length} approved questions available`);
   
   // Create a copy of the original array to avoid modifying it
   const questionsCopy = [...approvedQuestions];
@@ -102,7 +101,14 @@ export function getRandomQuestions(count: number): QuestionWithCategory[] {
     [questionsCopy[i], questionsCopy[j]] = [questionsCopy[j], questionsCopy[i]];
   }
   
+  // If count is greater than the number of available questions, return all available
+  if (count >= questionsCopy.length) {
+    console.log(`Returning all ${questionsCopy.length} available questions`);
+    return questionsCopy;
+  }
+  
   // Return the first 'count' questions
+  console.log(`Returning ${count} questions out of ${questionsCopy.length} available`);
   return questionsCopy.slice(0, count);
 }
 
