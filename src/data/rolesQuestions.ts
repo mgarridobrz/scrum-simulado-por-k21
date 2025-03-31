@@ -33,10 +33,10 @@ export const rolesQuestions: QuestionWithCategory[] = [
     category: 'roles',
     question: "Qual é o tamanho ideal de uma equipe Scrum?",
     options: [
+      { id: "d", text: "10-15 pessoas" },
       { id: "a", text: "3-9 pessoas" },
       { id: "b", text: "5-7 pessoas" },
-      { id: "c", text: "7-11 pessoas" },
-      { id: "d", text: "10-15 pessoas" }
+      { id: "c", text: "7-11 pessoas" }
     ],
     correctAnswer: "a",
     explanation: "De acordo com o Guia do Scrum, uma equipe Scrum típica tem 10 ou menos pessoas. Como regra geral, pequenas equipes comunicam-se melhor e são mais produtivas. Se as equipes Scrum ficarem muito grandes, elas devem considerar a reorganização em múltiplas equipes Scrum."
@@ -61,8 +61,8 @@ export const rolesQuestions: QuestionWithCategory[] = [
     options: [
       { id: "a", text: "Seguir as instruções do Scrum Master" },
       { id: "b", text: "Criar um plano para a Sprint" },
-      { id: "c", text: "Gerenciar o Product Backlog" },
-      { id: "d", text: "Criar um incremento valioso e útil a cada Sprint" }
+      { id: "d", text: "Criar um incremento valioso e útil a cada Sprint" },
+      { id: "c", text: "Gerenciar o Product Backlog" }
     ],
     correctAnswer: "d",
     explanation: "Os Desenvolvedores estão comprometidos em criar qualquer aspecto de um incremento utilizável a cada Sprint, aderindo à sua Definição de Pronto."
@@ -72,10 +72,10 @@ export const rolesQuestions: QuestionWithCategory[] = [
     category: 'roles',
     question: "Quem é responsável por promover e apoiar o Scrum dentro da organização?",
     options: [
+      { id: "d", text: "O Scrum Master" },
       { id: "a", text: "Os gerentes seniores" },
       { id: "b", text: "O Product Owner" },
-      { id: "c", text: "Os Desenvolvedores" },
-      { id: "d", text: "O Scrum Master" }
+      { id: "c", text: "Os Desenvolvedores" }
     ],
     correctAnswer: "d",
     explanation: "O Scrum Master é responsável pela eficácia do Time Scrum. Eles fazem isso ajudando todos a entender a teoria, prática, regras e valores do Scrum. O Scrum Master ajuda aqueles fora do Time Scrum a entender quais de suas interações com o Time Scrum são úteis e quais não são."
@@ -99,8 +99,8 @@ export const rolesQuestions: QuestionWithCategory[] = [
     question: "Qual afirmação sobre o Product Owner é correta?",
     options: [
       { id: "a", text: "O Product Owner pode delegar a responsabilidade pelo Product Backlog para a equipe de desenvolvimento" },
-      { id: "b", text: "O Product Owner pode ser um comitê de pessoas" },
       { id: "c", text: "O Product Owner é uma pessoa, não um comitê" },
+      { id: "b", text: "O Product Owner pode ser um comitê de pessoas" },
       { id: "d", text: "O Product Owner deve ter experiência técnica para avaliar as soluções implementadas" }
     ],
     correctAnswer: "c",
@@ -151,8 +151,8 @@ export const rolesQuestions: QuestionWithCategory[] = [
     question: "Qual é o papel do Product Owner em relação aos stakeholders?",
     options: [
       { id: "a", text: "Seguir todas as instruções dos stakeholders" },
-      { id: "b", text: "Isolar a equipe das solicitações dos stakeholders" },
       { id: "c", text: "Representar os interesses dos stakeholders no Product Backlog" },
+      { id: "b", text: "Isolar a equipe das solicitações dos stakeholders" },
       { id: "d", text: "Delegar decisões do produto aos stakeholders" }
     ],
     correctAnswer: "c",
@@ -176,10 +176,10 @@ export const rolesQuestions: QuestionWithCategory[] = [
     category: 'roles',
     question: "Como os Desenvolvedores devem responder a uma solicitação de mudança de escopo durante a Sprint?",
     options: [
+      { id: "d", text: "Implementar mudanças se tiverem capacidade extra" },
       { id: "a", text: "Sempre rejeitar qualquer mudança durante a Sprint" },
       { id: "b", text: "Aceitar todas as solicitações para satisfazer os stakeholders" },
-      { id: "c", text: "Direcionar a solicitação ao Product Owner para negociação" },
-      { id: "d", text: "Implementar mudanças se tiverem capacidade extra" }
+      { id: "c", text: "Direcionar a solicitação ao Product Owner para negociação" }
     ],
     correctAnswer: "c",
     explanation: "Os Desenvolvedores devem direcionar solicitações de mudança de escopo ao Product Owner, que é responsável por gerenciar o Product Backlog. O Product Owner pode então negociar a mudança, possivelmente removendo outros itens de igual tamanho para manter o foco na Meta da Sprint, ou adicionando a solicitação ao Product Backlog para Sprints futuras."
@@ -202,10 +202,10 @@ export const rolesQuestions: QuestionWithCategory[] = [
     category: 'roles',
     question: "Qual é a responsabilidade do Time Scrum em relação à Definição de Pronto?",
     options: [
+      { id: "d", text: "Deixar cada Desenvolvedor definir seu próprio critério de Pronto" },
       { id: "a", text: "Seguir a Definição de Pronto estabelecida pela organização" },
       { id: "b", text: "Permitir que o Product Owner defina o que é Pronto" },
-      { id: "c", text: "Criar e respeitar sua própria Definição de Pronto se a organização não tiver uma" },
-      { id: "d", text: "Deixar cada Desenvolvedor definir seu próprio critério de Pronto" }
+      { id: "c", text: "Criar e respeitar sua própria Definição de Pronto se a organização não tiver uma" }
     ],
     correctAnswer: "c",
     explanation: "Se a organização não tiver uma Definição de Pronto estabelecida, o Time Scrum deve criar sua própria Definição de Pronto apropriada para o produto. Os Desenvolvedores devem seguir a Definição de Pronto, e se houver múltiplos Times Scrum trabalhando no mesmo produto, eles devem definir e seguir a mesma definição."
@@ -215,10 +215,10 @@ export const rolesQuestions: QuestionWithCategory[] = [
     category: 'roles',
     question: "O que significa dizer que o Product Owner é 'uma pessoa, não um comitê'?",
     options: [
+      { id: "d", text: "O Product Owner não pode representar os desejos de stakeholders" },
       { id: "a", text: "O Product Owner nunca deve consultar outras pessoas" },
       { id: "b", text: "Uma única pessoa deve ter a autoridade final sobre o Product Backlog" },
-      { id: "c", text: "O Product Owner não deve fazer parte de um comitê de produto" },
-      { id: "d", text: "O Product Owner não pode representar os desejos de stakeholders" }
+      { id: "c", text: "O Product Owner não deve fazer parte de um comitê de produto" }
     ],
     correctAnswer: "b",
     explanation: "Dizer que o Product Owner é 'uma pessoa, não um comitê' significa que uma única pessoa deve ter a autoridade final sobre o Product Backlog. Embora o Product Owner possa representar os desejos de muitos stakeholders e delegar o trabalho a outros, ele continua sendo o único responsável pelo valor do produto e pelas decisões do Product Backlog."
@@ -229,9 +229,9 @@ export const rolesQuestions: QuestionWithCategory[] = [
     question: "Qual é o papel do Scrum Master em relação à remoção de impedimentos?",
     options: [
       { id: "a", text: "Resolver pessoalmente todos os impedimentos da equipe" },
+      { id: "d", text: "Ajudar a remover impedimentos quando os Desenvolvedores não conseguem" },
       { id: "b", text: "Apenas documentar impedimentos para futura resolução" },
-      { id: "c", text: "Treinar a equipe para resolver seus próprios impedimentos" },
-      { id: "d", text: "Ajudar a remover impedimentos quando os Desenvolvedores não conseguem" }
+      { id: "c", text: "Treinar a equipe para resolver seus próprios impedimentos" }
     ],
     correctAnswer: "d",
     explanation: "O Scrum Master ajuda a remover impedimentos quando os Desenvolvedores não conseguem resolvê-los sozinhos. Um bom Scrum Master não resolve todos os problemas pessoalmente, mas capacita a equipe a resolver muitos de seus próprios impedimentos, intervindo quando os obstáculos estão além da influência ou capacidade dos Desenvolvedores."

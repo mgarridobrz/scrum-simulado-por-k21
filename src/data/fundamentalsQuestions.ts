@@ -8,8 +8,8 @@ export const fundamentalsQuestions: QuestionWithCategory[] = [
     question: "O que acontece se a equipe não conseguir completar todo o trabalho planejado para a Sprint?",
     options: [
       { id: "a", text: "A Sprint é estendida até que todo o trabalho seja concluído" },
-      { id: "b", text: "O Scrum Master deve trabalhar horas extras para concluir o trabalho" },
       { id: "c", text: "O trabalho não concluído volta para o Product Backlog para repriorização" },
+      { id: "b", text: "O Scrum Master deve trabalhar horas extras para concluir o trabalho" },
       { id: "d", text: "A equipe é penalizada com uma Sprint mais curta na próxima vez" }
     ],
     correctAnswer: "c",
@@ -59,10 +59,10 @@ export const fundamentalsQuestions: QuestionWithCategory[] = [
     category: 'fundamentals',
     question: "Qual é o tamanho recomendado para um Time Scrum?",
     options: [
-      { id: "a", text: "3-9 pessoas incluindo Scrum Master e Product Owner" },
-      { id: "b", text: "5-11 pessoas excluindo Scrum Master e Product Owner" },
       { id: "c", text: "10-15 pessoas no total" },
-      { id: "d", text: "Não há um tamanho fixo obrigatório" }
+      { id: "d", text: "Não há um tamanho fixo obrigatório" },
+      { id: "a", text: "3-9 pessoas incluindo Scrum Master e Product Owner" },
+      { id: "b", text: "5-11 pessoas excluindo Scrum Master e Product Owner" }
     ],
     correctAnswer: "a",
     explanation: "Os Times Scrum são tipicamente compostos por 10 ou menos pessoas. Em geral, equipes menores se comunicam melhor e são mais produtivas."
@@ -163,10 +163,10 @@ export const fundamentalsQuestions: QuestionWithCategory[] = [
     category: 'fundamentals',
     question: "O que significa dizer que o Scrum é 'simples de entender, difícil de dominar'?",
     options: [
+      { id: "d", text: "O Guia do Scrum é curto, mas a certificação é difícil" },
       { id: "a", text: "Seu framework é minimalista, mas sua implementação eficaz exige prática" },
       { id: "b", text: "É mais fácil aprender do que outras metodologias ágeis" },
-      { id: "c", text: "É simples para iniciantes, mas muito complexo para profissionais" },
-      { id: "d", text: "O Guia do Scrum é curto, mas a certificação é difícil" }
+      { id: "c", text: "É simples para iniciantes, mas muito complexo para profissionais" }
     ],
     correctAnswer: "a",
     explanation: "O Scrum é 'simples de entender' porque seu framework tem poucas regras, papéis e artefatos. Porém, é 'difícil de dominar' porque sua implementação eficaz requer prática, adaptação cultural e compreensão profunda dos princípios empíricos em que se baseia."
@@ -190,9 +190,9 @@ export const fundamentalsQuestions: QuestionWithCategory[] = [
     question: "Qual é a relação entre 'Done' (Pronto) e 'valor' no Scrum?",
     options: [
       { id: "a", text: "São conceitos independentes" },
+      { id: "d", text: "Pronto é mais importante que valor" },
       { id: "b", text: "Um incremento só tem valor quando atende à Definição de Pronto" },
-      { id: "c", text: "Valor é determinado pelo Product Owner, Pronto pelos Desenvolvedores" },
-      { id: "d", text: "Pronto é mais importante que valor" }
+      { id: "c", text: "Valor é determinado pelo Product Owner, Pronto pelos Desenvolvedores" }
     ],
     correctAnswer: "b",
     explanation: "No Scrum, um incremento só tem valor quando atende à Definição de Pronto. Se um incremento não atender à Definição de Pronto, ele não pode ser liberado nem mesmo apresentado na Sprint Review, o que significa que não gera valor. A transparência, inspeção e adaptação dependem de incrementos 'Prontos'."
@@ -216,9 +216,9 @@ export const fundamentalsQuestions: QuestionWithCategory[] = [
     question: "Como o Scrum trata a previsibilidade em projetos complexos?",
     options: [
       { id: "a", text: "Exige planejamento detalhado antes da execução" },
+      { id: "d", text: "Deixa toda previsibilidade a cargo do Product Owner" },
       { id: "b", text: "Usa abordagem empírica para maximizar previsibilidade e controlar riscos" },
-      { id: "c", text: "Elimina a necessidade de previsibilidade em favor da adaptabilidade" },
-      { id: "d", text: "Deixa toda previsibilidade a cargo do Product Owner" }
+      { id: "c", text: "Elimina a necessidade de previsibilidade em favor da adaptabilidade" }
     ],
     correctAnswer: "b",
     explanation: "O Scrum usa uma abordagem empírica para maximizar a previsibilidade e controlar riscos. Ele reconhece que em trabalhos complexos, o que acontecerá no futuro é incerto. Em vez de planejar detalhadamente com antecedência, o Scrum usa ciclos curtos de inspeção e adaptação para otimizar a previsibilidade dentro desses limites."
@@ -229,9 +229,9 @@ export const fundamentalsQuestions: QuestionWithCategory[] = [
     question: "Quais são os valores do Scrum?",
     options: [
       { id: "a", text: "Transparência, Inspeção, Adaptação" },
-      { id: "b", text: "Comprometimento, Foco, Abertura, Respeito e Coragem" },
       { id: "c", text: "Comunicação, Colaboração, Visibilidade" },
-      { id: "d", text: "Agilidade, Eficiência, Qualidade, Inovação" }
+      { id: "d", text: "Agilidade, Eficiência, Qualidade, Inovação" },
+      { id: "b", text: "Comprometimento, Foco, Abertura, Respeito e Coragem" }
     ],
     correctAnswer: "b",
     explanation: "Os cinco valores do Scrum são: Comprometimento, Foco, Abertura, Respeito e Coragem. Esses valores dão direção ao Time Scrum com relação ao seu trabalho, ações e comportamentos."

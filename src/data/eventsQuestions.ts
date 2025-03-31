@@ -34,8 +34,8 @@ export const eventsQuestions: QuestionWithCategory[] = [
     question: "Quando o planejamento para uma Sprint começa?",
     options: [
       { id: "a", text: "Durante o último dia da Sprint anterior" },
-      { id: "b", text: "A qualquer momento durante a Sprint atual" },
       { id: "c", text: "Durante o Sprint Planning, no primeiro dia da Sprint" },
+      { id: "b", text: "A qualquer momento durante a Sprint atual" },
       { id: "d", text: "Uma semana antes da Sprint começar" }
     ],
     correctAnswer: "c",
@@ -60,9 +60,9 @@ export const eventsQuestions: QuestionWithCategory[] = [
     question: "Qual evento ocorre no último dia da Sprint?",
     options: [
       { id: "a", text: "Sprint Planning" },
+      { id: "d", text: "Product Backlog Refinement" },
       { id: "b", text: "Daily Scrum" },
-      { id: "c", text: "Sprint Review seguida pela Sprint Retrospective" },
-      { id: "d", text: "Product Backlog Refinement" }
+      { id: "c", text: "Sprint Review seguida pela Sprint Retrospective" }
     ],
     correctAnswer: "c",
     explanation: "No último dia da Sprint, ocorrem dois eventos: primeiro a Sprint Review, para inspecionar o incremento criado durante a Sprint, e depois a Sprint Retrospective, para a equipe inspecionar a si mesma e criar um plano de melhorias. Esses eventos ocorrem antes da próxima Sprint Planning."
@@ -72,9 +72,9 @@ export const eventsQuestions: QuestionWithCategory[] = [
     category: 'events',
     question: "O que acontece se um objetivo da Sprint se tornar obsoleto?",
     options: [
+      { id: "c", text: "A equipe deve completar a Sprint conforme planejado" },
       { id: "a", text: "A Sprint continua, mas com objetivos modificados" },
       { id: "b", text: "A Sprint pode ser cancelada pelo Product Owner" },
-      { id: "c", text: "A equipe deve completar a Sprint conforme planejado" },
       { id: "d", text: "O Scrum Master estende a Sprint" }
     ],
     correctAnswer: "b",
@@ -99,8 +99,8 @@ export const eventsQuestions: QuestionWithCategory[] = [
     question: "Qual é o propósito da Sprint Retrospective?",
     options: [
       { id: "a", text: "Planejar o trabalho para a próxima Sprint" },
-      { id: "b", text: "Avaliar o incremento produzido na Sprint" },
       { id: "c", text: "Inspecionar o Time Scrum e criar melhorias para a próxima Sprint" },
+      { id: "b", text: "Avaliar o incremento produzido na Sprint" },
       { id: "d", text: "Revisar e ajustar o Product Backlog" }
     ],
     correctAnswer: "c",
@@ -111,9 +111,9 @@ export const eventsQuestions: QuestionWithCategory[] = [
     category: 'events',
     question: "Qual é o principal objetivo da Sprint Planning?",
     options: [
+      { id: "c", text: "Estabelecer o que pode ser entregue na Sprint e como o trabalho será realizado" },
       { id: "a", text: "Atribuir tarefas aos membros da equipe" },
       { id: "b", text: "Iniciar o trabalho da Sprint" },
-      { id: "c", text: "Estabelecer o que pode ser entregue na Sprint e como o trabalho será realizado" },
       { id: "d", text: "Priorizar o Product Backlog" }
     ],
     correctAnswer: "c",
@@ -125,9 +125,9 @@ export const eventsQuestions: QuestionWithCategory[] = [
     question: "Qual declaração sobre a duração da Sprint é correta?",
     options: [
       { id: "a", text: "Sprints podem ter duração variável, dependendo da complexidade do trabalho" },
+      { id: "d", text: "A duração da Sprint deve aumentar à medida que o projeto avança" },
       { id: "b", text: "Sprints devem ter duração de duas semanas" },
-      { id: "c", text: "Sprints mais curtas podem ser usadas para gerar mais feedback e limitar risco" },
-      { id: "d", text: "A duração da Sprint deve aumentar à medida que o projeto avança" }
+      { id: "c", text: "Sprints mais curtas podem ser usadas para gerar mais feedback e limitar risco" }
     ],
     correctAnswer: "c",
     explanation: "Sprints mais curtas podem ser usadas para gerar mais feedback e limitar o risco de custo e esforço a um menor período de tempo. Cada Sprint pode ser considerado um projeto curto. Sprints são limitadas a um mês."
@@ -164,8 +164,8 @@ export const eventsQuestions: QuestionWithCategory[] = [
     question: "Quanto tempo deve durar o Sprint Planning para uma Sprint de duas semanas?",
     options: [
       { id: "a", text: "Não mais que 4 horas" },
-      { id: "b", text: "Exatamente 4 horas" },
       { id: "c", text: "Não mais que 8 horas" },
+      { id: "b", text: "Exatamente 4 horas" },
       { id: "d", text: "O tempo que for necessário" }
     ],
     correctAnswer: "a",
@@ -176,10 +176,10 @@ export const eventsQuestions: QuestionWithCategory[] = [
     category: 'events',
     question: "O que acontece durante o Sprint Review?",
     options: [
+      { id: "d", text: "O Product Owner atualiza o Product Backlog sozinho" },
       { id: "a", text: "A equipe planeja a próxima Sprint" },
       { id: "b", text: "O Time Scrum apresenta os resultados do trabalho para os stakeholders" },
-      { id: "c", text: "A equipe discute como melhorar seus processos" },
-      { id: "d", text: "O Product Owner atualiza o Product Backlog sozinho" }
+      { id: "c", text: "A equipe discute como melhorar seus processos" }
     ],
     correctAnswer: "b",
     explanation: "Durante o Sprint Review, o Time Scrum apresenta os resultados do seu trabalho para os stakeholders e discute o progresso em direção à Meta do Produto. Este é um momento para inspecionar o incremento e adaptar o Product Backlog, se necessário."
@@ -203,8 +203,8 @@ export const eventsQuestions: QuestionWithCategory[] = [
     question: "O que deve acontecer se uma equipe consistentemente não consegue completar o trabalho planejado dentro da Sprint?",
     options: [
       { id: "a", text: "Aumentar a duração da Sprint" },
-      { id: "b", text: "Adicionar mais pessoas à equipe" },
       { id: "c", text: "Reavaliar a capacidade da equipe no planejamento" },
+      { id: "b", text: "Adicionar mais pessoas à equipe" },
       { id: "d", text: "Permitir que o trabalho continue na próxima Sprint" }
     ],
     correctAnswer: "c",
@@ -229,8 +229,8 @@ export const eventsQuestions: QuestionWithCategory[] = [
     question: "Qual afirmação sobre o cancelamento de uma Sprint é correta?",
     options: [
       { id: "a", text: "Uma Sprint nunca deve ser cancelada" },
-      { id: "b", text: "Qualquer stakeholder pode cancelar uma Sprint" },
       { id: "c", text: "Apenas o Product Owner pode cancelar uma Sprint" },
+      { id: "b", text: "Qualquer stakeholder pode cancelar uma Sprint" },
       { id: "d", text: "O Time Scrum deve votar para cancelar uma Sprint" }
     ],
     correctAnswer: "c",
@@ -241,10 +241,10 @@ export const eventsQuestions: QuestionWithCategory[] = [
     category: 'events',
     question: "Qual é o objetivo principal da Sprint Retrospective?",
     options: [
+      { id: "d", text: "Avaliar o desempenho individual dos membros" },
       { id: "a", text: "Revisar o incremento do produto" },
       { id: "b", text: "Planejar melhorias na qualidade e eficácia" },
-      { id: "c", text: "Atualizar o Product Backlog" },
-      { id: "d", text: "Avaliar o desempenho individual dos membros" }
+      { id: "c", text: "Atualizar o Product Backlog" }
     ],
     correctAnswer: "b",
     explanation: "O objetivo da Sprint Retrospective é planejar maneiras de aumentar a qualidade e a eficácia. O Time Scrum inspeciona como foi a última Sprint em relação a indivíduos, interações, processos, ferramentas e sua Definição de Pronto, identificando melhorias para implementar na próxima Sprint."
@@ -267,10 +267,10 @@ export const eventsQuestions: QuestionWithCategory[] = [
     category: 'events',
     question: "O que diferencia a Sprint Retrospective de outros eventos Scrum?",
     options: [
+      { id: "d", text: "É o único evento opcional no Scrum" },
       { id: "a", text: "É o único evento onde os stakeholders estão presentes" },
       { id: "b", text: "É focada no processo e pessoas, não no produto" },
-      { id: "c", text: "É o único evento que o Scrum Master conduz" },
-      { id: "d", text: "É o único evento opcional no Scrum" }
+      { id: "c", text: "É o único evento que o Scrum Master conduz" }
     ],
     correctAnswer: "b",
     explanation: "A Sprint Retrospective diferencia-se por ser focada no processo e nas pessoas, não no produto. Enquanto outros eventos (como Sprint Planning, Daily Scrum e Sprint Review) concentram-se no produto e no trabalho, a Retrospective examina como o Time Scrum trabalhou junto, suas interações, ferramentas e processos."

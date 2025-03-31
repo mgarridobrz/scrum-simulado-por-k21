@@ -33,10 +33,10 @@ export const artifactsQuestions: QuestionWithCategory[] = [
     category: 'artifacts',
     question: "O que é Definition of Done (DoD) no Scrum?",
     options: [
+      { id: "d", text: "A definição do que constitui a Meta da Sprint" },
       { id: "a", text: "Uma lista de tarefas a serem completadas durante a Sprint" },
       { id: "b", text: "O critério de aceitação de uma única User Story" },
-      { id: "c", text: "Um entendimento compartilhado de quando um incremento está completo" },
-      { id: "d", text: "A definição do que constitui a Meta da Sprint" }
+      { id: "c", text: "Um entendimento compartilhado de quando um incremento está completo" }
     ],
     correctAnswer: "c",
     explanation: "A Definition of Done (DoD) é um acordo formal sobre o que significa um incremento de produto estar 'concluído'. É um conjunto de critérios que cada incremento deve satisfazer para garantir que está em condição utilizável. Todos na equipe devem entender o que significa concluir um item do Product Backlog."
@@ -47,8 +47,8 @@ export const artifactsQuestions: QuestionWithCategory[] = [
     question: "Quem é responsável por garantir que os itens do Product Backlog sejam transparentes?",
     options: [
       { id: "a", text: "O Scrum Master" },
-      { id: "b", text: "O Time de Desenvolvimento" },
       { id: "c", text: "O Product Owner" },
+      { id: "b", text: "O Time de Desenvolvimento" },
       { id: "d", text: "Todo o Time Scrum" }
     ],
     correctAnswer: "c",
@@ -72,9 +72,9 @@ export const artifactsQuestions: QuestionWithCategory[] = [
     category: 'artifacts',
     question: "O que é o Sprint Backlog?",
     options: [
+      { id: "c", text: "Uma lista de impedimentos identificados pelo Scrum Master" },
       { id: "a", text: "Uma lista de todas as tarefas que a equipe precisa fazer ao longo do projeto" },
       { id: "b", text: "A meta da Sprint, os itens do Product Backlog selecionados e um plano para entregar o incremento" },
-      { id: "c", text: "Uma lista de impedimentos identificados pelo Scrum Master" },
       { id: "d", text: "A lista de defeitos encontrados durante a Sprint" }
     ],
     correctAnswer: "b",
@@ -85,9 +85,9 @@ export const artifactsQuestions: QuestionWithCategory[] = [
     category: 'artifacts',
     question: "O que é o 'Incremento' no Scrum?",
     options: [
+      { id: "c", text: "O aumento na velocidade da equipe de uma Sprint para outra" },
       { id: "a", text: "A soma de todos os itens do Product Backlog completados durante a Sprint" },
       { id: "b", text: "Um passo concreto em direção à meta do Produto" },
-      { id: "c", text: "O aumento na velocidade da equipe de uma Sprint para outra" },
       { id: "d", text: "Uma nova versão do software com mais funcionalidades" }
     ],
     correctAnswer: "b",
@@ -124,10 +124,10 @@ export const artifactsQuestions: QuestionWithCategory[] = [
     category: 'artifacts',
     question: "Quem deve participar do Product Backlog Refinement?",
     options: [
+      { id: "d", text: "O Product Owner e os stakeholders" },
       { id: "a", text: "Apenas o Product Owner" },
       { id: "b", text: "Apenas os Desenvolvedores" },
-      { id: "c", text: "O Time Scrum" },
-      { id: "d", text: "O Product Owner e os stakeholders" }
+      { id: "c", text: "O Time Scrum" }
     ],
     correctAnswer: "c",
     explanation: "O Product Backlog Refinement é uma atividade colaborativa onde o Time Scrum (Product Owner, Scrum Master e Desenvolvedores) analisa, estima e detalha itens do Product Backlog. Embora o Product Owner seja o responsável final pelo backlog, o refinamento é uma atividade de todo o Time Scrum."
@@ -163,9 +163,9 @@ export const artifactsQuestions: QuestionWithCategory[] = [
     category: 'artifacts',
     question: "Qual é o papel dos 'compromissos' em relação aos artefatos Scrum?",
     options: [
+      { id: "c", text: "São requisitos contratuais para a entrega do produto" },
       { id: "a", text: "São promessas que o Time Scrum faz aos stakeholders" },
       { id: "b", text: "Aumentam a transparência e fornecem foco para medir o progresso" },
-      { id: "c", text: "São requisitos contratuais para a entrega do produto" },
       { id: "d", text: "Definem penalidades para metas não atingidas" }
     ],
     correctAnswer: "b",
@@ -190,8 +190,8 @@ export const artifactsQuestions: QuestionWithCategory[] = [
     question: "Qual é o propósito da Meta do Produto?",
     options: [
       { id: "a", text: "Definir exatamente como o produto final será" },
-      { id: "b", text: "Especificar todos os requisitos do produto" },
       { id: "c", text: "Comunicar o objetivo que o produto busca alcançar" },
+      { id: "b", text: "Especificar todos os requisitos do produto" },
       { id: "d", text: "Servir como contrato entre o Time Scrum e stakeholders" }
     ],
     correctAnswer: "c",
@@ -203,9 +203,9 @@ export const artifactsQuestions: QuestionWithCategory[] = [
     question: "O que acontece com o Sprint Backlog durante a Sprint?",
     options: [
       { id: "a", text: "Permanece fixo do início ao fim da Sprint" },
+      { id: "d", text: "Só pode ser alterado pelo Product Owner" },
       { id: "b", text: "Pode ser expandido, mas nunca reduzido" },
-      { id: "c", text: "É atualizado conforme os Desenvolvedores aprendem mais" },
-      { id: "d", text: "Só pode ser alterado pelo Product Owner" }
+      { id: "c", text: "É atualizado conforme os Desenvolvedores aprendem mais" }
     ],
     correctAnswer: "c",
     explanation: "O Sprint Backlog é atualizado ao longo da Sprint conforme os Desenvolvedores aprendem mais sobre o trabalho necessário para atingir a Meta da Sprint. Quando novo trabalho é necessário, os Desenvolvedores o adicionam ao Sprint Backlog, e o trabalho é atualizado ou removido à medida que é executado."
@@ -215,10 +215,10 @@ export const artifactsQuestions: QuestionWithCategory[] = [
     category: 'artifacts',
     question: "Qual característica deve ter um item do Product Backlog para ser selecionado para o Sprint Planning?",
     options: [
+      { id: "d", text: "Ter especificações técnicas detalhadas" },
       { id: "a", text: "Ser aprovado por todos os stakeholders" },
       { id: "b", text: "Ter uma estimativa de story points" },
-      { id: "c", text: "Ser considerado 'Pronto para Seleção'" },
-      { id: "d", text: "Ter especificações técnicas detalhadas" }
+      { id: "c", text: "Ser considerado 'Pronto para Seleção'" }
     ],
     correctAnswer: "c",
     explanation: "Para ser selecionado durante o Sprint Planning, um item do Product Backlog deve ser considerado 'Pronto para Seleção' (Ready), ou seja, suficientemente refinado para que os Desenvolvedores possam completá-lo dentro de uma Sprint. Itens com maior ordenação no Product Backlog geralmente são mais claros e detalhados."
