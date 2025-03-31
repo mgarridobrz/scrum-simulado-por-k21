@@ -1,11 +1,12 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { QuestionWithCategory } from '@/data/quizData';
 import { Card } from '@/components/ui/card';
 import QuizQuestion from './QuizQuestion';
 import { Progress } from '@/components/ui/progress';
 import { ChevronDown, ChevronUp } from 'lucide-react';
+import { trackQuizAttempt } from '@/utils/quizTracking';
 
 interface CategoryStats {
   correct: number;
@@ -19,6 +20,7 @@ interface QuizResultProps {
   onRestart: () => void;
   userAnswers?: Record<number, string>;
   questions?: QuestionWithCategory[];
+  userData?: { name: string; email: string };
 }
 
 const QuizResult = ({ 
@@ -27,11 +29,25 @@ const QuizResult = ({
   categoryStats, 
   correctAnswers, 
   totalQuestions, 
-  onRestart 
+  onRestart,
+  userData
 }: QuizResultProps) => {
   const [showQuestions, setShowQuestions] = useState(false);
   const score = (correctAnswers / totalQuestions) * 100;
   const formattedScore = score.toFixed(0);
+  
+  // Record the quiz result with score when the component mounts
+  useEffect(() => {
+    if (userData?.name) {
+      trackQuizAttempt(
+        userData.name, 
+        userData.email || '', 
+        totalQuestions, 
+        parseFloat(formattedScore)
+      );
+      console.log(`Recorded quiz result for ${userData.name} with score ${formattedScore}%`);
+    }
+  }, []);
   
   const getScoreColor = () => {
     if (score >= 85) return "text-green-500";

@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -10,7 +9,6 @@ import QuizResult from '@/components/QuizResult';
 import { getRandomQuestions, getCategoryStats, QuestionWithCategory, getApprovedQuestions } from '@/data/quizData';
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Info } from "lucide-react";
-import { trackQuizAttempt } from '@/utils/quizTracking';
 
 interface UserData {
   name: string;
@@ -25,30 +23,22 @@ const Index = () => {
   const [approvedQuestionsCount, setApprovedQuestionsCount] = useState<number>(0);
   const [userData, setUserData] = useState<UserData | null>(null);
 
-  // Carregar contagem de questões aprovadas ao iniciar o componente
   useEffect(() => {
-    // Get count of approved questions
     const approvedQuestions = getApprovedQuestions();
     setApprovedQuestionsCount(approvedQuestions.length);
   }, []);
 
-  // Combined function to handle quiz start with size selection and user data
   const handleStartWithSize = (selectedSize: number, userInfo?: UserData) => {
     console.log(`Index - Starting quiz with size: ${selectedSize}`);
     console.log("User data:", userInfo);
     
     if (userInfo) {
       setUserData(userInfo);
-      
-      // Track this quiz attempt
-      trackQuizAttempt(userInfo.name, userInfo.email, selectedSize);
     }
     
-    // Get random questions based on the selected quiz size
     const selectedQuestions = getRandomQuestions(selectedSize);
     console.log(`Generated quiz with ${selectedQuestions.length} out of ${selectedSize} requested questions`);
     
-    // Set the questions and reset other states
     setQuestions(selectedQuestions);
     setCurrentQuestionIndex(0);
     setUserAnswers({});
@@ -73,7 +63,6 @@ const Index = () => {
   const handleRestart = () => {
     setStatus('ready');
     setUserData(null);
-    // Recarregar a contagem de questões aprovadas ao reiniciar
     const approvedQuestions = getApprovedQuestions();
     setApprovedQuestionsCount(approvedQuestions.length);
   };
@@ -149,6 +138,7 @@ const Index = () => {
             onRestart={handleRestart}
             questions={questions}
             userAnswers={userAnswers}
+            userData={userData}
           />
         )}
       </div>

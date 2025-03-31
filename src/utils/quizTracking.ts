@@ -7,11 +7,13 @@
 export const saveQuizAttemptToDontpad = async (
   name: string,
   email: string,
-  size: number
+  size: number,
+  score?: number
 ): Promise<boolean> => {
   try {
     const timestamp = new Date().toISOString();
-    const data = `\n${timestamp} - ${name} (${email || 'No email'}) completed a ${size}-question quiz`;
+    const scoreInfo = score !== undefined ? ` with score ${score}%` : '';
+    const data = `\n${timestamp} - ${name} (${email || 'No email'}) completed a ${size}-question quiz${scoreInfo}`;
     
     // Try to fetch the current content
     const response = await fetch('https://dontpad.com/simuladocsmk21garrido');
@@ -31,11 +33,13 @@ export const saveQuizAttemptToDontpad = async (
 export const saveQuizAttemptToLocalStorage = (
   name: string,
   email: string,
-  size: number
+  size: number,
+  score?: number
 ): void => {
   try {
     const timestamp = new Date().toISOString();
-    const attemptData = `${name},${email || 'No email'},${size},${timestamp}`;
+    const scoreValue = score !== undefined ? score : '';
+    const attemptData = `${name},${email || 'No email'},${size},${timestamp},${scoreValue}`;
     
     // Get existing attempts from localStorage
     const existingData = localStorage.getItem('quizAttempts') || '';
@@ -44,7 +48,7 @@ export const saveQuizAttemptToLocalStorage = (
     const updatedData = existingData ? `${existingData}\n${attemptData}` : attemptData;
     localStorage.setItem('quizAttempts', updatedData);
     
-    console.log("Quiz attempt saved to local storage");
+    console.log("Quiz attempt saved to local storage with score");
   } catch (error) {
     console.error("Error saving to local storage:", error);
   }
@@ -54,14 +58,15 @@ export const saveQuizAttemptToLocalStorage = (
 export const trackQuizAttempt = async (
   name: string,
   email: string,
-  size: number
+  size: number,
+  score?: number
 ): Promise<void> => {
   // First try to save to dontpad
-  const dontpadSuccess = await saveQuizAttemptToDontpad(name, email, size);
+  const dontpadSuccess = await saveQuizAttemptToDontpad(name, email, size, score);
   
   // If dontpad fails, save to local storage
   if (!dontpadSuccess) {
-    saveQuizAttemptToLocalStorage(name, email, size);
+    saveQuizAttemptToLocalStorage(name, email, size, score);
   }
 };
 
