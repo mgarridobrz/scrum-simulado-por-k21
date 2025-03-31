@@ -10,8 +10,8 @@ interface QuizScoreCounterProps {
 
 const QuizScoreCounter = ({ correctCount, incorrectCount }: QuizScoreCounterProps) => {
   return (
-    <div className="flex items-center justify-between gap-3 py-3 px-4 mb-6 bg-gray-100 rounded-lg border border-gray-200 shadow-inner">
-      <h3 className="text-sm font-semibold text-gray-700">Seu progresso:</h3>
+    <div className="flex items-center justify-between gap-3 py-3 px-4 mb-6 bg-gray-200 rounded-lg border border-gray-300 shadow-inner">
+      <h3 className="text-sm font-semibold text-gray-800">Seu progresso:</h3>
       <div className="flex items-center gap-3">
         <Badge variant="default" className="bg-green-600 text-white flex items-center gap-1.5 px-3 py-1.5 shadow-sm">
           <CheckCircle size={16} />
