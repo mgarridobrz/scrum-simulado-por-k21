@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -37,7 +36,6 @@ const QuestionValidation = () => {
   const [showAttemptsDialog, setShowAttemptsDialog] = useState(false);
   const [quizAttempts, setQuizAttempts] = useState<string[]>([]);
 
-  // Check if user is authenticated via localStorage
   useEffect(() => {
     const authStatus = localStorage.getItem('validationPageAuthenticated');
     if (authStatus === 'true') {
@@ -45,34 +43,27 @@ const QuestionValidation = () => {
     }
   }, []);
 
-  // Load questions, edited versions, and approvals when component mounts
   useEffect(() => {
     if (!isAuthenticated) return;
     
-    // Get the base questions
     let baseQuestions = [...quizQuestions];
     
-    // Load approved questions from localStorage
     const savedApprovedIds = getApprovedQuestionIds();
     setApprovedQuestions(savedApprovedIds);
     
-    // Load edited questions
     const editedQuestionsMap = getEditedQuestions();
     
-    // Apply edited versions to the base questions
     const updatedQuestions = baseQuestions.map(q => 
       editedQuestionsMap[q.id] ? editedQuestionsMap[q.id] : q
     );
     
     setQuestions(updatedQuestions);
     
-    // Set the current question if questions array is not empty
     if (updatedQuestions.length > 0) {
       setCurrentQuestion(updatedQuestions[0]);
     }
   }, [isAuthenticated]);
 
-  // Effect to update when filter changes
   useEffect(() => {
     if (!isAuthenticated) return;
     
@@ -80,7 +71,6 @@ const QuestionValidation = () => {
       ? questions 
       : questions.filter(q => q.category === filter);
       
-    // Reset index and update current question when filter changes
     if (filteredQuestions.length > 0) {
       setCurrentIndex(0);
       setCurrentQuestion(filteredQuestions[0]);
@@ -88,18 +78,15 @@ const QuestionValidation = () => {
     }
   }, [filter, questions, isAuthenticated]);
 
-  // Save approved questions to localStorage whenever it changes
   useEffect(() => {
     saveApprovedQuestionIds(approvedQuestions);
   }, [approvedQuestions]);
 
-  // Handle password validation
   const handlePasswordSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Simple hashing function to avoid storing plaintext passwords
-    const hashedPassword = btoa(password); // This is a basic encoding, not secure encryption
-    const correctHash = btoa('120703'); // Encoded version of the password
+    const hashedPassword = btoa(password);
+    const correctHash = btoa('120703');
     
     if (hashedPassword === correctHash) {
       localStorage.setItem('validationPageAuthenticated', 'true');
@@ -117,12 +104,10 @@ const QuestionValidation = () => {
     }
   };
 
-  // Computed filtered questions
   const filteredQuestions = filter === 'all' 
     ? questions 
     : questions.filter(q => q.category === filter);
 
-  // Handle question navigation
   const goToNextQuestion = () => {
     if (currentIndex < filteredQuestions.length - 1) {
       setCurrentIndex(prevIndex => prevIndex + 1);
@@ -139,7 +124,6 @@ const QuestionValidation = () => {
     }
   };
 
-  // Handle edits to the current question
   const handleQuestionChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     if (currentQuestion) {
       setCurrentQuestion({
@@ -178,18 +162,15 @@ const QuestionValidation = () => {
     }
   };
 
-  // Save changes to the question
   const saveChanges = () => {
     if (!currentQuestion) return;
     
-    // Update the questions array with the edited version
     const updatedQuestions = questions.map(q => 
       q.id === currentQuestion.id ? currentQuestion : q
     );
     
     setQuestions(updatedQuestions);
     
-    // Save the edited question to localStorage
     saveEditedQuestion(currentQuestion);
     
     setEditMode(false);
@@ -199,12 +180,10 @@ const QuestionValidation = () => {
     });
   };
 
-  // Approve question (mark as validated)
   const approveQuestion = () => {
     if (!currentQuestion) return;
     
     if (!approvedQuestions.includes(currentQuestion.id)) {
-      // Save any pending edits before approving
       if (editMode) {
         saveChanges();
       }
@@ -212,7 +191,6 @@ const QuestionValidation = () => {
       const newApprovedQuestions = [...approvedQuestions, currentQuestion.id];
       setApprovedQuestions(newApprovedQuestions);
       
-      // Also save the edited question to ensure the approved version is the edited one
       saveEditedQuestion(currentQuestion);
       
       toast({
@@ -220,7 +198,6 @@ const QuestionValidation = () => {
         description: "A questão foi marcada como aprovada e será usada no quiz oficial.",
       });
     } else {
-      // Remove from approved if already approved (toggle functionality)
       const newApprovedQuestions = approvedQuestions.filter(id => id !== currentQuestion.id);
       setApprovedQuestions(newApprovedQuestions);
       toast({
@@ -235,21 +212,18 @@ const QuestionValidation = () => {
     return approvedQuestions.includes(questionId);
   };
 
-  // Handle logout
   const handleLogout = () => {
     localStorage.removeItem('validationPageAuthenticated');
     setIsAuthenticated(false);
     setPassword('');
   };
 
-  // Function to open the attempts dialog
   const handleOpenAttemptsDialog = () => {
     const attempts = getTrackedQuizAttempts();
     setQuizAttempts(attempts);
     setShowAttemptsDialog(true);
   };
 
-  // Format date from ISO string
   const formatDate = (isoString: string) => {
     try {
       return new Date(isoString).toLocaleString('pt-BR');
@@ -258,7 +232,6 @@ const QuestionValidation = () => {
     }
   };
 
-  // Export attempts to PDF
   const exportAttemptsToPdf = () => {
     if (quizAttempts.length === 0) {
       toast({
@@ -271,22 +244,18 @@ const QuestionValidation = () => {
 
     const doc = new jsPDF();
     
-    // Add title
     doc.setFontSize(18);
     doc.text("Relatório de Tentativas do Simulado", 14, 22);
     
-    // Add date
     doc.setFontSize(11);
     doc.text(`Gerado em: ${new Date().toLocaleString('pt-BR')}`, 14, 30);
     
-    // Prepare table data
     const tableColumn = ["Nome", "Email", "Tamanho", "Data/Hora"];
     const tableRows = quizAttempts.map(attempt => {
       const [name, email, size, timestamp] = attempt.split(',');
       return [name, email, `${size} questões`, formatDate(timestamp)];
     });
     
-    // Create the table
     autoTable(doc, {
       head: [tableColumn],
       body: tableRows,
@@ -296,8 +265,7 @@ const QuestionValidation = () => {
       alternateRowStyles: { fillColor: [240, 240, 245] }
     });
     
-    // Footer
-    const pageCount = doc.internal.getNumberOfPages();
+    const pageCount = (doc.internal as any).getNumberOfPages();
     for (let i = 1; i <= pageCount; i++) {
       doc.setPage(i);
       const pageSize = doc.internal.pageSize;
@@ -306,7 +274,6 @@ const QuestionValidation = () => {
       doc.text('Simulado CSMK21 - Página ' + i + ' de ' + pageCount, 14, pageHeight - 10);
     }
     
-    // Save the PDF
     doc.save("simulado-csmk21-tentativas.pdf");
     
     toast({
@@ -315,7 +282,6 @@ const QuestionValidation = () => {
     });
   };
 
-  // If not authenticated, show login screen
   if (!isAuthenticated) {
     return (
       <div className="container mx-auto py-8 max-w-md flex flex-col items-center justify-center min-h-[70vh]">
@@ -350,7 +316,6 @@ const QuestionValidation = () => {
     );
   }
 
-  // If there are no questions or current question is null, show loading or error message
   if (!currentQuestion) {
     return (
       <div className="container mx-auto py-8 text-center">
