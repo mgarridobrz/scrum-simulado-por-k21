@@ -37,7 +37,7 @@ const QuizQuestion = ({
   
   return (
     <div className={cn("space-y-4", className)}>
-      <h3 className="text-lg font-medium text-k21-black mb-6">{question.question}</h3>
+      <h3 className="text-lg font-medium text-gray-800 mb-6">{question.question}</h3>
       <div className="space-y-3">
         {question.options.map((option) => (
           <QuizOption
@@ -63,7 +63,7 @@ const QuizQuestion = ({
           
           {onContinue && (
             <div className="mt-4 flex justify-end">
-              <Button onClick={onContinue}>
+              <Button onClick={onContinue} className="bg-k21-teal hover:bg-k21-teal/90 text-white">
                 Continuar
               </Button>
             </div>

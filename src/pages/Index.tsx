@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -147,7 +148,7 @@ const Index = () => {
               currentQuestion={currentQuestionIndex + 1}
               totalQuestions={questions.length}
             />
-            <div className="bg-gray-200 rounded-lg p-5 shadow">
+            <div className="bg-white rounded-lg p-5 shadow-md border border-gray-100">
               {/* Place the score counter inside the question container */}
               <QuizScoreCounter correctCount={correctCount} incorrectCount={incorrectCount} />
               <QuizQuestion
