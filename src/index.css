@@ -83,7 +83,7 @@
   }
   
   .quiz-option-selected {
-    @apply border-k21-gold bg-muted;
+    @apply border-k21-gold bg-amber-50;
   }
 
   .quiz-option-correct {

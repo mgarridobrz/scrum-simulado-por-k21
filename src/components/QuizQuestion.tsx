@@ -53,11 +53,11 @@ const QuizQuestion = ({
       </div>
       
       {selectedOption && (
-        <div className="mt-4 p-4 bg-amber-50 border border-amber-200 rounded-md">
-          <h4 className="font-medium text-amber-800 mb-1">
+        <div className="mt-4 p-4 bg-blue-50 border border-blue-100 rounded-md shadow-sm">
+          <h4 className="font-medium text-blue-800 mb-1">
             {isCorrect ? "Correto!" : "Incorreto!"} Explicação:
           </h4>
-          <p className="text-sm text-amber-700">
+          <p className="text-sm text-blue-700">
             {question.explanation || "Não há explicação disponível para esta questão."}
           </p>
           
