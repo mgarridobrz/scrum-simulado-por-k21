@@ -27,7 +27,7 @@ const Index = () => {
   }, []);
 
   const handleStart = () => {
-    // Certifica-se de obter apenas as questões aprovadas
+    // Get random questions based on the selected quiz size
     const selectedQuestions = getRandomQuestions(quizSize);
     setQuestions(selectedQuestions);
     setCurrentQuestionIndex(0);
