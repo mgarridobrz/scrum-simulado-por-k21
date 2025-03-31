@@ -8,7 +8,7 @@ import AttemptsList from '@/components/question-validation/AttemptsList';
 import { useQuestionValidation } from '@/hooks/useQuestionValidation';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Info } from 'lucide-react';
-import { getQuizAttempts } from '@/utils/quizTracking';
+import { getTrackedQuizAttempts } from '@/utils/quizTracking';
 
 const QuestionValidation = () => {
   const [authenticated, setAuthenticated] = useState(false);
@@ -33,7 +33,7 @@ const QuestionValidation = () => {
 
   React.useEffect(() => {
     // Load attempts data
-    setAttempts(getQuizAttempts());
+    setAttempts(getTrackedQuizAttempts());
   }, []);
 
   const handleAuth = (password: string) => {
