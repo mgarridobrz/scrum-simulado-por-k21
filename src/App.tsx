@@ -6,11 +6,6 @@ import NotFound from './pages/NotFound';
 import { Toaster } from './components/ui/toaster';
 import './App.css';
 
-// Simple auth check function
-const isAuthenticated = () => {
-  return localStorage.getItem('validationPageAuthenticated') === 'true';
-};
-
 function App() {
   return (
     <Router>
