@@ -1,14 +1,12 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Check, Edit, X, Save } from 'lucide-react';
 import { QuestionWithCategory } from '@/data/quizData';
 import { useToast } from "@/hooks/use-toast";
+import QuestionOptionTable from './QuestionOptionTable';
+import QuestionHeaderActions from './QuestionHeaderActions';
 
 interface QuestionEditorProps {
   question: QuestionWithCategory;
@@ -23,7 +21,7 @@ const QuestionEditor = ({ question, isApproved, onSave, onApprove }: QuestionEdi
   const [currentQuestion, setCurrentQuestion] = useState<QuestionWithCategory>(question);
 
   // Update local state when props change
-  React.useEffect(() => {
+  useEffect(() => {
     setCurrentQuestion(question);
   }, [question]);
 
@@ -85,27 +83,13 @@ const QuestionEditor = ({ question, isApproved, onSave, onApprove }: QuestionEdi
           </CardTitle>
           <CardDescription>ID: {currentQuestion.id}</CardDescription>
         </div>
-        <div className="flex gap-2">
-          {editMode ? (
-            <Button onClick={saveChanges} variant="default" size="sm">
-              <Save size={16} className="mr-1" /> Salvar
-            </Button>
-          ) : (
-            <>
-              <Button onClick={() => setEditMode(true)} variant="outline" size="sm">
-                <Edit size={16} className="mr-1" /> Editar
-              </Button>
-              <Button 
-                onClick={onApprove} 
-                variant={isApproved ? "secondary" : "default"} 
-                size="sm"
-              >
-                <Check size={16} className="mr-1" /> 
-                {isApproved ? "Aprovada" : "Aprovar"}
-              </Button>
-            </>
-          )}
-        </div>
+        <QuestionHeaderActions 
+          editMode={editMode}
+          isApproved={isApproved}
+          onSave={saveChanges}
+          onEdit={() => setEditMode(true)}
+          onApprove={onApprove}
+        />
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
@@ -124,61 +108,12 @@ const QuestionEditor = ({ question, isApproved, onSave, onApprove }: QuestionEdi
 
           <div>
             <h3 className="text-sm font-medium mb-2">Opções:</h3>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead className="w-[100px]">ID</TableHead>
-                  <TableHead>Texto</TableHead>
-                  <TableHead className="w-[100px]">Correta</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {currentQuestion.options.map((option) => (
-                  <TableRow key={option.id}>
-                    <TableCell>{option.id}</TableCell>
-                    <TableCell>
-                      {editMode ? (
-                        <Input 
-                          value={option.text} 
-                          onChange={(e) => handleOptionChange(option.id, e.target.value)} 
-                        />
-                      ) : (
-                        option.text
-                      )}
-                    </TableCell>
-                    <TableCell>
-                      {editMode ? (
-                        <Select 
-                          value={currentQuestion.correctAnswer} 
-                          onValueChange={handleCorrectAnswerChange}
-                        >
-                          <SelectTrigger>
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {currentQuestion.options.map(o => (
-                              <SelectItem key={o.id} value={o.id}>
-                                {o.id}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      ) : (
-                        option.id === currentQuestion.correctAnswer ? (
-                          <span className="flex items-center text-green-600">
-                            <Check size={16} className="mr-1" /> Sim
-                          </span>
-                        ) : (
-                          <span className="flex items-center text-muted-foreground">
-                            <X size={16} className="mr-1" /> Não
-                          </span>
-                        )
-                      )}
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+            <QuestionOptionTable 
+              question={currentQuestion}
+              editMode={editMode}
+              onOptionChange={handleOptionChange}
+              onCorrectAnswerChange={handleCorrectAnswerChange}
+            />
           </div>
 
           <div>

@@ -1,8 +1,8 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ChevronLeft, ChevronRight, FileText } from 'lucide-react';
+import QuestionFilters from './QuestionFilters';
 
 interface NavigationBarProps {
   currentIndex: number;
@@ -41,18 +41,7 @@ const NavigationBar = ({
             <FileText size={16} />
             Listar Tentativas
           </Button>
-          <Select value={filter} onValueChange={onFilterChange}>
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Filtrar por categoria" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">Todas as categorias</SelectItem>
-              <SelectItem value="fundamentals">Fundamentos</SelectItem>
-              <SelectItem value="roles">Papéis</SelectItem>
-              <SelectItem value="events">Eventos</SelectItem>
-              <SelectItem value="artifacts">Artefatos</SelectItem>
-            </SelectContent>
-          </Select>
+          <QuestionFilters filter={filter} onFilterChange={onFilterChange} />
           <Button variant="outline" onClick={onNavigateHome}>
             Voltar para início
           </Button>

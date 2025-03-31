@@ -4,30 +4,40 @@ import { useNavigate } from 'react-router-dom';
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertCircle } from 'lucide-react';
 import { 
-  QuestionWithCategory, 
-  quizQuestions, 
-  saveEditedQuestion, 
-  getApprovedQuestionIds,
-  getEditedQuestions,
-  saveApprovedQuestionIds 
+  QuestionWithCategory,
+  quizQuestions,
+  saveEditedQuestion 
 } from '@/data/quizData';
 import { getTrackedQuizAttempts } from '@/utils/quizTracking';
 import AuthScreen from '@/components/question-validation/AuthScreen';
 import QuestionEditor from '@/components/question-validation/QuestionEditor';
 import AttemptsList from '@/components/question-validation/AttemptsList';
 import NavigationBar from '@/components/question-validation/NavigationBar';
+import QuestionFilters from '@/components/question-validation/QuestionFilters';
 import { useToast } from "@/hooks/use-toast";
+import { useQuestionValidation } from '@/hooks/useQuestionValidation';
 
 const QuestionValidation = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const [questions, setQuestions] = useState<QuestionWithCategory[]>([]);
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [filter, setFilter] = useState<string>('all');
-  const [approvedQuestions, setApprovedQuestions] = useState<number[]>([]);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [showAttemptsDialog, setShowAttemptsDialog] = useState(false);
   const [quizAttempts, setQuizAttempts] = useState<string[]>([]);
+  
+  const {
+    currentQuestion,
+    currentIndex,
+    filteredQuestions,
+    filter,
+    isLoading,
+    approvedQuestions,
+    setFilter,
+    goToNextQuestion,
+    goToPreviousQuestion,
+    approveQuestion,
+    isQuestionApproved,
+    setQuestions
+  } = useQuestionValidation();
 
   // Check authentication status on mount
   useEffect(() => {
@@ -36,48 +46,6 @@ const QuestionValidation = () => {
       setIsAuthenticated(true);
     }
   }, []);
-
-  // Load questions and approved IDs when authenticated
-  useEffect(() => {
-    if (!isAuthenticated) return;
-    
-    try {
-      // Load the approved question IDs
-      const savedApprovedIds = getApprovedQuestionIds();
-      setApprovedQuestions(savedApprovedIds);
-      
-      // Get the edited questions map
-      const editedQuestionsMap = getEditedQuestions();
-      
-      // Apply edits to the base questions
-      const updatedQuestions = quizQuestions.map(q => 
-        editedQuestionsMap[q.id] ? editedQuestionsMap[q.id] : q
-      );
-      
-      console.log(`Loaded ${updatedQuestions.length} questions with ${Object.keys(editedQuestionsMap).length} edits applied.`);
-      setQuestions(updatedQuestions);
-    } catch (error) {
-      console.error("Error loading questions:", error);
-      toast({
-        title: "Erro ao carregar questões",
-        description: "Houve um problema ao carregar as questões editadas.",
-        variant: "destructive"
-      });
-    }
-  }, [isAuthenticated, toast]);
-
-  // Handle filter changes
-  useEffect(() => {
-    if (!isAuthenticated || questions.length === 0) return;
-    setCurrentIndex(0);
-  }, [filter, isAuthenticated, questions]);
-
-  // Save approved questions when they change
-  useEffect(() => {
-    if (approvedQuestions.length > 0) {
-      saveApprovedQuestionIds(approvedQuestions);
-    }
-  }, [approvedQuestions]);
 
   const handleAuthenticated = () => {
     setIsAuthenticated(true);
@@ -94,45 +62,13 @@ const QuestionValidation = () => {
     setShowAttemptsDialog(true);
   };
 
-  const goToNextQuestion = () => {
-    if (currentIndex < filteredQuestions.length - 1) {
-      setCurrentIndex(prevIndex => prevIndex + 1);
-    }
-  };
-
-  const goToPreviousQuestion = () => {
-    if (currentIndex > 0) {
-      setCurrentIndex(prevIndex => prevIndex - 1);
-    }
-  };
-
-  const approveQuestion = () => {
-    if (!currentQuestion) return;
-    
-    if (!approvedQuestions.includes(currentQuestion.id)) {
-      const newApprovedQuestions = [...approvedQuestions, currentQuestion.id];
-      setApprovedQuestions(newApprovedQuestions);
-      toast({
-        title: "Questão aprovada",
-        description: `A questão #${currentQuestion.id} foi aprovada.`
-      });
-    } else {
-      const newApprovedQuestions = approvedQuestions.filter(id => id !== currentQuestion.id);
-      setApprovedQuestions(newApprovedQuestions);
-      toast({
-        title: "Aprovação removida",
-        description: `A aprovação da questão #${currentQuestion.id} foi removida.`
-      });
-    }
-  };
-
   const saveQuestionChanges = (editedQuestion: QuestionWithCategory) => {
     try {
       // First save to localStorage
       saveEditedQuestion(editedQuestion);
       
       // Then update state
-      const updatedQuestions = questions.map(q => 
+      const updatedQuestions = quizQuestions.map(q => 
         q.id === editedQuestion.id ? editedQuestion : q
       );
       setQuestions(updatedQuestions);
@@ -151,24 +87,13 @@ const QuestionValidation = () => {
     }
   };
 
-  const isQuestionApproved = (questionId: number) => {
-    return approvedQuestions.includes(questionId);
-  };
-
-  // Derived state
-  const filteredQuestions = filter === 'all' 
-    ? questions 
-    : questions.filter(q => q.category === filter);
-
-  const currentQuestion = filteredQuestions[currentIndex] || null;
-
   // Show authentication screen if not authenticated
   if (!isAuthenticated) {
     return <AuthScreen onAuthenticated={handleAuthenticated} />;
   }
 
   // Show loading state if no questions loaded
-  if (!currentQuestion) {
+  if (isLoading || !currentQuestion) {
     return (
       <div className="container mx-auto py-8 text-center">
         <h1 className="text-2xl font-bold mb-4">Carregando perguntas...</h1>
