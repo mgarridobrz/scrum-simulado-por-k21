@@ -7,6 +7,7 @@ import StartScreen from '@/components/StartScreen';
 import QuizQuestion from '@/components/QuizQuestion';
 import QuizProgress from '@/components/QuizProgress';
 import QuizResult from '@/components/QuizResult';
+import QuizScoreCounter from '@/components/QuizScoreCounter';
 import { getRandomQuestions, getCategoryStats, QuestionWithCategory, getApprovedQuestions } from '@/data/quizData';
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Info, Lock } from "lucide-react";
@@ -24,6 +25,8 @@ const Index = () => {
   const [approvedQuestionsCount, setApprovedQuestionsCount] = useState<number>(0);
   const [userData, setUserData] = useState<UserData | null>(null);
   const [canProceed, setCanProceed] = useState(false);
+  const [correctCount, setCorrectCount] = useState(0);
+  const [incorrectCount, setIncorrectCount] = useState(0);
 
   useEffect(() => {
     const approvedQuestions = getApprovedQuestions();
@@ -45,6 +48,8 @@ const Index = () => {
     setCurrentQuestionIndex(0);
     setUserAnswers({});
     setCanProceed(false);
+    setCorrectCount(0);
+    setIncorrectCount(0);
     setStatus('playing');
   };
 
@@ -55,6 +60,17 @@ const Index = () => {
         ...prevAnswers,
         [questionId]: answer,
       }));
+
+      // Update correct/incorrect counters
+      const currentQuestion = questions.find(q => q.id === questionId);
+      if (currentQuestion) {
+        if (answer === currentQuestion.correctAnswer) {
+          setCorrectCount(prev => prev + 1);
+        } else {
+          setIncorrectCount(prev => prev + 1);
+        }
+      }
+      
       // Enable proceed button after answering
       setCanProceed(true);
     }
@@ -72,6 +88,8 @@ const Index = () => {
   const handleRestart = () => {
     setStatus('ready');
     setUserData(null);
+    setCorrectCount(0);
+    setIncorrectCount(0);
     const approvedQuestions = getApprovedQuestions();
     setApprovedQuestionsCount(approvedQuestions.length);
   };
@@ -86,7 +104,7 @@ const Index = () => {
 
   const correctAnswersCount = showResult
     ? questions.filter(question => userAnswers[question.id] === question.correctAnswer).length
-    : 0;
+    : correctCount;
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
@@ -100,6 +118,11 @@ const Index = () => {
             </Button>
           </Link>
         </div>
+        
+        {/* Score Counter - Only show during quiz */}
+        {status === 'playing' && (
+          <QuizScoreCounter correctCount={correctCount} incorrectCount={incorrectCount} />
+        )}
         
         {status === 'ready' && (
           <>
