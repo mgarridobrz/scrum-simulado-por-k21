@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -6,7 +7,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Check, Edit, X, ChevronRight, ChevronLeft, Save, AlertCircle, FileText } from 'lucide-react';
+import { Check, Edit, X, ChevronRight, ChevronLeft, Save, AlertCircle, FileText, Download } from 'lucide-react';
 import { 
   QuestionWithCategory, 
   quizQuestions, 
@@ -19,6 +20,8 @@ import { useToast } from "@/components/ui/use-toast";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { getTrackedQuizAttempts } from '@/utils/quizTracking';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
 
 const QuestionValidation = () => {
   const navigate = useNavigate();
@@ -253,6 +256,63 @@ const QuestionValidation = () => {
     } catch (e) {
       return isoString;
     }
+  };
+
+  // Export attempts to PDF
+  const exportAttemptsToPdf = () => {
+    if (quizAttempts.length === 0) {
+      toast({
+        title: "Sem dados para exportar",
+        description: "Não há tentativas registradas para exportar.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    const doc = new jsPDF();
+    
+    // Add title
+    doc.setFontSize(18);
+    doc.text("Relatório de Tentativas do Simulado", 14, 22);
+    
+    // Add date
+    doc.setFontSize(11);
+    doc.text(`Gerado em: ${new Date().toLocaleString('pt-BR')}`, 14, 30);
+    
+    // Prepare table data
+    const tableColumn = ["Nome", "Email", "Tamanho", "Data/Hora"];
+    const tableRows = quizAttempts.map(attempt => {
+      const [name, email, size, timestamp] = attempt.split(',');
+      return [name, email, `${size} questões`, formatDate(timestamp)];
+    });
+    
+    // Create the table
+    autoTable(doc, {
+      head: [tableColumn],
+      body: tableRows,
+      startY: 35,
+      styles: { fontSize: 10, cellPadding: 3 },
+      headStyles: { fillColor: [155, 135, 245] },
+      alternateRowStyles: { fillColor: [240, 240, 245] }
+    });
+    
+    // Footer
+    const pageCount = doc.internal.getNumberOfPages();
+    for (let i = 1; i <= pageCount; i++) {
+      doc.setPage(i);
+      const pageSize = doc.internal.pageSize;
+      const pageHeight = pageSize.height ? pageSize.height : pageSize.getHeight();
+      doc.setFontSize(10);
+      doc.text('Simulado CSMK21 - Página ' + i + ' de ' + pageCount, 14, pageHeight - 10);
+    }
+    
+    // Save the PDF
+    doc.save("simulado-csmk21-tentativas.pdf");
+    
+    toast({
+      title: "PDF gerado com sucesso",
+      description: "O relatório de tentativas foi exportado como PDF.",
+    });
   };
 
   // If not authenticated, show login screen
@@ -510,6 +570,18 @@ const QuestionValidation = () => {
           <DialogHeader>
             <DialogTitle>Registros de Tentativas do Simulado</DialogTitle>
           </DialogHeader>
+          
+          <div className="mb-4 flex justify-end">
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={exportAttemptsToPdf}
+              className="flex items-center gap-1"
+            >
+              <Download size={16} />
+              Exportar como PDF
+            </Button>
+          </div>
           
           {quizAttempts.length > 0 ? (
             <Table>
