@@ -61,7 +61,13 @@ export const generatePDF = (
     doc.setFontSize(12);
     doc.text(`Questões corretas: ${correctAnswers} de ${totalQuestions} (${scorePercentage}%)`, 14, 68);
     
-    doc.setTextColor(passed ? 46, 125, 50 : 211, 47, 47);
+    // Fix: Use single color values properly with ternary
+    if (passed) {
+      doc.setTextColor(46, 125, 50); // Green color for pass
+    } else {
+      doc.setTextColor(211, 47, 47); // Red color for fail
+    }
+    
     doc.text(`Status: ${passed ? 'APROVADO' : 'NÃO APROVADO'}`, 14, 76);
     doc.setTextColor(0, 0, 0);
     doc.text(`Mínimo para aprovação: ${passPercentage}%`, 14, 84);
@@ -115,8 +121,13 @@ export const generatePDF = (
       doc.text(question.question, 14, yPosition);
       yPosition += lineHeight * 2;
       
-      // Status
-      doc.setTextColor(isCorrect ? 46, 125, 50 : 211, 47, 47);
+      // Fix: Use single color values properly with if/else instead of ternary
+      if (isCorrect) {
+        doc.setTextColor(46, 125, 50); // Green color
+      } else {
+        doc.setTextColor(211, 47, 47); // Red color
+      }
+      
       doc.text(`Status: ${isCorrect ? 'CORRETA' : 'INCORRETA'}`, 14, yPosition);
       doc.setTextColor(0, 0, 0);
       yPosition += lineHeight * 1.5;
