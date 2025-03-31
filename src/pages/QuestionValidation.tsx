@@ -36,7 +36,7 @@ const QuestionValidation = () => {
     goToPreviousQuestion,
     approveQuestion,
     isQuestionApproved,
-    setQuestions
+    updateQuestion
   } = useQuestionValidation();
 
   // Check authentication status on mount
@@ -64,14 +64,11 @@ const QuestionValidation = () => {
 
   const saveQuestionChanges = (editedQuestion: QuestionWithCategory) => {
     try {
-      // First save to localStorage
+      // Save to localStorage
       saveEditedQuestion(editedQuestion);
       
-      // Then update state
-      const updatedQuestions = quizQuestions.map(q => 
-        q.id === editedQuestion.id ? editedQuestion : q
-      );
-      setQuestions(updatedQuestions);
+      // Update the local state via the hook
+      updateQuestion(editedQuestion);
       
       toast({
         title: "Alterações salvas",

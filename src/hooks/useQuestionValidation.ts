@@ -24,16 +24,11 @@ export function useQuestionValidation() {
       const savedApprovedIds = getApprovedQuestionIds();
       setApprovedQuestions(savedApprovedIds);
       
-      // Get the edited questions map
-      const editedQuestionsMap = getEditedQuestions();
+      // Set the questions to use the quiz questions directly
+      // This ensures we always get the most up-to-date edited versions
+      setQuestions(quizQuestions);
+      console.log(`Loaded ${quizQuestions.length} questions with latest edits applied.`);
       
-      // Apply edits to the base questions
-      const updatedQuestions = quizQuestions.map(q => 
-        editedQuestionsMap[q.id] ? editedQuestionsMap[q.id] : q
-      );
-      
-      console.log(`Loaded ${updatedQuestions.length} questions with ${Object.keys(editedQuestionsMap).length} edits applied.`);
-      setQuestions(updatedQuestions);
       setIsLoading(false);
     } catch (error) {
       console.error("Error loading questions:", error);
@@ -102,6 +97,17 @@ export function useQuestionValidation() {
     return approvedQuestions.includes(questionId);
   };
 
+  // This function is modified to update the global quizQuestions array
+  const updateQuestion = (updatedQuestion: QuestionWithCategory) => {
+    // Create a new array with the updated question
+    const updatedQuestions = questions.map(q => 
+      q.id === updatedQuestion.id ? updatedQuestion : q
+    );
+    
+    // Update the local state with the new questions
+    setQuestions(updatedQuestions);
+  };
+
   return {
     currentQuestion,
     currentIndex,
@@ -114,6 +120,7 @@ export function useQuestionValidation() {
     goToPreviousQuestion,
     approveQuestion,
     isQuestionApproved,
-    setQuestions
+    setQuestions,
+    updateQuestion
   };
 }

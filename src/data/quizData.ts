@@ -5,13 +5,36 @@ import { rolesQuestions } from "./rolesQuestions";
 import { eventsQuestions } from "./eventsQuestions";
 import { artifactsQuestions } from "./artifactsQuestions";
 
-// Combine all questions into a single array
-export const quizQuestions: QuestionWithCategory[] = [
+// Combine all questions into a single array for the base questions
+const baseQuestions: QuestionWithCategory[] = [
   ...fundamentalsQuestions,
   ...rolesQuestions,
   ...eventsQuestions,
   ...artifactsQuestions,
 ];
+
+// Create a function to get the current active questions
+export function getQuizQuestions(): QuestionWithCategory[] {
+  // First check if we have edited questions
+  const editedQuestions = getEditedQuestions();
+  const editedQuestionIds = Object.keys(editedQuestions).map(id => parseInt(id));
+  
+  // Get the base questions that have not been edited
+  const baseQuestionsNotEdited = baseQuestions.filter(q => !editedQuestionIds.includes(q.id));
+  
+  // Combine base questions that have not been edited with the edited versions
+  const activeQuestions = [
+    ...baseQuestionsNotEdited,
+    ...Object.values(editedQuestions)
+  ];
+  
+  console.log(`Using ${Object.keys(editedQuestions).length} edited questions and ${baseQuestionsNotEdited.length} base questions`);
+  
+  return activeQuestions;
+}
+
+// Export the active questions to be used throughout the app
+export const quizQuestions = getQuizQuestions();
 
 // Function to get approved questions IDs from localStorage
 export function getApprovedQuestionIds(): number[] {
@@ -34,6 +57,9 @@ export function saveEditedQuestion(question: QuestionWithCategory): void {
   try {
     localStorage.setItem('editedQuestions', JSON.stringify(editedQuestions));
     console.log(`Question ${question.id} saved successfully.`, question);
+    
+    // Force a refresh of the quizQuestions array to reflect changes immediately
+    Object.assign(quizQuestions, getQuizQuestions());
   } catch (error) {
     console.error("Error saving edited question:", error);
   }
@@ -66,7 +92,7 @@ export function saveApprovedQuestionIds(ids: number[]): void {
   }
 }
 
-// Helper function to ensure edited questions are applied consistently
+// Helper function to ensure edited questions are always used
 function applyEditedQuestions(questions: QuestionWithCategory[]): QuestionWithCategory[] {
   const editedQuestions = getEditedQuestions();
   
@@ -85,15 +111,12 @@ export function getApprovedQuestions(): QuestionWithCategory[] {
   // If no questions are approved yet, return the full set with edited versions applied
   if (approvedIds.length === 0) {
     console.log("No approved questions found, returning all questions with edits applied.");
-    return applyEditedQuestions(quizQuestions);
+    return quizQuestions;
   }
   
-  // Filter approved questions and apply edited versions
+  // Filter approved questions and ensure we're using edited versions
   console.log(`Filtering ${approvedIds.length} approved questions from a total of ${quizQuestions.length}.`);
-  const approvedQuestions = quizQuestions
-    .filter(question => approvedIds.includes(question.id));
-  
-  return applyEditedQuestions(approvedQuestions);
+  return quizQuestions.filter(question => approvedIds.includes(question.id));
 }
 
 // Function to get a specified number of random questions from the question pool
