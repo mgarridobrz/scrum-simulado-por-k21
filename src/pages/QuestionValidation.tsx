@@ -232,6 +232,11 @@ const QuestionValidation = () => {
     }
   };
 
+  const formatScore = (score: string) => {
+    if (!score) return 'N/A';
+    return `${score}%`;
+  };
+
   const exportAttemptsToPdf = () => {
     if (quizAttempts.length === 0) {
       toast({
@@ -250,10 +255,10 @@ const QuestionValidation = () => {
     doc.setFontSize(11);
     doc.text(`Gerado em: ${new Date().toLocaleString('pt-BR')}`, 14, 30);
     
-    const tableColumn = ["Nome", "Email", "Tamanho", "Data/Hora"];
+    const tableColumn = ["Nome", "Email", "Tamanho", "Data/Hora", "Pontuação"];
     const tableRows = quizAttempts.map(attempt => {
-      const [name, email, size, timestamp] = attempt.split(',');
-      return [name, email, `${size} questões`, formatDate(timestamp)];
+      const [name, email, size, timestamp, score] = attempt.split(',');
+      return [name, email, `${size} questões`, formatDate(timestamp), formatScore(score)];
     });
     
     autoTable(doc, {
@@ -556,17 +561,19 @@ const QuestionValidation = () => {
                   <TableHead>Email</TableHead>
                   <TableHead>Tamanho</TableHead>
                   <TableHead>Data/Hora</TableHead>
+                  <TableHead>Pontuação</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {quizAttempts.map((attempt, index) => {
-                  const [name, email, size, timestamp] = attempt.split(',');
+                  const [name, email, size, timestamp, score] = attempt.split(',');
                   return (
                     <TableRow key={index}>
                       <TableCell>{name}</TableCell>
                       <TableCell>{email}</TableCell>
                       <TableCell>{size} questões</TableCell>
                       <TableCell>{formatDate(timestamp)}</TableCell>
+                      <TableCell>{formatScore(score)}</TableCell>
                     </TableRow>
                   );
                 })}
