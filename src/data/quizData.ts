@@ -33,6 +33,7 @@ export function saveEditedQuestion(question: QuestionWithCategory): void {
   editedQuestions[question.id] = question;
   try {
     localStorage.setItem('editedQuestions', JSON.stringify(editedQuestions));
+    console.log(`Question ${question.id} saved successfully.`, question);
   } catch (error) {
     console.error("Error saving edited question:", error);
   }
@@ -43,12 +44,15 @@ export function getEditedQuestions(): Record<number, QuestionWithCategory> {
   const savedEditedQuestions = localStorage.getItem('editedQuestions');
   if (savedEditedQuestions) {
     try {
-      return JSON.parse(savedEditedQuestions);
+      const parsed = JSON.parse(savedEditedQuestions);
+      console.log(`Retrieved ${Object.keys(parsed).length} edited questions from localStorage.`);
+      return parsed;
     } catch (error) {
       console.error("Error parsing edited questions:", error);
       return {};
     }
   }
+  console.log("No edited questions found in localStorage.");
   return {};
 }
 
@@ -56,32 +60,40 @@ export function getEditedQuestions(): Record<number, QuestionWithCategory> {
 export function saveApprovedQuestionIds(ids: number[]): void {
   try {
     localStorage.setItem('approvedQuestions', JSON.stringify(ids));
+    console.log(`Saved ${ids.length} approved question IDs to localStorage.`);
   } catch (error) {
     console.error("Error saving approved question IDs:", error);
   }
 }
 
+// Helper function to ensure edited questions are applied consistently
+function applyEditedQuestions(questions: QuestionWithCategory[]): QuestionWithCategory[] {
+  const editedQuestions = getEditedQuestions();
+  
+  return questions.map(question => {
+    if (editedQuestions[question.id]) {
+      return editedQuestions[question.id];
+    }
+    return question;
+  });
+}
+
 // Filter questions by their approval status and use edited versions when available
 export function getApprovedQuestions(): QuestionWithCategory[] {
   const approvedIds = getApprovedQuestionIds();
-  const editedQuestions = getEditedQuestions();
   
-  // If no questions are approved yet, return the full set
-  // This prevents the exam from having no questions if none have been approved
+  // If no questions are approved yet, return the full set with edited versions applied
   if (approvedIds.length === 0) {
-    return quizQuestions;
+    console.log("No approved questions found, returning all questions with edits applied.");
+    return applyEditedQuestions(quizQuestions);
   }
   
-  // Filter approved questions and replace with edited versions when available
-  return quizQuestions
-    .filter(question => approvedIds.includes(question.id))
-    .map(question => {
-      // If there's an edited version of this question, use it
-      if (editedQuestions[question.id]) {
-        return editedQuestions[question.id];
-      }
-      return question;
-    });
+  // Filter approved questions and apply edited versions
+  console.log(`Filtering ${approvedIds.length} approved questions from a total of ${quizQuestions.length}.`);
+  const approvedQuestions = quizQuestions
+    .filter(question => approvedIds.includes(question.id));
+  
+  return applyEditedQuestions(approvedQuestions);
 }
 
 // Function to get a specified number of random questions from the question pool
