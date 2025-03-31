@@ -1,159 +1,208 @@
 
-import React, { useState, useEffect } from 'react';
-import { Button } from "@/components/ui/button";
+import React, { useState } from 'react';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { AlertCircle, CheckCircle, Clock, Printer } from 'lucide-react';
 import { QuestionWithCategory } from '@/data/quizData';
-import { Card } from '@/components/ui/card';
 import QuizQuestion from './QuizQuestion';
-import { Progress } from '@/components/ui/progress';
-import { ChevronDown, ChevronUp } from 'lucide-react';
 import { trackQuizAttempt } from '@/utils/quizTracking';
+import { generatePDF } from '@/utils/pdfGenerator';
 
-interface CategoryStats {
-  correct: number;
-  total: number;
+interface CategoryStat {
+  category: string;
+  correctCount: number;
+  totalCount: number;
 }
 
 interface QuizResultProps {
-  categoryStats: Record<string, CategoryStats>;
   correctAnswers: number;
   totalQuestions: number;
+  categoryStats: CategoryStat[];
   onRestart: () => void;
-  userAnswers?: Record<number, string>;
-  questions?: QuestionWithCategory[];
-  userData?: { name: string; email: string };
+  questions: QuestionWithCategory[];
+  userAnswers: Record<number, string>;
+  userData?: { name: string; email: string } | null;
 }
 
-const QuizResult = ({ 
-  userAnswers, 
-  questions, 
-  categoryStats, 
-  correctAnswers, 
-  totalQuestions, 
+const QuizResult = ({
+  correctAnswers,
+  totalQuestions,
+  categoryStats,
   onRestart,
-  userData
+  questions,
+  userAnswers,
+  userData,
 }: QuizResultProps) => {
   const [showQuestions, setShowQuestions] = useState(false);
-  const score = (correctAnswers / totalQuestions) * 100;
-  const formattedScore = score.toFixed(0);
-  
-  // Record the quiz result with score when the component mounts
-  useEffect(() => {
+
+  // Calculate percentages
+  const passPercentage = 85;
+  const scorePercentage = Math.round((correctAnswers / totalQuestions) * 100);
+  const passed = scorePercentage >= passPercentage;
+
+  // Format date
+  const currentDate = new Date().toLocaleDateString('pt-BR', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  });
+
+  // Track the quiz attempt
+  React.useEffect(() => {
     if (userData?.name) {
       trackQuizAttempt(
-        userData.name, 
-        userData.email || '', 
-        totalQuestions, 
-        parseFloat(formattedScore)
+        userData.name,
+        userData.email || '',
+        totalQuestions,
+        scorePercentage
       );
-      console.log(`Recorded quiz result for ${userData.name} with score ${formattedScore}%`);
     }
-  }, []);
-  
-  const getScoreColor = () => {
-    if (score >= 85) return "text-green-500";
-    if (score >= 70) return "text-k21-gold";
-    return "text-red-500";
-  };
-
-  const getCategoryLabel = (category: string): string => {
-    switch(category) {
-      case 'fundamentals': return 'Fundamentos do Scrum';
-      case 'roles': return 'Papéis do Scrum';
-      case 'events': return 'Eventos do Scrum';
-      case 'artifacts': return 'Artefatos do Scrum';
-      default: return category;
-    }
-  };
+  }, [userData, totalQuestions, scorePercentage]);
 
   return (
-    <div className="space-y-8 animate-fade-in">
-      <div className="text-center space-y-4">
-        <h1 className="text-3xl font-bold text-k21-black">Resultado do Simulado</h1>
-        <p className="text-muted-foreground">
-          Você completou o simulado para a certificação Scrum Master
-        </p>
+    <div className="max-w-3xl mx-auto w-full animate-fade-in">
+      <Card className="shadow-lg border-t-4 border-t-k21-gold">
+        <CardHeader className="text-center pb-2">
+          <CardTitle className="text-2xl font-bold text-gray-800">
+            Resultados do Simulado
+          </CardTitle>
+          <CardDescription className="text-gray-600 flex items-center justify-center gap-1">
+            <Clock size={14} className="text-gray-400" />
+            {currentDate}
+          </CardDescription>
+        </CardHeader>
         
-        <div className="w-40 h-40 rounded-full flex items-center justify-center bg-muted mx-auto border-4 border-k21-gold">
-          <div className="text-center">
-            <div className={`text-4xl font-bold ${getScoreColor()}`}>{formattedScore}%</div>
-            <div className="text-sm text-muted-foreground">{correctAnswers} de {totalQuestions}</div>
+        <CardContent className="space-y-6">
+          {/* Score section */}
+          <div className="flex flex-col items-center justify-center text-center p-3 bg-gray-50 rounded-lg border border-gray-100">
+            <div className="text-5xl font-bold mb-2 text-k21-gold">
+              {scorePercentage}%
+            </div>
+            <div className="text-sm text-gray-500 mb-4">
+              {correctAnswers} de {totalQuestions} questões corretas
+            </div>
+
+            {passed ? (
+              <Badge variant="default" className="bg-green-600 flex gap-1 py-1 px-3 text-white">
+                <CheckCircle size={16} />
+                <span>Aprovado</span>
+              </Badge>
+            ) : (
+              <Badge variant="default" className="bg-amber-600 flex gap-1 py-1 px-3 text-white">
+                <AlertCircle size={16} />
+                <span>Não Aprovado</span>
+              </Badge>
+            )}
+
+            <div className="text-xs text-gray-500 mt-2">
+              Mínimo para aprovação: {passPercentage}%
+            </div>
           </div>
-        </div>
-        
-        <div className="mt-4">
-          {score >= 85 ? (
-            <p className="text-green-500 font-medium">Parabéns! Você está pronto para a certificação.</p>
-          ) : score >= 70 ? (
-            <p className="text-k21-gold font-medium">Bom trabalho! Continue estudando.</p>
-          ) : (
-            <p className="text-red-500 font-medium">Continue praticando para melhorar sua pontuação.</p>
-          )}
-        </div>
-      </div>
-      
-      <div className="space-y-6">
-        <h2 className="text-xl font-semibold text-k21-black border-b pb-2">Desempenho por Categoria</h2>
-        <div className="grid gap-4">
-          {Object.entries(categoryStats).map(([category, stats]) => {
-            const categoryScore = stats.total > 0 ? (stats.correct / stats.total) * 100 : 0;
-            return (
-              <div key={category} className="space-y-2">
-                <div className="flex justify-between items-center">
-                  <span className="font-medium text-k21-black">{getCategoryLabel(category)}</span>
-                  <span className={`${getScoreColor()} font-medium`}>
-                    {stats.correct} / {stats.total} ({Math.round(categoryScore)}%)
-                  </span>
+
+          {/* Category breakdown */}
+          <div>
+            <h3 className="font-medium text-gray-800 mb-3">Desempenho por Categoria</h3>
+            <div className="space-y-3">
+              {categoryStats.map((stat, index) => (
+                <div key={index} className="flex justify-between items-center">
+                  <div className="text-sm font-medium text-gray-600">{stat.category}</div>
+                  <div className="flex items-center gap-2">
+                    <div className="w-32 h-2 bg-gray-200 rounded-full overflow-hidden">
+                      <div
+                        className={`h-full rounded-full ${
+                          (stat.correctCount / stat.totalCount) * 100 >= 85
+                            ? 'bg-green-500'
+                            : (stat.correctCount / stat.totalCount) * 100 >= 60
+                            ? 'bg-yellow-500'
+                            : 'bg-red-500'
+                        }`}
+                        style={{
+                          width: `${(stat.correctCount / stat.totalCount) * 100}%`,
+                        }}
+                      />
+                    </div>
+                    <span className="text-sm text-gray-500">
+                      {stat.correctCount}/{stat.totalCount}
+                    </span>
+                  </div>
                 </div>
-                <Progress value={categoryScore} className="h-2" />
-              </div>
-            );
-          })}
-        </div>
-      </div>
-      
-      {questions && userAnswers && (
-        <div className="space-y-4">
-          <div className="flex justify-between items-center border-b pb-2">
-            <h2 className="text-xl font-semibold text-k21-black">Revisão das Questões</h2>
-            <Button 
-              variant="ghost" 
-              size="sm" 
+              ))}
+            </div>
+          </div>
+
+          {/* Toggle questions button */}
+          <div className="pt-2">
+            <Button
+              variant="outline"
               onClick={() => setShowQuestions(!showQuestions)}
-              className="flex items-center gap-1"
+              className="w-full"
             >
-              {showQuestions ? (
-                <>Ocultar Questões <ChevronUp size={16} /></>
-              ) : (
-                <>Mostrar Questões <ChevronDown size={16} /></>
-              )}
+              {showQuestions ? 'Ocultar Questões' : 'Mostrar Todas as Questões'}
             </Button>
           </div>
-          
+
+          {/* Questions details */}
           {showQuestions && (
-            <div className="space-y-6">
-              {questions.map((question) => (
-                <Card key={question.id} className="p-6">
+            <div className="space-y-8 pt-2">
+              <h3 className="font-medium text-gray-800 mb-3">Detalhes das Questões</h3>
+              {questions.map((question, index) => (
+                <div 
+                  key={question.id}
+                  className={`p-4 rounded-lg border ${
+                    userAnswers[question.id] === question.correctAnswer
+                      ? 'bg-green-50 border-green-200'
+                      : 'bg-red-50 border-red-200'
+                  }`}
+                >
+                  <div className="mb-2 flex justify-between items-center">
+                    <span className="text-sm font-medium text-gray-500">
+                      Questão {index + 1} • {question.category}
+                    </span>
+                    <Badge
+                      variant="default"
+                      className={`${
+                        userAnswers[question.id] === question.correctAnswer
+                          ? 'bg-green-600'
+                          : 'bg-red-600'
+                      } text-white`}
+                    >
+                      {userAnswers[question.id] === question.correctAnswer
+                        ? 'Correta'
+                        : 'Incorreta'}
+                    </Badge>
+                  </div>
                   <QuizQuestion
                     question={question}
                     selectedOption={userAnswers[question.id]}
                     onSelectOption={() => {}}
                     showResult={true}
                   />
-                </Card>
+                </div>
               ))}
             </div>
           )}
-        </div>
-      )}
-      
-      <div className="flex justify-center pt-4">
-        <Button
-          onClick={onRestart}
-          className="bg-k21-teal hover:bg-k21-teal/90 text-white"
-        >
-          Reiniciar Simulado
-        </Button>
-      </div>
+        </CardContent>
+
+        <CardFooter className="flex flex-col sm:flex-row gap-3 pt-0">
+          <Button 
+            onClick={onRestart} 
+            variant="default" 
+            className="w-full sm:w-auto"
+          >
+            Voltar para Início
+          </Button>
+          
+          <Button 
+            onClick={() => generatePDF(questions, userAnswers, correctAnswers, totalQuestions, categoryStats, userData)} 
+            variant="outline" 
+            className="w-full sm:w-auto flex items-center gap-2"
+          >
+            <Printer size={16} />
+            Baixar Resultados (PDF)
+          </Button>
+        </CardFooter>
+      </Card>
     </div>
   );
 };

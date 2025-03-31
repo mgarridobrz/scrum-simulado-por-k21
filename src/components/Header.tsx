@@ -25,7 +25,7 @@ const Header = ({ className }: HeaderProps) => {
     { label: 'Nossos Cursos', href: 'https://br.k21.global/cursos', isExternal: true },
     { label: 'Conteúdos K21', href: 'https://br.k21.global/conteudos', isExternal: true },
     { label: 'Blog Scrum', href: 'https://br.k21.global/blog/tag/Scrum', isExternal: true },
-    { label: 'Contato', href: 'https://br.k21.global/contato', isExternal: true },
+    { label: 'Contato', href: 'https://api.whatsapp.com/send/?phone=552138258624', isExternal: true },
   ];
 
   return (
@@ -49,7 +49,7 @@ const Header = ({ className }: HeaderProps) => {
           <img 
             src="/lovable-uploads/2342063e-9561-46ff-ae6a-e4a0316e24a1.png" 
             alt="K21 Logo" 
-            className="h-10 w-auto" 
+            className="h-14 w-auto" 
           />
         </div>
       </div>

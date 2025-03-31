@@ -32,6 +32,10 @@ export const saveQuizAttemptToDontpad = async (
   }
 };
 
+// Permanent storage key prefixes to ensure data isn't reset
+const QUIZ_ATTEMPT_KEYS = 'k21quiz_attempt_keys';
+const QUIZ_ATTEMPT_PREFIX = 'k21quiz_attempt_';
+
 // Function to save quiz attempt data to local storage
 export const saveQuizAttemptToLocalStorage = (
   name: string,
@@ -45,15 +49,15 @@ export const saveQuizAttemptToLocalStorage = (
     const attemptData = `${name},${email || 'No email'},${size},${timestamp},${scoreValue}`;
     
     // Create a unique key based on timestamp to ensure we don't overwrite
-    const attemptKey = `quizAttempt_${Date.now()}_${Math.random().toString(36).substring(2, 15)}`;
+    const attemptKey = `${QUIZ_ATTEMPT_PREFIX}${Date.now()}_${Math.random().toString(36).substring(2, 15)}`;
     
     // Save this individual attempt with a unique key
     localStorage.setItem(attemptKey, attemptData);
     
     // Also update the list of attempt keys
-    const attemptKeysList = JSON.parse(localStorage.getItem('quizAttemptKeys') || '[]');
+    const attemptKeysList = JSON.parse(localStorage.getItem(QUIZ_ATTEMPT_KEYS) || '[]');
     attemptKeysList.push(attemptKey);
-    localStorage.setItem('quizAttemptKeys', JSON.stringify(attemptKeysList));
+    localStorage.setItem(QUIZ_ATTEMPT_KEYS, JSON.stringify(attemptKeysList));
     
     console.log("Quiz attempt saved to local storage with unique key:", attemptKey);
   } catch (error) {
@@ -79,7 +83,7 @@ export const trackQuizAttempt = async (
 export const getTrackedQuizAttempts = (): string[] => {
   try {
     // Get the list of attempt keys
-    const attemptKeys = JSON.parse(localStorage.getItem('quizAttemptKeys') || '[]');
+    const attemptKeys = JSON.parse(localStorage.getItem(QUIZ_ATTEMPT_KEYS) || '[]');
     
     // Retrieve all attempts using their unique keys
     const attempts = attemptKeys.map((key: string) => {
@@ -96,7 +100,7 @@ export const getTrackedQuizAttempts = (): string[] => {
 // Function to clear all quiz attempts from local storage
 export const clearQuizAttempts = (): void => {
   try {
-    const attemptKeys = JSON.parse(localStorage.getItem('quizAttemptKeys') || '[]');
+    const attemptKeys = JSON.parse(localStorage.getItem(QUIZ_ATTEMPT_KEYS) || '[]');
     
     // Remove each individual attempt
     attemptKeys.forEach((key: string) => {
@@ -104,7 +108,7 @@ export const clearQuizAttempts = (): void => {
     });
     
     // Clear the keys list
-    localStorage.removeItem('quizAttemptKeys');
+    localStorage.removeItem(QUIZ_ATTEMPT_KEYS);
     
     console.log("All quiz attempts cleared from local storage");
   } catch (error) {

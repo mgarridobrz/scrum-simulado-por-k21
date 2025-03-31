@@ -110,19 +110,14 @@ const Index = () => {
     <div className="min-h-screen bg-gray-50 flex flex-col">
       <Header />
       <div className="container mx-auto px-4 py-8 flex-1 flex flex-col relative">
-        {/* Admin Lock Button - Positioned on right side */}
-        <div className="absolute top-0 right-0 mt-2">
+        {/* Admin Lock Button - Positioned at bottom right */}
+        <div className="fixed bottom-4 right-4 z-50">
           <Link to="/validate-questions">
-            <Button variant="ghost" size="icon" className="text-gray-400 hover:text-gray-600" title="Área administrativa">
+            <Button variant="ghost" size="icon" className="bg-white/70 hover:bg-white text-gray-500 hover:text-gray-700 shadow-sm border" title="Área administrativa">
               <Lock size={20} />
             </Button>
           </Link>
         </div>
-        
-        {/* Score Counter - Only show during quiz */}
-        {status === 'playing' && (
-          <QuizScoreCounter correctCount={correctCount} incorrectCount={incorrectCount} />
-        )}
         
         {status === 'ready' && (
           <>
@@ -153,12 +148,16 @@ const Index = () => {
               currentQuestion={currentQuestionIndex + 1}
               totalQuestions={questions.length}
             />
-            <QuizQuestion
-              question={currentQuestion}
-              selectedOption={userAnswers[currentQuestion.id] || null}
-              onSelectOption={(optionId) => handleAnswer(currentQuestion.id, optionId)}
-              onContinue={canProceed ? handleNextQuestion : undefined}
-            />
+            <div className="bg-gray-200 rounded-lg p-5 shadow">
+              {/* Place the score counter inside the question container */}
+              <QuizScoreCounter correctCount={correctCount} incorrectCount={incorrectCount} />
+              <QuizQuestion
+                question={currentQuestion}
+                selectedOption={userAnswers[currentQuestion.id] || null}
+                onSelectOption={(optionId) => handleAnswer(currentQuestion.id, optionId)}
+                onContinue={canProceed ? handleNextQuestion : undefined}
+              />
+            </div>
           </>
         )}
 
