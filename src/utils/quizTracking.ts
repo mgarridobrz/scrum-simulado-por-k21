@@ -42,7 +42,6 @@ export const saveQuizAttemptToLocalStorage = (
     
     // Add new attempt and save back to localStorage
     const updatedData = existingData ? `${existingData}\n${attemptData}` : attemptData;
-    localStorage.getItem('quizAttempts');
     localStorage.setItem('quizAttempts', updatedData);
     
     console.log("Quiz attempt saved to local storage");
