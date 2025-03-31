@@ -16,7 +16,6 @@ const Index = () => {
   const [questions, setQuestions] = useState<QuestionWithCategory[]>([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [userAnswers, setUserAnswers] = useState<Record<number, string>>({});
-  const [quizSize, setQuizSize] = useState<number>(10);
   const [approvedQuestionsCount, setApprovedQuestionsCount] = useState<number>(0);
 
   // Carregar contagem de questões aprovadas ao iniciar o componente
@@ -26,13 +25,13 @@ const Index = () => {
     setApprovedQuestionsCount(approvedQuestions.length);
   }, []);
 
-  const handleStart = () => {
-    // Log the current quiz size for debugging
-    console.log(`Index - Starting quiz with size: ${quizSize}`);
+  // Combined function to handle quiz start with size selection
+  const handleStartWithSize = (selectedSize: number) => {
+    console.log(`Index - Starting quiz with size: ${selectedSize}`);
     
     // Get random questions based on the selected quiz size
-    const selectedQuestions = getRandomQuestions(quizSize);
-    console.log(`Generated quiz with ${selectedQuestions.length} out of ${quizSize} requested questions`);
+    const selectedQuestions = getRandomQuestions(selectedSize);
+    console.log(`Generated quiz with ${selectedQuestions.length} out of ${selectedSize} requested questions`);
     
     // Set the questions and reset other states
     setQuestions(selectedQuestions);
@@ -54,11 +53,6 @@ const Index = () => {
     } else {
       setStatus('finished');
     }
-  };
-
-  const handleSizeChange = (size: number) => {
-    console.log(`Index - Quiz size changed to: ${size}`);
-    setQuizSize(size);
   };
 
   const handleRestart = () => {
@@ -103,11 +97,7 @@ const Index = () => {
                 </AlertDescription>
               </Alert>
             )}
-            <StartScreen 
-              onStart={handleStart} 
-              onSizeChange={handleSizeChange} 
-              quizSize={quizSize}
-            />
+            <StartScreen onStart={handleStartWithSize} />
             <div className="mt-4 text-center">
               <Link to="/validate-questions">
                 <Button variant="outline">Validar Perguntas (Especialistas)</Button>

@@ -5,12 +5,10 @@ import { Card } from "@/components/ui/card";
 import QuizSizeSelector from './QuizSizeSelector';
 
 interface StartScreenProps {
-  onStart: () => void;
-  onSizeChange: (size: number) => void;
-  quizSize: number;
+  onStart: (size: number) => void;
 }
 
-const StartScreen = ({ onStart, onSizeChange, quizSize }: StartScreenProps) => {
+const StartScreen = ({ onStart }: StartScreenProps) => {
   const [showSizeSelector, setShowSizeSelector] = useState(false);
   
   const handleStartClick = () => {
@@ -19,11 +17,8 @@ const StartScreen = ({ onStart, onSizeChange, quizSize }: StartScreenProps) => {
 
   const handleSizeSelection = (size: number) => {
     console.log("StartScreen - Size selected:", size);
-    onSizeChange(size);
-    // We need to delay the onStart call to ensure the state is updated
-    setTimeout(() => {
-      onStart();
-    }, 0);
+    // Directly pass the size to onStart
+    onStart(size);
   };
 
   return (

@@ -8,6 +8,13 @@ interface QuizSizeSelectorProps {
 }
 
 const QuizSizeSelector = ({ onSelectSize }: QuizSizeSelectorProps) => {
+  // Size options with their descriptions
+  const sizeOptions = [
+    { size: 10, title: "Simulado rápido", time: "Aprox. 10 minutos" },
+    { size: 25, title: "Simulado intermediário", time: "Aprox. 25 minutos" },
+    { size: 50, title: "Simulado completo", time: "Aprox. 50 minutos" }
+  ];
+
   const handleSizeSelection = (size: number) => {
     console.log(`QuizSizeSelector - Selected size: ${size}`);
     onSelectSize(size);
@@ -20,47 +27,22 @@ const QuizSizeSelector = ({ onSelectSize }: QuizSizeSelectorProps) => {
       </h2>
       
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card 
-          className="p-6 text-center cursor-pointer border-2 hover:border-k21-teal transition-colors"
-        >
-          <h3 className="text-2xl font-bold text-k21-black mb-2">10</h3>
-          <p className="text-sm text-muted-foreground">Simulado rápido</p>
-          <p className="text-xs text-muted-foreground mt-1">Aprox. 10 minutos</p>
-          <Button 
-            className="mt-4 bg-k21-teal hover:bg-k21-teal/90 w-full"
-            onClick={() => handleSizeSelection(10)}
+        {sizeOptions.map((option) => (
+          <Card 
+            key={option.size}
+            className="p-6 text-center cursor-pointer border-2 hover:border-k21-teal transition-colors"
           >
-            Iniciar
-          </Button>
-        </Card>
-        
-        <Card 
-          className="p-6 text-center cursor-pointer border-2 hover:border-k21-teal transition-colors"
-        >
-          <h3 className="text-2xl font-bold text-k21-black mb-2">25</h3>
-          <p className="text-sm text-muted-foreground">Simulado intermediário</p>
-          <p className="text-xs text-muted-foreground mt-1">Aprox. 25 minutos</p>
-          <Button 
-            className="mt-4 bg-k21-teal hover:bg-k21-teal/90 w-full"
-            onClick={() => handleSizeSelection(25)}
-          >
-            Iniciar
-          </Button>
-        </Card>
-        
-        <Card 
-          className="p-6 text-center cursor-pointer border-2 hover:border-k21-teal transition-colors"
-        >
-          <h3 className="text-2xl font-bold text-k21-black mb-2">50</h3>
-          <p className="text-sm text-muted-foreground">Simulado completo</p>
-          <p className="text-xs text-muted-foreground mt-1">Aprox. 50 minutos</p>
-          <Button 
-            className="mt-4 bg-k21-teal hover:bg-k21-teal/90 w-full"
-            onClick={() => handleSizeSelection(50)}
-          >
-            Iniciar
-          </Button>
-        </Card>
+            <h3 className="text-2xl font-bold text-k21-black mb-2">{option.size}</h3>
+            <p className="text-sm text-muted-foreground">{option.title}</p>
+            <p className="text-xs text-muted-foreground mt-1">{option.time}</p>
+            <Button 
+              className="mt-4 bg-k21-teal hover:bg-k21-teal/90 w-full"
+              onClick={() => handleSizeSelection(option.size)}
+            >
+              Iniciar
+            </Button>
+          </Card>
+        ))}
       </div>
     </div>
   );
