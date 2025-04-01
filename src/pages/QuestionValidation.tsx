@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import NavigationBar from '@/components/question-validation/NavigationBar';
 import QuestionEditor from '@/components/question-validation/QuestionEditor';
@@ -31,9 +30,7 @@ const QuestionValidation = () => {
     updateQuestion
   } = useQuestionValidation();
 
-  // Fix: Changed to proper async handling with useEffect
   useEffect(() => {
-    // Load attempts data asynchronously
     const loadAttempts = async () => {
       try {
         const fetchedAttempts = await getTrackedQuizAttempts();
@@ -48,7 +45,6 @@ const QuestionValidation = () => {
   }, []);
 
   const handleAuth = (password: string) => {
-    // Fix: Changed the expected password from "k21admin" to "120703"
     if (password === "120703") {
       setAuthenticated(true);
       localStorage.setItem('validationPageAuthenticated', 'true');
@@ -57,17 +53,12 @@ const QuestionValidation = () => {
     }
   };
 
-  // Check if already authenticated in localStorage
   React.useEffect(() => {
     const isAuth = localStorage.getItem('validationPageAuthenticated') === 'true';
     if (isAuth) {
       setAuthenticated(true);
     }
   }, []);
-
-  const handleAttemptsCleared = () => {
-    setAttempts([]);
-  };
 
   if (!authenticated) {
     return <AuthScreen onAuthenticated={handleAuth} />;
@@ -91,7 +82,6 @@ const QuestionValidation = () => {
       />
       
       <div className="container mx-auto px-4 py-8 flex-1">
-        {/* Add Global Stats Counter */}
         <div className="mb-6">
           <GlobalStatsCounter />
         </div>
@@ -101,7 +91,7 @@ const QuestionValidation = () => {
             open={showAttempts}
             onOpenChange={setShowAttempts}
             attempts={attempts}
-            onAttemptsCleared={handleAttemptsCleared}
+            onAttemptsCleared={() => {}}
           />
         ) : (
           currentQuestion && (

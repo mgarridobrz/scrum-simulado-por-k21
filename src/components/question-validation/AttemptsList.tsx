@@ -3,9 +3,9 @@ import React, { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
-import { Download, Trash2, RefreshCw } from 'lucide-react';
+import { Download, RefreshCw } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
-import { clearQuizAttempts, getTrackedQuizAttempts } from '@/utils/quizTracking';
+import { getTrackedQuizAttempts } from '@/utils/quizTracking';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 
@@ -112,62 +112,27 @@ const AttemptsList = ({ open, onOpenChange, attempts: initialAttempts, onAttempt
     });
   };
 
-  const handleClearAttempts = () => {
-    if (attempts.length === 0) {
-      toast({
-        title: "Sem dados para limpar",
-        description: "Não há tentativas registradas para limpar.",
-        variant: "destructive"
-      });
-      return;
-    }
-
-    if (window.confirm("Tem certeza que deseja limpar os registros locais de tentativas? Esta ação não pode ser desfeita e não afetará os dados salvos no servidor.")) {
-      clearQuizAttempts();
-      toast({
-        title: "Dados locais limpos",
-        description: "Os registros locais de tentativas foram removidos. Os dados no servidor permanecem intactos.",
-      });
-      loadAttempts();
-      if (onAttemptsCleared) {
-        onAttemptsCleared();
-      }
-    }
-  };
-
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Registros de Tentativas do Simulado</DialogTitle>
           <DialogDescription>
-            Esta lista mostra todas as tentativas registradas do simulado (locais e no servidor).
+            Esta lista mostra todas as tentativas registradas do simulado.
           </DialogDescription>
         </DialogHeader>
         
         <div className="mb-4 flex justify-between">
-          <div className="flex gap-2">
-            <Button 
-              variant="destructive" 
-              size="sm" 
-              onClick={handleClearAttempts}
-              className="flex items-center gap-1"
-            >
-              <Trash2 size={16} />
-              Limpar dados locais
-            </Button>
-            
-            <Button 
-              variant="secondary"
-              size="sm" 
-              onClick={loadAttempts}
-              disabled={isLoading}
-              className="flex items-center gap-1"
-            >
-              <RefreshCw size={16} className={isLoading ? "animate-spin" : ""} />
-              Atualizar dados
-            </Button>
-          </div>
+          <Button 
+            variant="secondary"
+            size="sm" 
+            onClick={loadAttempts}
+            disabled={isLoading}
+            className="flex items-center gap-1"
+          >
+            <RefreshCw size={16} className={isLoading ? "animate-spin" : ""} />
+            Atualizar dados
+          </Button>
           
           <Button 
             variant="outline" 
