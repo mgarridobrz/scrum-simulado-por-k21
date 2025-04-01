@@ -1,4 +1,6 @@
 
+import { supabase } from "@/integrations/supabase/client";
+
 /**
  * Utility for tracking quiz attempts
  */
@@ -29,6 +31,62 @@ export const saveQuizAttemptToDontpad = async (
   } catch (error) {
     console.error("Error saving to dontpad:", error);
     return false;
+  }
+};
+
+// Function to save quiz attempt to Supabase
+export const saveQuizAttemptToSupabase = async (
+  name: string,
+  email: string,
+  size: number,
+  score?: number
+): Promise<boolean> => {
+  try {
+    const { data, error } = await supabase
+      .from('quiz_attempts')
+      .insert([
+        {
+          name,
+          email: email || null,
+          quiz_size: size,
+          score: score || null
+        }
+      ]);
+    
+    if (error) {
+      console.error("Error saving to Supabase:", error);
+      return false;
+    }
+    
+    console.log("Quiz attempt saved to Supabase successfully");
+    return true;
+  } catch (error) {
+    console.error("Error saving to Supabase:", error);
+    return false;
+  }
+};
+
+// Fetch all quiz attempts from Supabase
+export const fetchQuizAttemptsFromSupabase = async (): Promise<string[]> => {
+  try {
+    const { data, error } = await supabase
+      .from('quiz_attempts')
+      .select('*')
+      .order('created_at', { ascending: false });
+    
+    if (error) {
+      console.error("Error fetching from Supabase:", error);
+      return [];
+    }
+    
+    // Convert Supabase data format to our local format
+    return data.map(attempt => {
+      const timestamp = new Date(attempt.created_at).toISOString();
+      return `${attempt.name},${attempt.email || 'No email'},${attempt.quiz_size},${timestamp},${attempt.score || ''}`;
+    });
+  } catch (error) {
+    console.error("Error fetching from Supabase:", error);
+    return [];
   }
 };
 
@@ -72,32 +130,52 @@ export const trackQuizAttempt = async (
   size: number,
   score?: number
 ): Promise<void> => {
-  // First try to save to dontpad
+  // First try to save to Supabase
+  const supabaseSuccess = await saveQuizAttemptToSupabase(name, email, size, score);
+  
+  // Try to save to dontpad (likely to fail due to CORS)
   const dontpadSuccess = await saveQuizAttemptToDontpad(name, email, size, score);
   
   // Always save to local storage for reliability
   saveQuizAttemptToLocalStorage(name, email, size, score);
 };
 
-// Function to get all tracked quiz attempts from local storage
-export const getTrackedQuizAttempts = (): string[] => {
+// Function to get all tracked quiz attempts
+export const getTrackedQuizAttempts = async (): Promise<string[]> => {
   try {
-    // Get the list of attempt keys
+    // Get local storage attempts
     const attemptKeys = JSON.parse(localStorage.getItem(QUIZ_ATTEMPT_KEYS) || '[]');
-    
-    // Retrieve all attempts using their unique keys
-    const attempts = attemptKeys.map((key: string) => {
+    const localAttempts = attemptKeys.map((key: string) => {
       return localStorage.getItem(key) || '';
     }).filter((item: string) => item !== '');
     
-    return attempts;
+    // Get Supabase attempts
+    const supabaseAttempts = await fetchQuizAttemptsFromSupabase();
+    
+    // Combine both sources
+    const allAttempts = [...localAttempts, ...supabaseAttempts];
+    
+    // Sort attempts by date (newest first)
+    allAttempts.sort((a, b) => {
+      const dateA = new Date(a.split(',')[3]);
+      const dateB = new Date(b.split(',')[3]);
+      return dateB.getTime() - dateA.getTime();
+    });
+    
+    return allAttempts;
   } catch (error) {
     console.error("Error retrieving quiz attempts:", error);
-    return [];
+    // Fallback to local storage only
+    const attemptKeys = JSON.parse(localStorage.getItem(QUIZ_ATTEMPT_KEYS) || '[]');
+    const localAttempts = attemptKeys.map((key: string) => {
+      return localStorage.getItem(key) || '';
+    }).filter((item: string) => item !== '');
+    return localAttempts;
   }
 };
 
 // Function to clear all quiz attempts from local storage
+// Note: We don't clear Supabase data to maintain persistence
 export const clearQuizAttempts = (): void => {
   try {
     const attemptKeys = JSON.parse(localStorage.getItem(QUIZ_ATTEMPT_KEYS) || '[]');

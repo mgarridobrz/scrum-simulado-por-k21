@@ -1,11 +1,11 @@
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
-import { Download, Trash2 } from 'lucide-react';
+import { Download, Trash2, RefreshCw } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
-import { clearQuizAttempts } from '@/utils/quizTracking';
+import { clearQuizAttempts, getTrackedQuizAttempts } from '@/utils/quizTracking';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 
@@ -16,8 +16,10 @@ interface AttemptsListProps {
   onAttemptsCleared?: () => void;
 }
 
-const AttemptsList = ({ open, onOpenChange, attempts, onAttemptsCleared }: AttemptsListProps) => {
+const AttemptsList = ({ open, onOpenChange, attempts: initialAttempts, onAttemptsCleared }: AttemptsListProps) => {
   const { toast } = useToast();
+  const [attempts, setAttempts] = useState<string[]>(initialAttempts);
+  const [isLoading, setIsLoading] = useState(false);
   
   const formatDate = (isoString: string) => {
     try {
@@ -31,6 +33,34 @@ const AttemptsList = ({ open, onOpenChange, attempts, onAttemptsCleared }: Attem
     if (!score) return 'N/A';
     return `${score}%`;
   };
+
+  const loadAttempts = async () => {
+    setIsLoading(true);
+    try {
+      const fetchedAttempts = await getTrackedQuizAttempts();
+      setAttempts(fetchedAttempts);
+      toast({
+        title: "Dados atualizados",
+        description: `${fetchedAttempts.length} tentativas carregadas.`,
+      });
+    } catch (error) {
+      console.error("Error loading attempts:", error);
+      toast({
+        title: "Erro ao carregar dados",
+        description: "Não foi possível carregar os dados de tentativas.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Load attempts when dialog opens
+  useEffect(() => {
+    if (open) {
+      loadAttempts();
+    }
+  }, [open]);
 
   const exportAttemptsToPdf = () => {
     if (attempts.length === 0) {
@@ -92,12 +122,13 @@ const AttemptsList = ({ open, onOpenChange, attempts, onAttemptsCleared }: Attem
       return;
     }
 
-    if (window.confirm("Tem certeza que deseja limpar todos os registros de tentativas? Esta ação não pode ser desfeita.")) {
+    if (window.confirm("Tem certeza que deseja limpar os registros locais de tentativas? Esta ação não pode ser desfeita e não afetará os dados salvos no servidor.")) {
       clearQuizAttempts();
       toast({
-        title: "Dados limpos",
-        description: "Todos os registros de tentativas foram removidos.",
+        title: "Dados locais limpos",
+        description: "Os registros locais de tentativas foram removidos. Os dados no servidor permanecem intactos.",
       });
+      loadAttempts();
       if (onAttemptsCleared) {
         onAttemptsCleared();
       }
@@ -110,20 +141,33 @@ const AttemptsList = ({ open, onOpenChange, attempts, onAttemptsCleared }: Attem
         <DialogHeader>
           <DialogTitle>Registros de Tentativas do Simulado</DialogTitle>
           <DialogDescription>
-            Esta lista mostra todas as tentativas registradas do simulado.
+            Esta lista mostra todas as tentativas registradas do simulado (locais e no servidor).
           </DialogDescription>
         </DialogHeader>
         
         <div className="mb-4 flex justify-between">
-          <Button 
-            variant="destructive" 
-            size="sm" 
-            onClick={handleClearAttempts}
-            className="flex items-center gap-1"
-          >
-            <Trash2 size={16} />
-            Limpar dados
-          </Button>
+          <div className="flex gap-2">
+            <Button 
+              variant="destructive" 
+              size="sm" 
+              onClick={handleClearAttempts}
+              className="flex items-center gap-1"
+            >
+              <Trash2 size={16} />
+              Limpar dados locais
+            </Button>
+            
+            <Button 
+              variant="secondary"
+              size="sm" 
+              onClick={loadAttempts}
+              disabled={isLoading}
+              className="flex items-center gap-1"
+            >
+              <RefreshCw size={16} className={isLoading ? "animate-spin" : ""} />
+              Atualizar dados
+            </Button>
+          </div>
           
           <Button 
             variant="outline" 
@@ -164,7 +208,14 @@ const AttemptsList = ({ open, onOpenChange, attempts, onAttemptsCleared }: Attem
           </Table>
         ) : (
           <div className="text-center py-8 text-muted-foreground">
-            Nenhuma tentativa registrada ainda.
+            {isLoading ? (
+              <div className="flex flex-col items-center gap-2">
+                <RefreshCw size={24} className="animate-spin text-muted-foreground" />
+                <p>Carregando tentativas...</p>
+              </div>
+            ) : (
+              "Nenhuma tentativa registrada ainda."
+            )}
           </div>
         )}
       </DialogContent>

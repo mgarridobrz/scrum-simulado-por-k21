@@ -1,5 +1,4 @@
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -8,6 +7,7 @@ import { QuestionWithCategory } from '@/data/quizData';
 import QuizQuestion from './QuizQuestion';
 import { trackQuizAttempt } from '@/utils/quizTracking';
 import { generatePDF } from '@/utils/pdfGenerator';
+import { useToast } from '@/hooks/use-toast';
 
 interface CategoryStat {
   category: string;
@@ -35,6 +35,8 @@ const QuizResult = ({
   userData,
 }: QuizResultProps) => {
   const [showQuestions, setShowQuestions] = useState(false);
+  const [tracked, setTracked] = useState(false);
+  const { toast } = useToast();
 
   // Calculate percentages
   const passPercentage = 85;
@@ -49,16 +51,29 @@ const QuizResult = ({
   });
 
   // Track the quiz attempt
-  React.useEffect(() => {
-    if (userData?.name) {
+  useEffect(() => {
+    if (userData?.name && !tracked) {
       trackQuizAttempt(
         userData.name,
         userData.email || '',
         totalQuestions,
         scorePercentage
-      );
+      ).then(() => {
+        setTracked(true);
+        toast({
+          title: "Resultado salvo",
+          description: "Seu resultado foi registrado com sucesso.",
+        });
+      }).catch(error => {
+        console.error("Error tracking quiz attempt:", error);
+        toast({
+          title: "Erro ao salvar",
+          description: "Houve um problema ao registrar seu resultado.",
+          variant: "destructive"
+        });
+      });
     }
-  }, [userData, totalQuestions, scorePercentage]);
+  }, [userData, totalQuestions, scorePercentage, tracked, toast]);
 
   return (
     <div className="max-w-3xl mx-auto w-full animate-fade-in">

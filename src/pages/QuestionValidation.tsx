@@ -37,7 +37,8 @@ const QuestionValidation = () => {
   }, []);
 
   const handleAuth = (password: string) => {
-    if (password === 'k21admin') {
+    // Fix: Changed the expected password from "k21admin" to "120703"
+    if (password === "120703") {
       setAuthenticated(true);
       localStorage.setItem('validationPageAuthenticated', 'true');
     } else {
