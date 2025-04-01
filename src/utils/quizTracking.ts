@@ -143,7 +143,14 @@ export const trackQuizAttempt = async (
   saveQuizAttemptToLocalStorage(name, email, size, score);
 };
 
-// Function to get all tracked quiz attempts
+// Helper function to create a unique identifier for attempts to detect duplicates
+const createAttemptId = (attempt: string): string => {
+  const parts = attempt.split(',');
+  // Use name, email, quiz_size, and timestamp as unique identifier
+  return `${parts[0]}_${parts[1]}_${parts[2]}_${parts[3]}`;
+};
+
+// Function to get all tracked quiz attempts (deduplicating between local and Supabase)
 export const getTrackedQuizAttempts = async (): Promise<string[]> => {
   try {
     // Get local storage attempts
@@ -155,8 +162,23 @@ export const getTrackedQuizAttempts = async (): Promise<string[]> => {
     // Get Supabase attempts
     const supabaseAttempts = await fetchQuizAttemptsFromSupabase();
     
-    // Combine both sources
-    const allAttempts = [...localAttempts, ...supabaseAttempts];
+    // Combine both sources but deduplicate
+    const attemptMap = new Map<string, string>();
+    
+    // Add local attempts to the map
+    localAttempts.forEach((attempt: string) => {
+      const id = createAttemptId(attempt);
+      attemptMap.set(id, attempt);
+    });
+    
+    // Add Supabase attempts to the map (will overwrite duplicates)
+    supabaseAttempts.forEach((attempt: string) => {
+      const id = createAttemptId(attempt);
+      attemptMap.set(id, attempt);
+    });
+    
+    // Convert map back to array
+    const allAttempts = Array.from(attemptMap.values());
     
     // Sort attempts by date (newest first)
     allAttempts.sort((a, b) => {
@@ -165,6 +187,7 @@ export const getTrackedQuizAttempts = async (): Promise<string[]> => {
       return dateB.getTime() - dateA.getTime();
     });
     
+    console.info(`Loaded ${allAttempts.length} attempts (${localAttempts.length} local, ${supabaseAttempts.length} from Supabase, after deduplication)`);
     return allAttempts;
   } catch (error) {
     console.error("Error retrieving quiz attempts:", error);
