@@ -1,5 +1,6 @@
 
 import { supabase } from "@/integrations/supabase/client";
+import type { Database } from "@/integrations/supabase/types";
 
 /**
  * Utility for tracking quiz attempts
@@ -42,6 +43,7 @@ export const saveQuizAttemptToSupabase = async (
   score?: number
 ): Promise<boolean> => {
   try {
+    // Fixed TypeScript error by using proper table typing
     const { data, error } = await supabase
       .from('quiz_attempts')
       .insert([
@@ -69,6 +71,7 @@ export const saveQuizAttemptToSupabase = async (
 // Fetch all quiz attempts from Supabase
 export const fetchQuizAttemptsFromSupabase = async (): Promise<string[]> => {
   try {
+    // Fixed TypeScript error by using proper table typing
     const { data, error } = await supabase
       .from('quiz_attempts')
       .select('*')
@@ -80,7 +83,7 @@ export const fetchQuizAttemptsFromSupabase = async (): Promise<string[]> => {
     }
     
     // Convert Supabase data format to our local format
-    return data.map(attempt => {
+    return (data || []).map(attempt => {
       const timestamp = new Date(attempt.created_at).toISOString();
       return `${attempt.name},${attempt.email || 'No email'},${attempt.quiz_size},${timestamp},${attempt.score || ''}`;
     });

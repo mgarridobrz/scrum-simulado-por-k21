@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import NavigationBar from '@/components/question-validation/NavigationBar';
 import QuestionEditor from '@/components/question-validation/QuestionEditor';
 import AuthScreen from '@/components/question-validation/AuthScreen';
@@ -31,9 +31,20 @@ const QuestionValidation = () => {
     updateQuestion
   } = useQuestionValidation();
 
-  React.useEffect(() => {
-    // Load attempts data
-    setAttempts(getTrackedQuizAttempts());
+  // Fix: Changed to proper async handling with useEffect
+  useEffect(() => {
+    // Load attempts data asynchronously
+    const loadAttempts = async () => {
+      try {
+        const fetchedAttempts = await getTrackedQuizAttempts();
+        setAttempts(fetchedAttempts);
+      } catch (error) {
+        console.error("Error loading attempts:", error);
+        setAttempts([]);
+      }
+    };
+    
+    loadAttempts();
   }, []);
 
   const handleAuth = (password: string) => {
