@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -18,10 +17,7 @@ const AuthScreen = ({ onAuthSuccess }: AuthScreenProps) => {
   const handlePasswordSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    const hashedPassword = btoa(password);
-    const correctHash = btoa('120703');
-    
-    if (hashedPassword === correctHash) {
+    if (password === '120703') {
       localStorage.setItem('validationPageAuthenticated', 'true');
       onAuthSuccess(password);
       toast({
