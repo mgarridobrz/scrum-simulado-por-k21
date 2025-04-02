@@ -1,7 +1,7 @@
 
 import { supabase } from "@/integrations/supabase/client";
 import type { Database } from "@/integrations/supabase/types";
-import { QuestionWithCategory, QuizAttempt } from "@/data/types";
+import { QuestionWithCategory, QuizAttempt, QuizCategory } from "@/data/types";
 
 interface AttemptFilters {
   name?: string;
@@ -165,7 +165,7 @@ export const fetchQuestionsByCategory = async (category?: string): Promise<Quest
       options: typeof item.options === 'string' ? JSON.parse(item.options) : item.options,
       correctAnswer: item.correct_answer,
       explanation: item.explanation || '',
-      category: item.category_id
+      category: item.category_id as QuizCategory // Cast the string to QuizCategory type
     }));
   } catch (error) {
     console.error("Error fetching questions:", error);
@@ -193,7 +193,7 @@ export const getRandomQuestions = async (count: number): Promise<QuestionWithCat
       options: typeof item.options === 'string' ? JSON.parse(item.options) : item.options,
       correctAnswer: item.correct_answer,
       explanation: item.explanation || '',
-      category: item.category_id
+      category: item.category_id as QuizCategory // Cast the string to QuizCategory type
     }));
     
     // Shuffle using Fisher-Yates algorithm
