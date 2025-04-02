@@ -32,7 +32,7 @@ const Header = () => {
             <DropdownMenuContent align="end">
               <DropdownMenuItem asChild>
                 <a 
-                  href="https://k21.global" 
+                  href="http://k21.global" 
                   target="_blank" 
                   rel="noopener noreferrer"
                   className="flex items-center gap-2"
@@ -43,7 +43,7 @@ const Header = () => {
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
                 <a 
-                  href="https://scrumguide.scrum.org/" 
+                  href="http://scrumguides.org" 
                   target="_blank" 
                   rel="noopener noreferrer"
                   className="flex items-center gap-2"
@@ -54,13 +54,24 @@ const Header = () => {
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
                 <a 
-                  href="https://www.scrum.org/professional-scrum-certifications/professional-scrum-master-assessments" 
+                  href="https://br.k21.global/cursos" 
                   target="_blank" 
                   rel="noopener noreferrer"
                   className="flex items-center gap-2"
                 >
                   <ExternalLink size={16} />
-                  Certificação PSM
+                  Cursos
+                </a>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <a 
+                  href="https://br.k21.global/conteudos" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2"
+                >
+                  <ExternalLink size={16} />
+                  Conteúdos
                 </a>
               </DropdownMenuItem>
             </DropdownMenuContent>
