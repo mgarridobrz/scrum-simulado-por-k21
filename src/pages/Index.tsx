@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -31,6 +30,21 @@ const Index = () => {
   useEffect(() => {
     const approvedQuestions = getApprovedQuestions();
     setApprovedQuestionsCount(approvedQuestions.length);
+  }, []);
+
+  useEffect(() => {
+    // Make the migration function available in the console for admin use
+    const importMigration = async () => {
+      try {
+        const module = await import('../utils/migrateQuestionsToDb');
+        (window as any).migrateQuestionsToDatabase = module.migrateQuestionsToDatabase;
+        console.log("Migration utility loaded. Run migrateQuestionsToDatabase() in console to migrate questions.");
+      } catch (error) {
+        console.error("Error loading migration utility:", error);
+      }
+    };
+    
+    importMigration();
   }, []);
 
   const handleStartWithSize = (selectedSize: number, userInfo?: UserData) => {

@@ -15,6 +15,7 @@ export type Database = {
           email: string | null
           id: string
           name: string
+          questions_data: Json | null
           quiz_size: number
           score: number | null
         }
@@ -23,6 +24,7 @@ export type Database = {
           email?: string | null
           id?: string
           name: string
+          questions_data?: Json | null
           quiz_size: number
           score?: number | null
         }
@@ -31,10 +33,67 @@ export type Database = {
           email?: string | null
           id?: string
           name?: string
+          questions_data?: Json | null
           quiz_size?: number
           score?: number | null
         }
         Relationships: []
+      }
+      quiz_categories: {
+        Row: {
+          id: string
+          name: string
+        }
+        Insert: {
+          id: string
+          name: string
+        }
+        Update: {
+          id?: string
+          name?: string
+        }
+        Relationships: []
+      }
+      quiz_questions: {
+        Row: {
+          category_id: string
+          correct_answer: string
+          created_at: string | null
+          explanation: string | null
+          id: number
+          options: Json
+          question: string
+          updated_at: string | null
+        }
+        Insert: {
+          category_id: string
+          correct_answer: string
+          created_at?: string | null
+          explanation?: string | null
+          id?: number
+          options: Json
+          question: string
+          updated_at?: string | null
+        }
+        Update: {
+          category_id?: string
+          correct_answer?: string
+          created_at?: string | null
+          explanation?: string | null
+          id?: number
+          options?: Json
+          question?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quiz_questions_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "quiz_categories"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {

@@ -1,19 +1,28 @@
+
 import React, { useState, useEffect } from 'react';
 import NavigationBar from '@/components/question-validation/NavigationBar';
 import QuestionEditor from '@/components/question-validation/QuestionEditor';
 import AuthScreen from '@/components/question-validation/AuthScreen';
 import GlobalStatsCounter from '@/components/question-validation/GlobalStatsCounter';
 import AttemptsList from '@/components/question-validation/AttemptsList';
-import { useQuestionValidation } from '@/hooks/useQuestionValidation';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Info } from 'lucide-react';
 import { getTrackedQuizAttempts } from '@/utils/quizTracking';
+import { useQuestions } from '@/hooks/useQuestions';
 
 const QuestionValidation = () => {
   const [authenticated, setAuthenticated] = useState(false);
-  const [activeTab, setActiveTab] = useState('fundamentals');
   const [showAttempts, setShowAttempts] = useState(false);
+  const [attemptFilters, setAttemptFilters] = useState({
+    page: 1,
+    pageSize: 10,
+    name: '',
+    email: '',
+    orderBy: 'created_at',
+    orderDirection: 'desc' as 'asc' | 'desc'
+  });
   const [attempts, setAttempts] = useState<string[]>([]);
+  const [totalAttempts, setTotalAttempts] = useState(0);
   
   const {
     currentQuestion,
@@ -21,28 +30,29 @@ const QuestionValidation = () => {
     filteredQuestions,
     filter,
     isLoading,
-    approvedQuestions,
     setFilter,
     goToNextQuestion,
     goToPreviousQuestion,
-    approveQuestion,
-    isQuestionApproved,
-    updateQuestion
-  } = useQuestionValidation();
+    saveQuestion
+  } = useQuestions();
 
   useEffect(() => {
     const loadAttempts = async () => {
       try {
-        const fetchedAttempts = await getTrackedQuizAttempts();
-        setAttempts(fetchedAttempts);
+        const result = await getTrackedQuizAttempts(attemptFilters);
+        setAttempts(result.attempts);
+        setTotalAttempts(result.totalCount);
       } catch (error) {
         console.error("Error loading attempts:", error);
         setAttempts([]);
+        setTotalAttempts(0);
       }
     };
     
-    loadAttempts();
-  }, []);
+    if (showAttempts) {
+      loadAttempts();
+    }
+  }, [showAttempts, attemptFilters]);
 
   const handleAuth = (password: string) => {
     if (password === "120703") {
@@ -60,6 +70,29 @@ const QuestionValidation = () => {
     }
   }, []);
 
+  const handlePageChange = (page: number) => {
+    setAttemptFilters(prev => ({ ...prev, page }));
+  };
+
+  const handleFilterChange = (filterKey: string, value: string) => {
+    setAttemptFilters(prev => ({
+      ...prev, 
+      [filterKey]: value,
+      page: 1 // Reset to first page when filters change
+    }));
+  };
+
+  const handleSortChange = (field: string) => {
+    setAttemptFilters(prev => {
+      const newDirection = prev.orderBy === field && prev.orderDirection === 'desc' ? 'asc' : 'desc';
+      return {
+        ...prev,
+        orderBy: field,
+        orderDirection: newDirection
+      };
+    });
+  };
+
   if (!authenticated) {
     return <AuthScreen onAuthenticated={handleAuth} />;
   }
@@ -74,10 +107,6 @@ const QuestionValidation = () => {
         onNavigatePrevious={goToPreviousQuestion}
         onNavigateNext={goToNextQuestion}
         onShowAttempts={() => setShowAttempts(!showAttempts)}
-        onLogout={() => {
-          localStorage.removeItem('validationPageAuthenticated');
-          setAuthenticated(false);
-        }}
         onNavigateHome={() => window.location.href = '/'}
       />
       
@@ -91,15 +120,19 @@ const QuestionValidation = () => {
             open={showAttempts}
             onOpenChange={setShowAttempts}
             attempts={attempts}
-            onAttemptsCleared={() => {}}
+            totalCount={totalAttempts}
+            currentPage={attemptFilters.page}
+            pageSize={attemptFilters.pageSize}
+            onPageChange={handlePageChange}
+            filters={attemptFilters}
+            onFilterChange={handleFilterChange}
+            onSortChange={handleSortChange}
           />
         ) : (
           currentQuestion && (
             <QuestionEditor
               question={currentQuestion}
-              isApproved={isQuestionApproved(currentQuestion.id)}
-              onSave={updateQuestion}
-              onApprove={approveQuestion}
+              onSave={saveQuestion}
             />
           )
         )}

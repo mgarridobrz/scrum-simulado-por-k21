@@ -3,7 +3,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { AlertCircle, CheckCircle, Clock, Printer } from 'lucide-react';
-import { QuestionWithCategory } from '@/data/quizData';
+import { QuestionWithCategory } from '@/data/types';
 import QuizQuestion from './QuizQuestion';
 import { trackQuizAttempt } from '@/utils/quizTracking';
 import { generatePDF } from '@/utils/pdfGenerator';
@@ -50,14 +50,29 @@ const QuizResult = ({
     day: 'numeric',
   });
 
+  // Prepare questions data for saving
+  const prepareQuestionsData = () => {
+    return questions.map(question => ({
+      id: question.id,
+      question: question.question,
+      category: question.category,
+      userAnswer: userAnswers[question.id],
+      correctAnswer: question.correctAnswer,
+      isCorrect: userAnswers[question.id] === question.correctAnswer
+    }));
+  };
+
   // Track the quiz attempt
   useEffect(() => {
     if (userData?.name && !tracked) {
+      const questionsData = prepareQuestionsData();
+      
       trackQuizAttempt(
         userData.name,
         userData.email || '',
         totalQuestions,
-        scorePercentage
+        scorePercentage,
+        questionsData
       ).then(() => {
         setTracked(true);
         toast({
@@ -73,7 +88,7 @@ const QuizResult = ({
         });
       });
     }
-  }, [userData, totalQuestions, scorePercentage, tracked, toast]);
+  }, [userData, totalQuestions, scorePercentage, tracked, toast, userAnswers, questions]);
 
   return (
     <div className="max-w-3xl mx-auto w-full animate-fade-in">

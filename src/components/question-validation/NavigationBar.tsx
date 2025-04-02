@@ -12,7 +12,6 @@ interface NavigationBarProps {
   onNavigatePrevious: () => void;
   onNavigateNext: () => void;
   onShowAttempts: () => void;
-  onLogout: () => void;
   onNavigateHome: () => void;
 }
 
@@ -24,7 +23,6 @@ const NavigationBar = ({
   onNavigatePrevious,
   onNavigateNext,
   onShowAttempts,
-  onLogout,
   onNavigateHome
 }: NavigationBarProps) => {
   return (
@@ -44,9 +42,6 @@ const NavigationBar = ({
           <QuestionFilters filter={filter} onFilterChange={onFilterChange} />
           <Button variant="outline" onClick={onNavigateHome}>
             Voltar para início
-          </Button>
-          <Button variant="destructive" size="sm" onClick={onLogout}>
-            Sair
           </Button>
         </div>
       </div>

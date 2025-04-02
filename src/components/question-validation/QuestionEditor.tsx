@@ -1,26 +1,26 @@
+
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { QuestionWithCategory } from '@/data/quizData';
+import { QuestionWithCategory } from '@/data/types';
 import { useToast } from "@/hooks/use-toast";
 import QuestionOptionTable from './QuestionOptionTable';
-import QuestionHeaderActions from './QuestionHeaderActions';
 
 interface QuestionEditorProps {
   question: QuestionWithCategory;
-  isApproved: boolean;
-  onSave: (question: QuestionWithCategory) => void;
-  onApprove: () => void;
+  onSave: (question: QuestionWithCategory) => Promise<boolean>;
 }
 
-const QuestionEditor = ({ question, isApproved, onSave, onApprove }: QuestionEditorProps) => {
+const QuestionEditor = ({ question, onSave }: QuestionEditorProps) => {
   const { toast } = useToast();
   const [editMode, setEditMode] = useState(false);
   const [currentQuestion, setCurrentQuestion] = useState<QuestionWithCategory>(question);
+  const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
     setCurrentQuestion(question);
+    setEditMode(false);
   }, [question]);
 
   const handleQuestionChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -53,13 +53,23 @@ const QuestionEditor = ({ question, isApproved, onSave, onApprove }: QuestionEdi
     });
   };
 
-  const saveChanges = () => {
-    onSave(currentQuestion);
-    setEditMode(false);
-    toast({
-      title: "Alterações salvas",
-      description: "As alterações na questão foram salvas com sucesso.",
-    });
+  const saveChanges = async () => {
+    setIsSaving(true);
+    try {
+      const success = await onSave(currentQuestion);
+      if (success) {
+        setEditMode(false);
+      }
+    } catch (error) {
+      console.error("Error saving question:", error);
+      toast({
+        title: "Erro ao salvar",
+        description: "Ocorreu um erro ao salvar as alterações.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const getCategoryName = (category: string) => {
@@ -68,6 +78,7 @@ const QuestionEditor = ({ question, isApproved, onSave, onApprove }: QuestionEdi
       case 'roles': return 'Papéis';
       case 'events': return 'Eventos';
       case 'artifacts': return 'Artefatos';
+      case 'dysfunctions': return 'Disfunções';
       default: return category;
     }
   };
@@ -81,13 +92,24 @@ const QuestionEditor = ({ question, isApproved, onSave, onApprove }: QuestionEdi
           </CardTitle>
           <CardDescription>ID: {question.id}</CardDescription>
         </div>
-        <QuestionHeaderActions 
-          editMode={editMode}
-          isApproved={isApproved}
-          onSave={saveChanges}
-          onEdit={() => setEditMode(true)}
-          onApprove={onApprove}
-        />
+        <div className="flex space-x-2">
+          {editMode ? (
+            <Button 
+              variant="default" 
+              onClick={saveChanges}
+              disabled={isSaving}
+            >
+              {isSaving ? 'Salvando...' : 'Salvar'}
+            </Button>
+          ) : (
+            <Button 
+              variant="outline" 
+              onClick={() => setEditMode(true)}
+            >
+              Editar
+            </Button>
+          )}
+        </div>
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
@@ -128,14 +150,7 @@ const QuestionEditor = ({ question, isApproved, onSave, onApprove }: QuestionEdi
           </div>
         </div>
       </CardContent>
-      <CardFooter className="flex justify-between">
-        <p className="text-sm text-muted-foreground">
-          Status: {isApproved ? (
-            <span className="text-green-600 font-medium">Aprovada</span>
-          ) : (
-            <span className="text-amber-600 font-medium">Pendente de aprovação</span>
-          )}
-        </p>
+      <CardFooter className="flex justify-end">
         <p className="text-sm text-muted-foreground">
           Última atualização: {new Date().toLocaleDateString()}
         </p>
