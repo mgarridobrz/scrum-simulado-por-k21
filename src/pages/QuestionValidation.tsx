@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQuestions } from '@/hooks/useQuestions';
@@ -21,7 +20,6 @@ const QuestionValidation = () => {
   const [totalPages, setTotalPages] = useState(1);
   const navigate = useNavigate();
   
-  // Use the custom hook for question management
   const { 
     currentQuestion, 
     currentIndex, 
@@ -34,7 +32,6 @@ const QuestionValidation = () => {
     saveQuestion
   } = useQuestions();
 
-  // Check for saved authentication
   useEffect(() => {
     const savedAuth = localStorage.getItem('validationPageAuthenticated');
     if (savedAuth === 'true') {
@@ -42,7 +39,6 @@ const QuestionValidation = () => {
     }
   }, []);
 
-  // Load attempts data
   const loadAttempts = async (page = 1) => {
     try {
       setLoading(true);
@@ -63,12 +59,10 @@ const QuestionValidation = () => {
     }
   };
 
-  // Handle page change for pagination
   const handlePageChange = (newPage: number) => {
     loadAttempts(newPage);
   };
 
-  // Handle navigation to attempts list
   const handleShowAttempts = () => {
     setActiveTab('attempts');
     loadAttempts();
@@ -78,12 +72,11 @@ const QuestionValidation = () => {
     navigate('/');
   };
 
-  // Handle authentication success
   const handleAuthSuccess = () => {
     setIsAuthenticated(true);
+    localStorage.setItem('validationPageAuthenticated', 'true');
   };
 
-  // Render authentication screen if not authenticated
   if (!isAuthenticated) {
     return <AuthScreen onAuthSuccess={handleAuthSuccess} />;
   }

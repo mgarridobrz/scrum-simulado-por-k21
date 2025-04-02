@@ -62,7 +62,10 @@ const AttemptsList = ({
           title: "Registro excluído",
           description: "O registro foi excluído com sucesso."
         });
-        onRefresh(); // Refresh the list after successful deletion
+        // Force refresh the list after deletion
+        setTimeout(() => {
+          onRefresh();
+        }, 100);
       } else {
         toast({
           title: "Erro ao excluir",

@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -37,13 +36,11 @@ const Ranking = () => {
     loadTopPerformers();
   }, [currentQuarter]);
   
-  // Format current quarter for display
   const formatQuarter = (quarter: string) => {
     const [year, quarterNum] = quarter.split('Q');
     return `${quarterNum}º Trimestre de ${year}`;
   };
   
-  // Generate available quarters (current and previous 3)
   const generateQuarterOptions = (): { value: string; label: string }[] => {
     const options = [];
     const currentDate = new Date();
@@ -54,10 +51,9 @@ const Ranking = () => {
       let year = currentYear;
       let quarter = currentQuarterNum - i;
       
-      // Handle previous year quarters
       if (quarter <= 0) {
         year--;
-        quarter = 4 + quarter; // e.g., if quarter is -1, it becomes 3 (Q3 of previous year)
+        quarter = 4 + quarter;
       }
       
       const value = `${year}Q${quarter}`;
