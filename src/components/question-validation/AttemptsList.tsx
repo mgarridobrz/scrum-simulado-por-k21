@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { 
   Table, 
@@ -152,7 +153,7 @@ const AttemptsList = ({
                       {attempt.score !== null ? (
                         <Badge 
                           className={`${
-                            attempt.score >= 74 ? 'bg-green-100 text-green-800 hover:bg-green-100' : 
+                            (attempt.score >= 74) ? 'bg-green-100 text-green-800 hover:bg-green-100' : 
                             'bg-amber-100 text-amber-800 hover:bg-amber-100'
                           }`}
                         >

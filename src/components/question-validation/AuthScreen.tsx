@@ -7,10 +7,10 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { useToast } from "@/hooks/use-toast";
 
 interface AuthScreenProps {
-  onAuthenticated: (password: string) => void;
+  onAuthSuccess: (password: string) => void;
 }
 
-const AuthScreen = ({ onAuthenticated }: AuthScreenProps) => {
+const AuthScreen = ({ onAuthSuccess }: AuthScreenProps) => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [password, setPassword] = useState('');
@@ -23,7 +23,7 @@ const AuthScreen = ({ onAuthenticated }: AuthScreenProps) => {
     
     if (hashedPassword === correctHash) {
       localStorage.setItem('validationPageAuthenticated', 'true');
-      onAuthenticated(password);
+      onAuthSuccess(password);
       toast({
         title: "Acesso autorizado",
         description: "Bem-vindo à página de validação de questões.",

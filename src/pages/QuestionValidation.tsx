@@ -1,12 +1,9 @@
 
-// Import relevant components and hooks
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQuestions } from '@/hooks/useQuestions';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { AlertDialog } from '@/components/ui/alert-dialog';
 import AuthScreen from '@/components/question-validation/AuthScreen';
 import QuestionEditor from '@/components/question-validation/QuestionEditor';
 import NavigationBar from '@/components/question-validation/NavigationBar';
