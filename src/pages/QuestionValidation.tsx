@@ -34,15 +34,25 @@ const QuestionValidation = () => {
     saveQuestion
   } = useQuestions();
 
+  // Check for saved authentication
+  useEffect(() => {
+    const savedAuth = localStorage.getItem('validationPageAuthenticated');
+    if (savedAuth === 'true') {
+      setIsAuthenticated(true);
+    }
+  }, []);
+
   // Load attempts data
   const loadAttempts = async (page = 1) => {
     try {
       setLoading(true);
+      console.log("Loading attempts page:", page);
       const { attempts: loadedAttempts, totalCount } = await getTrackedQuizAttempts({
         page,
         pageSize: 10
       });
       
+      console.log("Loaded attempts:", loadedAttempts);
       setAttempts(loadedAttempts);
       setTotalPages(Math.ceil(totalCount / 10));
       setCurrentPage(page);

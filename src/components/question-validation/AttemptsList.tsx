@@ -54,6 +54,7 @@ const AttemptsList = ({
 
   const handleDelete = async (id: string) => {
     try {
+      console.log("Deleting attempt with ID:", id);
       const success = await deleteQuizAttempt(id);
       
       if (success) {
@@ -61,7 +62,7 @@ const AttemptsList = ({
           title: "Registro excluído",
           description: "O registro foi excluído com sucesso."
         });
-        onRefresh();
+        onRefresh(); // Refresh the list after successful deletion
       } else {
         toast({
           title: "Erro ao excluir",

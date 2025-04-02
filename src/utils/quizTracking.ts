@@ -49,6 +49,7 @@ export const saveQuizAttemptToSupabase = async (
 // Delete a quiz attempt by ID
 export const deleteQuizAttempt = async (id: string): Promise<boolean> => {
   try {
+    console.log("Attempting to delete quiz attempt with ID:", id);
     const { error } = await supabase
       .from('quiz_attempts')
       .delete()
@@ -59,6 +60,7 @@ export const deleteQuizAttempt = async (id: string): Promise<boolean> => {
       return false;
     }
     
+    console.log("Successfully deleted quiz attempt with ID:", id);
     return true;
   } catch (error) {
     console.error("Error deleting attempt:", error);
