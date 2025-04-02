@@ -23,15 +23,13 @@ export const saveQuizAttemptToSupabase = async (
   try {
     const { data, error } = await supabase
       .from('quiz_attempts')
-      .insert([
-        {
-          name,
-          email: email || null,
-          quiz_size: size,
-          score: score || null,
-          questions_data: questionsData || null
-        }
-      ]);
+      .insert({
+        name,
+        email: email || null,
+        quiz_size: size,
+        score: score || null,
+        questions_data: questionsData || null
+      });
     
     if (error) {
       console.error("Error saving to Supabase:", error);
