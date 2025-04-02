@@ -11,6 +11,7 @@ interface AttemptFilters {
   pageSize?: number;
   orderBy?: string;
   orderDirection?: 'asc' | 'desc';
+  quarter?: string; // For ranking by quarter
 }
 
 // Function to save quiz attempt to Supabase
@@ -45,9 +46,108 @@ export const saveQuizAttemptToSupabase = async (
   }
 };
 
+// Delete a quiz attempt by ID
+export const deleteQuizAttempt = async (id: string): Promise<boolean> => {
+  try {
+    const { error } = await supabase
+      .from('quiz_attempts')
+      .delete()
+      .eq('id', id);
+    
+    if (error) {
+      console.error("Error deleting attempt:", error);
+      return false;
+    }
+    
+    return true;
+  } catch (error) {
+    console.error("Error deleting attempt:", error);
+    return false;
+  }
+};
+
+// Get statistics about quiz attempts
+export const getQuizAttemptStats = async (): Promise<{
+  totalAttempts: number;
+  size10Count: number;
+  size25Count: number;
+  size50Count: number;
+  averageLastFifty: number;
+}> => {
+  try {
+    // Get total count of attempts
+    const { count: totalCount, error: totalError } = await supabase
+      .from('quiz_attempts')
+      .select('*', { count: 'exact', head: true });
+    
+    if (totalError) {
+      console.error("Error counting attempts:", totalError);
+      return { totalAttempts: 0, size10Count: 0, size25Count: 0, size50Count: 0, averageLastFifty: 0 };
+    }
+    
+    // Get count of attempts by quiz size
+    const { data: sizeCounts, error: sizeError } = await supabase
+      .from('quiz_attempts')
+      .select('quiz_size, count')
+      .select('quiz_size')
+      .in('quiz_size', [10, 25, 50]);
+    
+    if (sizeError) {
+      console.error("Error counting by size:", sizeError);
+      return { 
+        totalAttempts: totalCount || 0, 
+        size10Count: 0, 
+        size25Count: 0, 
+        size50Count: 0, 
+        averageLastFifty: 0 
+      };
+    }
+    
+    // Count occurrences of each size
+    const size10Count = sizeCounts?.filter(item => item.quiz_size === 10).length || 0;
+    const size25Count = sizeCounts?.filter(item => item.quiz_size === 25).length || 0;
+    const size50Count = sizeCounts?.filter(item => item.quiz_size === 50).length || 0;
+    
+    // Get average score of last 50 attempts
+    const { data: lastFifty, error: lastFiftyError } = await supabase
+      .from('quiz_attempts')
+      .select('score')
+      .order('created_at', { ascending: false })
+      .limit(50);
+    
+    if (lastFiftyError) {
+      console.error("Error getting last fifty:", lastFiftyError);
+      return { 
+        totalAttempts: totalCount || 0, 
+        size10Count, 
+        size25Count, 
+        size50Count, 
+        averageLastFifty: 0 
+      };
+    }
+    
+    // Calculate average score
+    const validScores = lastFifty?.filter(item => item.score !== null) || [];
+    const averageLastFifty = validScores.length > 0
+      ? validScores.reduce((acc, curr) => acc + (curr.score || 0), 0) / validScores.length
+      : 0;
+    
+    return {
+      totalAttempts: totalCount || 0,
+      size10Count,
+      size25Count,
+      size50Count,
+      averageLastFifty: Math.round(averageLastFifty)
+    };
+  } catch (error) {
+    console.error("Error getting stats:", error);
+    return { totalAttempts: 0, size10Count: 0, size25Count: 0, size50Count: 0, averageLastFifty: 0 };
+  }
+};
+
 // Fetch quiz attempts from Supabase with pagination and filtering
 export const fetchQuizAttemptsFromSupabase = async (filters: AttemptFilters = {}): Promise<{
-  attempts: string[];
+  attempts: QuizAttempt[];
   totalCount: number;
 }> => {
   try {
@@ -57,7 +157,8 @@ export const fetchQuizAttemptsFromSupabase = async (filters: AttemptFilters = {}
       page = 1,
       pageSize = 10,
       orderBy = 'created_at',
-      orderDirection = 'desc'
+      orderDirection = 'desc',
+      quarter
     } = filters;
     
     // Calculate the range for pagination
@@ -78,6 +179,17 @@ export const fetchQuizAttemptsFromSupabase = async (filters: AttemptFilters = {}
       query = query.ilike('email', `%${email}%`);
     }
     
+    // Filter by current quarter if specified
+    if (quarter) {
+      const [year, quarterNum] = quarter.split('Q');
+      const startDate = new Date(parseInt(year), (parseInt(quarterNum) - 1) * 3, 1);
+      const endDate = new Date(parseInt(year), parseInt(quarterNum) * 3, 0);
+      
+      query = query
+        .gte('created_at', startDate.toISOString())
+        .lte('created_at', endDate.toISOString());
+    }
+    
     // Get the count first
     const { count, error: countError } = await query;
     
@@ -96,19 +208,59 @@ export const fetchQuizAttemptsFromSupabase = async (filters: AttemptFilters = {}
       return { attempts: [], totalCount: 0 };
     }
     
-    // Convert Supabase data format to our string format
-    const attempts = (data || []).map(attempt => {
-      const timestamp = new Date(attempt.created_at).toISOString();
-      return `${attempt.name},${attempt.email || 'No email'},${attempt.quiz_size},${timestamp},${attempt.score || ''}`;
-    });
-    
     return { 
-      attempts, 
+      attempts: data || [], 
       totalCount: count || 0 
     };
   } catch (error) {
     console.error("Error fetching from Supabase:", error);
     return { attempts: [], totalCount: 0 };
+  }
+};
+
+// Get current quarter for ranking
+export const getCurrentQuarter = (): string => {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = now.getMonth();
+  const quarter = Math.floor(month / 3) + 1;
+  
+  return `${year}Q${quarter}`;
+};
+
+// Get Top 10 performers for the current quarter
+export const getTopPerformersForQuarter = async (quarter?: string): Promise<{
+  performers: { name: string; score: number }[];
+}> => {
+  try {
+    const currentQuarter = quarter || getCurrentQuarter();
+    const [year, quarterNum] = currentQuarter.split('Q');
+    const startDate = new Date(parseInt(year), (parseInt(quarterNum) - 1) * 3, 1);
+    const endDate = new Date(parseInt(year), parseInt(quarterNum) * 3, 0);
+    
+    const { data, error } = await supabase
+      .from('quiz_attempts')
+      .select('id, name, score')
+      .gte('created_at', startDate.toISOString())
+      .lte('created_at', endDate.toISOString())
+      .not('score', 'is', null)
+      .order('score', { ascending: false })
+      .limit(10);
+    
+    if (error) {
+      console.error("Error fetching top performers:", error);
+      return { performers: [] };
+    }
+    
+    return { 
+      performers: data.map(item => ({ 
+        name: item.name, 
+        score: item.score || 0 
+      })) 
+    };
+  } catch (error) {
+    console.error("Error fetching top performers:", error);
+    return { performers: [] };
   }
 };
 
@@ -126,7 +278,7 @@ export const trackQuizAttempt = async (
 
 // Function to get all tracked quiz attempts with filtering and pagination
 export const getTrackedQuizAttempts = async (filters: AttemptFilters = {}): Promise<{
-  attempts: string[];
+  attempts: QuizAttempt[];
   totalCount: number;
 }> => {
   try {
@@ -164,7 +316,7 @@ export const fetchQuestionsByCategory = async (category?: string): Promise<Quest
       options: typeof item.options === 'string' ? JSON.parse(item.options) : item.options,
       correctAnswer: item.correct_answer,
       explanation: item.explanation || '',
-      category: item.category_id as QuizCategory // Cast the string to QuizCategory type
+      category: item.category_id as QuizCategory
     }));
   } catch (error) {
     console.error("Error fetching questions:", error);
@@ -172,8 +324,8 @@ export const fetchQuestionsByCategory = async (category?: string): Promise<Quest
   }
 };
 
-// Get random questions for a quiz
-export const getRandomQuestions = async (count: number): Promise<QuestionWithCategory[]> => {
+// Get balanced random questions for a quiz
+export const getRandomQuestionsWithBalance = async (count: number): Promise<QuestionWithCategory[]> => {
   try {
     // Get all questions
     const { data, error } = await supabase
@@ -185,24 +337,64 @@ export const getRandomQuestions = async (count: number): Promise<QuestionWithCat
       return [];
     }
     
-    // Transform and shuffle
+    // Transform data format
     const questions = data.map(item => ({
       id: item.id,
       question: item.question,
       options: typeof item.options === 'string' ? JSON.parse(item.options) : item.options,
       correctAnswer: item.correct_answer,
       explanation: item.explanation || '',
-      category: item.category_id as QuizCategory // Cast the string to QuizCategory type
+      category: item.category_id as QuizCategory
     }));
     
-    // Shuffle using Fisher-Yates algorithm
-    for (let i = questions.length - 1; i > 0; i--) {
+    // Group questions by category
+    const questionsByCategory: Record<string, QuestionWithCategory[]> = {};
+    questions.forEach(question => {
+      if (!questionsByCategory[question.category]) {
+        questionsByCategory[question.category] = [];
+      }
+      questionsByCategory[question.category].push(question);
+    });
+    
+    // Shuffle each category's questions
+    Object.keys(questionsByCategory).forEach(category => {
+      // Fisher-Yates shuffle algorithm
+      const categoryQuestions = questionsByCategory[category];
+      for (let i = categoryQuestions.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [categoryQuestions[i], categoryQuestions[j]] = [categoryQuestions[j], categoryQuestions[i]];
+      }
+    });
+    
+    // Calculate how many questions to pick from each category
+    const categories = Object.keys(questionsByCategory);
+    const totalCategories = categories.length;
+    
+    // Base number of questions per category
+    const baseQuestionsPerCategory = Math.floor(count / totalCategories);
+    let remainder = count % totalCategories;
+    
+    // Select questions with balance
+    const selectedQuestions: QuestionWithCategory[] = [];
+    
+    categories.forEach(category => {
+      // Determine how many questions to take from this category
+      const categoryQuestions = questionsByCategory[category];
+      const questionsToTake = baseQuestionsPerCategory + (remainder > 0 ? 1 : 0);
+      if (remainder > 0) remainder--;
+      
+      // Add questions up to the limit or as many as available
+      const actualQuestionsToTake = Math.min(questionsToTake, categoryQuestions.length);
+      selectedQuestions.push(...categoryQuestions.slice(0, actualQuestionsToTake));
+    });
+    
+    // Shuffle the final selection to randomize the order
+    for (let i = selectedQuestions.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
-      [questions[i], questions[j]] = [questions[j], questions[i]];
+      [selectedQuestions[i], selectedQuestions[j]] = [selectedQuestions[j], selectedQuestions[i]];
     }
     
-    // Return requested number of questions
-    return questions.slice(0, Math.min(count, questions.length));
+    return selectedQuestions;
   } catch (error) {
     console.error("Error getting random questions:", error);
     return [];

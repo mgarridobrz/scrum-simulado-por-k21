@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -7,7 +8,7 @@ import QuizQuestion from '@/components/QuizQuestion';
 import QuizProgress from '@/components/QuizProgress';
 import QuizResult from '@/components/QuizResult';
 import QuizScoreCounter from '@/components/QuizScoreCounter';
-import { getRandomQuestions, getCategoryStats, QuestionWithCategory, getApprovedQuestions } from '@/data/quizData';
+import { getRandomQuestionsWithBalance } from '@/utils/quizTracking';
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Info, Lock } from "lucide-react";
 
@@ -18,19 +19,49 @@ interface UserData {
 
 const Index = () => {
   const [status, setStatus] = useState<'ready' | 'playing' | 'finished'>('ready');
-  const [questions, setQuestions] = useState<QuestionWithCategory[]>([]);
+  const [questions, setQuestions] = useState([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [userAnswers, setUserAnswers] = useState<Record<number, string>>({});
-  const [approvedQuestionsCount, setApprovedQuestionsCount] = useState<number>(0);
+  const [totalQuestionsCount, setTotalQuestionsCount] = useState(0);
   const [userData, setUserData] = useState<UserData | null>(null);
   const [canProceed, setCanProceed] = useState(false);
   const [correctCount, setCorrectCount] = useState(0);
   const [incorrectCount, setIncorrectCount] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const approvedQuestions = getApprovedQuestions();
-    setApprovedQuestionsCount(approvedQuestions.length);
+    const loadQuestionCount = async () => {
+      try {
+        const count = await getQuestionCount();
+        setTotalQuestionsCount(count);
+        setIsLoading(false);
+      } catch (error) {
+        console.error("Error loading question count:", error);
+        setIsLoading(false);
+      }
+    };
+    
+    loadQuestionCount();
   }, []);
+
+  // Function to get total question count from database
+  const getQuestionCount = async () => {
+    try {
+      const { count, error } = await supabase
+        .from('quiz_questions')
+        .select('*', { count: 'exact', head: true });
+      
+      if (error) {
+        console.error("Error counting questions:", error);
+        return 0;
+      }
+      
+      return count || 0;
+    } catch (error) {
+      console.error("Error counting questions:", error);
+      return 0;
+    }
+  };
 
   useEffect(() => {
     // Make the migration function available in the console for admin use
@@ -47,7 +78,7 @@ const Index = () => {
     importMigration();
   }, []);
 
-  const handleStartWithSize = (selectedSize: number, userInfo?: UserData) => {
+  const handleStartWithSize = async (selectedSize: number, userInfo?: UserData) => {
     console.log(`Index - Starting quiz with size: ${selectedSize}`);
     console.log("User data:", userInfo);
     
@@ -55,16 +86,24 @@ const Index = () => {
       setUserData(userInfo);
     }
     
-    const selectedQuestions = getRandomQuestions(selectedSize);
-    console.log(`Generated quiz with ${selectedQuestions.length} out of ${selectedSize} requested questions`);
-    
-    setQuestions(selectedQuestions);
-    setCurrentQuestionIndex(0);
-    setUserAnswers({});
-    setCanProceed(false);
-    setCorrectCount(0);
-    setIncorrectCount(0);
-    setStatus('playing');
+    setIsLoading(true);
+    try {
+      // Get random questions with category balance
+      const selectedQuestions = await getRandomQuestionsWithBalance(selectedSize);
+      console.log(`Generated quiz with ${selectedQuestions.length} out of ${selectedSize} requested questions`);
+      
+      setQuestions(selectedQuestions);
+      setCurrentQuestionIndex(0);
+      setUserAnswers({});
+      setCanProceed(false);
+      setCorrectCount(0);
+      setIncorrectCount(0);
+      setStatus('playing');
+    } catch (error) {
+      console.error("Error getting questions:", error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleAnswer = (questionId: number, answer: string) => {
@@ -104,8 +143,6 @@ const Index = () => {
     setUserData(null);
     setCorrectCount(0);
     setIncorrectCount(0);
-    const approvedQuestions = getApprovedQuestions();
-    setApprovedQuestionsCount(approvedQuestions.length);
   };
 
   const currentQuestion = questions[currentQuestionIndex];
@@ -135,12 +172,12 @@ const Index = () => {
         
         {status === 'ready' && (
           <>
-            {approvedQuestionsCount === 0 ? (
+            {isLoading ? (
               <Alert className="mb-6">
                 <Info className="h-4 w-4" />
-                <AlertTitle>Atenção</AlertTitle>
+                <AlertTitle>Carregando...</AlertTitle>
                 <AlertDescription>
-                  Nenhuma questão foi aprovada ainda. Todas as questões serão utilizadas no quiz.
+                  Carregando informações do banco de dados.
                 </AlertDescription>
               </Alert>
             ) : (
@@ -148,7 +185,7 @@ const Index = () => {
                 <Info className="h-4 w-4" />
                 <AlertTitle>Informação</AlertTitle>
                 <AlertDescription>
-                  {approvedQuestionsCount} questões foram aprovadas e serão utilizadas no quiz.
+                  Banco de dados com {totalQuestionsCount} questões disponíveis. O simulado seleciona questões aleatórias com um balanço entre categorias.
                 </AlertDescription>
               </Alert>
             )}

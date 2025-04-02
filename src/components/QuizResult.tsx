@@ -39,7 +39,7 @@ const QuizResult = ({
   const { toast } = useToast();
 
   // Calculate percentages
-  const passPercentage = 85;
+  const passPercentage = 74;
   const scorePercentage = Math.round((correctAnswers / totalQuestions) * 100);
   const passed = scorePercentage >= passPercentage;
 
@@ -141,7 +141,7 @@ const QuizResult = ({
                     <div className="w-32 h-2 bg-gray-200 rounded-full overflow-hidden">
                       <div
                         className={`h-full rounded-full ${
-                          (stat.correctCount / stat.totalCount) * 100 >= 85
+                          (stat.correctCount / stat.totalCount) * 100 >= passPercentage
                             ? 'bg-green-500'
                             : (stat.correctCount / stat.totalCount) * 100 >= 60
                             ? 'bg-yellow-500'
