@@ -1,7 +1,7 @@
 
 import { supabase } from "@/integrations/supabase/client";
 import type { Database } from "@/integrations/supabase/types";
-import { QuestionWithCategory } from "@/data/types";
+import { QuestionWithCategory, QuizAttempt } from "@/data/types";
 
 interface AttemptFilters {
   name?: string;

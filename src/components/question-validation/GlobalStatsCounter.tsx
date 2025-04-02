@@ -15,9 +15,9 @@ const GlobalStatsCounter = () => {
     setIsLoading(true);
     try {
       // Get all quiz attempts and count them
-      const attempts = await getTrackedQuizAttempts();
-      setTotalAttempts(attempts.length);
-      console.log(`Loaded ${attempts.length} attempts`);
+      const attemptsData = await getTrackedQuizAttempts();
+      setTotalAttempts(attemptsData.totalCount);
+      console.log(`Loaded ${attemptsData.totalCount} attempts`);
     } catch (error) {
       console.error("Error loading attempts:", error);
       toast({
