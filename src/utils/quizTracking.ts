@@ -1,6 +1,7 @@
 
 import { supabase } from "@/integrations/supabase/client";
 import type { Database } from "@/integrations/supabase/types";
+import type { Json } from "@/integrations/supabase/types";
 import { QuestionWithCategory, QuizAttempt, QuizCategory } from "@/data/types";
 
 interface AttemptFilters {
@@ -28,7 +29,7 @@ export const saveQuizAttemptToSupabase = async (
         email: email || null,
         quiz_size: size,
         score: score || null,
-        questions_data: questionsData || null
+        questions_data: questionsData as Json || null
       });
     
     if (error) {
