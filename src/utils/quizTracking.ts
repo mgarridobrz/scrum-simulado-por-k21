@@ -1,4 +1,3 @@
-
 import { supabase } from "@/integrations/supabase/client";
 import type { Database } from "@/integrations/supabase/types";
 import type { Json } from "@/integrations/supabase/types";
@@ -88,9 +87,7 @@ export const getQuizAttemptStats = async (): Promise<{
     // Get count of attempts by quiz size
     const { data: sizeCounts, error: sizeError } = await supabase
       .from('quiz_attempts')
-      .select('quiz_size, count')
-      .select('quiz_size')
-      .in('quiz_size', [10, 25, 50]);
+      .select('quiz_size');
     
     if (sizeError) {
       console.error("Error counting by size:", sizeError);

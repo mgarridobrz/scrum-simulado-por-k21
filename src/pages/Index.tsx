@@ -8,9 +8,10 @@ import QuizQuestion from '@/components/QuizQuestion';
 import QuizProgress from '@/components/QuizProgress';
 import QuizResult from '@/components/QuizResult';
 import QuizScoreCounter from '@/components/QuizScoreCounter';
-import { getRandomQuestionsWithBalance } from '@/utils/quizTracking';
+import { getRandomQuestionsWithBalance, getCategoryStats } from '@/utils/quizTracking';
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Info, Lock } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 
 interface UserData {
   name: string;
@@ -149,6 +150,7 @@ const Index = () => {
   const isLastQuestion = currentQuestionIndex === questions.length - 1;
   const showResult = status === 'finished';
 
+  // Get category stats for the result page
   const categoryStats = showResult
     ? getCategoryStats(userAnswers, questions)
     : [];
