@@ -14,5 +14,5 @@ Allow: /
 User-agent: *
 Allow: /
 
-Sitemap: https://simuladocsm.k21.com/sitemap.xml
+Sitemap: https://simuladocsm.com/sitemap.xml
 
