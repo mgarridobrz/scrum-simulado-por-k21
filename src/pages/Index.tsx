@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -177,20 +178,11 @@ const Index = () => {
         
         {status === 'playing' && currentQuestion && (
           <>
-            <div className="flex justify-between items-center mb-4">
+            <div className="mb-4">
               <QuizProgress
                 currentQuestion={currentQuestionIndex + 1}
                 totalQuestions={questions.length}
               />
-              <Button 
-                variant="outline" 
-                size="sm" 
-                onClick={handleReturnHome}
-                className="flex items-center gap-1"
-              >
-                <Home size={16} className="text-k21-teal" />
-                <span>Voltar para página inicial</span>
-              </Button>
             </div>
             <div className="bg-white rounded-lg p-5 shadow-md border border-gray-100">
               <QuizScoreCounter correctCount={correctCount} incorrectCount={incorrectCount} />
@@ -200,6 +192,17 @@ const Index = () => {
                 onSelectOption={(optionId) => handleAnswer(currentQuestion.id, optionId)}
                 onContinue={canProceed ? handleNextQuestion : undefined}
               />
+            </div>
+            <div className="mt-6 text-center">
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={handleReturnHome}
+                className="flex items-center gap-1"
+              >
+                <Home size={16} className="text-k21-teal" />
+                <span>Voltar para página inicial</span>
+              </Button>
             </div>
           </>
         )}
