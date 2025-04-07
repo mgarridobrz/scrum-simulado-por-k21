@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Trophy, ExternalLink } from 'lucide-react';
+import { Trophy, ExternalLink, MessageCircle } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -23,6 +23,17 @@ const Header = () => {
         </Link>
         
         <div className="flex items-center gap-4">
+          <a 
+            href="https://api.whatsapp.com/send/?phone=552138258624" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="flex items-center gap-1 text-sm font-medium text-gray-600 hover:text-green-600 transition-colors"
+            title="Fale com a K21"
+          >
+            <MessageCircle size={16} className="text-green-600" />
+            <span>Fale com a K21</span>
+          </a>
+          
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline" size="sm">
