@@ -1,8 +1,8 @@
-
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import Header from '@/components/Header';
+import Footer from '@/components/Footer';
 import StartScreen from '@/components/StartScreen';
 import QuizQuestion from '@/components/QuizQuestion';
 import QuizProgress from '@/components/QuizProgress';
@@ -45,7 +45,6 @@ const Index = () => {
     loadQuestionCount();
   }, []);
 
-  // Function to get total question count from database
   const getQuestionCount = async () => {
     try {
       const { count, error } = await supabase
@@ -65,7 +64,6 @@ const Index = () => {
   };
 
   useEffect(() => {
-    // Make the migration function available in the console for admin use
     const importMigration = async () => {
       try {
         const module = await import('../utils/migrateQuestionsToDb');
@@ -89,7 +87,6 @@ const Index = () => {
     
     setIsLoading(true);
     try {
-      // Get random questions with category balance
       const selectedQuestions = await getRandomQuestionsWithBalance(selectedSize);
       console.log(`Generated quiz with ${selectedQuestions.length} out of ${selectedSize} requested questions`);
       
@@ -108,14 +105,12 @@ const Index = () => {
   };
 
   const handleAnswer = (questionId: number, answer: string) => {
-    // Only set answer if not already answered
     if (!userAnswers[questionId]) {
       setUserAnswers(prevAnswers => ({
         ...prevAnswers,
         [questionId]: answer,
       }));
 
-      // Update correct/incorrect counters
       const currentQuestion = questions.find(q => q.id === questionId);
       if (currentQuestion) {
         if (answer === currentQuestion.correctAnswer) {
@@ -125,7 +120,6 @@ const Index = () => {
         }
       }
       
-      // Enable proceed button after answering
       setCanProceed(true);
     }
   };
@@ -150,7 +144,6 @@ const Index = () => {
   const isLastQuestion = currentQuestionIndex === questions.length - 1;
   const showResult = status === 'finished';
 
-  // Get category stats for the result page
   const categoryStats = showResult
     ? getCategoryStats(userAnswers, questions)
     : [];
@@ -163,7 +156,6 @@ const Index = () => {
     <div className="min-h-screen bg-gray-50 flex flex-col">
       <Header />
       <div className="container mx-auto px-4 py-8 flex-1 flex flex-col relative">
-        {/* Admin Lock Button - Positioned at bottom right */}
         <div className="fixed bottom-4 right-4 z-50">
           <Link to="/validate-questions">
             <Button variant="ghost" size="icon" className="bg-white/70 hover:bg-white text-gray-500 hover:text-gray-700 shadow-sm border" title="Área administrativa">
@@ -202,7 +194,6 @@ const Index = () => {
               totalQuestions={questions.length}
             />
             <div className="bg-white rounded-lg p-5 shadow-md border border-gray-100">
-              {/* Place the score counter inside the question container */}
               <QuizScoreCounter correctCount={correctCount} incorrectCount={incorrectCount} />
               <QuizQuestion
                 question={currentQuestion}
@@ -226,6 +217,7 @@ const Index = () => {
           />
         )}
       </div>
+      <Footer />
     </div>
   );
 };
