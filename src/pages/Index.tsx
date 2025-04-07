@@ -9,8 +9,7 @@ import QuizProgress from '@/components/QuizProgress';
 import QuizResult from '@/components/QuizResult';
 import QuizScoreCounter from '@/components/QuizScoreCounter';
 import { getRandomQuestionsWithBalance, getCategoryStats } from '@/utils/quizTracking';
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Info, Lock } from "lucide-react";
+import { Lock } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
 interface UserData {
@@ -165,26 +164,7 @@ const Index = () => {
         </div>
         
         {status === 'ready' && (
-          <>
-            {isLoading ? (
-              <Alert className="mb-6">
-                <Info className="h-4 w-4" />
-                <AlertTitle>Carregando...</AlertTitle>
-                <AlertDescription>
-                  Carregando informações do banco de dados.
-                </AlertDescription>
-              </Alert>
-            ) : (
-              <Alert className="mb-6">
-                <Info className="h-4 w-4" />
-                <AlertTitle>Informação</AlertTitle>
-                <AlertDescription>
-                  Banco de dados com {totalQuestionsCount} questões disponíveis. O simulado seleciona questões aleatórias com um balanço entre categorias.
-                </AlertDescription>
-              </Alert>
-            )}
-            <StartScreen onStart={handleStartWithSize} />
-          </>
+          <StartScreen onStart={handleStartWithSize} />
         )}
         
         {status === 'playing' && currentQuestion && (

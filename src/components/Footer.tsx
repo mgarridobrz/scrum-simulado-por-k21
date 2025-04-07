@@ -13,6 +13,7 @@ const Footer = () => {
         >
           <p>Simulado Gratuito para CSM – Certified ScrumMaster® (Scrum Alliance)
           Simulado online e gratuito para quem deseja se preparar para a certificação CSM (Certified ScrumMaster®) da Scrum Alliance. Desenvolvido pela K21, o teste inclui perguntas no formato da prova oficial, abordando temas como papéis do Scrum, eventos, artefatos e princípios do Ágil. Ideal para quem busca um simulado de Scrum, um teste de certificação Scrum Master ou um quiz de preparação para o exame CSM. Avalie seu conhecimento e aumente suas chances de aprovação na certificação ScrumMaster com este simulado gratuito e completo.</p>
+          <p className="mt-2 text-gray-600 font-medium">O banco de dados possui 80 questões disponíveis, selecionando questões aleatórias com um balanço entre categorias.</p>
         </div>
         
         <div className="mt-6 flex justify-between items-center text-xs text-gray-500">
