@@ -43,7 +43,7 @@ const Header = () => {
             <DropdownMenuContent align="end">
               <DropdownMenuItem asChild>
                 <a 
-                  href="http://k21.global" 
+                  href="http://br.k21.global" 
                   target="_blank" 
                   rel="noopener noreferrer"
                   className="flex items-center gap-2"

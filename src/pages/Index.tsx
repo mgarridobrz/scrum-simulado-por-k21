@@ -9,7 +9,7 @@ import QuizProgress from '@/components/QuizProgress';
 import QuizResult from '@/components/QuizResult';
 import QuizScoreCounter from '@/components/QuizScoreCounter';
 import { getRandomQuestionsWithBalance, getCategoryStats } from '@/utils/quizTracking';
-import { Lock } from "lucide-react";
+import { Lock, Home } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
 interface UserData {
@@ -139,6 +139,14 @@ const Index = () => {
     setIncorrectCount(0);
   };
 
+  const handleReturnHome = () => {
+    setStatus('ready');
+    setUserData(null);
+    setCorrectCount(0);
+    setIncorrectCount(0);
+    setUserAnswers({});
+  };
+
   const currentQuestion = questions[currentQuestionIndex];
   const isLastQuestion = currentQuestionIndex === questions.length - 1;
   const showResult = status === 'finished';
@@ -169,10 +177,21 @@ const Index = () => {
         
         {status === 'playing' && currentQuestion && (
           <>
-            <QuizProgress
-              currentQuestion={currentQuestionIndex + 1}
-              totalQuestions={questions.length}
-            />
+            <div className="flex justify-between items-center mb-4">
+              <QuizProgress
+                currentQuestion={currentQuestionIndex + 1}
+                totalQuestions={questions.length}
+              />
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={handleReturnHome}
+                className="flex items-center gap-1"
+              >
+                <Home size={16} className="text-k21-teal" />
+                <span>Voltar para página inicial</span>
+              </Button>
+            </div>
             <div className="bg-white rounded-lg p-5 shadow-md border border-gray-100">
               <QuizScoreCounter correctCount={correctCount} incorrectCount={incorrectCount} />
               <QuizQuestion
