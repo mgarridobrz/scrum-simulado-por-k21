@@ -228,8 +228,8 @@ export const getCurrentQuarter = (): string => {
   return `${year}Q${quarter}`;
 };
 
-// Get Top 10 performers for the current quarter
-export const getTopPerformersForQuarter = async (quarter?: string): Promise<{
+// Get Top 10 performers for the current quarter and specified quiz size
+export const getTopPerformersForQuarter = async (quarter?: string, quizSize?: number): Promise<{
   performers: { name: string; score: number }[];
 }> => {
   try {
@@ -238,12 +238,19 @@ export const getTopPerformersForQuarter = async (quarter?: string): Promise<{
     const startDate = new Date(parseInt(year), (parseInt(quarterNum) - 1) * 3, 1);
     const endDate = new Date(parseInt(year), parseInt(quarterNum) * 3, 0);
     
-    const { data, error } = await supabase
+    let query = supabase
       .from('quiz_attempts')
       .select('id, name, score')
       .gte('created_at', startDate.toISOString())
       .lte('created_at', endDate.toISOString())
-      .not('score', 'is', null)
+      .not('score', 'is', null);
+    
+    // Filter by quiz size if provided
+    if (quizSize) {
+      query = query.eq('quiz_size', quizSize);
+    }
+    
+    const { data, error } = await query
       .order('score', { ascending: false })
       .limit(10);
     

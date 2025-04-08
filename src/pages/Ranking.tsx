@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -9,8 +10,15 @@ import { useToast } from '@/hooks/use-toast';
 import Header from '@/components/Header';
 import { ArrowLeft, Medal, RefreshCw, Trophy } from 'lucide-react';
 
+interface RankingData {
+  name: string;
+  score: number;
+}
+
 const Ranking = () => {
-  const [topPerformers, setTopPerformers] = useState<{ name: string; score: number }[]>([]);
+  const [topPerformers10, setTopPerformers10] = useState<RankingData[]>([]);
+  const [topPerformers25, setTopPerformers25] = useState<RankingData[]>([]);
+  const [topPerformers50, setTopPerformers50] = useState<RankingData[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [currentQuarter, setCurrentQuarter] = useState(getCurrentQuarter());
   const { toast } = useToast();
@@ -18,8 +26,14 @@ const Ranking = () => {
   const loadTopPerformers = async (quarter = currentQuarter) => {
     setIsLoading(true);
     try {
-      const { performers } = await getTopPerformersForQuarter(quarter);
-      setTopPerformers(performers);
+      // Fetch rankings for each quiz size separately
+      const { performers: performers10 } = await getTopPerformersForQuarter(quarter, 10);
+      const { performers: performers25 } = await getTopPerformersForQuarter(quarter, 25);
+      const { performers: performers50 } = await getTopPerformersForQuarter(quarter, 50);
+      
+      setTopPerformers10(performers10);
+      setTopPerformers25(performers25);
+      setTopPerformers50(performers50);
     } catch (error) {
       console.error("Error loading top performers:", error);
       toast({
@@ -65,6 +79,66 @@ const Ranking = () => {
     
     return options;
   };
+
+  const renderRankingTable = (performers: RankingData[], title: string) => (
+    <Card className="bg-white shadow-md mb-8">
+      <CardHeader className="pb-1">
+        <div className="flex items-center justify-between">
+          <div>
+            <CardTitle className="text-xl flex items-center gap-2">
+              <Trophy className="h-5 w-5 text-amber-500" />
+              {title}
+            </CardTitle>
+            <CardDescription>
+              Os 10 melhores resultados do {formatQuarter(currentQuarter)}
+            </CardDescription>
+          </div>
+        </div>
+      </CardHeader>
+      <CardContent>
+        {isLoading ? (
+          <div className="flex justify-center p-6">
+            <RefreshCw className="h-8 w-8 animate-spin text-muted-foreground" />
+          </div>
+        ) : performers.length > 0 ? (
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="w-16 text-center">#</TableHead>
+                <TableHead>Nome</TableHead>
+                <TableHead className="text-right">Pontuação</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {performers.map((performer, index) => (
+                <TableRow key={index}>
+                  <TableCell className="text-center">
+                    {index === 0 ? (
+                      <Medal className="h-5 w-5 text-amber-500 inline" />
+                    ) : index === 1 ? (
+                      <Medal className="h-5 w-5 text-gray-400 inline" />
+                    ) : index === 2 ? (
+                      <Medal className="h-5 w-5 text-amber-700 inline" />
+                    ) : (
+                      index + 1
+                    )}
+                  </TableCell>
+                  <TableCell className="font-medium">{performer.name}</TableCell>
+                  <TableCell className="text-right font-semibold">
+                    {performer.score}%
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        ) : (
+          <div className="text-center py-8 text-muted-foreground">
+            Nenhum resultado encontrado para este trimestre.
+          </div>
+        )}
+      </CardContent>
+    </Card>
+  );
   
   const quarterOptions = generateQuarterOptions();
   
@@ -108,67 +182,14 @@ const Ranking = () => {
           </div>
         </div>
         
-        <Card className="bg-white shadow-md">
-          <CardHeader className="pb-1">
-            <div className="flex items-center justify-between">
-              <div>
-                <CardTitle className="text-xl flex items-center gap-2">
-                  <Trophy className="h-5 w-5 text-amber-500" />
-                  Ranking do Simulado
-                </CardTitle>
-                <CardDescription>
-                  Os 10 melhores resultados do {formatQuarter(currentQuarter)}
-                </CardDescription>
-              </div>
-            </div>
-          </CardHeader>
-          <CardContent>
-            {isLoading ? (
-              <div className="flex justify-center p-6">
-                <RefreshCw className="h-8 w-8 animate-spin text-muted-foreground" />
-              </div>
-            ) : topPerformers.length > 0 ? (
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead className="w-16 text-center">#</TableHead>
-                    <TableHead>Nome</TableHead>
-                    <TableHead className="text-right">Pontuação</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {topPerformers.map((performer, index) => (
-                    <TableRow key={index}>
-                      <TableCell className="text-center">
-                        {index === 0 ? (
-                          <Medal className="h-5 w-5 text-amber-500 inline" />
-                        ) : index === 1 ? (
-                          <Medal className="h-5 w-5 text-gray-400 inline" />
-                        ) : index === 2 ? (
-                          <Medal className="h-5 w-5 text-amber-700 inline" />
-                        ) : (
-                          index + 1
-                        )}
-                      </TableCell>
-                      <TableCell className="font-medium">{performer.name}</TableCell>
-                      <TableCell className="text-right font-semibold">
-                        {performer.score}%
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            ) : (
-              <div className="text-center py-8 text-muted-foreground">
-                Nenhum resultado encontrado para este trimestre.
-              </div>
-            )}
-            
-            <div className="mt-4 text-xs text-muted-foreground text-center">
-              Os rankings são resetados a cada novo trimestre.
-            </div>
-          </CardContent>
-        </Card>
+        {/* Render three separate ranking tables */}
+        {renderRankingTable(topPerformers10, "Ranking do Simulado - 10 Questões")}
+        {renderRankingTable(topPerformers25, "Ranking do Simulado - 25 Questões")}
+        {renderRankingTable(topPerformers50, "Ranking do Simulado - 50 Questões")}
+        
+        <div className="text-xs text-muted-foreground text-center">
+          Os rankings são resetados a cada novo trimestre.
+        </div>
       </div>
     </div>
   );
