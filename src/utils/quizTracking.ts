@@ -382,7 +382,7 @@ export const getRandomQuestionsWithBalance = async (count: number): Promise<Ques
     let remainder = count % totalCategories;
     
     // Select questions with balance
-    const selectedQuestions: QuestionWithCategory[] = [];
+    let selectedQuestions: QuestionWithCategory[] = [];
     
     categories.forEach(category => {
       // Determine how many questions to take from this category
@@ -395,12 +395,36 @@ export const getRandomQuestionsWithBalance = async (count: number): Promise<Ques
       selectedQuestions.push(...categoryQuestions.slice(0, actualQuestionsToTake));
     });
     
+    // If we still don't have enough questions due to category imbalance,
+    // get additional questions from categories that have extras
+    if (selectedQuestions.length < count) {
+      const remaining = count - selectedQuestions.length;
+      console.log(`Need ${remaining} more questions to reach the requested count of ${count}`);
+      
+      // Create a pool of all remaining questions that weren't selected
+      const selectedIds = new Set(selectedQuestions.map(q => q.id));
+      const remainingQuestions = questions.filter(q => !selectedIds.has(q.id));
+      
+      // Shuffle the remaining questions
+      for (let i = remainingQuestions.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [remainingQuestions[i], remainingQuestions[j]] = [remainingQuestions[j], remainingQuestions[i]];
+      }
+      
+      // Add as many as needed to reach the requested count
+      const additionalQuestions = remainingQuestions.slice(0, remaining);
+      selectedQuestions = [...selectedQuestions, ...additionalQuestions];
+      
+      console.log(`Added ${additionalQuestions.length} additional questions to reach ${selectedQuestions.length} total`);
+    }
+    
     // Shuffle the final selection to randomize the order
     for (let i = selectedQuestions.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       [selectedQuestions[i], selectedQuestions[j]] = [selectedQuestions[j], selectedQuestions[i]];
     }
     
+    console.log(`Returning ${selectedQuestions.length} questions out of ${count} requested`);
     return selectedQuestions;
   } catch (error) {
     console.error("Error getting random questions:", error);
