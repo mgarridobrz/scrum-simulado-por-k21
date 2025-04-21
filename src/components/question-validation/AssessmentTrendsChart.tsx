@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/chart";
 import { LineChart, Line, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer, CartesianGrid } from "recharts";
 import { supabase } from "@/integrations/supabase/client";
-import { CalendarDays, CalendarWeek } from "lucide-react";
+import { CalendarDays, Calendar } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { addDays, subDays, subWeeks, format } from "date-fns";
 
@@ -143,7 +143,7 @@ const AssessmentTrendsChart = () => {
         </div>
         <div>
           <h4 className="flex items-center gap-2 text-md font-medium mb-2">
-            <CalendarWeek size={18} className="text-yellow-600" />
+            <Calendar size={18} className="text-yellow-600" />
             Últimas 30 semanas
           </h4>
           <div style={{ width: "100%", height: 250 }}>
