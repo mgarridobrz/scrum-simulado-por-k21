@@ -8,6 +8,7 @@ import QuestionEditor from '@/components/question-validation/QuestionEditor';
 import NavigationBar from '@/components/question-validation/NavigationBar';
 import AttemptsList from '@/components/question-validation/AttemptsList';
 import GlobalStatsCounter from '@/components/question-validation/GlobalStatsCounter';
+import AssessmentTrendsChart from "@/components/question-validation/AssessmentTrendsChart";
 import { getTrackedQuizAttempts } from '@/utils/quizTracking';
 import type { QuizAttempt } from '@/data/types';
 
@@ -141,6 +142,7 @@ const QuestionValidation = () => {
           />
         </>
       )}
+      <AssessmentTrendsChart />
     </div>
   );
 };
