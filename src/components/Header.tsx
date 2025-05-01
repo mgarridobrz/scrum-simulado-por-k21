@@ -1,16 +1,46 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Trophy, ExternalLink, MessageCircle } from 'lucide-react';
+import { Trophy, ExternalLink, MessageCircle, Share2, Linkedin, Twitter, Instagram } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
+import { toast } from '@/components/ui/use-toast';
 
 const Header = () => {
+  const handleShare = (platform: string) => {
+    const url = window.location.href;
+    const text = "Acabei de testar meu conhecimento em Scrum com o simulado CSM da K21! Confira:";
+    
+    let shareUrl = '';
+    
+    switch (platform) {
+      case 'linkedin':
+        shareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`;
+        break;
+      case 'twitter':
+        shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`;
+        break;
+      case 'instagram':
+        // Instagram não tem API direta de compartilhamento, usamos apenas um toast informativo
+        toast({
+          title: "Compartilhar no Instagram",
+          description: "Copie o link e compartilhe em sua história do Instagram!",
+        });
+        navigator.clipboard.writeText(url);
+        return;
+    }
+    
+    if (shareUrl) {
+      window.open(shareUrl, '_blank', 'noopener,noreferrer');
+    }
+  };
+
   return (
     <header className="bg-white border-b">
       <div className="container mx-auto px-4 py-4 flex justify-between items-center">
@@ -34,6 +64,30 @@ const Header = () => {
             <span>Fale com a K21</span>
           </a>
           
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" size="sm" className="flex items-center gap-1">
+                <Share2 size={16} />
+                <span className="hidden sm:inline">Curtiu o simulado? Então compartilhe!</span>
+                <span className="sm:hidden">Compartilhe!</span>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-56">
+              <DropdownMenuItem onClick={() => handleShare('linkedin')} className="cursor-pointer">
+                <Linkedin size={16} className="mr-2 text-blue-600" />
+                Compartilhar no LinkedIn
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => handleShare('twitter')} className="cursor-pointer">
+                <Twitter size={16} className="mr-2 text-sky-500" />
+                Compartilhar no Twitter
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => handleShare('instagram')} className="cursor-pointer">
+                <Instagram size={16} className="mr-2 text-pink-600" />
+                Compartilhar no Instagram
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline" size="sm">
