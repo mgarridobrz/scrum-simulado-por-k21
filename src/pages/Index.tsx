@@ -29,6 +29,8 @@ const Index = () => {
   const [correctCount, setCorrectCount] = useState(0);
   const [incorrectCount, setIncorrectCount] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
+  const [startTime, setStartTime] = useState<number | null>(null);
+  const [completionTime, setCompletionTime] = useState<number | null>(null);
 
   useEffect(() => {
     const loadQuestionCount = async () => {
@@ -97,6 +99,10 @@ const Index = () => {
       setCorrectCount(0);
       setIncorrectCount(0);
       setStatus('playing');
+      
+      // Start tracking time when quiz begins
+      setStartTime(Date.now());
+      setCompletionTime(null);
     } catch (error) {
       console.error("Error getting questions:", error);
     } finally {
@@ -146,6 +152,8 @@ const Index = () => {
     setCorrectCount(0);
     setIncorrectCount(0);
     setUserAnswers({});
+    setStartTime(null);
+    setCompletionTime(null);
   };
 
   const currentQuestion = questions[currentQuestionIndex];
@@ -159,6 +167,15 @@ const Index = () => {
   const correctAnswersCount = showResult
     ? questions.filter(question => userAnswers[question.id] === question.correctAnswer).length
     : correctCount;
+
+  useEffect(() => {
+    if (status === 'finished' && startTime) {
+      const endTime = Date.now();
+      const elapsedSeconds = Math.floor((endTime - startTime) / 1000);
+      setCompletionTime(elapsedSeconds);
+      console.log(`Quiz completed in ${elapsedSeconds} seconds`);
+    }
+  }, [status, startTime]);
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
@@ -219,6 +236,7 @@ const Index = () => {
             questions={questions}
             userAnswers={userAnswers}
             userData={userData}
+            completionTime={completionTime}
           />
         )}
       </div>

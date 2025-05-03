@@ -1,4 +1,3 @@
-
 import { supabase } from "@/integrations/supabase/client";
 import type { Database } from "@/integrations/supabase/types";
 import type { Json } from "@/integrations/supabase/types";
@@ -20,7 +19,8 @@ export const saveQuizAttemptToSupabase = async (
   email: string,
   size: number,
   score?: number,
-  questionsData?: object
+  questionsData?: object,
+  completionTime?: number
 ): Promise<boolean> => {
   try {
     const { data, error } = await supabase
@@ -30,7 +30,8 @@ export const saveQuizAttemptToSupabase = async (
         email: email || null,
         quiz_size: size,
         score: score || null,
-        questions_data: questionsData as Json || null
+        questions_data: questionsData as Json || null,
+        completion_time_seconds: completionTime || null
       });
     
     if (error) {
@@ -230,7 +231,7 @@ export const getCurrentQuarter = (): string => {
 
 // Get Top 10 performers for the current quarter and specified quiz size
 export const getTopPerformersForQuarter = async (quarter?: string, quizSize?: number): Promise<{
-  performers: { name: string; score: number }[];
+  performers: { name: string; score: number; completionTime?: number }[];
 }> => {
   try {
     const currentQuarter = quarter || getCurrentQuarter();
@@ -240,7 +241,7 @@ export const getTopPerformersForQuarter = async (quarter?: string, quizSize?: nu
     
     let query = supabase
       .from('quiz_attempts')
-      .select('id, name, score')
+      .select('id, name, score, completion_time_seconds')
       .gte('created_at', startDate.toISOString())
       .lte('created_at', endDate.toISOString())
       .not('score', 'is', null);
@@ -252,6 +253,7 @@ export const getTopPerformersForQuarter = async (quarter?: string, quizSize?: nu
     
     const { data, error } = await query
       .order('score', { ascending: false })
+      .order('completion_time_seconds', { ascending: true, nullsLast: true })
       .limit(10);
     
     if (error) {
@@ -262,7 +264,8 @@ export const getTopPerformersForQuarter = async (quarter?: string, quizSize?: nu
     return { 
       performers: data.map(item => ({ 
         name: item.name, 
-        score: item.score || 0 
+        score: item.score || 0,
+        completionTime: item.completion_time_seconds 
       })) 
     };
   } catch (error) {
@@ -277,10 +280,11 @@ export const trackQuizAttempt = async (
   email: string,
   size: number,
   score?: number,
-  questionsData?: object
+  questionsData?: object,
+  completionTime?: number
 ): Promise<void> => {
   // Save to Supabase
-  await saveQuizAttemptToSupabase(name, email, size, score, questionsData);
+  await saveQuizAttemptToSupabase(name, email, size, score, questionsData, completionTime);
 };
 
 // Function to get all tracked quiz attempts with filtering and pagination

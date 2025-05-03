@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -23,6 +24,7 @@ interface QuizResultProps {
   questions: QuestionWithCategory[];
   userAnswers: Record<number, string>;
   userData?: { name: string; email: string } | null;
+  completionTime?: number | null;
 }
 
 const QuizResult = ({
@@ -33,6 +35,7 @@ const QuizResult = ({
   questions,
   userAnswers,
   userData,
+  completionTime,
 }: QuizResultProps) => {
   const [showQuestions, setShowQuestions] = useState(false);
   const [tracked, setTracked] = useState(false);
@@ -49,6 +52,16 @@ const QuizResult = ({
     month: 'long',
     day: 'numeric',
   });
+  
+  // Format completion time
+  const formatTime = (seconds: number | null | undefined): string => {
+    if (!seconds) return 'N/A';
+    
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+    
+    return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+  };
 
   // Prepare questions data for saving
   const prepareQuestionsData = () => {
@@ -72,7 +85,8 @@ const QuizResult = ({
         userData.email || '',
         totalQuestions,
         scorePercentage,
-        questionsData
+        questionsData,
+        completionTime
       ).then(() => {
         setTracked(true);
         toast({
@@ -88,7 +102,7 @@ const QuizResult = ({
         });
       });
     }
-  }, [userData, totalQuestions, scorePercentage, tracked, toast, userAnswers, questions]);
+  }, [userData, totalQuestions, scorePercentage, tracked, toast, userAnswers, questions, completionTime]);
 
   return (
     <div className="max-w-3xl mx-auto w-full animate-fade-in">
@@ -128,6 +142,13 @@ const QuizResult = ({
             <div className="text-xs text-gray-500 mt-2">
               Mínimo para aprovação: {passPercentage}%
             </div>
+            
+            {completionTime && (
+              <div className="flex items-center gap-1 mt-3 text-sm text-gray-600">
+                <Clock size={14} className="text-gray-500" />
+                <span>Tempo de conclusão: {formatTime(completionTime)}</span>
+              </div>
+            )}
           </div>
 
           {/* Category breakdown */}

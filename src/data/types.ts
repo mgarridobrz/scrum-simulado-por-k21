@@ -21,4 +21,5 @@ export interface QuizAttempt {
   score: number | null;
   created_at: string;
   questions_data?: any;
+  completion_time_seconds?: number | null;
 }

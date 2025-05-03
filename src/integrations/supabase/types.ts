@@ -11,6 +11,7 @@ export type Database = {
     Tables: {
       quiz_attempts: {
         Row: {
+          completion_time_seconds: number | null
           created_at: string
           email: string | null
           id: string
@@ -20,6 +21,7 @@ export type Database = {
           score: number | null
         }
         Insert: {
+          completion_time_seconds?: number | null
           created_at?: string
           email?: string | null
           id?: string
@@ -29,6 +31,7 @@ export type Database = {
           score?: number | null
         }
         Update: {
+          completion_time_seconds?: number | null
           created_at?: string
           email?: string | null
           id?: string
@@ -100,7 +103,14 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      get_top_performers_for_quarter: {
+        Args: { quarter: string; quiz_size: number }
+        Returns: {
+          name: string
+          score: number
+          completion_time_seconds: number
+        }[]
+      }
     }
     Enums: {
       [_ in never]: never
