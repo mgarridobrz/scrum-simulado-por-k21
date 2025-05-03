@@ -1,7 +1,7 @@
 
 import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
-import { QuestionWithCategory } from '@/data/quizData';
+import { QuestionWithCategory } from '@/data/types';
 
 interface CategoryStat {
   category: string;
@@ -51,7 +51,7 @@ export const generatePDF = (
     
     // Add score summary
     const scorePercentage = Math.round((correctAnswers / totalQuestions) * 100);
-    const passPercentage = 85;
+    const passPercentage = 74; // Corrigido de 85% para 74%
     const passed = scorePercentage >= passPercentage;
     
     doc.setFontSize(14);
@@ -61,7 +61,6 @@ export const generatePDF = (
     doc.setFontSize(12);
     doc.text(`Questões corretas: ${correctAnswers} de ${totalQuestions} (${scorePercentage}%)`, 14, 68);
     
-    // Fix: Use single color values properly with ternary
     if (passed) {
       doc.setTextColor(46, 125, 50); // Green color for pass
     } else {
@@ -89,56 +88,6 @@ export const generatePDF = (
       body: categoryData,
       theme: 'striped',
       headStyles: { fillColor: [41, 128, 185] },
-    });
-    
-    // Add question details
-    doc.addPage();
-    doc.setFontSize(14);
-    doc.text('Detalhes das Questões', 14, 20);
-    
-    let yPosition = 30;
-    const lineHeight = 7;
-    const pageHeight = doc.internal.pageSize.getHeight();
-    
-    questions.forEach((question, index) => {
-      const isCorrect = userAnswers[question.id] === question.correctAnswer;
-      const remainingSpace = pageHeight - yPosition;
-      
-      // Check if we need a new page
-      if (remainingSpace < 60) {
-        doc.addPage();
-        yPosition = 20;
-      }
-      
-      // Question header
-      doc.setFontSize(11);
-      doc.setTextColor(0, 0, 0);
-      doc.text(`Questão ${index + 1}: ${question.category}`, 14, yPosition);
-      yPosition += lineHeight;
-      
-      // Question text
-      doc.setFontSize(10);
-      doc.text(question.question, 14, yPosition);
-      yPosition += lineHeight * 2;
-      
-      // Fix: Use single color values properly with if/else instead of ternary
-      if (isCorrect) {
-        doc.setTextColor(46, 125, 50); // Green color
-      } else {
-        doc.setTextColor(211, 47, 47); // Red color
-      }
-      
-      doc.text(`Status: ${isCorrect ? 'CORRETA' : 'INCORRETA'}`, 14, yPosition);
-      doc.setTextColor(0, 0, 0);
-      yPosition += lineHeight * 1.5;
-      
-      // Answer details
-      doc.setFontSize(9);
-      doc.text(`Sua resposta: ${question.options.find(o => o.id === userAnswers[question.id])?.text || 'Não respondida'}`, 14, yPosition);
-      yPosition += lineHeight;
-      
-      doc.text(`Resposta correta: ${question.options.find(o => o.id === question.correctAnswer)?.text}`, 14, yPosition);
-      yPosition += lineHeight * 2;
     });
     
     // Save the PDF
