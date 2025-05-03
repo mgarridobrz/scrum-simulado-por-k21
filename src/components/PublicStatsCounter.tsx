@@ -4,17 +4,10 @@ import { getQuizAttemptStats } from '@/utils/quizTracking';
 import { Card } from '@/components/ui/card';
 import { Calculator, Users, Award } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-
-interface StatsData {
-  totalAttempts: number;
-  size10Count: number;
-  size25Count: number;
-  size50Count: number;
-  averageLastFifty: number;
-}
+import type { QuizStats } from '@/data/types';
 
 const PublicStatsCounter = () => {
-  const [stats, setStats] = useState<StatsData | null>(null);
+  const [stats, setStats] = useState<QuizStats | null>(null);
   const { toast } = useToast();
   
   useEffect(() => {

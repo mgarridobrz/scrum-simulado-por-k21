@@ -1,7 +1,7 @@
 import { supabase } from "@/integrations/supabase/client";
 import type { Database } from "@/integrations/supabase/types";
 import type { Json } from "@/integrations/supabase/types";
-import { QuestionWithCategory, QuizAttempt, QuizCategory } from "@/data/types";
+import { QuestionWithCategory, QuizAttempt, QuizCategory, QuizStats } from "@/data/types";
 
 interface AttemptFilters {
   name?: string;
@@ -69,14 +69,18 @@ export const deleteQuizAttempt = async (id: string): Promise<boolean> => {
   }
 };
 
+// Format seconds into mm:ss format
+export const formatTimeFromSeconds = (seconds: number | null | undefined): string => {
+  if (!seconds) return "-";
+  
+  const minutes = Math.floor(seconds / 60);
+  const remainingSeconds = seconds % 60;
+  
+  return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+};
+
 // Get statistics about quiz attempts
-export const getQuizAttemptStats = async (): Promise<{
-  totalAttempts: number;
-  size10Count: number;
-  size25Count: number;
-  size50Count: number;
-  averageLastFifty: number;
-}> => {
+export const getQuizAttemptStats = async (): Promise<QuizStats> => {
   try {
     // Get total count of attempts
     const { count: totalCount, error: totalError } = await supabase
@@ -85,7 +89,12 @@ export const getQuizAttemptStats = async (): Promise<{
     
     if (totalError) {
       console.error("Error counting attempts:", totalError);
-      return { totalAttempts: 0, size10Count: 0, size25Count: 0, size50Count: 0, averageLastFifty: 0 };
+      return { 
+        totalAttempts: 0, size10Count: 0, size25Count: 0, size50Count: 0, 
+        averageLastFifty: 0, averageTime10: null, averageTime25: null, 
+        averageTime50: null, averageScore10: null, averageScore25: null, 
+        averageScore50: null 
+      };
     }
     
     // Get count of attempts by quiz size
@@ -96,11 +105,10 @@ export const getQuizAttemptStats = async (): Promise<{
     if (sizeError) {
       console.error("Error counting by size:", sizeError);
       return { 
-        totalAttempts: totalCount || 0, 
-        size10Count: 0, 
-        size25Count: 0, 
-        size50Count: 0, 
-        averageLastFifty: 0 
+        totalAttempts: totalCount || 0, size10Count: 0, size25Count: 0, size50Count: 0, 
+        averageLastFifty: 0, averageTime10: null, averageTime25: null, 
+        averageTime50: null, averageScore10: null, averageScore25: null, 
+        averageScore50: null 
       };
     }
     
@@ -119,30 +127,94 @@ export const getQuizAttemptStats = async (): Promise<{
     if (lastFiftyError) {
       console.error("Error getting last fifty:", lastFiftyError);
       return { 
-        totalAttempts: totalCount || 0, 
-        size10Count, 
-        size25Count, 
-        size50Count, 
-        averageLastFifty: 0 
+        totalAttempts: totalCount || 0, size10Count, size25Count, size50Count, 
+        averageLastFifty: 0, averageTime10: null, averageTime25: null, 
+        averageTime50: null, averageScore10: null, averageScore25: null, 
+        averageScore50: null 
       };
     }
     
-    // Calculate average score
+    // Calculate average score for all attempts
     const validScores = lastFifty?.filter(item => item.score !== null) || [];
     const averageLastFifty = validScores.length > 0
       ? validScores.reduce((acc, curr) => acc + (curr.score || 0), 0) / validScores.length
       : 0;
+    
+    // Get stats for size 10
+    const { data: stats10, error: error10 } = await supabase
+      .from('quiz_attempts')
+      .select('score, completion_time_seconds')
+      .eq('quiz_size', 10)
+      .order('created_at', { ascending: false })
+      .limit(50);
+      
+    // Get stats for size 25
+    const { data: stats25, error: error25 } = await supabase
+      .from('quiz_attempts')
+      .select('score, completion_time_seconds')
+      .eq('quiz_size', 25)
+      .order('created_at', { ascending: false })
+      .limit(50);
+      
+    // Get stats for size 50
+    const { data: stats50, error: error50 } = await supabase
+      .from('quiz_attempts')
+      .select('score, completion_time_seconds')
+      .eq('quiz_size', 50)
+      .order('created_at', { ascending: false })
+      .limit(50);
+      
+    // Calculate stats for size 10
+    const validScores10 = stats10?.filter(item => item.score !== null) || [];
+    const validTimes10 = stats10?.filter(item => item.completion_time_seconds !== null) || [];
+    const averageScore10 = validScores10.length > 0
+      ? validScores10.reduce((acc, curr) => acc + (curr.score || 0), 0) / validScores10.length
+      : null;
+    const averageTime10 = validTimes10.length > 0
+      ? validTimes10.reduce((acc, curr) => acc + (curr.completion_time_seconds || 0), 0) / validTimes10.length
+      : null;
+      
+    // Calculate stats for size 25
+    const validScores25 = stats25?.filter(item => item.score !== null) || [];
+    const validTimes25 = stats25?.filter(item => item.completion_time_seconds !== null) || [];
+    const averageScore25 = validScores25.length > 0
+      ? validScores25.reduce((acc, curr) => acc + (curr.score || 0), 0) / validScores25.length
+      : null;
+    const averageTime25 = validTimes25.length > 0
+      ? validTimes25.reduce((acc, curr) => acc + (curr.completion_time_seconds || 0), 0) / validTimes25.length
+      : null;
+      
+    // Calculate stats for size 50
+    const validScores50 = stats50?.filter(item => item.score !== null) || [];
+    const validTimes50 = stats50?.filter(item => item.completion_time_seconds !== null) || [];
+    const averageScore50 = validScores50.length > 0
+      ? validScores50.reduce((acc, curr) => acc + (curr.score || 0), 0) / validScores50.length
+      : null;
+    const averageTime50 = validTimes50.length > 0
+      ? validTimes50.reduce((acc, curr) => acc + (curr.completion_time_seconds || 0), 0) / validTimes50.length
+      : null;
     
     return {
       totalAttempts: totalCount || 0,
       size10Count,
       size25Count,
       size50Count,
-      averageLastFifty: Math.round(averageLastFifty)
+      averageLastFifty: Math.round(averageLastFifty),
+      averageScore10: averageScore10 !== null ? Math.round(averageScore10) : null,
+      averageScore25: averageScore25 !== null ? Math.round(averageScore25) : null,
+      averageScore50: averageScore50 !== null ? Math.round(averageScore50) : null,
+      averageTime10,
+      averageTime25,
+      averageTime50
     };
   } catch (error) {
     console.error("Error getting stats:", error);
-    return { totalAttempts: 0, size10Count: 0, size25Count: 0, size50Count: 0, averageLastFifty: 0 };
+    return { 
+      totalAttempts: 0, size10Count: 0, size25Count: 0, size50Count: 0, 
+      averageLastFifty: 0, averageTime10: null, averageTime25: null, 
+      averageTime50: null, averageScore10: null, averageScore25: null, 
+      averageScore50: null 
+    };
   }
 };
 

@@ -1,22 +1,15 @@
 
 import React, { useEffect, useState } from 'react';
-import { getQuizAttemptStats } from '@/utils/quizTracking';
+import { getQuizAttemptStats, formatTimeFromSeconds } from '@/utils/quizTracking';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Calculator, RefreshCw, Users, Award, Clock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { Separator } from '@/components/ui/separator';
-
-interface StatsData {
-  totalAttempts: number;
-  size10Count: number;
-  size25Count: number;
-  size50Count: number;
-  averageLastFifty: number;
-}
+import type { QuizStats } from '@/data/types';
 
 const GlobalStatsCounter = () => {
-  const [stats, setStats] = useState<StatsData | null>(null);
+  const [stats, setStats] = useState<QuizStats | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const { toast } = useToast();
   
@@ -79,6 +72,78 @@ const GlobalStatsCounter = () => {
             <div className="p-2 bg-gray-50 rounded text-center">
               <span className="block text-xs text-gray-500 mb-1">50 questões</span>
               <span className="block font-semibold">{stats?.size50Count || 0}</span>
+            </div>
+          </div>
+          
+          <Separator />
+          
+          {/* Stats by Quiz Size */}
+          <div className="space-y-4">
+            <h4 className="text-sm font-medium text-gray-500 mb-2">Estatísticas por tamanho do simulado</h4>
+            
+            <div className="grid grid-cols-3 gap-3">
+              {/* 10 Questions */}
+              <div className="p-3 bg-gray-50 rounded-lg">
+                <div className="text-center">
+                  <span className="block font-semibold text-sm mb-2">10 Questões</span>
+                  <div className="flex items-center justify-center mb-2">
+                    <Award className="h-4 w-4 text-amber-500 mr-1.5" />
+                    <span className="text-sm text-gray-500">Média:</span>
+                  </div>
+                  <span className="block text-lg font-bold text-amber-500">
+                    {stats?.averageScore10 !== null ? `${stats?.averageScore10}%` : "-"}
+                  </span>
+                  <div className="flex items-center justify-center mt-2 mb-1">
+                    <Clock className="h-4 w-4 text-indigo-500 mr-1.5" />
+                    <span className="text-sm text-gray-500">Tempo:</span>
+                  </div>
+                  <span className="block text-lg font-bold text-indigo-500">
+                    {formatTimeFromSeconds(stats?.averageTime10 || null)}
+                  </span>
+                </div>
+              </div>
+              
+              {/* 25 Questions */}
+              <div className="p-3 bg-gray-50 rounded-lg">
+                <div className="text-center">
+                  <span className="block font-semibold text-sm mb-2">25 Questões</span>
+                  <div className="flex items-center justify-center mb-2">
+                    <Award className="h-4 w-4 text-amber-500 mr-1.5" />
+                    <span className="text-sm text-gray-500">Média:</span>
+                  </div>
+                  <span className="block text-lg font-bold text-amber-500">
+                    {stats?.averageScore25 !== null ? `${stats?.averageScore25}%` : "-"}
+                  </span>
+                  <div className="flex items-center justify-center mt-2 mb-1">
+                    <Clock className="h-4 w-4 text-indigo-500 mr-1.5" />
+                    <span className="text-sm text-gray-500">Tempo:</span>
+                  </div>
+                  <span className="block text-lg font-bold text-indigo-500">
+                    {formatTimeFromSeconds(stats?.averageTime25 || null)}
+                  </span>
+                </div>
+              </div>
+              
+              {/* 50 Questions */}
+              <div className="p-3 bg-gray-50 rounded-lg">
+                <div className="text-center">
+                  <span className="block font-semibold text-sm mb-2">50 Questões</span>
+                  <div className="flex items-center justify-center mb-2">
+                    <Award className="h-4 w-4 text-amber-500 mr-1.5" />
+                    <span className="text-sm text-gray-500">Média:</span>
+                  </div>
+                  <span className="block text-lg font-bold text-amber-500">
+                    {stats?.averageScore50 !== null ? `${stats?.averageScore50}%` : "-"}
+                  </span>
+                  <div className="flex items-center justify-center mt-2 mb-1">
+                    <Clock className="h-4 w-4 text-indigo-500 mr-1.5" />
+                    <span className="text-sm text-gray-500">Tempo:</span>
+                  </div>
+                  <span className="block text-lg font-bold text-indigo-500">
+                    {formatTimeFromSeconds(stats?.averageTime50 || null)}
+                  </span>
+                </div>
+              </div>
             </div>
           </div>
           

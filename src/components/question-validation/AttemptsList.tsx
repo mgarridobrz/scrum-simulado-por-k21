@@ -14,7 +14,8 @@ import {
   ChevronRight, 
   RefreshCw, 
   Trash2,
-  Calendar
+  Calendar,
+  Clock
 } from 'lucide-react';
 import {
   AlertDialog,
@@ -30,7 +31,7 @@ import {
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
-import { deleteQuizAttempt } from '@/utils/quizTracking';
+import { deleteQuizAttempt, formatTimeFromSeconds } from '@/utils/quizTracking';
 import type { QuizAttempt } from '@/data/types';
 
 interface AttemptsListProps {
@@ -126,6 +127,7 @@ const AttemptsList = ({
                   <TableHead>Nome</TableHead>
                   <TableHead className="text-center">Tamanho</TableHead>
                   <TableHead className="text-center">Pontuação</TableHead>
+                  <TableHead className="text-center">Tempo</TableHead>
                   <TableHead className="w-[100px]"></TableHead>
                 </TableRow>
               </TableHeader>
@@ -163,6 +165,16 @@ const AttemptsList = ({
                         >
                           {attempt.score}%
                         </Badge>
+                      ) : (
+                        <span className="text-muted-foreground">-</span>
+                      )}
+                    </TableCell>
+                    <TableCell className="text-center">
+                      {attempt.completion_time_seconds ? (
+                        <div className="flex items-center justify-center gap-1 text-muted-foreground text-sm">
+                          <Clock size={14} />
+                          {formatTimeFromSeconds(attempt.completion_time_seconds)}
+                        </div>
                       ) : (
                         <span className="text-muted-foreground">-</span>
                       )}

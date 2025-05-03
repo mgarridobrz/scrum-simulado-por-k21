@@ -23,3 +23,17 @@ export interface QuizAttempt {
   questions_data?: any;
   completion_time_seconds?: number | null;
 }
+
+export interface QuizStats {
+  totalAttempts: number;
+  size10Count: number;
+  size25Count: number;
+  size50Count: number;
+  averageLastFifty: number;
+  averageTime10: number | null;
+  averageTime25: number | null;
+  averageTime50: number | null;
+  averageScore10: number | null;
+  averageScore25: number | null;
+  averageScore50: number | null;
+}
