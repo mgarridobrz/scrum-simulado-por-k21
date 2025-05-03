@@ -253,7 +253,7 @@ export const getTopPerformersForQuarter = async (quarter?: string, quizSize?: nu
     
     const { data, error } = await query
       .order('score', { ascending: false })
-      .order('completion_time_seconds', { ascending: true, nullsLast: true })
+      .order('completion_time_seconds', { ascending: true })
       .limit(10);
     
     if (error) {
