@@ -123,11 +123,10 @@ export const formatTimeFromSeconds = (seconds: number | null | undefined): strin
 // Get statistics about quiz attempts
 export const getQuizAttemptStats = async (): Promise<QuizStats> => {
   try {
-    // Get total count of attempts - only count complete attempts with completion time
+    // Get total count of attempts - include all attempts, even those without completion time
     const { count: totalCount, error: totalError } = await supabase
       .from('quiz_attempts')
-      .select('*', { count: 'exact', head: true })
-      .not('completion_time_seconds', 'is', null);
+      .select('*', { count: 'exact', head: true });
     
     if (totalError) {
       console.error("Error counting attempts:", totalError);
@@ -139,11 +138,10 @@ export const getQuizAttemptStats = async (): Promise<QuizStats> => {
       };
     }
     
-    // Get count of attempts by quiz size (only complete attempts)
+    // Get count of attempts by quiz size (include all attempts)
     const { data: sizeCounts, error: sizeError } = await supabase
       .from('quiz_attempts')
-      .select('quiz_size')
-      .not('completion_time_seconds', 'is', null);
+      .select('quiz_size');
     
     if (sizeError) {
       console.error("Error counting by size:", sizeError);
@@ -160,11 +158,11 @@ export const getQuizAttemptStats = async (): Promise<QuizStats> => {
     const size25Count = sizeCounts?.filter(item => item.quiz_size === 25).length || 0;
     const size50Count = sizeCounts?.filter(item => item.quiz_size === 50).length || 0;
     
-    // Get average score of last 50 attempts - only complete attempts
+    // Get average score of last 50 attempts - only include attempts with scores
     const { data: lastFifty, error: lastFiftyError } = await supabase
       .from('quiz_attempts')
       .select('score')
-      .not('completion_time_seconds', 'is', null)
+      .not('score', 'is', null)
       .order('created_at', { ascending: false })
       .limit(50);
     
@@ -184,28 +182,28 @@ export const getQuizAttemptStats = async (): Promise<QuizStats> => {
       ? validScores.reduce((acc, curr) => acc + (curr.score || 0), 0) / validScores.length
       : 0;
     
-    // Get stats for size 10 - removed the limit(50) that was causing the problem
+    // Get stats for size 10 - include all attempts with scores
     const { data: stats10, error: error10 } = await supabase
       .from('quiz_attempts')
       .select('score, completion_time_seconds')
       .eq('quiz_size', 10)
-      .not('completion_time_seconds', 'is', null)
+      .not('score', 'is', null)
       .order('created_at', { ascending: false });
       
-    // Get stats for size 25 - removed the limit(50) that was causing the problem
+    // Get stats for size 25 - include all attempts with scores
     const { data: stats25, error: error25 } = await supabase
       .from('quiz_attempts')
       .select('score, completion_time_seconds')
       .eq('quiz_size', 25)
-      .not('completion_time_seconds', 'is', null)
+      .not('score', 'is', null)
       .order('created_at', { ascending: false });
       
-    // Get stats for size 50 - removed the limit(50) that was causing the problem
+    // Get stats for size 50 - include all attempts with scores
     const { data: stats50, error: error50 } = await supabase
       .from('quiz_attempts')
       .select('score, completion_time_seconds')
       .eq('quiz_size', 50)
-      .not('completion_time_seconds', 'is', null)
+      .not('score', 'is', null)
       .order('created_at', { ascending: false });
       
     // Calculate stats for size 10 
@@ -285,8 +283,7 @@ export const fetchQuizAttemptsFromSupabase = async (filters: AttemptFilters = {}
     // Build the query - only get complete attempts
     let query = supabase
       .from('quiz_attempts')
-      .select('*', { count: 'exact' })
-      .not('completion_time_seconds', 'is', null);
+      .select('*', { count: 'exact' });
     
     // Apply filters if provided
     if (name) {
@@ -361,8 +358,7 @@ export const getTopPerformersForQuarter = async (quarter?: string, quizSize?: nu
       .select('id, name, score, completion_time_seconds')
       .gte('created_at', startDate.toISOString())
       .lte('created_at', endDate.toISOString())
-      .not('score', 'is', null)
-      .not('completion_time_seconds', 'is', null);
+      .not('score', 'is', null); // apenas retirar o filtro de time aqui
     
     // Filter by quiz size if provided
     if (quizSize) {

@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -90,24 +89,7 @@ const Ranking = () => {
     return options;
   };
   
-  // Find if there are ties in the ranking that are resolved by time
-  const hasTiebreakers = (performers: RankingData[]): { [index: number]: boolean } => {
-    const tiebreakers: { [index: number]: boolean } = {};
-    
-    for (let i = 1; i < performers.length; i++) {
-      if (performers[i].score === performers[i-1].score && 
-          performers[i].completionTime !== performers[i-1].completionTime) {
-        tiebreakers[i] = true;
-        tiebreakers[i-1] = true;
-      }
-    }
-    
-    return tiebreakers;
-  };
-
   const renderRankingTable = (performers: RankingData[], title: string) => {
-    const tiebreakers = hasTiebreakers(performers);
-    
     return (
       <Card className="bg-white shadow-md mb-8">
         <CardHeader className="pb-1">
@@ -156,14 +138,17 @@ const Ranking = () => {
                     <TableCell className="text-right font-semibold">
                       {performer.score}%
                     </TableCell>
-                    <TableCell className={`text-right ${tiebreakers[index] ? 'font-semibold text-green-600' : ''}`}>
+                    <TableCell className="text-right font-semibold text-green-600">
                       {performer.completionTime ? (
                         <div className="flex items-center justify-end gap-1">
-                          {tiebreakers[index] && <Clock size={14} className="text-green-600" />}
+                          <Clock size={14} className="text-green-600" />
                           {formatTime(performer.completionTime)}
                         </div>
                       ) : (
-                        '--:--'
+                        <div className="flex items-center justify-end gap-1">
+                          <Clock size={14} className="text-green-600" />
+                          {'--:--'}
+                        </div>
                       )}
                     </TableCell>
                   </TableRow>
