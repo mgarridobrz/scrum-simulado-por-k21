@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -77,8 +76,10 @@ const QuizResult = ({
 
   // Track the quiz attempt - only when we have the user data and completion time is available
   useEffect(() => {
-    // Só registra a tentativa quando temos dados do usuário E tempo de conclusão E ainda não registramos
+    // Only register attempt if we have user name, completion time, and haven't tracked it yet
     if (userData?.name && completionTime && !tracked) {
+      console.log(`Tracking quiz attempt with completion time: ${completionTime}s`);
+      
       const questionsData = prepareQuestionsData();
       
       trackQuizAttempt(
@@ -102,6 +103,8 @@ const QuizResult = ({
           variant: "destructive"
         });
       });
+    } else if (!completionTime) {
+      console.log("Not tracking attempt: missing completion time");
     }
   }, [userData, totalQuestions, scorePercentage, tracked, toast, userAnswers, questions, completionTime]);
 

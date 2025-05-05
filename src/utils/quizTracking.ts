@@ -13,6 +13,39 @@ interface AttemptFilters {
   quarter?: string; // For ranking by quarter
 }
 
+// Function to check if an attempt has been recently saved to prevent duplicates
+const checkRecentAttempt = async (
+  name: string,
+  email: string | null,
+  size: number,
+  minutesThreshold: number = 2
+): Promise<boolean> => {
+  try {
+    // Calculate time threshold (last X minutes)
+    const thresholdTime = new Date();
+    thresholdTime.setMinutes(thresholdTime.getMinutes() - minutesThreshold);
+    
+    const { data, error } = await supabase
+      .from('quiz_attempts')
+      .select('id')
+      .eq('name', name)
+      .eq('quiz_size', size)
+      .gte('created_at', thresholdTime.toISOString())
+      .limit(1);
+    
+    if (error) {
+      console.error("Error checking for recent attempts:", error);
+      return false; // If there's an error, assume no recent attempt (fail open)
+    }
+    
+    // If we found a recent attempt, return true (duplicate exists)
+    return data && data.length > 0;
+  } catch (error) {
+    console.error("Error checking for recent attempts:", error);
+    return false;
+  }
+};
+
 // Function to save quiz attempt to Supabase
 export const saveQuizAttemptToSupabase = async (
   name: string,
@@ -23,6 +56,14 @@ export const saveQuizAttemptToSupabase = async (
   completionTime?: number
 ): Promise<boolean> => {
   try {
+    // Check if this is likely a duplicate submission (within last 2 minutes)
+    const isDuplicate = await checkRecentAttempt(name, email || null, size);
+    
+    if (isDuplicate) {
+      console.warn("Possible duplicate attempt detected. Skipping save.");
+      return true; // Return true to prevent error messages to user
+    }
+    
     const { data, error } = await supabase
       .from('quiz_attempts')
       .insert({
@@ -82,10 +123,11 @@ export const formatTimeFromSeconds = (seconds: number | null | undefined): strin
 // Get statistics about quiz attempts
 export const getQuizAttemptStats = async (): Promise<QuizStats> => {
   try {
-    // Get total count of attempts
+    // Get total count of attempts - only count complete attempts with completion time
     const { count: totalCount, error: totalError } = await supabase
       .from('quiz_attempts')
-      .select('*', { count: 'exact', head: true });
+      .select('*', { count: 'exact', head: true })
+      .not('completion_time_seconds', 'is', null);
     
     if (totalError) {
       console.error("Error counting attempts:", totalError);
@@ -97,10 +139,11 @@ export const getQuizAttemptStats = async (): Promise<QuizStats> => {
       };
     }
     
-    // Get count of attempts by quiz size
+    // Get count of attempts by quiz size (only complete attempts)
     const { data: sizeCounts, error: sizeError } = await supabase
       .from('quiz_attempts')
-      .select('quiz_size');
+      .select('quiz_size')
+      .not('completion_time_seconds', 'is', null);
     
     if (sizeError) {
       console.error("Error counting by size:", sizeError);
@@ -117,10 +160,11 @@ export const getQuizAttemptStats = async (): Promise<QuizStats> => {
     const size25Count = sizeCounts?.filter(item => item.quiz_size === 25).length || 0;
     const size50Count = sizeCounts?.filter(item => item.quiz_size === 50).length || 0;
     
-    // Get average score of last 50 attempts
+    // Get average score of last 50 attempts - only complete attempts
     const { data: lastFifty, error: lastFiftyError } = await supabase
       .from('quiz_attempts')
       .select('score')
+      .not('completion_time_seconds', 'is', null)
       .order('created_at', { ascending: false })
       .limit(50);
     
@@ -145,6 +189,7 @@ export const getQuizAttemptStats = async (): Promise<QuizStats> => {
       .from('quiz_attempts')
       .select('score, completion_time_seconds')
       .eq('quiz_size', 10)
+      .not('completion_time_seconds', 'is', null)
       .order('created_at', { ascending: false })
       .limit(50);
       
@@ -153,6 +198,7 @@ export const getQuizAttemptStats = async (): Promise<QuizStats> => {
       .from('quiz_attempts')
       .select('score, completion_time_seconds')
       .eq('quiz_size', 25)
+      .not('completion_time_seconds', 'is', null)
       .order('created_at', { ascending: false })
       .limit(50);
       
@@ -161,10 +207,11 @@ export const getQuizAttemptStats = async (): Promise<QuizStats> => {
       .from('quiz_attempts')
       .select('score, completion_time_seconds')
       .eq('quiz_size', 50)
+      .not('completion_time_seconds', 'is', null)
       .order('created_at', { ascending: false })
       .limit(50);
       
-    // Calculate stats for size 10
+    // Calculate stats for size 10 
     const validScores10 = stats10?.filter(item => item.score !== null) || [];
     const validTimes10 = stats10?.filter(item => item.completion_time_seconds !== null) || [];
     const averageScore10 = validScores10.length > 0
@@ -238,10 +285,11 @@ export const fetchQuizAttemptsFromSupabase = async (filters: AttemptFilters = {}
     const from = (page - 1) * pageSize;
     const to = from + pageSize - 1;
     
-    // Build the query
+    // Build the query - only get complete attempts
     let query = supabase
       .from('quiz_attempts')
-      .select('*', { count: 'exact' });
+      .select('*', { count: 'exact' })
+      .not('completion_time_seconds', 'is', null);
     
     // Apply filters if provided
     if (name) {
@@ -316,7 +364,8 @@ export const getTopPerformersForQuarter = async (quarter?: string, quizSize?: nu
       .select('id, name, score, completion_time_seconds')
       .gte('created_at', startDate.toISOString())
       .lte('created_at', endDate.toISOString())
-      .not('score', 'is', null);
+      .not('score', 'is', null)
+      .not('completion_time_seconds', 'is', null);
     
     // Filter by quiz size if provided
     if (quizSize) {
@@ -355,8 +404,13 @@ export const trackQuizAttempt = async (
   questionsData?: object,
   completionTime?: number
 ): Promise<void> => {
-  // Save to Supabase
-  await saveQuizAttemptToSupabase(name, email, size, score, questionsData, completionTime);
+  // Only save if we have a completion time
+  if (completionTime) {
+    // Save to Supabase
+    await saveQuizAttemptToSupabase(name, email, size, score, questionsData, completionTime);
+  } else {
+    console.warn("Attempt not saved: missing completion time");
+  }
 };
 
 // Function to get all tracked quiz attempts with filtering and pagination
@@ -368,18 +422,8 @@ export const getTrackedQuizAttempts = async (filters: AttemptFilters = {}): Prom
     // Get Supabase attempts with pagination and filtering
     const result = await fetchQuizAttemptsFromSupabase(filters);
     
-    // Filtrar para mostrar apenas tentativas com tempo de conclusão
-    const filteredAttempts = result.attempts.filter(attempt => 
-      attempt.completion_time_seconds !== null && attempt.completion_time_seconds !== undefined
-    );
-    
-    console.info(`Loaded ${filteredAttempts.length} attempts from Supabase with completion time (page ${filters.page || 1}, total: ${result.totalCount})`);
-    
-    return {
-      attempts: filteredAttempts,
-      // Ajuste o total para refletir apenas registros filtrados
-      totalCount: filteredAttempts.length 
-    };
+    console.info(`Loaded ${result.attempts.length} attempts from Supabase (page ${filters.page || 1}, total: ${result.totalCount})`);
+    return result;
   } catch (error) {
     console.error("Error retrieving quiz attempts:", error);
     return { attempts: [], totalCount: 0 };

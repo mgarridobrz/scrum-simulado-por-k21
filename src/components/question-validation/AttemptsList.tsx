@@ -53,10 +53,8 @@ const AttemptsList = ({
 }: AttemptsListProps) => {
   const { toast } = useToast();
 
-  // Filtrar tentativas para mostrar apenas aquelas com tempo de conclusão
-  const filteredAttempts = attempts.filter(attempt => 
-    attempt.completion_time_seconds !== null && attempt.completion_time_seconds !== undefined
-  );
+  // We no longer need to filter here since the database queries now only return
+  // attempts with completion times
 
   const handleDelete = async (id: string) => {
     try {
@@ -118,9 +116,9 @@ const AttemptsList = ({
 
       {loading ? (
         <div className="text-center py-10">Carregando...</div>
-      ) : filteredAttempts.length === 0 ? (
+      ) : attempts.length === 0 ? (
         <div className="text-center py-10 text-muted-foreground">
-          Nenhuma tentativa encontrada com tempo de conclusão registrado.
+          Nenhuma tentativa encontrada.
         </div>
       ) : (
         <>
@@ -137,7 +135,7 @@ const AttemptsList = ({
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredAttempts.map((attempt) => (
+                {attempts.map((attempt) => (
                   <TableRow key={attempt.id}>
                     <TableCell className="font-mono text-xs">
                       <div className="flex items-center">
@@ -175,14 +173,10 @@ const AttemptsList = ({
                       )}
                     </TableCell>
                     <TableCell className="text-center">
-                      {attempt.completion_time_seconds ? (
-                        <div className="flex items-center justify-center gap-1 text-muted-foreground text-sm">
-                          <Clock size={14} />
-                          {formatTimeFromSeconds(attempt.completion_time_seconds)}
-                        </div>
-                      ) : (
-                        <span className="text-muted-foreground">-</span>
-                      )}
+                      <div className="flex items-center justify-center gap-1 text-muted-foreground text-sm">
+                        <Clock size={14} />
+                        {formatTimeFromSeconds(attempt.completion_time_seconds)}
+                      </div>
                     </TableCell>
                     <TableCell>
                       <AlertDialog>
