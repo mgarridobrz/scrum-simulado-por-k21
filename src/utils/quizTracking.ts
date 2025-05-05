@@ -368,8 +368,18 @@ export const getTrackedQuizAttempts = async (filters: AttemptFilters = {}): Prom
     // Get Supabase attempts with pagination and filtering
     const result = await fetchQuizAttemptsFromSupabase(filters);
     
-    console.info(`Loaded ${result.attempts.length} attempts from Supabase (page ${filters.page || 1}, total: ${result.totalCount})`);
-    return result;
+    // Filtrar para mostrar apenas tentativas com tempo de conclusão
+    const filteredAttempts = result.attempts.filter(attempt => 
+      attempt.completion_time_seconds !== null && attempt.completion_time_seconds !== undefined
+    );
+    
+    console.info(`Loaded ${filteredAttempts.length} attempts from Supabase with completion time (page ${filters.page || 1}, total: ${result.totalCount})`);
+    
+    return {
+      attempts: filteredAttempts,
+      // Ajuste o total para refletir apenas registros filtrados
+      totalCount: filteredAttempts.length 
+    };
   } catch (error) {
     console.error("Error retrieving quiz attempts:", error);
     return { attempts: [], totalCount: 0 };

@@ -77,8 +77,8 @@ const QuizResult = ({
 
   // Track the quiz attempt - only when we have the user data and completion time is available
   useEffect(() => {
-    // Only track the attempt when userData, completionTime are available and we haven't tracked it yet
-    if (userData?.name && completionTime !== undefined && !tracked) {
+    // Só registra a tentativa quando temos dados do usuário E tempo de conclusão E ainda não registramos
+    if (userData?.name && completionTime && !tracked) {
       const questionsData = prepareQuestionsData();
       
       trackQuizAttempt(

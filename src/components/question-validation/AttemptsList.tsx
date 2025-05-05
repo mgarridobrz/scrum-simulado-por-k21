@@ -53,6 +53,11 @@ const AttemptsList = ({
 }: AttemptsListProps) => {
   const { toast } = useToast();
 
+  // Filtrar tentativas para mostrar apenas aquelas com tempo de conclusão
+  const filteredAttempts = attempts.filter(attempt => 
+    attempt.completion_time_seconds !== null && attempt.completion_time_seconds !== undefined
+  );
+
   const handleDelete = async (id: string) => {
     try {
       console.log("Deleting attempt with ID:", id);
@@ -113,9 +118,9 @@ const AttemptsList = ({
 
       {loading ? (
         <div className="text-center py-10">Carregando...</div>
-      ) : attempts.length === 0 ? (
+      ) : filteredAttempts.length === 0 ? (
         <div className="text-center py-10 text-muted-foreground">
-          Nenhuma tentativa encontrada.
+          Nenhuma tentativa encontrada com tempo de conclusão registrado.
         </div>
       ) : (
         <>
@@ -132,7 +137,7 @@ const AttemptsList = ({
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {attempts.map((attempt) => (
+                {filteredAttempts.map((attempt) => (
                   <TableRow key={attempt.id}>
                     <TableCell className="font-mono text-xs">
                       <div className="flex items-center">
