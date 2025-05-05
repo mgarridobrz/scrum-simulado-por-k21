@@ -14,6 +14,7 @@ const PublicStatsCounter = () => {
     const loadStats = async () => {
       try {
         const statsData = await getQuizAttemptStats();
+        console.log('Estatísticas carregadas:', statsData);
         setStats(statsData);
       } catch (error) {
         console.error("Error loading stats:", error);

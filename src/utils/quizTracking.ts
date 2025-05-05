@@ -184,32 +184,29 @@ export const getQuizAttemptStats = async (): Promise<QuizStats> => {
       ? validScores.reduce((acc, curr) => acc + (curr.score || 0), 0) / validScores.length
       : 0;
     
-    // Get stats for size 10
+    // Get stats for size 10 - removed the limit(50) that was causing the problem
     const { data: stats10, error: error10 } = await supabase
       .from('quiz_attempts')
       .select('score, completion_time_seconds')
       .eq('quiz_size', 10)
       .not('completion_time_seconds', 'is', null)
-      .order('created_at', { ascending: false })
-      .limit(50);
+      .order('created_at', { ascending: false });
       
-    // Get stats for size 25
+    // Get stats for size 25 - removed the limit(50) that was causing the problem
     const { data: stats25, error: error25 } = await supabase
       .from('quiz_attempts')
       .select('score, completion_time_seconds')
       .eq('quiz_size', 25)
       .not('completion_time_seconds', 'is', null)
-      .order('created_at', { ascending: false })
-      .limit(50);
+      .order('created_at', { ascending: false });
       
-    // Get stats for size 50
+    // Get stats for size 50 - removed the limit(50) that was causing the problem
     const { data: stats50, error: error50 } = await supabase
       .from('quiz_attempts')
       .select('score, completion_time_seconds')
       .eq('quiz_size', 50)
       .not('completion_time_seconds', 'is', null)
-      .order('created_at', { ascending: false })
-      .limit(50);
+      .order('created_at', { ascending: false });
       
     // Calculate stats for size 10 
     const validScores10 = stats10?.filter(item => item.score !== null) || [];
