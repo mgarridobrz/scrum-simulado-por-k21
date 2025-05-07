@@ -1,3 +1,4 @@
+
 import { supabase } from "@/integrations/supabase/client";
 import type { Database } from "@/integrations/supabase/types";
 import type { Json } from "@/integrations/supabase/types";
@@ -11,6 +12,8 @@ interface AttemptFilters {
   orderBy?: string;
   orderDirection?: 'asc' | 'desc';
   quarter?: string; // For ranking by quarter
+  month?: string; // For ranking by month
+  week?: string; // For ranking by week
 }
 
 // Function to check if an attempt has been recently saved to prevent duplicates
@@ -346,6 +349,26 @@ export const getCurrentQuarter = (): string => {
   return `${year}Q${quarter}`;
 };
 
+// Get current month for ranking
+export const getCurrentMonth = (): string => {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = now.getMonth() + 1;
+  
+  return `${year}M${month}`;
+};
+
+// Get current week for ranking
+export const getCurrentWeek = (): string => {
+  const now = new Date();
+  const year = now.getFullYear();
+  const startOfYear = new Date(year, 0, 1);
+  // Calculate the week number (approximate)
+  const weekNum = Math.ceil((now.getTime() - startOfYear.getTime()) / (7 * 24 * 60 * 60 * 1000));
+  
+  return `${year}W${weekNum}`;
+};
+
 // Get Top 10 performers for the current quarter and specified quiz size
 export const getTopPerformersForQuarter = async (quarter?: string, quizSize?: number): Promise<{
   performers: { name: string; score: number; completionTime?: number }[];
@@ -356,37 +379,248 @@ export const getTopPerformersForQuarter = async (quarter?: string, quizSize?: nu
     const startDate = new Date(parseInt(year), (parseInt(quarterNum) - 1) * 3, 1);
     const endDate = new Date(parseInt(year), parseInt(quarterNum) * 3, 0);
     
-    let query = supabase
+    // First, get attempts with completion time (they have priority)
+    let queryWithTime = supabase
       .from('quiz_attempts')
       .select('id, name, score, completion_time_seconds')
       .gte('created_at', startDate.toISOString())
       .lte('created_at', endDate.toISOString())
-      .not('score', 'is', null); // apenas retirar o filtro de time aqui
+      .not('score', 'is', null)
+      .not('completion_time_seconds', 'is', null);
     
     // Filter by quiz size if provided
     if (quizSize) {
-      query = query.eq('quiz_size', quizSize);
+      queryWithTime = queryWithTime.eq('quiz_size', quizSize);
     }
     
-    const { data, error } = await query
+    const { data: dataWithTime, error: errorWithTime } = await queryWithTime
       .order('score', { ascending: false })
-      .order('completion_time_seconds', { ascending: true })
-      .limit(10);
+      .order('completion_time_seconds', { ascending: true });
     
-    if (error) {
-      console.error("Error fetching top performers:", error);
+    if (errorWithTime) {
+      console.error("Error fetching top performers with time:", errorWithTime);
       return { performers: [] };
     }
     
-    return { 
-      performers: data.map(item => ({ 
-        name: item.name, 
+    // Then, get attempts without completion time (if we still have room)
+    const remainingSlots = 10 - (dataWithTime?.length || 0);
+    
+    if (remainingSlots > 0) {
+      let queryWithoutTime = supabase
+        .from('quiz_attempts')
+        .select('id, name, score, completion_time_seconds')
+        .gte('created_at', startDate.toISOString())
+        .lte('created_at', endDate.toISOString())
+        .not('score', 'is', null)
+        .is('completion_time_seconds', null);
+      
+      // Filter by quiz size if provided
+      if (quizSize) {
+        queryWithoutTime = queryWithoutTime.eq('quiz_size', quizSize);
+      }
+      
+      const { data: dataWithoutTime, error: errorWithoutTime } = await queryWithoutTime
+        .order('score', { ascending: false })
+        .order('created_at', { ascending: true })
+        .limit(remainingSlots);
+      
+      if (!errorWithoutTime && dataWithoutTime) {
+        // Combine the results
+        const combinedData = [...dataWithTime || [], ...dataWithoutTime];
+        
+        return {
+          performers: combinedData.map(item => ({
+            name: item.name,
+            score: item.score || 0,
+            completionTime: item.completion_time_seconds
+          }))
+        };
+      }
+    }
+    
+    return {
+      performers: (dataWithTime || []).map(item => ({
+        name: item.name,
         score: item.score || 0,
-        completionTime: item.completion_time_seconds 
-      })) 
+        completionTime: item.completion_time_seconds
+      }))
     };
   } catch (error) {
     console.error("Error fetching top performers:", error);
+    return { performers: [] };
+  }
+};
+
+// Get Top 10 performers for a specific month and quiz size
+export const getTopPerformersForMonth = async (month?: string, quizSize?: number): Promise<{
+  performers: { name: string; score: number; completionTime?: number }[];
+}> => {
+  try {
+    const currentMonth = month || getCurrentMonth();
+    const [year, monthNum] = currentMonth.split('M');
+    
+    // Start of month
+    const startDate = new Date(parseInt(year), parseInt(monthNum) - 1, 1);
+    
+    // End of month
+    const endDate = new Date(parseInt(year), parseInt(monthNum), 0);
+    
+    // First, get attempts with completion time (they have priority)
+    let queryWithTime = supabase
+      .from('quiz_attempts')
+      .select('id, name, score, completion_time_seconds')
+      .gte('created_at', startDate.toISOString())
+      .lte('created_at', endDate.toISOString())
+      .not('score', 'is', null)
+      .not('completion_time_seconds', 'is', null);
+    
+    // Filter by quiz size if provided
+    if (quizSize) {
+      queryWithTime = queryWithTime.eq('quiz_size', quizSize);
+    }
+    
+    const { data: dataWithTime, error: errorWithTime } = await queryWithTime
+      .order('score', { ascending: false })
+      .order('completion_time_seconds', { ascending: true });
+    
+    if (errorWithTime) {
+      console.error("Error fetching top performers with time for month:", errorWithTime);
+      return { performers: [] };
+    }
+    
+    // Then, get attempts without completion time (if we still have room)
+    const remainingSlots = 10 - (dataWithTime?.length || 0);
+    
+    if (remainingSlots > 0) {
+      let queryWithoutTime = supabase
+        .from('quiz_attempts')
+        .select('id, name, score, completion_time_seconds')
+        .gte('created_at', startDate.toISOString())
+        .lte('created_at', endDate.toISOString())
+        .not('score', 'is', null)
+        .is('completion_time_seconds', null);
+      
+      // Filter by quiz size if provided
+      if (quizSize) {
+        queryWithoutTime = queryWithoutTime.eq('quiz_size', quizSize);
+      }
+      
+      const { data: dataWithoutTime, error: errorWithoutTime } = await queryWithoutTime
+        .order('score', { ascending: false })
+        .order('created_at', { ascending: true })
+        .limit(remainingSlots);
+      
+      if (!errorWithoutTime && dataWithoutTime) {
+        // Combine the results
+        const combinedData = [...dataWithTime || [], ...dataWithoutTime];
+        
+        return {
+          performers: combinedData.map(item => ({
+            name: item.name,
+            score: item.score || 0,
+            completionTime: item.completion_time_seconds
+          }))
+        };
+      }
+    }
+    
+    return {
+      performers: (dataWithTime || []).map(item => ({
+        name: item.name,
+        score: item.score || 0,
+        completionTime: item.completion_time_seconds
+      }))
+    };
+  } catch (error) {
+    console.error("Error fetching top performers for month:", error);
+    return { performers: [] };
+  }
+};
+
+// Get Top 10 performers for a specific week and quiz size
+export const getTopPerformersForWeek = async (week?: string, quizSize?: number): Promise<{
+  performers: { name: string; score: number; completionTime?: number }[];
+}> => {
+  try {
+    const currentWeek = week || getCurrentWeek();
+    const [year, weekNum] = currentWeek.split('W');
+    
+    // Calculate the start date of the week (approximately)
+    const startDate = new Date(parseInt(year), 0, 1);
+    startDate.setDate(startDate.getDate() + (parseInt(weekNum) - 1) * 7);
+    
+    // Calculate the end date of the week
+    const endDate = new Date(startDate);
+    endDate.setDate(endDate.getDate() + 6);
+    
+    // First, get attempts with completion time (they have priority)
+    let queryWithTime = supabase
+      .from('quiz_attempts')
+      .select('id, name, score, completion_time_seconds')
+      .gte('created_at', startDate.toISOString())
+      .lte('created_at', endDate.toISOString())
+      .not('score', 'is', null)
+      .not('completion_time_seconds', 'is', null);
+    
+    // Filter by quiz size if provided
+    if (quizSize) {
+      queryWithTime = queryWithTime.eq('quiz_size', quizSize);
+    }
+    
+    const { data: dataWithTime, error: errorWithTime } = await queryWithTime
+      .order('score', { ascending: false })
+      .order('completion_time_seconds', { ascending: true });
+    
+    if (errorWithTime) {
+      console.error("Error fetching top performers with time for week:", errorWithTime);
+      return { performers: [] };
+    }
+    
+    // Then, get attempts without completion time (if we still have room)
+    const remainingSlots = 10 - (dataWithTime?.length || 0);
+    
+    if (remainingSlots > 0) {
+      let queryWithoutTime = supabase
+        .from('quiz_attempts')
+        .select('id, name, score, completion_time_seconds')
+        .gte('created_at', startDate.toISOString())
+        .lte('created_at', endDate.toISOString())
+        .not('score', 'is', null)
+        .is('completion_time_seconds', null);
+      
+      // Filter by quiz size if provided
+      if (quizSize) {
+        queryWithoutTime = queryWithoutTime.eq('quiz_size', quizSize);
+      }
+      
+      const { data: dataWithoutTime, error: errorWithoutTime } = await queryWithoutTime
+        .order('score', { ascending: false })
+        .order('created_at', { ascending: true })
+        .limit(remainingSlots);
+      
+      if (!errorWithoutTime && dataWithoutTime) {
+        // Combine the results
+        const combinedData = [...dataWithTime || [], ...dataWithoutTime];
+        
+        return {
+          performers: combinedData.map(item => ({
+            name: item.name,
+            score: item.score || 0,
+            completionTime: item.completion_time_seconds
+          }))
+        };
+      }
+    }
+    
+    return {
+      performers: (dataWithTime || []).map(item => ({
+        name: item.name,
+        score: item.score || 0,
+        completionTime: item.completion_time_seconds
+      }))
+    };
+  } catch (error) {
+    console.error("Error fetching top performers for week:", error);
     return { performers: [] };
   }
 };
