@@ -1,8 +1,8 @@
 
 import React, { useEffect, useState } from 'react';
-import { getQuizAttemptStats } from '@/utils/quizTracking';
+import { getQuizAttemptStats, formatTimeFromSeconds } from '@/utils/quizTracking';
 import { Card } from '@/components/ui/card';
-import { Calculator, Users, Award } from 'lucide-react';
+import { Calculator, Users, Award, Clock } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import type { QuizStats } from '@/data/types';
 

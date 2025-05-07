@@ -114,6 +114,9 @@ export const deleteQuizAttempt = async (id: string): Promise<boolean> => {
 export const formatTimeFromSeconds = (seconds: number | null | undefined): string => {
   if (!seconds) return "-";
   
+  // Round to the nearest second
+  seconds = Math.round(seconds);
+  
   const minutes = Math.floor(seconds / 60);
   const remainingSeconds = seconds % 60;
   

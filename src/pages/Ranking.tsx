@@ -139,17 +139,10 @@ const Ranking = () => {
                       {performer.score}%
                     </TableCell>
                     <TableCell className="text-right font-semibold text-green-600">
-                      {performer.completionTime ? (
-                        <div className="flex items-center justify-end gap-1">
-                          <Clock size={14} className="text-green-600" />
-                          {formatTime(performer.completionTime)}
-                        </div>
-                      ) : (
-                        <div className="flex items-center justify-end gap-1">
-                          <Clock size={14} className="text-green-600" />
-                          {'--:--'}
-                        </div>
-                      )}
+                      <div className="flex items-center justify-end gap-1">
+                        <Clock size={14} className="text-green-600" />
+                        {formatTime(performer.completionTime)}
+                      </div>
                     </TableCell>
                   </TableRow>
                 ))}
