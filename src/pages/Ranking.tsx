@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -15,7 +14,7 @@ import {
 } from '@/utils/quizTracking';
 import { useToast } from '@/hooks/use-toast';
 import Header from '@/components/Header';
-import { ArrowLeft, Medal, RefreshCw, Trophy, Clock, Calendar, CalendarDays, CalendarMonth, CalendarQuarter } from 'lucide-react';
+import { ArrowLeft, Medal, RefreshCw, Trophy, Clock, Calendar, CalendarDays, CalendarHeart } from 'lucide-react';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 interface RankingData {
@@ -283,11 +282,11 @@ const Ranking = () => {
                   <span className="hidden sm:inline">Semana</span>
                 </TabsTrigger>
                 <TabsTrigger value="month" className="flex items-center gap-1">
-                  <CalendarMonth size={14} />
+                  <Calendar size={14} />
                   <span className="hidden sm:inline">Mês</span>
                 </TabsTrigger>
                 <TabsTrigger value="quarter" className="flex items-center gap-1">
-                  <CalendarQuarter size={14} />
+                  <CalendarHeart size={14} />
                   <span className="hidden sm:inline">Trimestre</span>
                 </TabsTrigger>
               </TabsList>
