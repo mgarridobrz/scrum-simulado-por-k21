@@ -194,7 +194,7 @@ const Index = () => {
         {status === 'ready' && (
           <>
             <StartScreen onStart={handleStartWithSize} />
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+            <div className="mt-6 space-y-6">
               <PublicStatsCounter />
               <ScoreEvolutionChart />
             </div>

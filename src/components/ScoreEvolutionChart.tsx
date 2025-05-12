@@ -160,7 +160,7 @@ const ScoreEvolutionChart = () => {
                 dataKey="averageScore" 
                 stroke="#069488" 
                 strokeWidth={2} 
-                dot={{ stroke: '#069488', strokeWidth: 2, r: 4, fill: "white" }}
+                dot={false}
                 activeDot={{ r: 6 }}
                 name="Pontuação Média"
               />
