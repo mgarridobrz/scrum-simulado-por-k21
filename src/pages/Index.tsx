@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -9,6 +10,7 @@ import QuizProgress from '@/components/QuizProgress';
 import QuizResult from '@/components/QuizResult';
 import QuizScoreCounter from '@/components/QuizScoreCounter';
 import PublicStatsCounter from '@/components/PublicStatsCounter';
+import ScoreEvolutionChart from '@/components/ScoreEvolutionChart';
 import { getRandomQuestionsWithBalance, getCategoryStats } from '@/utils/quizTracking';
 import { Lock, Home } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
@@ -192,7 +194,10 @@ const Index = () => {
         {status === 'ready' && (
           <>
             <StartScreen onStart={handleStartWithSize} />
-            <PublicStatsCounter />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+              <PublicStatsCounter />
+              <ScoreEvolutionChart />
+            </div>
           </>
         )}
         
