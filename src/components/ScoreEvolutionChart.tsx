@@ -29,6 +29,7 @@ const ScoreEvolutionChart = () => {
   const { toast } = useToast();
   const [chartData, setChartData] = useState<DailyScore[]>([]);
   const [loading, setLoading] = useState(true);
+  const [totalAttempts, setTotalAttempts] = useState(0);
 
   useEffect(() => {
     const fetchScoreEvolution = async () => {
@@ -46,6 +47,9 @@ const ScoreEvolutionChart = () => {
           .order('created_at', { ascending: true });
 
         if (error) throw error;
+
+        // Set the total attempts count
+        setTotalAttempts(data?.length || 0);
 
         // Initialize empty data for all 30 days
         const dailyData: Record<string, DailyScore> = {};
@@ -160,9 +164,9 @@ const ScoreEvolutionChart = () => {
       )}
       
       <div className="text-xs text-muted-foreground mt-2">
-        {!loading && chartData.length > 0 && (
+        {!loading && totalAttempts > 0 && (
           <>
-            Baseado em {chartData.reduce((acc, curr) => acc + curr.count, 0)} simulados nos últimos 30 dias
+            Baseado em {totalAttempts} simulados nos últimos 30 dias
           </>
         )}
       </div>
