@@ -89,7 +89,9 @@ const Ranking = () => {
   };
 
   const formatScoreAsPercentage = (score: number, totalQuestions: number): string => {
+    console.log('Score:', score, 'Total Questions:', totalQuestions);
     const percentage = Math.round((score / totalQuestions) * 100);
+    console.log('Calculated percentage:', percentage);
     return `${percentage}%`;
   };
 
