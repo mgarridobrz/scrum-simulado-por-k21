@@ -12,11 +12,17 @@ import {
 import { Button } from '@/components/ui/button';
 import { toast } from '@/components/ui/use-toast';
 import LanguageSelector from '@/components/LanguageSelector';
+import { useLanguage } from '@/contexts/LanguageContext';
+import { getTranslation } from '@/utils/translations';
 
 const Header = () => {
+  const { language } = useLanguage();
+  
   const handleShare = (platform: string) => {
     const url = window.location.href;
-    const text = "Acabei de testar meu conhecimento em Scrum com o simulado CSM da K21! Confira:";
+    const text = language === 'en' 
+      ? "I just tested my Scrum knowledge with K21's CSM quiz! Check it out:"
+      : "Acabei de testar meu conhecimento em Scrum com o simulado CSM da K21! Confira:";
     
     let shareUrl = '';
     
@@ -28,10 +34,11 @@ const Header = () => {
         shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`;
         break;
       case 'instagram':
-        // Instagram não tem API direta de compartilhamento, usamos apenas um toast informativo
         toast({
-          title: "Compartilhar no Instagram",
-          description: "Copie o link e compartilhe em sua história do Instagram!",
+          title: getTranslation(language, 'shareInstagram'),
+          description: language === 'en' 
+            ? "Copy the link and share it on your Instagram story!"
+            : "Copie o link e compartilhe em sua história do Instagram!",
         });
         navigator.clipboard.writeText(url);
         return;
@@ -45,7 +52,7 @@ const Header = () => {
   return (
     <header className="bg-white border-b">
       <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-        <Link to="/" className="flex items-center">
+        <Link to={language === 'en' ? '/us' : '/'} className="flex items-center">
           <img 
             src="/lovable-uploads/2342063e-9561-46ff-ae6a-e4a0316e24a1.png" 
             alt="K21 Logo" 
@@ -59,32 +66,32 @@ const Header = () => {
             target="_blank" 
             rel="noopener noreferrer"
             className="flex items-center gap-1 text-sm font-medium text-gray-600 hover:text-green-600 transition-colors"
-            title="Fale com a K21"
+            title={getTranslation(language, 'talkToK21')}
           >
             <MessageCircle size={16} className="text-green-600" />
-            <span>Fale com a K21</span>
+            <span>{getTranslation(language, 'talkToK21')}</span>
           </a>
           
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline" size="sm" className="flex items-center gap-1">
                 <Share2 size={16} />
-                <span className="hidden sm:inline">Curtiu o simulado? Então compartilhe!</span>
-                <span className="sm:hidden">Compartilhe!</span>
+                <span className="hidden sm:inline">{getTranslation(language, 'shareText')}</span>
+                <span className="sm:hidden">{getTranslation(language, 'shareShort')}</span>
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-56">
+            <DropdownMenuContent align="end" className="w-56 bg-white">
               <DropdownMenuItem onClick={() => handleShare('linkedin')} className="cursor-pointer">
                 <Linkedin size={16} className="mr-2 text-blue-600" />
-                Compartilhar no LinkedIn
+                {getTranslation(language, 'shareLinkedIn')}
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => handleShare('twitter')} className="cursor-pointer">
                 <Twitter size={16} className="mr-2 text-sky-500" />
-                Compartilhar no Twitter
+                {getTranslation(language, 'shareTwitter')}
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => handleShare('instagram')} className="cursor-pointer">
                 <Instagram size={16} className="mr-2 text-pink-600" />
-                Compartilhar no Instagram
+                {getTranslation(language, 'shareInstagram')}
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -92,10 +99,10 @@ const Header = () => {
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline" size="sm">
-                Links Úteis
+                {getTranslation(language, 'usefulLinks')}
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
+            <DropdownMenuContent align="end" className="bg-white">
               <DropdownMenuItem asChild>
                 <a 
                   href="http://br.k21.global" 
@@ -104,7 +111,7 @@ const Header = () => {
                   className="flex items-center gap-2"
                 >
                   <ExternalLink size={16} />
-                  Site K21
+                  {getTranslation(language, 'k21Site')}
                 </a>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
@@ -115,7 +122,7 @@ const Header = () => {
                   className="flex items-center gap-2"
                 >
                   <ExternalLink size={16} />
-                  Scrum Guide
+                  {getTranslation(language, 'scrumGuide')}
                 </a>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
@@ -126,7 +133,7 @@ const Header = () => {
                   className="flex items-center gap-2"
                 >
                   <ExternalLink size={16} />
-                  Cursos
+                  {getTranslation(language, 'courses')}
                 </a>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
@@ -137,18 +144,18 @@ const Header = () => {
                   className="flex items-center gap-2"
                 >
                   <ExternalLink size={16} />
-                  Conteúdos
+                  {getTranslation(language, 'content')}
                 </a>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
           
           <Link 
-            to="/ranking" 
+            to={language === 'en' ? '/us/ranking' : '/ranking'}
             className="flex items-center gap-1 text-sm font-medium text-gray-600 hover:text-k21-teal transition-colors"
           >
             <Trophy size={16} className="text-k21-gold" />
-            <span>Ranking</span>
+            <span>{getTranslation(language, 'ranking')}</span>
           </Link>
 
           <LanguageSelector />

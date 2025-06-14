@@ -40,7 +40,21 @@ export const translations = {
     loading: 'Carregando...',
     error: 'Erro',
     tryAgain: 'Tente novamente',
-    category: 'Categoria'
+    category: 'Categoria',
+    
+    // Header
+    talkToK21: 'Fale com a K21',
+    shareText: 'Curtiu o simulado? Então compartilhe!',
+    shareShort: 'Compartilhe!',
+    shareLinkedIn: 'Compartilhar no LinkedIn',
+    shareTwitter: 'Compartilhar no Twitter',
+    shareInstagram: 'Compartilhar no Instagram',
+    usefulLinks: 'Links Úteis',
+    k21Site: 'Site K21',
+    scrumGuide: 'Scrum Guide',
+    courses: 'Cursos',
+    content: 'Conteúdos',
+    ranking: 'Ranking'
   },
   en: {
     // Quiz Results
@@ -80,7 +94,21 @@ export const translations = {
     loading: 'Loading...',
     error: 'Error',
     tryAgain: 'Please try again',
-    category: 'Category'
+    category: 'Category',
+    
+    // Header
+    talkToK21: 'Talk to K21',
+    shareText: 'Liked the quiz? Share it!',
+    shareShort: 'Share!',
+    shareLinkedIn: 'Share on LinkedIn',
+    shareTwitter: 'Share on Twitter',
+    shareInstagram: 'Share on Instagram',
+    usefulLinks: 'Useful Links',
+    k21Site: 'K21 Site',
+    scrumGuide: 'Scrum Guide',
+    courses: 'Courses',
+    content: 'Content',
+    ranking: 'Ranking'
   }
 };
 

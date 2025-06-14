@@ -1,5 +1,6 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 export type Language = 'pt' | 'en';
 
@@ -25,23 +26,25 @@ interface LanguageProviderProps {
 }
 
 export const LanguageProvider: React.FC<LanguageProviderProps> = ({ children }) => {
-  const [language, setLanguage] = useState<Language>('pt');
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [language, setLanguageState] = useState<Language>('pt');
 
   useEffect(() => {
-    // Check URL for language preference
-    const path = window.location.pathname;
+    // Check URL for language preference on initial load
+    const path = location.pathname;
     if (path.startsWith('/us')) {
-      setLanguage('en');
+      setLanguageState('en');
     } else {
-      setLanguage('pt');
+      setLanguageState('pt');
     }
-  }, []);
+  }, [location.pathname]);
 
-  const handleSetLanguage = (lang: Language) => {
-    setLanguage(lang);
+  const setLanguage = (lang: Language) => {
+    setLanguageState(lang);
     
     // Update URL based on language
-    const currentPath = window.location.pathname;
+    const currentPath = location.pathname;
     let newPath = currentPath;
     
     if (lang === 'en') {
@@ -57,7 +60,7 @@ export const LanguageProvider: React.FC<LanguageProviderProps> = ({ children }) 
     }
     
     if (newPath !== currentPath) {
-      window.history.pushState({}, '', newPath);
+      navigate(newPath, { replace: true });
     }
   };
 
@@ -68,7 +71,7 @@ export const LanguageProvider: React.FC<LanguageProviderProps> = ({ children }) 
     <LanguageContext.Provider 
       value={{ 
         language, 
-        setLanguage: handleSetLanguage, 
+        setLanguage, 
         isEnglish, 
         isPortuguese 
       }}
