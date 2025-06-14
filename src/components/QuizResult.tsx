@@ -253,6 +253,10 @@ const QuizResult = ({
                     question={question}
                     selectedOption={userAnswers[question.id]}
                     onSelectOption={() => {}}
+                    onNext={() => {}}
+                    onPrevious={() => {}}
+                    canGoPrevious={false}
+                    isLastQuestion={false}
                     showResult={true}
                   />
                 </div>

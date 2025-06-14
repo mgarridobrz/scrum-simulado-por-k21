@@ -46,9 +46,11 @@ const Index = () => {
     }
   };
 
-  const handleStartQuiz = (size: number, name: string, email: string) => {
+  const handleStartQuiz = (size: number, userData?: { name: string; email: string }) => {
     setQuizSize(size);
-    setUserInfo({ name, email });
+    if (userData) {
+      setUserInfo(userData);
+    }
     setCurrentScreen('quiz');
     setStartTime(new Date());
     setUserAnswers({});
