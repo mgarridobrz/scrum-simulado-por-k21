@@ -152,18 +152,20 @@ const QuizResult = ({
           <CardTitle className="text-2xl font-bold text-gray-800">
             {getTranslation(language, 'quizResults')}
           </CardTitle>
-          <CardDescription className="text-gray-600 flex items-center justify-center gap-1">
-            <Clock size={14} className="text-gray-400" />
-            {currentDate}
+          <div className="text-gray-600 space-y-1">
+            <div className="flex items-center justify-center gap-1">
+              <Clock size={14} className="text-gray-400" />
+              <span className="text-sm">{currentDate}</span>
+            </div>
             {isTracking && (
-              <div className="flex items-center gap-1 ml-2">
+              <div className="flex items-center justify-center gap-1">
                 <div className="animate-spin rounded-full h-3 w-3 border-b border-k21-teal"></div>
                 <span className="text-xs text-k21-teal">
                   {language === 'en' ? 'Saving...' : 'Salvando...'}
                 </span>
               </div>
             )}
-          </CardDescription>
+          </div>
         </CardHeader>
         
         <CardContent className="space-y-6">
