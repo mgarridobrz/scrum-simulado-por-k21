@@ -22,9 +22,10 @@ const App = () => (
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/us" element={<Index />} />
-            <Route path="/us/*" element={<Index />} />
             <Route path="/validate-questions" element={<QuestionValidation />} />
+            <Route path="/us/validate-questions" element={<QuestionValidation />} />
             <Route path="/ranking" element={<Ranking />} />
+            <Route path="/us/ranking" element={<Ranking />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </TooltipProvider>

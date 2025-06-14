@@ -4,12 +4,15 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import QuizSizeSelector from './QuizSizeSelector';
 import UserInfoForm from './UserInfoForm';
+import { useLanguage } from '@/contexts/LanguageContext';
+import { getTranslation } from '@/utils/translations';
 
 interface StartScreenProps {
   onStart: (size: number, userData?: { name: string; email: string }) => void;
 }
 
 const StartScreen = ({ onStart }: StartScreenProps) => {
+  const { language } = useLanguage();
   const [showSizeSelector, setShowSizeSelector] = useState(false);
   const [selectedSize, setSelectedSize] = useState<number | null>(null);
   
@@ -32,14 +35,14 @@ const StartScreen = ({ onStart }: StartScreenProps) => {
   return (
     <div className="max-w-2xl mx-auto text-center space-y-6 animate-fade-in">
       <h1 className="text-3xl font-bold text-k21-black">
-        Simulado de Certificação
-        <span className="text-k21-gold block"> Certified ScrumMaster®</span>
+        {getTranslation(language, 'certificationQuiz')}
+        <span className="text-k21-gold block">{getTranslation(language, 'certifiedScrumMaster')}</span>
       </h1>
       
       <div className="bg-gradient-to-r from-k21-gold to-k21-teal h-1 w-32 mx-auto rounded-full" />
       
       <p className="text-muted-foreground">
-        Prepare-se para sua certificação CSM com este simulado oferecido pela K21 Brasil.
+        {getTranslation(language, 'quizDescription')}
       </p>
       
       {!showSizeSelector ? (
@@ -51,8 +54,8 @@ const StartScreen = ({ onStart }: StartScreenProps) => {
                   <span className="text-k21-teal font-medium">1</span>
                 </div>
                 <div className="text-left">
-                  <h3 className="font-medium text-k21-black">Simulado Realista</h3>
-                  <p className="text-sm text-muted-foreground">Questões no estilo do exame oficial</p>
+                  <h3 className="font-medium text-k21-black">{getTranslation(language, 'realisticQuiz')}</h3>
+                  <p className="text-sm text-muted-foreground">{getTranslation(language, 'realisticQuizDesc')}</p>
                 </div>
               </div>
               
@@ -61,8 +64,8 @@ const StartScreen = ({ onStart }: StartScreenProps) => {
                   <span className="text-k21-gold font-medium">2</span>
                 </div>
                 <div className="text-left">
-                  <h3 className="font-medium text-k21-black">Resultado Detalhado</h3>
-                  <p className="text-sm text-muted-foreground">Veja o que você acertou e onde precisa melhorar</p>
+                  <h3 className="font-medium text-k21-black">{getTranslation(language, 'detailedResults')}</h3>
+                  <p className="text-sm text-muted-foreground">{getTranslation(language, 'detailedResultsDesc')}</p>
                 </div>
               </div>
               
@@ -71,8 +74,8 @@ const StartScreen = ({ onStart }: StartScreenProps) => {
                   <span className="text-black font-medium">3</span>
                 </div>
                 <div className="text-left">
-                  <h3 className="font-medium text-k21-black">Conteúdo Atualizado</h3>
-                  <p className="text-sm text-muted-foreground">Baseado nas diretrizes mais recentes da Scrum Alliance</p>
+                  <h3 className="font-medium text-k21-black">{getTranslation(language, 'updatedContent')}</h3>
+                  <p className="text-sm text-muted-foreground">{getTranslation(language, 'updatedContentDesc')}</p>
                 </div>
               </div>
               
@@ -81,8 +84,8 @@ const StartScreen = ({ onStart }: StartScreenProps) => {
                   <span className="text-green-500 font-medium">4</span>
                 </div>
                 <div className="text-left">
-                  <h3 className="font-medium text-k21-black">Explicações Detalhadas</h3>
-                  <p className="text-sm text-muted-foreground">Entenda o porquê de cada resposta correta</p>
+                  <h3 className="font-medium text-k21-black">{getTranslation(language, 'detailedExplanations')}</h3>
+                  <p className="text-sm text-muted-foreground">{getTranslation(language, 'detailedExplanationsDesc')}</p>
                 </div>
               </div>
             </div>
@@ -92,7 +95,7 @@ const StartScreen = ({ onStart }: StartScreenProps) => {
             onClick={handleStartClick}
             className="bg-k21-teal hover:bg-k21-teal/90 text-white px-8 py-6 text-lg"
           >
-            Iniciar Simulado
+            {getTranslation(language, 'startQuiz')}
           </Button>
         </>
       ) : selectedSize ? (
@@ -102,7 +105,7 @@ const StartScreen = ({ onStart }: StartScreenProps) => {
       )}
       
       <p className="text-xs text-muted-foreground">
-        Para informações adicionais, visite <a href="https://k21.com.br" className="text-k21-gold hover:underline">k21.com.br</a>
+        {getTranslation(language, 'additionalInfo')} <a href="https://k21.com.br" className="text-k21-gold hover:underline">k21.com.br</a>
       </p>
     </div>
   );

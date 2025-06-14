@@ -1,6 +1,8 @@
 
 import React from 'react';
 import { cn } from "@/lib/utils";
+import { useLanguage } from '@/contexts/LanguageContext';
+import { getTranslation } from '@/utils/translations';
 
 interface QuizProgressProps {
   currentQuestion: number;
@@ -13,12 +15,15 @@ const QuizProgress = ({
   totalQuestions,
   className,
 }: QuizProgressProps) => {
+  const { language } = useLanguage();
   const progress = (currentQuestion / totalQuestions) * 100;
 
   return (
     <div className={cn("w-full space-y-2", className)}>
       <div className="flex justify-between text-sm text-muted-foreground">
-        <span>Questão {currentQuestion} de {totalQuestions}</span>
+        <span>
+          {getTranslation(language, 'question')} {currentQuestion} {getTranslation(language, 'of')} {totalQuestions}
+        </span>
         <span>{Math.round(progress)}%</span>
       </div>
       <div className="h-2 w-full bg-muted rounded-full overflow-hidden">

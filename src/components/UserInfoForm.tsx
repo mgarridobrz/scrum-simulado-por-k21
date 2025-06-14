@@ -6,13 +6,8 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-
-const formSchema = z.object({
-  name: z.string().min(2, {
-    message: "Nome deve ter pelo menos 2 caracteres",
-  }),
-  email: z.string().email({ message: "Email inválido" }).optional().or(z.literal("")),
-});
+import { useLanguage } from '@/contexts/LanguageContext';
+import { getTranslation } from '@/utils/translations';
 
 interface UserInfoFormProps {
   onSubmit: (data: { name: string; email: string }) => void;
@@ -20,6 +15,15 @@ interface UserInfoFormProps {
 }
 
 const UserInfoForm = ({ onSubmit, selectedSize }: UserInfoFormProps) => {
+  const { language } = useLanguage();
+  
+  const formSchema = z.object({
+    name: z.string().min(2, {
+      message: getTranslation(language, 'nameMinLength'),
+    }),
+    email: z.string().email({ message: getTranslation(language, 'invalidEmail') }).optional().or(z.literal("")),
+  });
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -38,7 +42,7 @@ const UserInfoForm = ({ onSubmit, selectedSize }: UserInfoFormProps) => {
   return (
     <div className="space-y-6 animate-fade-in">
       <h2 className="text-xl font-semibold text-center text-k21-black">
-        Informações do Participante
+        {getTranslation(language, 'participantInfo')}
       </h2>
       
       <div className="bg-white p-6 rounded-lg shadow-sm">
@@ -49,9 +53,9 @@ const UserInfoForm = ({ onSubmit, selectedSize }: UserInfoFormProps) => {
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Nome completo</FormLabel>
+                  <FormLabel>{getTranslation(language, 'fullName')}</FormLabel>
                   <FormControl>
-                    <Input placeholder="Digite seu nome" {...field} />
+                    <Input placeholder={getTranslation(language, 'enterName')} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -63,9 +67,9 @@ const UserInfoForm = ({ onSubmit, selectedSize }: UserInfoFormProps) => {
               name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Email</FormLabel>
+                  <FormLabel>{getTranslation(language, 'email')}</FormLabel>
                   <FormControl>
-                    <Input placeholder="seu@email.com" {...field} />
+                    <Input placeholder={getTranslation(language, 'emailPlaceholder')} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -77,7 +81,7 @@ const UserInfoForm = ({ onSubmit, selectedSize }: UserInfoFormProps) => {
                 type="submit" 
                 className="w-full bg-k21-teal hover:bg-k21-teal/90"
               >
-                Iniciar Simulado com {selectedSize} Questões
+                {getTranslation(language, 'startQuizWith')} {selectedSize} {getTranslation(language, 'questions')}
               </Button>
             </div>
           </form>

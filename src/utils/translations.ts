@@ -54,7 +54,44 @@ export const translations = {
     scrumGuide: 'Scrum Guide',
     courses: 'Cursos',
     content: 'Conteúdos',
-    ranking: 'Ranking'
+    ranking: 'Ranking',
+    
+    // Start Screen
+    certificationQuiz: 'Simulado de Certificação',
+    certifiedScrumMaster: 'Certified ScrumMaster®',
+    quizDescription: 'Prepare-se para sua certificação CSM com este simulado oferecido pela K21 Brasil.',
+    realisticQuiz: 'Simulado Realista',
+    realisticQuizDesc: 'Questões no estilo do exame oficial',
+    detailedResults: 'Resultado Detalhado',
+    detailedResultsDesc: 'Veja o que você acertou e onde precisa melhorar',
+    updatedContent: 'Conteúdo Atualizado',
+    updatedContentDesc: 'Baseado nas diretrizes mais recentes da Scrum Alliance',
+    detailedExplanations: 'Explicações Detalhadas',
+    detailedExplanationsDesc: 'Entenda o porquê de cada resposta correta',
+    startQuiz: 'Iniciar Simulado',
+    additionalInfo: 'Para informações adicionais, visite',
+    
+    // Quiz Size Selector
+    selectQuestionCount: 'Selecione o número de questões',
+    quickQuiz: 'Simulado rápido',
+    intermediateQuiz: 'Simulado intermediário',
+    completeQuiz: 'Simulado completo',
+    approxTime: 'Aprox.',
+    minutes: 'minutos',
+    start: 'Iniciar',
+    
+    // User Info Form
+    participantInfo: 'Informações do Participante',
+    fullName: 'Nome completo',
+    enterName: 'Digite seu nome',
+    email: 'Email',
+    emailPlaceholder: 'seu@email.com',
+    startQuizWith: 'Iniciar Simulado com',
+    questions: 'Questões',
+    
+    // Form Validation
+    nameMinLength: 'Nome deve ter pelo menos 2 caracteres',
+    invalidEmail: 'Email inválido'
   },
   en: {
     // Quiz Results
@@ -108,7 +145,44 @@ export const translations = {
     scrumGuide: 'Scrum Guide',
     courses: 'Courses',
     content: 'Content',
-    ranking: 'Ranking'
+    ranking: 'Ranking',
+    
+    // Start Screen
+    certificationQuiz: 'Certification Quiz',
+    certifiedScrumMaster: 'Certified ScrumMaster®',
+    quizDescription: 'Prepare for your CSM certification with this quiz offered by K21 Brasil.',
+    realisticQuiz: 'Realistic Quiz',
+    realisticQuizDesc: 'Questions in the style of the official exam',
+    detailedResults: 'Detailed Results',
+    detailedResultsDesc: 'See what you got right and where you need to improve',
+    updatedContent: 'Updated Content',
+    updatedContentDesc: 'Based on the latest Scrum Alliance guidelines',
+    detailedExplanations: 'Detailed Explanations',
+    detailedExplanationsDesc: 'Understand why each answer is correct',
+    startQuiz: 'Start Quiz',
+    additionalInfo: 'For additional information, visit',
+    
+    // Quiz Size Selector
+    selectQuestionCount: 'Select the number of questions',
+    quickQuiz: 'Quick quiz',
+    intermediateQuiz: 'Intermediate quiz',
+    completeQuiz: 'Complete quiz',
+    approxTime: 'Approx.',
+    minutes: 'minutes',
+    start: 'Start',
+    
+    // User Info Form
+    participantInfo: 'Participant Information',
+    fullName: 'Full name',
+    enterName: 'Enter your name',
+    email: 'Email',
+    emailPlaceholder: 'your@email.com',
+    startQuizWith: 'Start Quiz with',
+    questions: 'Questions',
+    
+    // Form Validation
+    nameMinLength: 'Name must be at least 2 characters',
+    invalidEmail: 'Invalid email'
   }
 };
 
