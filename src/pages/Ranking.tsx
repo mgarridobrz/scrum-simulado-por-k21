@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -89,10 +88,9 @@ const Ranking = () => {
   };
 
   const formatScoreAsPercentage = (score: number, totalQuestions: number): string => {
-    console.log('Score:', score, 'Total Questions:', totalQuestions);
-    const percentage = Math.round((score / totalQuestions) * 100);
-    console.log('Calculated percentage:', percentage);
-    return `${percentage}%`;
+    // Score is already stored as a percentage in the database
+    // Just format it properly
+    return `${Math.round(score)}%`;
   };
 
   return (
