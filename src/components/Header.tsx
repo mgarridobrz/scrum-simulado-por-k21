@@ -11,6 +11,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
 import { toast } from '@/components/ui/use-toast';
+import LanguageSelector from '@/components/LanguageSelector';
 
 const Header = () => {
   const handleShare = (platform: string) => {
@@ -52,7 +53,7 @@ const Header = () => {
           />
         </Link>
         
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3">
           <a 
             href="https://api.whatsapp.com/send/?phone=552138258624" 
             target="_blank" 
@@ -149,6 +150,8 @@ const Header = () => {
             <Trophy size={16} className="text-k21-gold" />
             <span>Ranking</span>
           </Link>
+
+          <LanguageSelector />
         </div>
       </div>
     </header>
