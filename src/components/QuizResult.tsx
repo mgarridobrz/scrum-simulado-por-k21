@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -99,14 +98,14 @@ const QuizResult = ({
     trackingAttempted.current = true;
     setIsTracking(true);
     
-    console.log(`[QUIZ_RESULT] Attempting to track quiz attempt with completion time: ${completionTime}s, scorePercentage: ${scorePercentage}%`);
+    console.log(`[QUIZ_RESULT] Attempting to track quiz attempt with completion time: ${completionTime}s, raw score: ${score}/${totalQuestions}`);
     
     // Add a small delay to prevent rapid successive submissions
     const trackingTimeout = setTimeout(() => {
       trackQuizAttempt(
         userName,
         null, // email
-        scorePercentage, // Use percentage score (e.g., 60 for 60%)
+        score, // Use raw score (number of correct answers, e.g., 6 out of 10)
         totalQuestions,
         userAnswers,
         questions,
@@ -143,7 +142,7 @@ const QuizResult = ({
     }, 500); // 500ms delay to prevent rapid submissions
 
     return () => clearTimeout(trackingTimeout);
-  }, [userName, totalQuestions, scorePercentage, tracked, isTracking, toast, userAnswers, questions, completionTime, language]);
+  }, [userName, totalQuestions, score, tracked, isTracking, toast, userAnswers, questions, completionTime, language]);
 
   return (
     <div className="max-w-3xl mx-auto w-full animate-fade-in">
