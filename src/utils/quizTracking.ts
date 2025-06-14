@@ -1,3 +1,4 @@
+
 import { supabase } from "@/integrations/supabase/client";
 import type { QuestionWithCategory, QuizAttempt, UserAnswers, QuizStats, QuizCategory } from "@/data/types";
 
@@ -178,7 +179,7 @@ export async function trackQuizAttempt(
 }
 
 /**
- * Gets tracked quiz attempts with pagination and optional filtering - now with duplicate prevention
+ * Gets tracked quiz attempts with pagination and optional filtering
  */
 export async function getTrackedQuizAttempts(options?: {
   page?: number;
@@ -191,7 +192,6 @@ export async function getTrackedQuizAttempts(options?: {
     let query = supabase
       .from('quiz_attempts')
       .select('*', { count: 'exact' })
-      .not('completion_time_seconds', 'is', null) // Only attempts with completion time
       .order('created_at', { ascending: false });
 
     // Add language filter if specified
@@ -252,11 +252,10 @@ export async function getGlobalQuizStats(): Promise<{
   languageBreakdown: { pt: number; en: number };
 }> {
   try {
-    // Get total attempts and average score - only count attempts with completion times
+    // Get total attempts and average score - include ALL attempts
     const { data: statsData, error: statsError } = await supabase
       .from('quiz_attempts')
-      .select('score, language')
-      .not('completion_time_seconds', 'is', null);
+      .select('score, language');
 
     if (statsError) {
       console.error("Error fetching global stats:", statsError);
@@ -324,7 +323,6 @@ export async function getRankingData(
       .select('name, score, completion_time_seconds, language')
       .eq('quiz_size', quizSize)
       .not('score', 'is', null)
-      .not('completion_time_seconds', 'is', null) // Only completed attempts
       .order('score', { ascending: false })
       .order('completion_time_seconds', { ascending: true })
       .limit(100);
@@ -354,14 +352,13 @@ export async function getRankingData(
 }
 
 /**
- * Gets quiz attempt statistics - with duplicate prevention
+ * Gets quiz attempt statistics - include ALL attempts
  */
 export async function getQuizAttemptStats(): Promise<QuizStats> {
   try {
     const { data, error } = await supabase
       .from('quiz_attempts')
       .select('quiz_size, score, completion_time_seconds, created_at')
-      .not('completion_time_seconds', 'is', null) // Only completed attempts
       .order('created_at', { ascending: false });
 
     if (error) {
@@ -383,21 +380,27 @@ export async function getQuizAttemptStats(): Promise<QuizStats> {
       ? Math.round((lastFifty.reduce((sum, a) => sum + (a.score || 0), 0) / lastFifty.length))
       : 0;
     
-    // Calculate averages by quiz size
-    const size10Attempts = attempts.filter(a => a.quiz_size === 10);
-    const size25Attempts = attempts.filter(a => a.quiz_size === 25);
-    const size50Attempts = attempts.filter(a => a.quiz_size === 50);
+    // Calculate averages by quiz size - only for attempts with completion time
+    const size10Attempts = attempts.filter(a => a.quiz_size === 10 && a.completion_time_seconds);
+    const size25Attempts = attempts.filter(a => a.quiz_size === 25 && a.completion_time_seconds);
+    const size50Attempts = attempts.filter(a => a.quiz_size === 50 && a.completion_time_seconds);
     
-    const averageScore10 = size10Attempts.length > 0 
-      ? Math.round(size10Attempts.reduce((sum, a) => sum + (a.score || 0), 0) / size10Attempts.length)
+    // Score averages include all attempts
+    const size10AllAttempts = attempts.filter(a => a.quiz_size === 10);
+    const size25AllAttempts = attempts.filter(a => a.quiz_size === 25);
+    const size50AllAttempts = attempts.filter(a => a.quiz_size === 50);
+    
+    const averageScore10 = size10AllAttempts.length > 0 
+      ? Math.round(size10AllAttempts.reduce((sum, a) => sum + (a.score || 0), 0) / size10AllAttempts.length)
       : null;
-    const averageScore25 = size25Attempts.length > 0 
-      ? Math.round(size25Attempts.reduce((sum, a) => sum + (a.score || 0), 0) / size25Attempts.length)
+    const averageScore25 = size25AllAttempts.length > 0 
+      ? Math.round(size25AllAttempts.reduce((sum, a) => sum + (a.score || 0), 0) / size25AllAttempts.length)
       : null;
-    const averageScore50 = size50Attempts.length > 0 
-      ? Math.round(size50Attempts.reduce((sum, a) => sum + (a.score || 0), 0) / size50Attempts.length)
+    const averageScore50 = size50AllAttempts.length > 0 
+      ? Math.round(size50AllAttempts.reduce((sum, a) => sum + (a.score || 0), 0) / size50AllAttempts.length)
       : null;
     
+    // Time averages only for attempts with completion time
     const averageTime10 = size10Attempts.length > 0 
       ? Math.round(size10Attempts.reduce((sum, a) => sum + (a.completion_time_seconds || 0), 0) / size10Attempts.length)
       : null;
