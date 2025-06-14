@@ -1,191 +1,172 @@
 
-import { Language } from '@/contexts/LanguageContext';
+export type TranslationKey = 
+  | 'certificationQuiz'
+  | 'certifiedScrumMaster'
+  | 'quizDescription'
+  | 'realisticQuiz'
+  | 'realisticQuizDesc'
+  | 'detailedResults'
+  | 'detailedResultsDesc'
+  | 'updatedContent'
+  | 'updatedContentDesc'
+  | 'detailedExplanations'
+  | 'detailedExplanationsDesc'
+  | 'startQuiz'
+  | 'additionalInfo'
+  | 'loadingQuestions'
+  | 'errorLoadingQuestions'
+  | 'selectQuizSize'
+  | 'questions'
+  | 'enterInfo'
+  | 'name'
+  | 'email'
+  | 'emailOptional'
+  | 'startQuizButton'
+  | 'question'
+  | 'next'
+  | 'previous'
+  | 'finish'
+  | 'score'
+  | 'correct'
+  | 'incorrect'
+  | 'explanation'
+  | 'yourAnswer'
+  | 'correctAnswer'
+  | 'congratulations'
+  | 'tryAgain'
+  | 'completionTime'
+  | 'downloadPDF'
+  | 'restartQuiz'
+  | 'viewRanking'
+  | 'ranking'
+  | 'position'
+  | 'player'
+  | 'time'
+  | 'minutes'
+  | 'seconds'
+  | 'quizSizeFilter'
+  | 'languageFilter'
+  | 'all'
+  | 'portuguese'
+  | 'english'
+  | 'minute'
+  | 'second'
+  | 'restrictedArea'
+  | 'accessRestrictedArea';
 
-export const translations = {
+const translations = {
   pt: {
-    // Quiz Results
-    quizResults: 'Resultados do Simulado',
-    approved: 'Aprovado',
-    notApproved: 'Não Aprovado',
-    minimumToPass: 'Mínimo para aprovação',
-    completionTime: 'Tempo de conclusão',
-    performanceByCategory: 'Desempenho por Categoria',
-    showAllQuestions: 'Mostrar Todas as Questões',
-    hideQuestions: 'Ocultar Questões',
-    questionDetails: 'Detalhes das Questões',
-    question: 'Questão',
-    correct: 'Correta',
-    incorrect: 'Incorreta',
-    backToStart: 'Voltar para Início',
-    downloadResults: 'Baixar Resultados (PDF)',
-    
-    // Quiz Questions
-    previous: 'Anterior',
-    next: 'Próxima',
-    finish: 'Finalizar',
-    correctExplanation: 'Correto! Explicação:',
-    incorrectExplanation: 'Incorreto! Explicação:',
-    noExplanation: 'Não há explicação disponível para esta questão.',
-    continue: 'Continuar',
-    
-    // Loading and Error States
+    certificationQuiz: 'Simulado de Certificação',
+    certifiedScrumMaster: 'Certified Scrum Master',
+    quizDescription: 'Teste seus conhecimentos com questões baseadas no exame oficial da Scrum Alliance.',
+    realisticQuiz: 'Simulado Realista',
+    realisticQuizDesc: 'Questões baseadas no exame oficial',
+    detailedResults: 'Resultados Detalhados',
+    detailedResultsDesc: 'Análise completa do seu desempenho',
+    updatedContent: 'Conteúdo Atualizado',
+    updatedContentDesc: 'Baseado no Scrum Guide mais recente',
+    detailedExplanations: 'Explicações Detalhadas',
+    detailedExplanationsDesc: 'Entenda o porquê de cada resposta',
+    startQuiz: 'Iniciar Simulado',
+    additionalInfo: 'Mais informações sobre Scrum em',
     loadingQuestions: 'Carregando questões...',
     errorLoadingQuestions: 'Erro ao carregar questões. Tente novamente.',
-    
-    // Quiz Progress
-    of: 'de',
-    questionsCount: 'questões',
-    
-    // Common
-    loading: 'Carregando...',
-    error: 'Erro',
-    tryAgain: 'Tente novamente',
-    category: 'Categoria',
-    
-    // Header
-    talkToK21: 'Fale com a K21',
-    shareText: 'Curtiu o simulado? Então compartilhe!',
-    shareShort: 'Compartilhe!',
-    shareLinkedIn: 'Compartilhar no LinkedIn',
-    shareTwitter: 'Compartilhar no Twitter',
-    shareInstagram: 'Compartilhar no Instagram',
-    usefulLinks: 'Links Úteis',
-    k21Site: 'Site K21',
-    scrumGuide: 'Scrum Guide',
-    courses: 'Cursos',
-    content: 'Conteúdos',
-    ranking: 'Ranking',
-    
-    // Start Screen
-    certificationQuiz: 'Simulado de Certificação',
-    certifiedScrumMaster: 'Certified ScrumMaster®',
-    quizDescription: 'Prepare-se para sua certificação CSM com este simulado oferecido pela K21 Brasil.',
-    realisticQuiz: 'Simulado Realista',
-    realisticQuizDesc: 'Questões no estilo do exame oficial',
-    detailedResults: 'Resultado Detalhado',
-    detailedResultsDesc: 'Veja o que você acertou e onde precisa melhorar',
-    updatedContent: 'Conteúdo Atualizado',
-    updatedContentDesc: 'Baseado nas diretrizes mais recentes da Scrum Alliance',
-    detailedExplanations: 'Explicações Detalhadas',
-    detailedExplanationsDesc: 'Entenda o porquê de cada resposta correta',
-    startQuiz: 'Iniciar Simulado',
-    additionalInfo: 'Para informações adicionais, visite',
-    
-    // Quiz Size Selector
-    selectQuestionCount: 'Selecione o número de questões',
-    quickQuiz: 'Simulado rápido',
-    intermediateQuiz: 'Simulado intermediário',
-    completeQuiz: 'Simulado completo',
-    approxTime: 'Aprox.',
-    minutes: 'minutos',
-    start: 'Iniciar',
-    
-    // User Info Form
-    participantInfo: 'Informações do Participante',
-    fullName: 'Nome completo',
-    enterName: 'Digite seu nome',
+    selectQuizSize: 'Selecione o tamanho do simulado',
+    questions: 'questões',
+    enterInfo: 'Digite suas informações',
+    name: 'Nome',
     email: 'Email',
-    emailPlaceholder: 'seu@email.com',
-    startQuizWith: 'Iniciar Simulado com',
-    questions: 'Questões',
-    
-    // Form Validation
-    nameMinLength: 'Nome deve ter pelo menos 2 caracteres',
-    invalidEmail: 'Email inválido'
+    emailOptional: 'Email (opcional)',
+    startQuizButton: 'Iniciar Simulado',
+    question: 'Questão',
+    next: 'Próxima',
+    previous: 'Anterior',
+    finish: 'Finalizar',
+    score: 'Pontuação',
+    correct: 'Corretas',
+    incorrect: 'Incorretas',
+    explanation: 'Explicação',
+    yourAnswer: 'Sua resposta',
+    correctAnswer: 'Resposta correta',
+    congratulations: 'Parabéns!',
+    tryAgain: 'Continue estudando!',
+    completionTime: 'Tempo de conclusão',
+    downloadPDF: 'Baixar PDF',
+    restartQuiz: 'Novo Simulado',
+    viewRanking: 'Ver Ranking',
+    ranking: 'Ranking',
+    position: 'Posição',
+    player: 'Participante',
+    time: 'Tempo',
+    minutes: 'minutos',
+    seconds: 'segundos',
+    quizSizeFilter: 'Tamanho do simulado',
+    languageFilter: 'Idioma',
+    all: 'Todos',
+    portuguese: 'Português',
+    english: 'Inglês',
+    minute: 'minuto',
+    second: 'segundo',
+    restrictedArea: 'Área Restrita',
+    accessRestrictedArea: 'Acessar Área Restrita'
   },
   en: {
-    // Quiz Results
-    quizResults: 'Quiz Results',
-    approved: 'Passed',
-    notApproved: 'Not Passed',
-    minimumToPass: 'Minimum to pass',
-    completionTime: 'Completion time',
-    performanceByCategory: 'Performance by Category',
-    showAllQuestions: 'Show All Questions',
-    hideQuestions: 'Hide Questions',
-    questionDetails: 'Question Details',
-    question: 'Question',
-    correct: 'Correct',
-    incorrect: 'Incorrect',
-    backToStart: 'Back to Start',
-    downloadResults: 'Download Results (PDF)',
-    
-    // Quiz Questions
-    previous: 'Previous',
-    next: 'Next',
-    finish: 'Finish',
-    correctExplanation: 'Correct! Explanation:',
-    incorrectExplanation: 'Incorrect! Explanation:',
-    noExplanation: 'No explanation available for this question.',
-    continue: 'Continue',
-    
-    // Loading and Error States
+    certificationQuiz: 'Certification Quiz',
+    certifiedScrumMaster: 'Certified Scrum Master',
+    quizDescription: 'Test your knowledge with questions based on the official Scrum Alliance exam.',
+    realisticQuiz: 'Realistic Quiz',
+    realisticQuizDesc: 'Questions based on the official exam',
+    detailedResults: 'Detailed Results',
+    detailedResultsDesc: 'Complete analysis of your performance',
+    updatedContent: 'Updated Content',
+    updatedContentDesc: 'Based on the latest Scrum Guide',
+    detailedExplanations: 'Detailed Explanations',
+    detailedExplanationsDesc: 'Understand the why behind each answer',
+    startQuiz: 'Start Quiz',
+    additionalInfo: 'More information about Scrum at',
     loadingQuestions: 'Loading questions...',
     errorLoadingQuestions: 'Error loading questions. Please try again.',
-    
-    // Quiz Progress
-    of: 'of',
-    questionsCount: 'questions',
-    
-    // Common
-    loading: 'Loading...',
-    error: 'Error',
-    tryAgain: 'Please try again',
-    category: 'Category',
-    
-    // Header
-    talkToK21: 'Talk to K21',
-    shareText: 'Liked the quiz? Share it!',
-    shareShort: 'Share!',
-    shareLinkedIn: 'Share on LinkedIn',
-    shareTwitter: 'Share on Twitter',
-    shareInstagram: 'Share on Instagram',
-    usefulLinks: 'Useful Links',
-    k21Site: 'K21 Site',
-    scrumGuide: 'Scrum Guide',
-    courses: 'Courses',
-    content: 'Content',
-    ranking: 'Ranking',
-    
-    // Start Screen
-    certificationQuiz: 'Certification Quiz',
-    certifiedScrumMaster: 'Certified ScrumMaster®',
-    quizDescription: 'Prepare for your CSM certification with this quiz offered by K21 Brasil.',
-    realisticQuiz: 'Realistic Quiz',
-    realisticQuizDesc: 'Questions in the style of the official exam',
-    detailedResults: 'Detailed Results',
-    detailedResultsDesc: 'See what you got right and where you need to improve',
-    updatedContent: 'Updated Content',
-    updatedContentDesc: 'Based on the latest Scrum Alliance guidelines',
-    detailedExplanations: 'Detailed Explanations',
-    detailedExplanationsDesc: 'Understand why each answer is correct',
-    startQuiz: 'Start Quiz',
-    additionalInfo: 'For additional information, visit',
-    
-    // Quiz Size Selector
-    selectQuestionCount: 'Select the number of questions',
-    quickQuiz: 'Quick quiz',
-    intermediateQuiz: 'Intermediate quiz',
-    completeQuiz: 'Complete quiz',
-    approxTime: 'Approx.',
-    minutes: 'minutes',
-    start: 'Start',
-    
-    // User Info Form
-    participantInfo: 'Participant Information',
-    fullName: 'Full name',
-    enterName: 'Enter your name',
+    selectQuizSize: 'Select quiz size',
+    questions: 'questions',
+    enterInfo: 'Enter your information',
+    name: 'Name',
     email: 'Email',
-    emailPlaceholder: 'your@email.com',
-    startQuizWith: 'Start Quiz with',
-    questions: 'Questions',
-    
-    // Form Validation
-    nameMinLength: 'Name must be at least 2 characters',
-    invalidEmail: 'Invalid email'
+    emailOptional: 'Email (optional)',
+    startQuizButton: 'Start Quiz',
+    question: 'Question',
+    next: 'Next',
+    previous: 'Previous',
+    finish: 'Finish',
+    score: 'Score',
+    correct: 'Correct',
+    incorrect: 'Incorrect',
+    explanation: 'Explanation',
+    yourAnswer: 'Your answer',
+    correctAnswer: 'Correct answer',
+    congratulations: 'Congratulations!',
+    tryAgain: 'Keep studying!',
+    completionTime: 'Completion time',
+    downloadPDF: 'Download PDF',
+    restartQuiz: 'New Quiz',
+    viewRanking: 'View Ranking',
+    ranking: 'Ranking',
+    position: 'Position',
+    player: 'Player',
+    time: 'Time',
+    minutes: 'minutes',
+    seconds: 'seconds',
+    quizSizeFilter: 'Quiz size',
+    languageFilter: 'Language',
+    all: 'All',
+    portuguese: 'Portuguese',
+    english: 'English',
+    minute: 'minute',
+    second: 'second',
+    restrictedArea: 'Restricted Area',
+    accessRestrictedArea: 'Access Restricted Area'
   }
 };
 
-export const getTranslation = (language: Language, key: keyof typeof translations.pt): string => {
+export function getTranslation(language: 'pt' | 'en', key: TranslationKey): string {
   return translations[language][key] || translations.pt[key];
-};
+}

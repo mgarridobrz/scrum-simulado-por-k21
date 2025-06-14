@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { QuestionWithCategory } from '@/data/types';
 import { trackQuizAttempt, fetchRandomQuestions } from '@/utils/quizTracking';
@@ -9,6 +10,8 @@ import StartScreen from '@/components/StartScreen';
 import QuizQuestion from '@/components/QuizQuestion';
 import QuizResult from '@/components/QuizResult';
 import QuizProgress from '@/components/QuizProgress';
+import PublicStatsCounter from '@/components/PublicStatsCounter';
+import RestrictedAreaButton from '@/components/RestrictedAreaButton';
 import { Card } from '@/components/ui/card';
 
 const Index = () => {
@@ -130,7 +133,15 @@ const Index = () => {
       
       <main className="container mx-auto px-4 py-8">
         {currentScreen === 'start' && (
-          <StartScreen onStart={handleStartQuiz} />
+          <>
+            <StartScreen onStart={handleStartQuiz} />
+            
+            {/* Public Statistics */}
+            <PublicStatsCounter />
+            
+            {/* Restricted Area Button */}
+            <RestrictedAreaButton />
+          </>
         )}
 
         {currentScreen === 'quiz' && (
