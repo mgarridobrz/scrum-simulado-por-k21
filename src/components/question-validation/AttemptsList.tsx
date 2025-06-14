@@ -140,7 +140,7 @@ const AttemptsList = ({
                     <TableCell className="font-mono text-xs">
                       <div className="flex items-center">
                         <Calendar size={14} className="mr-1.5 text-muted-foreground" />
-                        {formatDate(attempt.created_at)}
+                        {formatDate(attempt.createdAt)}
                       </div>
                     </TableCell>
                     <TableCell>
@@ -155,7 +155,7 @@ const AttemptsList = ({
                     </TableCell>
                     <TableCell className="text-center">
                       <Badge variant="outline">
-                        {attempt.quiz_size}
+                        {attempt.quizSize}
                       </Badge>
                     </TableCell>
                     <TableCell className="text-center">
@@ -175,7 +175,7 @@ const AttemptsList = ({
                     <TableCell className="text-center">
                       <div className="flex items-center justify-center gap-1 text-muted-foreground text-sm">
                         <Clock size={14} />
-                        {formatTimeFromSeconds(attempt.completion_time_seconds)}
+                        {formatTimeFromSeconds(attempt.completionTimeSeconds)}
                       </div>
                     </TableCell>
                     <TableCell>

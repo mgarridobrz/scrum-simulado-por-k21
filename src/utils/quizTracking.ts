@@ -1,6 +1,6 @@
 
 import { supabase } from "@/integrations/supabase/client";
-import type { QuestionWithCategory, QuizAttempt, UserAnswers } from "@/data/types";
+import type { QuestionWithCategory, QuizAttempt, UserAnswers, QuizStats, QuizCategory } from "@/data/types";
 
 /**
  * Fetches questions from the database with language support
@@ -33,7 +33,7 @@ export async function fetchQuestionsByCategory(
     const questions: QuestionWithCategory[] = data.map(row => ({
       id: row.id,
       question: language === 'en' && row.question_en ? row.question_en : row.question,
-      category: row.category_id,
+      category: row.category_id as QuizCategory,
       options: language === 'en' && row.options_en ? row.options_en : row.options,
       correctAnswer: row.correct_answer,
       explanation: language === 'en' && row.explanation_en ? row.explanation_en : row.explanation
@@ -199,7 +199,7 @@ export async function getTrackedQuizAttempts(options?: {
       email: row.email,
       score: row.score,
       quizSize: row.quiz_size,
-      questionsData: row.questions_data,
+      questionsData: Array.isArray(row.questions_data) ? row.questions_data : [],
       createdAt: row.created_at,
       completionTimeSeconds: row.completion_time_seconds,
       language: row.language || 'pt'
@@ -231,7 +231,7 @@ export async function getGlobalQuizStats(): Promise<{
       .select('score, language');
 
     if (statsError) {
-      console.error("Error fetching global stats:", error);
+      console.error("Error fetching global stats:", statsError);
       throw statsError;
     }
 
@@ -321,5 +321,128 @@ export async function getRankingData(
   } catch (error) {
     console.error("Error in getRankingData:", error);
     return [];
+  }
+}
+
+/**
+ * Gets quiz attempt statistics
+ */
+export async function getQuizAttemptStats(): Promise<QuizStats> {
+  try {
+    const { data, error } = await supabase
+      .from('quiz_attempts')
+      .select('quiz_size, score, completion_time_seconds, created_at')
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      console.error("Error fetching quiz stats:", error);
+      throw error;
+    }
+
+    const attempts = data || [];
+    const totalAttempts = attempts.length;
+    
+    // Count by quiz size
+    const size10Count = attempts.filter(a => a.quiz_size === 10).length;
+    const size25Count = attempts.filter(a => a.quiz_size === 25).length;
+    const size50Count = attempts.filter(a => a.quiz_size === 50).length;
+    
+    // Get last 50 attempts for average
+    const lastFifty = attempts.slice(0, 50);
+    const averageLastFifty = lastFifty.length > 0 
+      ? Math.round((lastFifty.reduce((sum, a) => sum + (a.score || 0), 0) / lastFifty.length))
+      : 0;
+    
+    // Calculate averages by quiz size
+    const size10Attempts = attempts.filter(a => a.quiz_size === 10);
+    const size25Attempts = attempts.filter(a => a.quiz_size === 25);
+    const size50Attempts = attempts.filter(a => a.quiz_size === 50);
+    
+    const averageScore10 = size10Attempts.length > 0 
+      ? Math.round(size10Attempts.reduce((sum, a) => sum + (a.score || 0), 0) / size10Attempts.length)
+      : null;
+    const averageScore25 = size25Attempts.length > 0 
+      ? Math.round(size25Attempts.reduce((sum, a) => sum + (a.score || 0), 0) / size25Attempts.length)
+      : null;
+    const averageScore50 = size50Attempts.length > 0 
+      ? Math.round(size50Attempts.reduce((sum, a) => sum + (a.score || 0), 0) / size50Attempts.length)
+      : null;
+    
+    const averageTime10 = size10Attempts.length > 0 
+      ? Math.round(size10Attempts.reduce((sum, a) => sum + (a.completion_time_seconds || 0), 0) / size10Attempts.length)
+      : null;
+    const averageTime25 = size25Attempts.length > 0 
+      ? Math.round(size25Attempts.reduce((sum, a) => sum + (a.completion_time_seconds || 0), 0) / size25Attempts.length)
+      : null;
+    const averageTime50 = size50Attempts.length > 0 
+      ? Math.round(size50Attempts.reduce((sum, a) => sum + (a.completion_time_seconds || 0), 0) / size50Attempts.length)
+      : null;
+
+    return {
+      totalAttempts,
+      size10Count,
+      size25Count,
+      size50Count,
+      averageLastFifty,
+      averageTime10,
+      averageTime25,
+      averageTime50,
+      averageScore10,
+      averageScore25,
+      averageScore50
+    };
+  } catch (error) {
+    console.error("Error in getQuizAttemptStats:", error);
+    return {
+      totalAttempts: 0,
+      size10Count: 0,
+      size25Count: 0,
+      size50Count: 0,
+      averageLastFifty: 0,
+      averageTime10: null,
+      averageTime25: null,
+      averageTime50: null,
+      averageScore10: null,
+      averageScore25: null,
+      averageScore50: null
+    };
+  }
+}
+
+/**
+ * Formats time from seconds to readable format
+ */
+export function formatTimeFromSeconds(seconds: number | null): string {
+  if (!seconds) return '-';
+  
+  const minutes = Math.floor(seconds / 60);
+  const remainingSeconds = seconds % 60;
+  
+  if (minutes > 0) {
+    return `${minutes}m ${remainingSeconds}s`;
+  }
+  return `${remainingSeconds}s`;
+}
+
+/**
+ * Deletes a quiz attempt
+ */
+export async function deleteQuizAttempt(id: string): Promise<boolean> {
+  try {
+    const { error } = await supabase
+      .from('quiz_attempts')
+      .delete()
+      .eq('id', id);
+
+    if (error) {
+      console.error("Error deleting quiz attempt:", error);
+      return false;
+    }
+
+    console.log(`Quiz attempt ${id} deleted successfully`);
+    return true;
+  } catch (error) {
+    console.error("Error in deleteQuizAttempt:", error);
+    return false;
   }
 }

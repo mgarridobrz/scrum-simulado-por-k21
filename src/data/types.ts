@@ -1,4 +1,7 @@
+
 export type QuizCategory = 'fundamentals' | 'roles' | 'events' | 'artifacts' | 'dysfunctions';
+
+export type UserAnswers = Record<number, string>;
 
 export interface QuestionWithCategory {
   id: number;

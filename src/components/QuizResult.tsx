@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -16,25 +17,23 @@ interface CategoryStat {
 }
 
 interface QuizResultProps {
-  correctAnswers: number;
+  score: number;
   totalQuestions: number;
-  categoryStats: CategoryStat[];
-  onRestart: () => void;
   questions: QuestionWithCategory[];
   userAnswers: Record<number, string>;
-  userData?: { name: string; email: string } | null;
-  completionTime?: number | null;
+  onRestart: () => void;
+  completionTime: number;
+  userName: string;
 }
 
 const QuizResult = ({
-  correctAnswers,
+  score,
   totalQuestions,
-  categoryStats,
-  onRestart,
   questions,
   userAnswers,
-  userData,
+  onRestart,
   completionTime,
+  userName,
 }: QuizResultProps) => {
   const [showQuestions, setShowQuestions] = useState(false);
   const [tracked, setTracked] = useState(false);
@@ -42,8 +41,31 @@ const QuizResult = ({
 
   // Calculate percentages
   const passPercentage = 74;
-  const scorePercentage = Math.round((correctAnswers / totalQuestions) * 100);
+  const scorePercentage = Math.round((score / totalQuestions) * 100);
   const passed = scorePercentage >= passPercentage;
+
+  // Calculate category stats
+  const categoryStats: CategoryStat[] = React.useMemo(() => {
+    const statsObj: Record<string, { correct: number; total: number }> = {};
+    
+    questions.forEach(question => {
+      if (!statsObj[question.category]) {
+        statsObj[question.category] = { correct: 0, total: 0 };
+      }
+      
+      statsObj[question.category].total += 1;
+      
+      if (userAnswers[question.id] === question.correctAnswer) {
+        statsObj[question.category].correct += 1;
+      }
+    });
+    
+    return Object.entries(statsObj).map(([category, data]) => ({
+      category,
+      correctCount: data.correct,
+      totalCount: data.total
+    }));
+  }, [questions, userAnswers]);
 
   // Format date
   const currentDate = new Date().toLocaleDateString('pt-BR', {
@@ -77,18 +99,18 @@ const QuizResult = ({
   // Track the quiz attempt - only when we have the user data and completion time is available
   useEffect(() => {
     // Only register attempt if we have user name, completion time, and haven't tracked it yet
-    if (userData?.name && completionTime && !tracked) {
+    if (userName && completionTime && !tracked) {
       console.log(`Tracking quiz attempt with completion time: ${completionTime}s`);
       
-      const questionsData = prepareQuestionsData();
-      
       trackQuizAttempt(
-        userData.name,
-        userData.email || '',
+        userName,
+        null, // email
+        score,
         totalQuestions,
-        scorePercentage,
-        questionsData,
-        completionTime
+        userAnswers,
+        questions,
+        completionTime,
+        'pt' // language
       ).then(() => {
         setTracked(true);
         toast({
@@ -106,7 +128,7 @@ const QuizResult = ({
     } else if (!completionTime) {
       console.log("Not tracking attempt: missing completion time");
     }
-  }, [userData, totalQuestions, scorePercentage, tracked, toast, userAnswers, questions, completionTime]);
+  }, [userName, totalQuestions, score, tracked, toast, userAnswers, questions, completionTime]);
 
   return (
     <div className="max-w-3xl mx-auto w-full animate-fade-in">
@@ -128,7 +150,7 @@ const QuizResult = ({
               {scorePercentage}%
             </div>
             <div className="text-sm text-gray-500 mb-4">
-              {correctAnswers} de {totalQuestions} questões corretas
+              {score} de {totalQuestions} questões corretas
             </div>
 
             {passed ? (
@@ -249,7 +271,7 @@ const QuizResult = ({
           </Button>
           
           <Button 
-            onClick={() => generatePDF(questions, userAnswers, correctAnswers, totalQuestions, categoryStats, userData)} 
+            onClick={() => generatePDF(questions, userAnswers, score, totalQuestions, categoryStats, { name: userName, email: '' })} 
             variant="outline" 
             className="w-full sm:w-auto flex items-center gap-2"
           >
