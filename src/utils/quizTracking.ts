@@ -1,3 +1,4 @@
+
 import { supabase } from "@/integrations/supabase/client";
 import type { QuestionWithCategory, QuizAttempt, UserAnswers, QuizStats, QuizCategory } from "@/data/types";
 
@@ -118,11 +119,11 @@ export async function trackQuizAttempt(
   totalQuestions: number,
   userAnswers: UserAnswers,
   questions: QuestionWithCategory[],
-  completionTimeSeconds: number,
+  completionTimeSeconds: number | null,
   language: 'pt' | 'en' = 'pt'
 ): Promise<string | null> {
   try {
-    console.log(`[TRACKING] Attempting to track quiz for user: ${name}, score: ${score}%, completion time: ${completionTimeSeconds}s`);
+    console.log(`[TRACKING] Attempting to track quiz for user: ${name}, score: ${score}/${totalQuestions}, completion time: ${completionTimeSeconds}s`);
     
     // Enhanced duplicate detection with stricter criteria
     const currentTime = new Date();
@@ -143,11 +144,14 @@ export async function trackQuizAttempt(
     } else if (existingAttempts && existingAttempts.length > 0) {
       console.log(`[TRACKING] Found ${existingAttempts.length} recent attempts for ${name}:`, existingAttempts);
       
-      // Check for exact duplicates (same score and completion time within 2 seconds)
-      const exactDuplicate = existingAttempts.find(attempt => 
-        Math.abs(attempt.score - score) < 0.1 && // Same score (within 0.1%)
-        Math.abs((attempt.completion_time_seconds || 0) - completionTimeSeconds) < 2 // Same time (within 2 seconds)
-      );
+      // Check for exact duplicates (same score and similar completion time)
+      const exactDuplicate = existingAttempts.find(attempt => {
+        const scoreMatch = Math.abs(attempt.score - score) < 0.1;
+        const timeMatch = completionTimeSeconds && attempt.completion_time_seconds ? 
+          Math.abs((attempt.completion_time_seconds || 0) - completionTimeSeconds) < 2 : 
+          !completionTimeSeconds && !attempt.completion_time_seconds;
+        return scoreMatch && timeMatch;
+      });
       
       if (exactDuplicate) {
         console.log("[TRACKING] Exact duplicate detected, skipping insert:", exactDuplicate);
@@ -165,7 +169,7 @@ export async function trackQuizAttempt(
       isCorrect: userAnswers[q.id] === q.correctAnswer
     }));
 
-    console.log(`[TRACKING] Inserting new attempt for ${name}: ${score}% in ${completionTimeSeconds}s`);
+    console.log(`[TRACKING] Inserting new attempt for ${name}: ${score}/${totalQuestions} in ${completionTimeSeconds || 'N/A'}s`);
 
     const { data, error } = await supabase
       .from('quiz_attempts')
@@ -268,7 +272,7 @@ export async function getGlobalQuizStats(): Promise<{
   languageBreakdown: { pt: number; en: number };
 }> {
   try {
-    // Get total attempts and average score - include ALL attempts
+    // Get total attempts and average score - include ALL attempts (with and without completion time)
     const { data: statsData, error: statsError } = await supabase
       .from('quiz_attempts')
       .select('score, language');
@@ -368,7 +372,7 @@ export async function getRankingData(
 }
 
 /**
- * Gets quiz attempt statistics - include ALL attempts
+ * Gets quiz attempt statistics - include ALL attempts (with and without completion time)
  */
 export async function getQuizAttemptStats(): Promise<QuizStats> {
   try {
@@ -385,23 +389,23 @@ export async function getQuizAttemptStats(): Promise<QuizStats> {
     const attempts = data || [];
     const totalAttempts = attempts.length;
     
-    // Count by quiz size
+    // Count by quiz size - include ALL attempts
     const size10Count = attempts.filter(a => a.quiz_size === 10).length;
     const size25Count = attempts.filter(a => a.quiz_size === 25).length;
     const size50Count = attempts.filter(a => a.quiz_size === 50).length;
     
-    // Get last 50 attempts for average
+    // Get last 50 attempts for average - include ALL attempts
     const lastFifty = attempts.slice(0, 50);
     const averageLastFifty = lastFifty.length > 0 
       ? Math.round((lastFifty.reduce((sum, a) => sum + (a.score || 0), 0) / lastFifty.length))
       : 0;
     
-    // Calculate averages by quiz size - only for attempts with completion time
-    const size10Attempts = attempts.filter(a => a.quiz_size === 10 && a.completion_time_seconds);
-    const size25Attempts = attempts.filter(a => a.quiz_size === 25 && a.completion_time_seconds);
-    const size50Attempts = attempts.filter(a => a.quiz_size === 50 && a.completion_time_seconds);
+    // Calculate averages by quiz size - only for time averages use attempts with completion time
+    const size10AttemptsWithTime = attempts.filter(a => a.quiz_size === 10 && a.completion_time_seconds);
+    const size25AttemptsWithTime = attempts.filter(a => a.quiz_size === 25 && a.completion_time_seconds);
+    const size50AttemptsWithTime = attempts.filter(a => a.quiz_size === 50 && a.completion_time_seconds);
     
-    // Score averages include all attempts
+    // Score averages include ALL attempts
     const size10AllAttempts = attempts.filter(a => a.quiz_size === 10);
     const size25AllAttempts = attempts.filter(a => a.quiz_size === 25);
     const size50AllAttempts = attempts.filter(a => a.quiz_size === 50);
@@ -417,14 +421,14 @@ export async function getQuizAttemptStats(): Promise<QuizStats> {
       : null;
     
     // Time averages only for attempts with completion time
-    const averageTime10 = size10Attempts.length > 0 
-      ? Math.round(size10Attempts.reduce((sum, a) => sum + (a.completion_time_seconds || 0), 0) / size10Attempts.length)
+    const averageTime10 = size10AttemptsWithTime.length > 0 
+      ? Math.round(size10AttemptsWithTime.reduce((sum, a) => sum + (a.completion_time_seconds || 0), 0) / size10AttemptsWithTime.length)
       : null;
-    const averageTime25 = size25Attempts.length > 0 
-      ? Math.round(size25Attempts.reduce((sum, a) => sum + (a.completion_time_seconds || 0), 0) / size25Attempts.length)
+    const averageTime25 = size25AttemptsWithTime.length > 0 
+      ? Math.round(size25AttemptsWithTime.reduce((sum, a) => sum + (a.completion_time_seconds || 0), 0) / size25AttemptsWithTime.length)
       : null;
-    const averageTime50 = size50Attempts.length > 0 
-      ? Math.round(size50Attempts.reduce((sum, a) => sum + (a.completion_time_seconds || 0), 0) / size50Attempts.length)
+    const averageTime50 = size50AttemptsWithTime.length > 0 
+      ? Math.round(size50AttemptsWithTime.reduce((sum, a) => sum + (a.completion_time_seconds || 0), 0) / size50AttemptsWithTime.length)
       : null;
 
     return {

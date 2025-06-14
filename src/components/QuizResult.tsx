@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -23,7 +24,7 @@ interface QuizResultProps {
   questions: QuestionWithCategory[];
   userAnswers: Record<number, string>;
   onRestart: () => void;
-  completionTime: number;
+  completionTime: number | null;
   userName: string;
 }
 
@@ -91,14 +92,14 @@ const QuizResult = ({
   // Track the quiz attempt - only once with proper safeguards and debouncing
   useEffect(() => {
     // Prevent multiple tracking attempts
-    if (trackingAttempted.current || tracked || isTracking || !userName || !completionTime) {
+    if (trackingAttempted.current || tracked || isTracking || !userName) {
       return;
     }
 
     trackingAttempted.current = true;
     setIsTracking(true);
     
-    console.log(`[QUIZ_RESULT] Attempting to track quiz attempt with completion time: ${completionTime}s, raw score: ${score}/${totalQuestions}`);
+    console.log(`[QUIZ_RESULT] Attempting to track quiz attempt with completion time: ${completionTime || 'N/A'}s, raw score: ${score}/${totalQuestions}`);
     
     // Add a small delay to prevent rapid successive submissions
     const trackingTimeout = setTimeout(() => {
@@ -109,7 +110,7 @@ const QuizResult = ({
         totalQuestions,
         userAnswers,
         questions,
-        completionTime,
+        completionTime, // This can be null and that's OK
         language
       ).then((attemptId) => {
         setIsTracking(false);
