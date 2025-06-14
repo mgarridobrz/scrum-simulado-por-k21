@@ -128,7 +128,7 @@ const Index = () => {
       
       <main className="container mx-auto px-4 py-8">
         {currentScreen === 'start' && (
-          <StartScreen onStartQuiz={handleStartQuiz} />
+          <StartScreen onStart={handleStartQuiz} />
         )}
 
         {currentScreen === 'quiz' && (
@@ -162,8 +162,8 @@ const Index = () => {
                 {currentQuestion && (
                   <QuizQuestion
                     question={currentQuestion}
-                    selectedAnswer={userAnswers[currentQuestion.id]}
-                    onAnswerSelect={handleAnswerSelect}
+                    selectedOption={userAnswers[currentQuestion.id]}
+                    onSelectOption={handleAnswerSelect}
                     onNext={handleNextQuestion}
                     onPrevious={handlePreviousQuestion}
                     canGoPrevious={currentQuestionIndex > 0}

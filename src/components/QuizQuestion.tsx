@@ -18,7 +18,11 @@ export interface QuestionType {
 interface QuizQuestionProps {
   question: QuestionType;
   selectedOption: string | null;
-  onSelectOption: (id: string) => void;
+  onSelectOption: (questionId: number, answer: string) => void;
+  onNext: () => void;
+  onPrevious: () => void;
+  canGoPrevious: boolean;
+  isLastQuestion: boolean;
   showResult?: boolean;
   className?: string;
   onContinue?: () => void;
@@ -28,12 +32,19 @@ const QuizQuestion = ({
   question,
   selectedOption,
   onSelectOption,
+  onNext,
+  onPrevious,
+  canGoPrevious,
+  isLastQuestion,
   showResult = false,
   className,
   onContinue,
 }: QuizQuestionProps) => {
   const isCorrect = selectedOption === question.correctAnswer;
-  const isIncorrect = selectedOption && selectedOption !== question.correctAnswer;
+  
+  const handleOptionSelect = (optionId: string) => {
+    onSelectOption(question.id, optionId);
+  };
   
   return (
     <div className={cn("space-y-4", className)}>
@@ -47,7 +58,7 @@ const QuizQuestion = ({
             isSelected={selectedOption === option.id}
             isCorrect={option.id === question.correctAnswer}
             showResult={!!selectedOption || showResult}
-            onSelect={onSelectOption}
+            onSelect={handleOptionSelect}
           />
         ))}
       </div>
@@ -70,6 +81,23 @@ const QuizQuestion = ({
           )}
         </div>
       )}
+      
+      <div className="flex justify-between mt-6">
+        <Button
+          variant="outline"
+          onClick={onPrevious}
+          disabled={!canGoPrevious}
+        >
+          Anterior
+        </Button>
+        <Button
+          onClick={onNext}
+          disabled={!selectedOption}
+          className="bg-k21-teal hover:bg-k21-teal/90"
+        >
+          {isLastQuestion ? 'Finalizar' : 'Próxima'}
+        </Button>
+      </div>
     </div>
   );
 };

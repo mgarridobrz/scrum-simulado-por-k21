@@ -1,4 +1,3 @@
-
 import { supabase } from "@/integrations/supabase/client";
 import type { QuestionWithCategory, QuizAttempt, UserAnswers, QuizStats, QuizCategory } from "@/data/types";
 
@@ -34,7 +33,7 @@ export async function fetchQuestionsByCategory(
       id: row.id,
       question: language === 'en' && row.question_en ? row.question_en : row.question,
       category: row.category_id as QuizCategory,
-      options: language === 'en' && row.options_en ? row.options_en : row.options,
+      options: (language === 'en' && row.options_en ? row.options_en : row.options) as { id: string; text: string; }[],
       correctAnswer: row.correct_answer,
       explanation: language === 'en' && row.explanation_en ? row.explanation_en : row.explanation
     }));
@@ -199,7 +198,15 @@ export async function getTrackedQuizAttempts(options?: {
       email: row.email,
       score: row.score,
       quizSize: row.quiz_size,
-      questionsData: Array.isArray(row.questions_data) ? row.questions_data : [],
+      questionsData: Array.isArray(row.questions_data) ? row.questions_data as Array<{
+        id: number;
+        question: string;
+        category: string;
+        options: Array<{ id: string; text: string }>;
+        correctAnswer: string;
+        userAnswer: string | null;
+        isCorrect: boolean;
+      }> : [],
       createdAt: row.created_at,
       completionTimeSeconds: row.completion_time_seconds,
       language: row.language || 'pt'
