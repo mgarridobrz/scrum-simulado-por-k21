@@ -15,6 +15,7 @@ export type Database = {
           created_at: string
           email: string | null
           id: string
+          language: string
           name: string
           questions_data: Json | null
           quiz_size: number
@@ -25,6 +26,7 @@ export type Database = {
           created_at?: string
           email?: string | null
           id?: string
+          language?: string
           name: string
           questions_data?: Json | null
           quiz_size: number
@@ -35,6 +37,7 @@ export type Database = {
           created_at?: string
           email?: string | null
           id?: string
+          language?: string
           name?: string
           questions_data?: Json | null
           quiz_size?: number
@@ -63,9 +66,12 @@ export type Database = {
           correct_answer: string
           created_at: string | null
           explanation: string | null
+          explanation_en: string | null
           id: number
           options: Json
+          options_en: Json | null
           question: string
+          question_en: string | null
           updated_at: string | null
         }
         Insert: {
@@ -73,9 +79,12 @@ export type Database = {
           correct_answer: string
           created_at?: string | null
           explanation?: string | null
+          explanation_en?: string | null
           id?: number
           options: Json
+          options_en?: Json | null
           question: string
+          question_en?: string | null
           updated_at?: string | null
         }
         Update: {
@@ -83,9 +92,12 @@ export type Database = {
           correct_answer?: string
           created_at?: string | null
           explanation?: string | null
+          explanation_en?: string | null
           id?: number
           options?: Json
+          options_en?: Json | null
           question?: string
+          question_en?: string | null
           updated_at?: string | null
         }
         Relationships: [

@@ -1,25 +1,26 @@
-
 import { useState, useEffect } from 'react';
 import { QuestionWithCategory } from '@/data/types';
 import { fetchQuestionsByCategory, updateQuestion } from '@/utils/quizTracking';
 import { useToast } from '@/hooks/use-toast';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 export function useQuestions() {
   const { toast } = useToast();
+  const { language } = useLanguage();
   const [questions, setQuestions] = useState<QuestionWithCategory[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [filter, setFilter] = useState<string>('all');
   const [isLoading, setIsLoading] = useState(true);
 
-  // Load questions from the database
+  // Load questions from the database with language support
   useEffect(() => {
     const loadQuestions = async () => {
       try {
         setIsLoading(true);
-        const fetchedQuestions = await fetchQuestionsByCategory(filter === 'all' ? undefined : filter);
+        const fetchedQuestions = await fetchQuestionsByCategory(filter === 'all' ? undefined : filter, language);
         setQuestions(fetchedQuestions);
         setCurrentIndex(0);
-        console.log(`Loaded ${fetchedQuestions.length} questions from database with filter: ${filter}`);
+        console.log(`Loaded ${fetchedQuestions.length} questions from database with filter: ${filter} and language: ${language}`);
         setIsLoading(false);
       } catch (error) {
         console.error("Error loading questions:", error);
@@ -33,7 +34,7 @@ export function useQuestions() {
     };
     
     loadQuestions();
-  }, [filter, toast]);
+  }, [filter, language, toast]);
 
   // Derived state
   const filteredQuestions = questions;

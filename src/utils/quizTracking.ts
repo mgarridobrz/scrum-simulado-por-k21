@@ -1,4 +1,3 @@
-
 import { supabase } from "@/integrations/supabase/client";
 import type { Database } from "@/integrations/supabase/types";
 import type { Json } from "@/integrations/supabase/types";
@@ -56,7 +55,8 @@ export const saveQuizAttemptToSupabase = async (
   size: number,
   score?: number,
   questionsData?: object,
-  completionTime?: number
+  completionTime?: number,
+  language: 'pt' | 'en' = 'pt'
 ): Promise<boolean> => {
   try {
     // Check if this is likely a duplicate submission (within last 2 minutes)
@@ -75,7 +75,8 @@ export const saveQuizAttemptToSupabase = async (
         quiz_size: size,
         score: score || null,
         questions_data: questionsData as Json || null,
-        completion_time_seconds: completionTime || null
+        completion_time_seconds: completionTime || null,
+        language
       });
     
     if (error) {
@@ -632,12 +633,13 @@ export const trackQuizAttempt = async (
   size: number,
   score?: number,
   questionsData?: object,
-  completionTime?: number
+  completionTime?: number,
+  language: 'pt' | 'en' = 'pt'
 ): Promise<void> => {
   // Only save if we have a completion time
   if (completionTime) {
     // Save to Supabase
-    await saveQuizAttemptToSupabase(name, email, size, score, questionsData, completionTime);
+    await saveQuizAttemptToSupabase(name, email, size, score, questionsData, completionTime, language);
   } else {
     console.warn("Attempt not saved: missing completion time");
   }
@@ -660,8 +662,8 @@ export const getTrackedQuizAttempts = async (filters: AttemptFilters = {}): Prom
   }
 };
 
-// Fetch questions from database by category
-export const fetchQuestionsByCategory = async (category?: string): Promise<QuestionWithCategory[]> => {
+// Fetch questions from database by category with language support
+export const fetchQuestionsByCategory = async (category?: string, language: 'pt' | 'en' = 'pt'): Promise<QuestionWithCategory[]> => {
   try {
     let query = supabase.from('quiz_questions').select('*');
     
@@ -676,13 +678,15 @@ export const fetchQuestionsByCategory = async (category?: string): Promise<Quest
       return [];
     }
     
-    // Transform database format to application format
+    // Transform database format to application format with language support
     return data.map(item => ({
       id: item.id,
-      question: item.question,
-      options: typeof item.options === 'string' ? JSON.parse(item.options) : item.options,
+      question: language === 'en' && item.question_en ? item.question_en : item.question,
+      options: language === 'en' && item.options_en ? 
+        (typeof item.options_en === 'string' ? JSON.parse(item.options_en) : item.options_en) :
+        (typeof item.options === 'string' ? JSON.parse(item.options) : item.options),
       correctAnswer: item.correct_answer,
-      explanation: item.explanation || '',
+      explanation: language === 'en' && item.explanation_en ? item.explanation_en : (item.explanation || ''),
       category: item.category_id as QuizCategory
     }));
   } catch (error) {
@@ -691,8 +695,8 @@ export const fetchQuestionsByCategory = async (category?: string): Promise<Quest
   }
 };
 
-// Get balanced random questions for a quiz
-export const getRandomQuestionsWithBalance = async (count: number): Promise<QuestionWithCategory[]> => {
+// Get balanced random questions for a quiz with language support
+export const getRandomQuestionsWithBalance = async (count: number, language: 'pt' | 'en' = 'pt'): Promise<QuestionWithCategory[]> => {
   try {
     // Get all questions
     const { data, error } = await supabase
@@ -704,13 +708,15 @@ export const getRandomQuestionsWithBalance = async (count: number): Promise<Ques
       return [];
     }
     
-    // Transform data format
+    // Transform data format with language support
     const questions = data.map(item => ({
       id: item.id,
-      question: item.question,
-      options: typeof item.options === 'string' ? JSON.parse(item.options) : item.options,
+      question: language === 'en' && item.question_en ? item.question_en : item.question,
+      options: language === 'en' && item.options_en ? 
+        (typeof item.options_en === 'string' ? JSON.parse(item.options_en) : item.options_en) :
+        (typeof item.options === 'string' ? JSON.parse(item.options) : item.options),
       correctAnswer: item.correct_answer,
-      explanation: item.explanation || '',
+      explanation: language === 'en' && item.explanation_en ? item.explanation_en : (item.explanation || ''),
       category: item.category_id as QuizCategory
     }));
     

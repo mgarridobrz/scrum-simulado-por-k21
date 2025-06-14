@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -11,7 +10,9 @@ import QuizResult from '@/components/QuizResult';
 import QuizScoreCounter from '@/components/QuizScoreCounter';
 import PublicStatsCounter from '@/components/PublicStatsCounter';
 import ScoreEvolutionChart from '@/components/ScoreEvolutionChart';
-import { getRandomQuestionsWithBalance, getCategoryStats } from '@/utils/quizTracking';
+import LanguageSelector from '@/components/LanguageSelector';
+import { getRandomQuestionsWithBalance, getCategoryStats, trackQuizAttempt } from '@/utils/quizTracking';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { Lock, Home } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -21,6 +22,7 @@ interface UserData {
 }
 
 const Index = () => {
+  const { language } = useLanguage();
   const [status, setStatus] = useState<'ready' | 'playing' | 'finished'>('ready');
   const [questions, setQuestions] = useState([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -82,7 +84,7 @@ const Index = () => {
   }, []);
 
   const handleStartWithSize = async (selectedSize: number, userInfo?: UserData) => {
-    console.log(`Index - Starting quiz with size: ${selectedSize}`);
+    console.log(`Index - Starting quiz with size: ${selectedSize}, language: ${language}`);
     console.log("User data:", userInfo);
     
     if (userInfo) {
@@ -91,7 +93,7 @@ const Index = () => {
     
     setIsLoading(true);
     try {
-      const selectedQuestions = await getRandomQuestionsWithBalance(selectedSize);
+      const selectedQuestions = await getRandomQuestionsWithBalance(selectedSize, language);
       console.log(`Generated quiz with ${selectedQuestions.length} out of ${selectedSize} requested questions`);
       
       setQuestions(selectedQuestions);
@@ -171,18 +173,34 @@ const Index = () => {
     : correctCount;
 
   useEffect(() => {
-    if (status === 'finished' && startTime) {
+    if (status === 'finished' && startTime && userData) {
       const endTime = Date.now();
       const elapsedSeconds = Math.floor((endTime - startTime) / 1000);
       setCompletionTime(elapsedSeconds);
       console.log(`Quiz completed in ${elapsedSeconds} seconds`);
+      
+      // Track the quiz attempt with language
+      const score = Math.round((correctAnswersCount / questions.length) * 100);
+      trackQuizAttempt(
+        userData.name,
+        userData.email,
+        questions.length,
+        score,
+        { questions, userAnswers },
+        elapsedSeconds,
+        language
+      );
     }
-  }, [status, startTime]);
+  }, [status, startTime, userData, correctAnswersCount, questions, userAnswers, language]);
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
       <Header />
       <div className="container mx-auto px-4 py-8 flex-1 flex flex-col relative">
+        <div className="fixed top-4 right-4 z-50">
+          <LanguageSelector />
+        </div>
+        
         <div className="fixed bottom-4 right-4 z-50">
           <Link to="/validate-questions">
             <Button variant="ghost" size="icon" className="bg-white/70 hover:bg-white text-gray-500 hover:text-gray-700 shadow-sm border" title="Área administrativa">
