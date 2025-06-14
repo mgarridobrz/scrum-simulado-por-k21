@@ -1,268 +1,195 @@
+
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
+import { QuestionWithCategory } from '@/data/types';
+import { trackQuizAttempt, fetchRandomQuestions } from '@/utils/quizTracking';
+import { useLanguage } from '@/contexts/LanguageContext';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import StartScreen from '@/components/StartScreen';
 import QuizQuestion from '@/components/QuizQuestion';
-import QuizProgress from '@/components/QuizProgress';
 import QuizResult from '@/components/QuizResult';
-import QuizScoreCounter from '@/components/QuizScoreCounter';
-import PublicStatsCounter from '@/components/PublicStatsCounter';
-import ScoreEvolutionChart from '@/components/ScoreEvolutionChart';
-import LanguageSelector from '@/components/LanguageSelector';
-import { getRandomQuestionsWithBalance, getCategoryStats, trackQuizAttempt } from '@/utils/quizTracking';
-import { useLanguage } from '@/contexts/LanguageContext';
-import { Lock, Home } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
-
-interface UserData {
-  name: string;
-  email: string;
-}
+import QuizProgress from '@/components/QuizProgress';
+import { Card } from '@/components/ui/card';
 
 const Index = () => {
   const { language } = useLanguage();
-  const [status, setStatus] = useState<'ready' | 'playing' | 'finished'>('ready');
-  const [questions, setQuestions] = useState([]);
+  const [currentScreen, setCurrentScreen] = useState<'start' | 'quiz' | 'result'>('start');
+  const [questions, setQuestions] = useState<QuestionWithCategory[]>([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [userAnswers, setUserAnswers] = useState<Record<number, string>>({});
-  const [totalQuestionsCount, setTotalQuestionsCount] = useState(0);
-  const [userData, setUserData] = useState<UserData | null>(null);
-  const [canProceed, setCanProceed] = useState(false);
-  const [correctCount, setCorrectCount] = useState(0);
-  const [incorrectCount, setIncorrectCount] = useState(0);
-  const [isLoading, setIsLoading] = useState(true);
-  const [startTime, setStartTime] = useState<number | null>(null);
-  const [completionTime, setCompletionTime] = useState<number | null>(null);
+  const [quizSize, setQuizSize] = useState(20);
+  const [userInfo, setUserInfo] = useState<{ name: string; email: string }>({ name: '', email: '' });
+  const [startTime, setStartTime] = useState<Date | null>(null);
+  const [endTime, setEndTime] = useState<Date | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
+  // Load questions when quiz starts or language changes
   useEffect(() => {
-    const loadQuestionCount = async () => {
-      try {
-        const count = await getQuestionCount();
-        setTotalQuestionsCount(count);
-        setIsLoading(false);
-      } catch (error) {
-        console.error("Error loading question count:", error);
-        setIsLoading(false);
-      }
-    };
-    
-    loadQuestionCount();
-  }, []);
-
-  const getQuestionCount = async () => {
-    try {
-      const { count, error } = await supabase
-        .from('quiz_questions')
-        .select('*', { count: 'exact', head: true });
-      
-      if (error) {
-        console.error("Error counting questions:", error);
-        return 0;
-      }
-      
-      return count || 0;
-    } catch (error) {
-      console.error("Error counting questions:", error);
-      return 0;
+    if (currentScreen === 'quiz' && questions.length === 0) {
+      loadQuestions();
     }
-  };
+  }, [currentScreen, quizSize, language]);
 
-  useEffect(() => {
-    const importMigration = async () => {
-      try {
-        const module = await import('../utils/migrateQuestionsToDb');
-        (window as any).migrateQuestionsToDatabase = module.migrateQuestionsToDatabase;
-        console.log("Migration utility loaded. Run migrateQuestionsToDatabase() in console to migrate questions.");
-      } catch (error) {
-        console.error("Error loading migration utility:", error);
-      }
-    };
-    
-    importMigration();
-  }, []);
-
-  const handleStartWithSize = async (selectedSize: number, userInfo?: UserData) => {
-    console.log(`Index - Starting quiz with size: ${selectedSize}, language: ${language}`);
-    console.log("User data:", userInfo);
-    
-    if (userInfo) {
-      setUserData(userInfo);
-    }
-    
-    setIsLoading(true);
+  const loadQuestions = async () => {
     try {
-      const selectedQuestions = await getRandomQuestionsWithBalance(selectedSize, language);
-      console.log(`Generated quiz with ${selectedQuestions.length} out of ${selectedSize} requested questions`);
-      
-      setQuestions(selectedQuestions);
-      setCurrentQuestionIndex(0);
-      setUserAnswers({});
-      setCanProceed(false);
-      setCorrectCount(0);
-      setIncorrectCount(0);
-      setStatus('playing');
-      
-      // Start tracking time when quiz begins
-      setStartTime(Date.now());
-      setCompletionTime(null);
+      setIsLoading(true);
+      console.log(`Loading ${quizSize} questions for language: ${language}`);
+      const fetchedQuestions = await fetchRandomQuestions(quizSize, language);
+      setQuestions(fetchedQuestions);
+      console.log(`Loaded ${fetchedQuestions.length} questions`);
     } catch (error) {
-      console.error("Error getting questions:", error);
+      console.error("Error loading questions:", error);
+      // Fallback to empty array to prevent app crash
+      setQuestions([]);
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleAnswer = (questionId: number, answer: string) => {
-    if (!userAnswers[questionId]) {
-      setUserAnswers(prevAnswers => ({
-        ...prevAnswers,
-        [questionId]: answer,
-      }));
+  const handleStartQuiz = (size: number, name: string, email: string) => {
+    setQuizSize(size);
+    setUserInfo({ name, email });
+    setCurrentScreen('quiz');
+    setStartTime(new Date());
+    setUserAnswers({});
+    setCurrentQuestionIndex(0);
+    setQuestions([]); // Reset questions to trigger reload with new size/language
+  };
 
-      const currentQuestion = questions.find(q => q.id === questionId);
-      if (currentQuestion) {
-        if (answer === currentQuestion.correctAnswer) {
-          setCorrectCount(prev => prev + 1);
-        } else {
-          setIncorrectCount(prev => prev + 1);
-        }
-      }
-      
-      setCanProceed(true);
-    }
+  const handleAnswerSelect = (questionId: number, answer: string) => {
+    setUserAnswers(prev => ({
+      ...prev,
+      [questionId]: answer
+    }));
   };
 
   const handleNextQuestion = () => {
     if (currentQuestionIndex < questions.length - 1) {
-      setCurrentQuestionIndex(currentQuestionIndex + 1);
-      setCanProceed(false);
+      setCurrentQuestionIndex(prev => prev + 1);
     } else {
-      setStatus('finished');
+      handleFinishQuiz();
     }
   };
 
-  const handleRestart = () => {
-    setStatus('ready');
-    setUserData(null);
-    setCorrectCount(0);
-    setIncorrectCount(0);
+  const handlePreviousQuestion = () => {
+    if (currentQuestionIndex > 0) {
+      setCurrentQuestionIndex(prev => prev - 1);
+    }
   };
 
-  const handleReturnHome = () => {
-    setStatus('ready');
-    setUserData(null);
-    setCorrectCount(0);
-    setIncorrectCount(0);
+  const handleFinishQuiz = async () => {
+    const endDateTime = new Date();
+    setEndTime(endDateTime);
+
+    // Calculate score
+    const score = questions.reduce((total, question) => {
+      return total + (userAnswers[question.id] === question.correctAnswer ? 1 : 0);
+    }, 0);
+
+    // Calculate completion time in seconds
+    const completionTimeSeconds = startTime 
+      ? Math.round((endDateTime.getTime() - startTime.getTime()) / 1000)
+      : 0;
+
+    // Track the quiz attempt with language information
+    try {
+      await trackQuizAttempt(
+        userInfo.name,
+        userInfo.email || null,
+        score,
+        questions.length,
+        userAnswers,
+        questions,
+        completionTimeSeconds,
+        language
+      );
+      console.log(`Quiz attempt tracked for language: ${language}`);
+    } catch (error) {
+      console.error("Error tracking quiz attempt:", error);
+    }
+
+    setCurrentScreen('result');
+  };
+
+  const handleRestartQuiz = () => {
+    setCurrentScreen('start');
+    setQuestions([]);
+    setCurrentQuestionIndex(0);
     setUserAnswers({});
     setStartTime(null);
-    setCompletionTime(null);
+    setEndTime(null);
   };
 
   const currentQuestion = questions[currentQuestionIndex];
-  const isLastQuestion = currentQuestionIndex === questions.length - 1;
-  const showResult = status === 'finished';
-
-  const categoryStats = showResult
-    ? getCategoryStats(userAnswers, questions)
-    : [];
-
-  const correctAnswersCount = showResult
-    ? questions.filter(question => userAnswers[question.id] === question.correctAnswer).length
-    : correctCount;
-
-  useEffect(() => {
-    if (status === 'finished' && startTime && userData) {
-      const endTime = Date.now();
-      const elapsedSeconds = Math.floor((endTime - startTime) / 1000);
-      setCompletionTime(elapsedSeconds);
-      console.log(`Quiz completed in ${elapsedSeconds} seconds`);
-      
-      // Track the quiz attempt with language
-      const score = Math.round((correctAnswersCount / questions.length) * 100);
-      trackQuizAttempt(
-        userData.name,
-        userData.email,
-        questions.length,
-        score,
-        { questions, userAnswers },
-        elapsedSeconds,
-        language
-      );
-    }
-  }, [status, startTime, userData, correctAnswersCount, questions, userAnswers, language]);
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
+    <div className="min-h-screen bg-gray-50">
       <Header />
-      <div className="container mx-auto px-4 py-8 flex-1 flex flex-col relative">
-        <div className="fixed top-4 right-4 z-50">
-          <LanguageSelector />
-        </div>
-        
-        <div className="fixed bottom-4 right-4 z-50">
-          <Link to="/validate-questions">
-            <Button variant="ghost" size="icon" className="bg-white/70 hover:bg-white text-gray-500 hover:text-gray-700 shadow-sm border" title="Área administrativa">
-              <Lock size={20} />
-            </Button>
-          </Link>
-        </div>
-        
-        {status === 'ready' && (
-          <>
-            <StartScreen onStart={handleStartWithSize} />
-            <div className="mt-6 space-y-6">
-              <PublicStatsCounter />
-              <ScoreEvolutionChart />
-            </div>
-          </>
-        )}
-        
-        {status === 'playing' && currentQuestion && (
-          <>
-            <div className="mb-4">
-              <QuizProgress
-                currentQuestion={currentQuestionIndex + 1}
-                totalQuestions={questions.length}
-              />
-            </div>
-            <div className="bg-white rounded-lg p-5 shadow-md border border-gray-100">
-              <QuizScoreCounter correctCount={correctCount} incorrectCount={incorrectCount} />
-              <QuizQuestion
-                question={currentQuestion}
-                selectedOption={userAnswers[currentQuestion.id] || null}
-                onSelectOption={(optionId) => handleAnswer(currentQuestion.id, optionId)}
-                onContinue={canProceed ? handleNextQuestion : undefined}
-              />
-            </div>
-            <div className="mt-6 text-center">
-              <Button 
-                variant="outline" 
-                size="sm" 
-                onClick={handleReturnHome}
-                className="flex items-center gap-1"
-              >
-                <Home size={16} className="text-k21-teal" />
-                <span>Voltar para página inicial</span>
-              </Button>
-            </div>
-          </>
+      
+      <main className="container mx-auto px-4 py-8">
+        {currentScreen === 'start' && (
+          <StartScreen onStartQuiz={handleStartQuiz} />
         )}
 
-        {status === 'finished' && categoryStats && (
+        {currentScreen === 'quiz' && (
+          <div className="max-w-4xl mx-auto">
+            {isLoading ? (
+              <Card className="p-8">
+                <div className="text-center">
+                  <div className="text-lg mb-4">
+                    {language === 'en' ? 'Loading questions...' : 'Carregando questões...'}
+                  </div>
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-k21-teal mx-auto"></div>
+                </div>
+              </Card>
+            ) : questions.length === 0 ? (
+              <Card className="p-8">
+                <div className="text-center">
+                  <div className="text-lg text-red-600">
+                    {language === 'en' 
+                      ? 'Error loading questions. Please try again.' 
+                      : 'Erro ao carregar questões. Tente novamente.'}
+                  </div>
+                </div>
+              </Card>
+            ) : (
+              <>
+                <QuizProgress 
+                  currentQuestion={currentQuestionIndex + 1}
+                  totalQuestions={questions.length}
+                />
+                
+                {currentQuestion && (
+                  <QuizQuestion
+                    question={currentQuestion}
+                    selectedAnswer={userAnswers[currentQuestion.id]}
+                    onAnswerSelect={handleAnswerSelect}
+                    onNext={handleNextQuestion}
+                    onPrevious={handlePreviousQuestion}
+                    canGoPrevious={currentQuestionIndex > 0}
+                    isLastQuestion={currentQuestionIndex === questions.length - 1}
+                  />
+                )}
+              </>
+            )}
+          </div>
+        )}
+
+        {currentScreen === 'result' && (
           <QuizResult
-            categoryStats={categoryStats}
-            correctAnswers={correctAnswersCount}
+            score={questions.reduce((total, question) => {
+              return total + (userAnswers[question.id] === question.correctAnswer ? 1 : 0);
+            }, 0)}
             totalQuestions={questions.length}
-            onRestart={handleRestart}
             questions={questions}
             userAnswers={userAnswers}
-            userData={userData}
-            completionTime={completionTime}
+            onRestart={handleRestartQuiz}
+            completionTime={startTime && endTime ? Math.round((endTime.getTime() - startTime.getTime()) / 1000) : 0}
+            userName={userInfo.name}
           />
         )}
-      </div>
+      </main>
+      
       <Footer />
     </div>
   );

@@ -1,4 +1,3 @@
-
 export type QuizCategory = 'fundamentals' | 'roles' | 'events' | 'artifacts' | 'dysfunctions';
 
 export interface QuestionWithCategory {
@@ -17,11 +16,20 @@ export interface QuizAttempt {
   id: string;
   name: string;
   email: string | null;
-  quiz_size: number;
-  score: number | null;
-  created_at: string;
-  questions_data?: any;
-  completion_time_seconds?: number | null;
+  score: number;
+  quizSize: number;
+  questionsData: Array<{
+    id: number;
+    question: string;
+    category: string;
+    options: Array<{ id: string; text: string }>;
+    correctAnswer: string;
+    userAnswer: string | null;
+    isCorrect: boolean;
+  }>;
+  createdAt: string;
+  completionTimeSeconds: number;
+  language?: string; // Add language field to track which language was used
 }
 
 export interface QuizStats {

@@ -1,338 +1,312 @@
-import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { 
-  getCurrentQuarter, 
-  getTopPerformersForQuarter, 
-  getCurrentMonth, 
-  getCurrentWeek,
-  getTopPerformersForMonth,
-  getTopPerformersForWeek 
-} from '@/utils/quizTracking';
-import { useToast } from '@/hooks/use-toast';
-import Header from '@/components/Header';
-import { ArrowLeft, Medal, RefreshCw, Trophy, Clock, Calendar, CalendarDays, CalendarHeart } from 'lucide-react';
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
-interface RankingData {
+import React, { useState, useEffect } from 'react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Trophy, Clock, Users, Globe } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { getRankingData, getGlobalQuizStats } from '@/utils/quizTracking';
+import { useLanguage } from '@/contexts/LanguageContext';
+import Header from '@/components/Header';
+import Footer from '@/components/Footer';
+
+interface RankingEntry {
   name: string;
   score: number;
-  completionTime?: number;
+  completionTimeSeconds: number;
+  language: string;
+}
+
+interface GlobalStats {
+  totalAttempts: number;
+  averageScore: number;
+  totalQuestions: number;
+  languageBreakdown: { pt: number; en: number };
 }
 
 const Ranking = () => {
-  const [topPerformers10, setTopPerformers10] = useState<RankingData[]>([]);
-  const [topPerformers25, setTopPerformers25] = useState<RankingData[]>([]);
-  const [topPerformers50, setTopPerformers50] = useState<RankingData[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [currentPeriod, setCurrentPeriod] = useState('quarter');
-  const [currentValue, setCurrentValue] = useState(getCurrentQuarter());
-  const { toast } = useToast();
-  
-  const loadTopPerformers = async (period = currentPeriod, value = currentValue) => {
-    setIsLoading(true);
-    try {
-      let performers10, performers25, performers50;
-      
-      // Fetch rankings for the selected time period
-      if (period === 'quarter') {
-        const result10 = await getTopPerformersForQuarter(value, 10);
-        const result25 = await getTopPerformersForQuarter(value, 25);
-        const result50 = await getTopPerformersForQuarter(value, 50);
-        performers10 = result10.performers;
-        performers25 = result25.performers;
-        performers50 = result50.performers;
-      } else if (period === 'month') {
-        const result10 = await getTopPerformersForMonth(value, 10);
-        const result25 = await getTopPerformersForMonth(value, 25);
-        const result50 = await getTopPerformersForMonth(value, 50);
-        performers10 = result10.performers;
-        performers25 = result25.performers;
-        performers50 = result50.performers;
-      } else { // week
-        const result10 = await getTopPerformersForWeek(value, 10);
-        const result25 = await getTopPerformersForWeek(value, 25);
-        const result50 = await getTopPerformersForWeek(value, 50);
-        performers10 = result10.performers;
-        performers25 = result25.performers;
-        performers50 = result50.performers;
-      }
-      
-      setTopPerformers10(performers10);
-      setTopPerformers25(performers25);
-      setTopPerformers50(performers50);
-    } catch (error) {
-      console.error("Error loading top performers:", error);
-      toast({
-        title: "Erro ao carregar ranking",
-        description: "Não foi possível carregar os dados do ranking.",
-        variant: "destructive"
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
-  
+  const { language, isEnglish } = useLanguage();
+  const [selectedQuizSize, setSelectedQuizSize] = useState<number>(20);
+  const [selectedLanguage, setSelectedLanguage] = useState<'all' | 'pt' | 'en'>('all');
+  const [rankingData, setRankingData] = useState<RankingEntry[]>([]);
+  const [globalStats, setGlobalStats] = useState<GlobalStats>({
+    totalAttempts: 0,
+    averageScore: 0,
+    totalQuestions: 0,
+    languageBreakdown: { pt: 0, en: 0 }
+  });
+  const [loading, setLoading] = useState(true);
+
+  const quizSizes = [10, 20, 30, 50];
+
   useEffect(() => {
-    loadTopPerformers(currentPeriod, currentValue);
-  }, [currentPeriod, currentValue]);
-  
-  const formatPeriodValue = (period: string, value: string): string => {
-    if (period === 'quarter') {
-      const [year, quarterNum] = value.split('Q');
-      return `${quarterNum}º Trimestre de ${year}`;
-    } else if (period === 'month') {
-      const [year, monthNum] = value.split('M');
-      const monthNames = [
-        'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 
-        'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'
-      ];
-      const monthName = monthNames[parseInt(monthNum) - 1];
-      return `${monthName} de ${year}`;
-    } else { // week
-      const [year, weekNum] = value.split('W');
-      return `Semana ${weekNum} de ${year}`;
+    loadData();
+  }, [selectedQuizSize, selectedLanguage]);
+
+  useEffect(() => {
+    loadGlobalStats();
+  }, []);
+
+  const loadData = async () => {
+    setLoading(true);
+    try {
+      const languageFilter = selectedLanguage === 'all' ? undefined : selectedLanguage;
+      const data = await getRankingData(selectedQuizSize, languageFilter);
+      setRankingData(data);
+    } catch (error) {
+      console.error('Error loading ranking data:', error);
+    } finally {
+      setLoading(false);
     }
   };
-  
-  const formatTime = (seconds?: number): string => {
-    if (!seconds) return '--:--';
-    
+
+  const loadGlobalStats = async () => {
+    try {
+      const stats = await getGlobalQuizStats();
+      setGlobalStats(stats);
+    } catch (error) {
+      console.error('Error loading global stats:', error);
+    }
+  };
+
+  const formatTime = (seconds: number): string => {
     const minutes = Math.floor(seconds / 60);
-    const remainingSeconds = Math.round(seconds % 60);
-    
+    const remainingSeconds = seconds % 60;
     return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
   };
-  
-  const generatePeriodOptions = (): { value: string; label: string }[] => {
-    const options = [];
-    const currentDate = new Date();
-    
-    if (currentPeriod === 'quarter') {
-      const currentYear = currentDate.getFullYear();
-      const currentQuarterNum = Math.floor(currentDate.getMonth() / 3) + 1;
-      
-      for (let i = 0; i < 4; i++) {
-        let year = currentYear;
-        let quarter = currentQuarterNum - i;
-        
-        if (quarter <= 0) {
-          year--;
-          quarter = 4 + quarter;
-        }
-        
-        const value = `${year}Q${quarter}`;
-        options.push({
-          value,
-          label: formatPeriodValue('quarter', value)
-        });
-      }
-    } else if (currentPeriod === 'month') {
-      const currentYear = currentDate.getFullYear();
-      const currentMonthNum = currentDate.getMonth() + 1;
-      
-      for (let i = 0; i < 6; i++) {
-        let year = currentYear;
-        let month = currentMonthNum - i;
-        
-        if (month <= 0) {
-          year--;
-          month = 12 + month;
-        }
-        
-        const value = `${year}M${month}`;
-        options.push({
-          value,
-          label: formatPeriodValue('month', value)
-        });
-      }
-    } else { // week
-      const currentYear = currentDate.getFullYear();
-      const currentWeekNum = Math.ceil((currentDate.getTime() - new Date(currentYear, 0, 1).getTime()) / (7 * 24 * 60 * 60 * 1000));
-      
-      for (let i = 0; i < 8; i++) {
-        let year = currentYear;
-        let week = currentWeekNum - i;
-        
-        if (week <= 0) {
-          year--;
-          // Approximate number of weeks in the previous year
-          week = 52 + week;
-        }
-        
-        const value = `${year}W${week}`;
-        options.push({
-          value,
-          label: formatPeriodValue('week', value)
-        });
-      }
-    }
-    
-    return options;
+
+  const getLanguageFlag = (lang: string) => {
+    return lang === 'en' ? '🇺🇸' : '🇧🇷';
   };
-  
-  const handlePeriodChange = (newPeriod: string) => {
-    setCurrentPeriod(newPeriod);
-    
-    // Set appropriate current value based on period
-    if (newPeriod === 'quarter') {
-      setCurrentValue(getCurrentQuarter());
-    } else if (newPeriod === 'month') {
-      setCurrentValue(getCurrentMonth());
-    } else { // week
-      setCurrentValue(getCurrentWeek());
+
+  const getLanguageLabel = (lang: string) => {
+    if (isEnglish) {
+      return lang === 'en' ? 'English' : 'Portuguese';
     }
+    return lang === 'en' ? 'Inglês' : 'Português';
   };
-  
-  const renderRankingTable = (performers: RankingData[], title: string) => {
-    return (
-      <Card className="bg-white shadow-md mb-8">
-        <CardHeader className="pb-1">
-          <div className="flex items-center justify-between">
-            <div>
-              <CardTitle className="text-xl flex items-center gap-2">
-                <Trophy className="h-5 w-5 text-amber-500" />
-                {title}
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      <Header />
+      
+      <main className="container mx-auto px-4 py-8">
+        <div className="max-w-6xl mx-auto">
+          {/* Header */}
+          <div className="text-center mb-8">
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">
+              {isEnglish ? 'Global Ranking' : 'Ranking Global'}
+            </h1>
+            <p className="text-gray-600">
+              {isEnglish 
+                ? 'See how you rank among other CSM quiz participants worldwide' 
+                : 'Veja como você se posiciona entre outros participantes do simulado CSM no mundo'}
+            </p>
+          </div>
+
+          {/* Global Stats */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">
+                  {isEnglish ? 'Total Attempts' : 'Total de Tentativas'}
+                </CardTitle>
+                <Users className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">{globalStats.totalAttempts.toLocaleString()}</div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">
+                  {isEnglish ? 'Average Score' : 'Pontuação Média'}
+                </CardTitle>
+                <Trophy className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">{globalStats.averageScore.toFixed(1)}</div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">
+                  {isEnglish ? 'Portuguese Tests' : 'Testes em Português'}
+                </CardTitle>
+                <div className="text-lg">🇧🇷</div>
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">{globalStats.languageBreakdown.pt.toLocaleString()}</div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">
+                  {isEnglish ? 'English Tests' : 'Testes em Inglês'}
+                </CardTitle>
+                <div className="text-lg">🇺🇸</div>
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">{globalStats.languageBreakdown.en.toLocaleString()}</div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Filters */}
+          <Card className="mb-6">
+            <CardHeader>
+              <CardTitle>{isEnglish ? 'Filters' : 'Filtros'}</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex flex-col sm:flex-row gap-4">
+                <div className="flex-1">
+                  <label className="text-sm font-medium mb-2 block">
+                    {isEnglish ? 'Quiz Size' : 'Tamanho do Quiz'}
+                  </label>
+                  <Select value={selectedQuizSize.toString()} onValueChange={(value) => setSelectedQuizSize(parseInt(value))}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {quizSizes.map(size => (
+                        <SelectItem key={size} value={size.toString()}>
+                          {size} {isEnglish ? 'questions' : 'questões'}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="flex-1">
+                  <label className="text-sm font-medium mb-2 block">
+                    {isEnglish ? 'Language' : 'Idioma'}
+                  </label>
+                  <Select value={selectedLanguage} onValueChange={(value: 'all' | 'pt' | 'en') => setSelectedLanguage(value)}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">
+                        <div className="flex items-center gap-2">
+                          <Globe className="h-4 w-4" />
+                          {isEnglish ? 'All Languages' : 'Todos os idiomas'}
+                        </div>
+                      </SelectItem>
+                      <SelectItem value="pt">
+                        <div className="flex items-center gap-2">
+                          🇧🇷 {isEnglish ? 'Portuguese' : 'Português'}
+                        </div>
+                      </SelectItem>
+                      <SelectItem value="en">
+                        <div className="flex items-center gap-2">
+                          🇺🇸 {isEnglish ? 'English' : 'Inglês'}
+                        </div>
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Ranking Table */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Trophy className="h-5 w-5 text-k21-gold" />
+                {isEnglish ? 'Top Performers' : 'Melhores Performances'}
               </CardTitle>
               <CardDescription>
-                Os 10 melhores resultados do {formatPeriodValue(currentPeriod, currentValue)}
+                {isEnglish 
+                  ? `Top performers for ${selectedQuizSize} question quizzes` 
+                  : `Melhores performances para quizzes de ${selectedQuizSize} questões`}
+                {selectedLanguage !== 'all' && ` - ${getLanguageLabel(selectedLanguage)}`}
               </CardDescription>
-            </div>
-          </div>
-        </CardHeader>
-        <CardContent>
-          {isLoading ? (
-            <div className="flex justify-center p-6">
-              <RefreshCw className="h-8 w-8 animate-spin text-muted-foreground" />
-            </div>
-          ) : performers.length > 0 ? (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead className="w-16 text-center">#</TableHead>
-                  <TableHead>Nome</TableHead>
-                  <TableHead className="text-right">Pontuação</TableHead>
-                  <TableHead className="text-right">Tempo</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {performers.map((performer, index) => (
-                  <TableRow key={index}>
-                    <TableCell className="text-center">
-                      {index === 0 ? (
-                        <Medal className="h-5 w-5 text-amber-500 inline" />
-                      ) : index === 1 ? (
-                        <Medal className="h-5 w-5 text-gray-400 inline" />
-                      ) : index === 2 ? (
-                        <Medal className="h-5 w-5 text-amber-700 inline" />
-                      ) : (
-                        index + 1
-                      )}
-                    </TableCell>
-                    <TableCell className="font-medium">{performer.name}</TableCell>
-                    <TableCell className="text-right font-semibold">
-                      {performer.score}%
-                    </TableCell>
-                    <TableCell className="text-right font-semibold text-green-600">
-                      <div className="flex items-center justify-end gap-1">
-                        <Clock size={14} className="text-green-600" />
-                        {formatTime(performer.completionTime)}
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          ) : (
-            <div className="text-center py-8 text-muted-foreground">
-              Nenhum resultado encontrado para este período.
-            </div>
-          )}
-        </CardContent>
-      </Card>
-    );
-  };
-  
-  const periodOptions = generatePeriodOptions();
-  
-  return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
-      <Header />
-      <div className="container mx-auto px-4 py-8 flex-1">
-        <div className="flex items-center justify-between mb-6">
-          <Button variant="ghost" asChild>
-            <Link to="/" className="flex items-center gap-1">
-              <ArrowLeft size={16} />
-              Voltar
-            </Link>
-          </Button>
-          
-          <div className="flex flex-col md:flex-row gap-3 items-end md:items-center">
-            <Tabs 
-              value={currentPeriod} 
-              onValueChange={handlePeriodChange}
-              className="w-full md:w-auto"
-            >
-              <TabsList className="grid grid-cols-3 w-full">
-                <TabsTrigger value="week" className="flex items-center gap-1">
-                  <CalendarDays size={14} />
-                  <span className="hidden sm:inline">Semana</span>
-                </TabsTrigger>
-                <TabsTrigger value="month" className="flex items-center gap-1">
-                  <Calendar size={14} />
-                  <span className="hidden sm:inline">Mês</span>
-                </TabsTrigger>
-                <TabsTrigger value="quarter" className="flex items-center gap-1">
-                  <CalendarHeart size={14} />
-                  <span className="hidden sm:inline">Trimestre</span>
-                </TabsTrigger>
-              </TabsList>
-            </Tabs>
-            
-            <div className="flex gap-3 w-full md:w-auto">
-              <Select
-                value={currentValue}
-                onValueChange={(value) => setCurrentValue(value)}
-              >
-                <SelectTrigger className="w-full md:w-[180px]">
-                  <SelectValue placeholder="Selecione o período" />
-                </SelectTrigger>
-                <SelectContent>
-                  {periodOptions.map(option => (
-                    <SelectItem key={option.value} value={option.value}>
-                      {option.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              
-              <Button 
-                variant="outline" 
-                size="icon"
-                onClick={() => loadTopPerformers(currentPeriod, currentValue)}
-                disabled={isLoading}
-              >
-                <RefreshCw size={16} className={isLoading ? "animate-spin" : ""} />
-              </Button>
-            </div>
-          </div>
+            </CardHeader>
+            <CardContent>
+              {loading ? (
+                <div className="text-center py-8">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-k21-teal mx-auto mb-2"></div>
+                  <p className="text-gray-600">
+                    {isEnglish ? 'Loading ranking...' : 'Carregando ranking...'}
+                  </p>
+                </div>
+              ) : rankingData.length === 0 ? (
+                <div className="text-center py-8">
+                  <p className="text-gray-600">
+                    {isEnglish 
+                      ? 'No quiz attempts found for the selected filters.' 
+                      : 'Nenhuma tentativa de quiz encontrada para os filtros selecionados.'}
+                  </p>
+                </div>
+              ) : (
+                <div className="overflow-x-auto">
+                  <table className="w-full">
+                    <thead>
+                      <tr className="border-b">
+                        <th className="text-left py-3 px-2">
+                          {isEnglish ? 'Position' : 'Posição'}
+                        </th>
+                        <th className="text-left py-3 px-2">
+                          {isEnglish ? 'Name' : 'Nome'}
+                        </th>
+                        <th className="text-left py-3 px-2">
+                          {isEnglish ? 'Score' : 'Pontuação'}
+                        </th>
+                        <th className="text-left py-3 px-2">
+                          {isEnglish ? 'Time' : 'Tempo'}
+                        </th>
+                        <th className="text-left py-3 px-2">
+                          {isEnglish ? 'Language' : 'Idioma'}
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {rankingData.map((entry, index) => (
+                        <tr key={index} className="border-b hover:bg-gray-50">
+                          <td className="py-3 px-2">
+                            <div className="flex items-center gap-2">
+                              {index === 0 && <Trophy className="h-4 w-4 text-yellow-500" />}
+                              {index === 1 && <Trophy className="h-4 w-4 text-gray-400" />}
+                              {index === 2 && <Trophy className="h-4 w-4 text-amber-600" />}
+                              <span className="font-medium">#{index + 1}</span>
+                            </div>
+                          </td>
+                          <td className="py-3 px-2 font-medium">{entry.name}</td>
+                          <td className="py-3 px-2">
+                            <Badge variant="secondary">
+                              {entry.score}/{selectedQuizSize}
+                            </Badge>
+                          </td>
+                          <td className="py-3 px-2">
+                            <div className="flex items-center gap-1">
+                              <Clock className="h-3 w-3 text-gray-400" />
+                              {formatTime(entry.completionTimeSeconds)}
+                            </div>
+                          </td>
+                          <td className="py-3 px-2">
+                            <div className="flex items-center gap-1">
+                              {getLanguageFlag(entry.language)}
+                              <span className="text-sm text-gray-600">
+                                {getLanguageLabel(entry.language)}
+                              </span>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </CardContent>
+          </Card>
         </div>
-        
-        {/* Render three separate ranking tables */}
-        {renderRankingTable(topPerformers10, "Ranking do Simulado - 10 Questões")}
-        {renderRankingTable(topPerformers25, "Ranking do Simulado - 25 Questões")}
-        {renderRankingTable(topPerformers50, "Ranking do Simulado - 50 Questões")}
-        
-        <div className="text-xs text-muted-foreground text-center">
-          {currentPeriod === 'quarter' && "Os rankings são resetados a cada novo trimestre."}
-          {currentPeriod === 'month' && "Os rankings são resetados a cada novo mês."}
-          {currentPeriod === 'week' && "Os rankings são resetados a cada nova semana."}
-          <span className="block mt-1">Em caso de empate, o menor tempo de conclusão é usado como critério de desempate.</span>
-        </div>
-      </div>
+      </main>
+      
+      <Footer />
     </div>
   );
 };
