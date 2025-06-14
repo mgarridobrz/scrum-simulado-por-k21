@@ -4,11 +4,14 @@ import { getQuizAttemptStats, formatTimeFromSeconds } from '@/utils/quizTracking
 import { Card } from '@/components/ui/card';
 import { Calculator, Users, Award, Clock } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { useLanguage } from '@/contexts/LanguageContext';
+import { getTranslation } from '@/utils/translations';
 import type { QuizStats } from '@/data/types';
 
 const PublicStatsCounter = () => {
   const [stats, setStats] = useState<QuizStats | null>(null);
   const { toast } = useToast();
+  const { language } = useLanguage();
   
   useEffect(() => {
     const loadStats = async () => {
@@ -36,7 +39,7 @@ const PublicStatsCounter = () => {
           <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-k21-teal/10 mb-2">
             <Users className="h-6 w-6 text-k21-teal" />
           </div>
-          <h3 className="text-sm font-medium text-gray-500">Total de Simulados</h3>
+          <h3 className="text-sm font-medium text-gray-500">{getTranslation(language, 'totalQuizzes')}</h3>
           <p className="text-3xl font-bold text-k21-teal">{stats?.totalAttempts || 0}</p>
         </div>
         
@@ -44,7 +47,7 @@ const PublicStatsCounter = () => {
           <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-k21-gold/10 mb-2">
             <Calculator className="h-6 w-6 text-k21-gold" />
           </div>
-          <h3 className="text-sm font-medium text-gray-500">Questões Respondidas</h3>
+          <h3 className="text-sm font-medium text-gray-500">{getTranslation(language, 'questionsAnswered')}</h3>
           <p className="text-3xl font-bold text-k21-gold">
             {stats ? stats.size10Count * 10 + stats.size25Count * 25 + stats.size50Count * 50 : 0}
           </p>
@@ -54,7 +57,7 @@ const PublicStatsCounter = () => {
           <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-amber-500/10 mb-2">
             <Award className="h-6 w-6 text-amber-500" />
           </div>
-          <h3 className="text-sm font-medium text-gray-500">Média Últimos 50</h3>
+          <h3 className="text-sm font-medium text-gray-500">{getTranslation(language, 'averageLast50')}</h3>
           <p className="text-3xl font-bold text-amber-500">{stats?.averageLastFifty || 0}%</p>
         </div>
       </div>
