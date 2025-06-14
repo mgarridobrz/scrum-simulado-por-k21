@@ -1,9 +1,10 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Trophy, Clock, Users } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { getRankingData, getGlobalQuizStats } from '@/utils/quizTracking';
 import { useLanguage } from '@/contexts/LanguageContext';
 import Header from '@/components/Header';
@@ -37,8 +38,8 @@ const Ranking = () => {
   });
   const [loading, setLoading] = useState(true);
 
-  // Quiz sizes are now only 15, 25, and 50
-  const quizSizes = [15, 25, 50];
+  // Quiz sizes are now 10, 25, and 50
+  const quizSizes = [10, 25, 50];
 
   useEffect(() => {
     loadData();
@@ -85,6 +86,11 @@ const Ranking = () => {
       return lang === 'en' ? 'English' : 'Portuguese';
     }
     return lang === 'en' ? 'Inglês' : 'Português';
+  };
+
+  const formatScoreAsPercentage = (score: number, totalQuestions: number): string => {
+    const percentage = Math.round((score / totalQuestions) * 100);
+    return `${percentage}%`;
   };
 
   return (
@@ -156,32 +162,28 @@ const Ranking = () => {
             </Card>
           </div>
 
-          {/* Filters (only Quiz Size select remains) */}
+          {/* Quiz Size Selection with Toggle Buttons */}
           <Card className="mb-6">
             <CardHeader>
-              <CardTitle>{isEnglish ? 'Filters' : 'Filtros'}</CardTitle>
+              <CardTitle>{isEnglish ? 'Quiz Size' : 'Tamanho do Quiz'}</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="flex flex-col sm:flex-row gap-4">
-                <div className="flex-1">
-                  <label className="text-sm font-medium mb-2 block">
-                    {isEnglish ? 'Quiz Size' : 'Tamanho do Quiz'}
-                  </label>
-                  <Select value={selectedQuizSize.toString()} onValueChange={(value) => setSelectedQuizSize(parseInt(value))}>
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {quizSizes.map(size => (
-                        <SelectItem key={size} value={size.toString()}>
-                          {size} {isEnglish ? 'questions' : 'questões'}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                {/* Language filter removed */}
-              </div>
+              <ToggleGroup 
+                type="single" 
+                value={selectedQuizSize.toString()} 
+                onValueChange={(value) => value && setSelectedQuizSize(parseInt(value))}
+                className="justify-start"
+              >
+                {quizSizes.map(size => (
+                  <ToggleGroupItem 
+                    key={size} 
+                    value={size.toString()}
+                    className="px-6 py-2"
+                  >
+                    {size} {isEnglish ? 'questions' : 'questões'}
+                  </ToggleGroupItem>
+                ))}
+              </ToggleGroup>
             </CardContent>
           </Card>
 
@@ -250,7 +252,7 @@ const Ranking = () => {
                           <td className="py-3 px-2 font-medium">{entry.name}</td>
                           <td className="py-3 px-2">
                             <Badge variant="secondary">
-                              {entry.score}/{selectedQuizSize}
+                              {formatScoreAsPercentage(entry.score, selectedQuizSize)}
                             </Badge>
                           </td>
                           <td className="py-3 px-2">
