@@ -1,3 +1,4 @@
+
 export type TranslationKey = 
   | 'certificationQuiz'
   | 'certifiedScrumMaster'
@@ -94,7 +95,8 @@ export type TranslationKey =
   | 'startQuizWith'
   | 'totalQuizzes'
   | 'questionsAnswered'
-  | 'averageLast50';
+  | 'averageLast50'
+  | 'backToHome';
 
 const translations = {
   pt: {
@@ -193,7 +195,8 @@ const translations = {
     startQuizWith: 'Iniciar simulado com',
     totalQuizzes: 'Total de Simulados',
     questionsAnswered: 'Questões Respondidas',
-    averageLast50: 'Média Últimos 50'
+    averageLast50: 'Média Últimos 50',
+    backToHome: 'Voltar ao Início'
   },
   en: {
     certificationQuiz: 'Certification Quiz',
@@ -291,7 +294,8 @@ const translations = {
     startQuizWith: 'Start quiz with',
     totalQuizzes: 'Total Quizzes',
     questionsAnswered: 'Questions Answered',
-    averageLast50: 'Average Last 50'
+    averageLast50: 'Average Last 50',
+    backToHome: 'Back to Home'
   }
 };
 

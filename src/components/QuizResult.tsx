@@ -40,6 +40,7 @@ const QuizResult = ({
   const { language } = useLanguage();
   const [showQuestions, setShowQuestions] = useState(false);
   const [tracked, setTracked] = useState(false);
+  const [isTracking, setIsTracking] = useState(false);
   const { toast } = useToast();
   const trackingAttempted = useRef(false);
 
@@ -88,53 +89,61 @@ const QuizResult = ({
     return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
   };
 
-  // Track the quiz attempt - only once with proper safeguards
+  // Track the quiz attempt - only once with proper safeguards and debouncing
   useEffect(() => {
     // Prevent multiple tracking attempts
-    if (trackingAttempted.current || tracked || !userName || !completionTime) {
+    if (trackingAttempted.current || tracked || isTracking || !userName || !completionTime) {
       return;
     }
 
     trackingAttempted.current = true;
+    setIsTracking(true);
     
-    console.log(`Attempting to track quiz attempt with completion time: ${completionTime}s`);
+    console.log(`[QUIZ_RESULT] Attempting to track quiz attempt with completion time: ${completionTime}s`);
     
-    trackQuizAttempt(
-      userName,
-      null, // email
-      scorePercentage, // Use percentage score instead of raw score
-      totalQuestions,
-      userAnswers,
-      questions,
-      completionTime,
-      language
-    ).then((attemptId) => {
-      if (attemptId) {
-        setTracked(true);
-        console.log(`Quiz attempt tracked successfully with ID: ${attemptId}`);
-        toast({
-          title: language === 'en' ? "Result saved" : "Resultado salvo",
-          description: language === 'en' ? "Your result was successfully recorded." : "Seu resultado foi registrado com sucesso.",
-        });
-      } else {
-        console.error("Failed to track quiz attempt - no ID returned");
+    // Add a small delay to prevent rapid successive submissions
+    const trackingTimeout = setTimeout(() => {
+      trackQuizAttempt(
+        userName,
+        null, // email
+        scorePercentage, // Use percentage score instead of raw score
+        totalQuestions,
+        userAnswers,
+        questions,
+        completionTime,
+        language
+      ).then((attemptId) => {
+        setIsTracking(false);
+        if (attemptId) {
+          setTracked(true);
+          console.log(`[QUIZ_RESULT] Quiz attempt tracked successfully with ID: ${attemptId}`);
+          toast({
+            title: language === 'en' ? "Result saved" : "Resultado salvo",
+            description: language === 'en' ? "Your result was successfully recorded." : "Seu resultado foi registrado com sucesso.",
+          });
+        } else {
+          console.error("[QUIZ_RESULT] Failed to track quiz attempt - no ID returned");
+          trackingAttempted.current = false; // Allow retry
+          toast({
+            title: language === 'en' ? "Save error" : "Erro ao salvar",
+            description: language === 'en' ? "There was a problem recording your result." : "Houve um problema ao registrar seu resultado.",
+            variant: "destructive"
+          });
+        }
+      }).catch(error => {
+        setIsTracking(false);
+        console.error("[QUIZ_RESULT] Error tracking quiz attempt:", error);
         trackingAttempted.current = false; // Allow retry
         toast({
           title: language === 'en' ? "Save error" : "Erro ao salvar",
           description: language === 'en' ? "There was a problem recording your result." : "Houve um problema ao registrar seu resultado.",
           variant: "destructive"
         });
-      }
-    }).catch(error => {
-      console.error("Error tracking quiz attempt:", error);
-      trackingAttempted.current = false; // Allow retry
-      toast({
-        title: language === 'en' ? "Save error" : "Erro ao salvar",
-        description: language === 'en' ? "There was a problem recording your result." : "Houve um problema ao registrar seu resultado.",
-        variant: "destructive"
       });
-    });
-  }, [userName, totalQuestions, scorePercentage, tracked, toast, userAnswers, questions, completionTime, language]);
+    }, 500); // 500ms delay to prevent rapid submissions
+
+    return () => clearTimeout(trackingTimeout);
+  }, [userName, totalQuestions, scorePercentage, tracked, isTracking, toast, userAnswers, questions, completionTime, language]);
 
   return (
     <div className="max-w-3xl mx-auto w-full animate-fade-in">
@@ -146,6 +155,14 @@ const QuizResult = ({
           <CardDescription className="text-gray-600 flex items-center justify-center gap-1">
             <Clock size={14} className="text-gray-400" />
             {currentDate}
+            {isTracking && (
+              <div className="flex items-center gap-1 ml-2">
+                <div className="animate-spin rounded-full h-3 w-3 border-b border-k21-teal"></div>
+                <span className="text-xs text-k21-teal">
+                  {language === 'en' ? 'Saving...' : 'Salvando...'}
+                </span>
+              </div>
+            )}
           </CardDescription>
         </CardHeader>
         
@@ -276,6 +293,7 @@ const QuizResult = ({
             onClick={onRestart} 
             variant="default" 
             className="w-full sm:w-auto"
+            disabled={isTracking}
           >
             {getTranslation(language, 'backToStart')}
           </Button>
@@ -284,6 +302,7 @@ const QuizResult = ({
             onClick={() => generatePDF(questions, userAnswers, score, totalQuestions, categoryStats, { name: userName, email: '' })} 
             variant="outline" 
             className="w-full sm:w-auto flex items-center gap-2"
+            disabled={isTracking}
           >
             <Printer size={16} />
             {getTranslation(language, 'downloadResults')}

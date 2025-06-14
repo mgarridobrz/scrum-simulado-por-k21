@@ -1,11 +1,13 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Trophy, Clock, Users } from 'lucide-react';
+import { Trophy, Clock, Users, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { getRankingData, getGlobalQuizStats } from '@/utils/quizTracking';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useNavigate } from 'react-router-dom';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 
@@ -25,6 +27,7 @@ interface GlobalStats {
 
 const Ranking = () => {
   const { language, isEnglish } = useLanguage();
+  const navigate = useNavigate();
   // Default quiz size is now 10
   const [selectedQuizSize, setSelectedQuizSize] = useState<number>(10);
   // Language filter state and filter are removed
@@ -93,22 +96,37 @@ const Ranking = () => {
     return `${Math.round(score)}%`;
   };
 
+  const handleBackClick = () => {
+    navigate('/');
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
       
       <main className="container mx-auto px-4 py-8">
         <div className="max-w-6xl mx-auto">
-          {/* Header */}
-          <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">
-              {isEnglish ? 'Global Ranking' : 'Ranking Global'}
-            </h1>
-            <p className="text-gray-600">
-              {isEnglish 
-                ? 'See how you rank among other CSM quiz participants worldwide' 
-                : 'Veja como você se posiciona entre outros participantes do simulado CSM no mundo'}
-            </p>
+          {/* Back Button and Header */}
+          <div className="mb-6">
+            <Button
+              onClick={handleBackClick}
+              variant="outline"
+              className="mb-4 flex items-center gap-2"
+            >
+              <ArrowLeft className="h-4 w-4" />
+              {isEnglish ? 'Back to Home' : 'Voltar ao Início'}
+            </Button>
+            
+            <div className="text-center">
+              <h1 className="text-3xl font-bold text-gray-900 mb-2">
+                {isEnglish ? 'Global Ranking' : 'Ranking Global'}
+              </h1>
+              <p className="text-gray-600">
+                {isEnglish 
+                  ? 'See how you rank among other CSM quiz participants worldwide' 
+                  : 'Veja como você se posiciona entre outros participantes do simulado CSM no mundo'}
+              </p>
+            </div>
           </div>
 
           {/* Global Stats */}

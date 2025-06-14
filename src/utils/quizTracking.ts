@@ -1,4 +1,3 @@
-
 import { supabase } from "@/integrations/supabase/client";
 import type { QuestionWithCategory, QuizAttempt, UserAnswers, QuizStats, QuizCategory } from "@/data/types";
 
@@ -110,7 +109,7 @@ export async function updateQuestion(question: QuestionWithCategory): Promise<bo
 }
 
 /**
- * Tracks a quiz attempt with language support
+ * Tracks a quiz attempt with language support and improved duplicate detection
  */
 export async function trackQuizAttempt(
   name: string,
@@ -123,22 +122,37 @@ export async function trackQuizAttempt(
   language: 'pt' | 'en' = 'pt'
 ): Promise<string | null> {
   try {
-    // Check if a similar attempt already exists to prevent duplicates
+    console.log(`[TRACKING] Attempting to track quiz for user: ${name}, score: ${score}%, completion time: ${completionTimeSeconds}s`);
+    
+    // Enhanced duplicate detection with stricter criteria
+    const currentTime = new Date();
+    const twoSecondsAgo = new Date(currentTime.getTime() - 2000); // 2 seconds window
+    
     const { data: existingAttempts, error: checkError } = await supabase
       .from('quiz_attempts')
-      .select('id')
+      .select('id, created_at, score, completion_time_seconds')
       .eq('name', name)
-      .eq('score', score)
       .eq('quiz_size', totalQuestions)
-      .eq('completion_time_seconds', completionTimeSeconds)
-      .gte('created_at', new Date(Date.now() - 5000).toISOString()) // Within last 5 seconds
-      .limit(1);
+      .eq('language', language)
+      .gte('created_at', twoSecondsAgo.toISOString())
+      .order('created_at', { ascending: false })
+      .limit(5);
 
     if (checkError) {
-      console.error("Error checking for existing attempts:", checkError);
+      console.error("[TRACKING] Error checking for existing attempts:", checkError);
     } else if (existingAttempts && existingAttempts.length > 0) {
-      console.log("Duplicate attempt detected, skipping insert");
-      return existingAttempts[0].id;
+      console.log(`[TRACKING] Found ${existingAttempts.length} recent attempts for ${name}:`, existingAttempts);
+      
+      // Check for exact duplicates (same score and completion time within 2 seconds)
+      const exactDuplicate = existingAttempts.find(attempt => 
+        Math.abs(attempt.score - score) < 0.1 && // Same score (within 0.1%)
+        Math.abs((attempt.completion_time_seconds || 0) - completionTimeSeconds) < 2 // Same time (within 2 seconds)
+      );
+      
+      if (exactDuplicate) {
+        console.log("[TRACKING] Exact duplicate detected, skipping insert:", exactDuplicate);
+        return exactDuplicate.id;
+      }
     }
 
     const questionsData = questions.map(q => ({
@@ -150,6 +164,8 @@ export async function trackQuizAttempt(
       userAnswer: userAnswers[q.id] || null,
       isCorrect: userAnswers[q.id] === q.correctAnswer
     }));
+
+    console.log(`[TRACKING] Inserting new attempt for ${name}: ${score}% in ${completionTimeSeconds}s`);
 
     const { data, error } = await supabase
       .from('quiz_attempts')
@@ -166,14 +182,14 @@ export async function trackQuizAttempt(
       .single();
 
     if (error) {
-      console.error("Error tracking quiz attempt:", error);
+      console.error("[TRACKING] Error tracking quiz attempt:", error);
       return null;
     }
 
-    console.log(`Quiz attempt tracked successfully with ID: ${data.id} for language: ${language}`);
+    console.log(`[TRACKING] Quiz attempt tracked successfully with ID: ${data.id} for language: ${language}`);
     return data.id;
   } catch (error) {
-    console.error("Error in trackQuizAttempt:", error);
+    console.error("[TRACKING] Error in trackQuizAttempt:", error);
     return null;
   }
 }
