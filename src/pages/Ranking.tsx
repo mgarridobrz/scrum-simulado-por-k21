@@ -196,7 +196,6 @@ const Ranking = () => {
                 {isEnglish 
                   ? `Top performers for ${selectedQuizSize} question quizzes` 
                   : `Melhores performances para quizzes de ${selectedQuizSize} questões`}
-                {selectedLanguage !== 'all' && ` - ${getLanguageLabel(selectedLanguage)}`}
               </CardDescription>
             </CardHeader>
             <CardContent>
