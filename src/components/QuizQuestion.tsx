@@ -1,8 +1,9 @@
-
 import React from 'react';
 import QuizOption from './QuizOption';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
+import { useLanguage } from '@/contexts/LanguageContext';
+import { getTranslation } from '@/utils/translations';
 
 export interface QuestionType {
   id: number;
@@ -40,6 +41,7 @@ const QuizQuestion = ({
   className,
   onContinue,
 }: QuizQuestionProps) => {
+  const { language } = useLanguage();
   const isCorrect = selectedOption === question.correctAnswer;
   
   const handleOptionSelect = (optionId: string) => {
@@ -66,16 +68,16 @@ const QuizQuestion = ({
       {selectedOption && (
         <div className="mt-4 p-4 bg-blue-50 border border-blue-100 rounded-md shadow-sm">
           <h4 className="font-medium text-blue-800 mb-1">
-            {isCorrect ? "Correto!" : "Incorreto!"} Explicação:
+            {isCorrect ? getTranslation(language, 'correctExplanation') : getTranslation(language, 'incorrectExplanation')}
           </h4>
           <p className="text-sm text-blue-700">
-            {question.explanation || "Não há explicação disponível para esta questão."}
+            {question.explanation || getTranslation(language, 'noExplanation')}
           </p>
           
           {onContinue && (
             <div className="mt-4 flex justify-end">
               <Button onClick={onContinue} className="bg-k21-teal hover:bg-k21-teal/90 text-white">
-                Continuar
+                {getTranslation(language, 'continue')}
               </Button>
             </div>
           )}
@@ -88,14 +90,14 @@ const QuizQuestion = ({
           onClick={onPrevious}
           disabled={!canGoPrevious}
         >
-          Anterior
+          {getTranslation(language, 'previous')}
         </Button>
         <Button
           onClick={onNext}
           disabled={!selectedOption}
           className="bg-k21-teal hover:bg-k21-teal/90"
         >
-          {isLastQuestion ? 'Finalizar' : 'Próxima'}
+          {isLastQuestion ? getTranslation(language, 'finish') : getTranslation(language, 'next')}
         </Button>
       </div>
     </div>

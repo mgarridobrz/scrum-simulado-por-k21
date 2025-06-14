@@ -1,8 +1,8 @@
-
 import React, { useState, useEffect } from 'react';
 import { QuestionWithCategory } from '@/data/types';
 import { trackQuizAttempt, fetchRandomQuestions } from '@/utils/quizTracking';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { getTranslation } from '@/utils/translations';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import StartScreen from '@/components/StartScreen';
@@ -139,7 +139,7 @@ const Index = () => {
               <Card className="p-8">
                 <div className="text-center">
                   <div className="text-lg mb-4">
-                    {language === 'en' ? 'Loading questions...' : 'Carregando questões...'}
+                    {getTranslation(language, 'loadingQuestions')}
                   </div>
                   <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-k21-teal mx-auto"></div>
                 </div>
@@ -148,9 +148,7 @@ const Index = () => {
               <Card className="p-8">
                 <div className="text-center">
                   <div className="text-lg text-red-600">
-                    {language === 'en' 
-                      ? 'Error loading questions. Please try again.' 
-                      : 'Erro ao carregar questões. Tente novamente.'}
+                    {getTranslation(language, 'errorLoadingQuestions')}
                   </div>
                 </div>
               </Card>

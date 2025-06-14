@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -9,6 +8,8 @@ import QuizQuestion from './QuizQuestion';
 import { trackQuizAttempt } from '@/utils/quizTracking';
 import { generatePDF } from '@/utils/pdfGenerator';
 import { useToast } from '@/hooks/use-toast';
+import { useLanguage } from '@/contexts/LanguageContext';
+import { getTranslation } from '@/utils/translations';
 
 interface CategoryStat {
   category: string;
@@ -35,6 +36,7 @@ const QuizResult = ({
   completionTime,
   userName,
 }: QuizResultProps) => {
+  const { language } = useLanguage();
   const [showQuestions, setShowQuestions] = useState(false);
   const [tracked, setTracked] = useState(false);
   const { toast } = useToast();
@@ -110,32 +112,32 @@ const QuizResult = ({
         userAnswers,
         questions,
         completionTime,
-        'pt' // language
+        language
       ).then(() => {
         setTracked(true);
         toast({
-          title: "Resultado salvo",
-          description: "Seu resultado foi registrado com sucesso.",
+          title: language === 'en' ? "Result saved" : "Resultado salvo",
+          description: language === 'en' ? "Your result was successfully recorded." : "Seu resultado foi registrado com sucesso.",
         });
       }).catch(error => {
         console.error("Error tracking quiz attempt:", error);
         toast({
-          title: "Erro ao salvar",
-          description: "Houve um problema ao registrar seu resultado.",
+          title: language === 'en' ? "Save error" : "Erro ao salvar",
+          description: language === 'en' ? "There was a problem recording your result." : "Houve um problema ao registrar seu resultado.",
           variant: "destructive"
         });
       });
     } else if (!completionTime) {
       console.log("Not tracking attempt: missing completion time");
     }
-  }, [userName, totalQuestions, score, tracked, toast, userAnswers, questions, completionTime]);
+  }, [userName, totalQuestions, score, tracked, toast, userAnswers, questions, completionTime, language]);
 
   return (
     <div className="max-w-3xl mx-auto w-full animate-fade-in">
       <Card className="shadow-lg border-t-4 border-t-k21-gold">
         <CardHeader className="text-center pb-2">
           <CardTitle className="text-2xl font-bold text-gray-800">
-            Resultados do Simulado
+            {getTranslation(language, 'quizResults')}
           </CardTitle>
           <CardDescription className="text-gray-600 flex items-center justify-center gap-1">
             <Clock size={14} className="text-gray-400" />
@@ -150,36 +152,36 @@ const QuizResult = ({
               {scorePercentage}%
             </div>
             <div className="text-sm text-gray-500 mb-4">
-              {score} de {totalQuestions} questões corretas
+              {score} {getTranslation(language, 'of')} {totalQuestions} {getTranslation(language, 'questionsCount')} {language === 'en' ? 'correct' : 'corretas'}
             </div>
 
             {passed ? (
               <Badge variant="default" className="bg-green-600 flex gap-1 py-1 px-3 text-white">
                 <CheckCircle size={16} />
-                <span>Aprovado</span>
+                <span>{getTranslation(language, 'approved')}</span>
               </Badge>
             ) : (
               <Badge variant="default" className="bg-amber-600 flex gap-1 py-1 px-3 text-white">
                 <AlertCircle size={16} />
-                <span>Não Aprovado</span>
+                <span>{getTranslation(language, 'notApproved')}</span>
               </Badge>
             )}
 
             <div className="text-xs text-gray-500 mt-2">
-              Mínimo para aprovação: {passPercentage}%
+              {getTranslation(language, 'minimumToPass')}: {passPercentage}%
             </div>
             
             {completionTime && (
               <div className="flex items-center gap-1 mt-3 text-sm text-gray-600">
                 <Clock size={14} className="text-gray-500" />
-                <span>Tempo de conclusão: {formatTime(completionTime)}</span>
+                <span>{getTranslation(language, 'completionTime')}: {formatTime(completionTime)}</span>
               </div>
             )}
           </div>
 
           {/* Category breakdown */}
           <div>
-            <h3 className="font-medium text-gray-800 mb-3">Desempenho por Categoria</h3>
+            <h3 className="font-medium text-gray-800 mb-3">{getTranslation(language, 'performanceByCategory')}</h3>
             <div className="space-y-3">
               {Array.isArray(categoryStats) && categoryStats.map((stat, index) => (
                 <div key={index} className="flex justify-between items-center">
@@ -215,14 +217,14 @@ const QuizResult = ({
               onClick={() => setShowQuestions(!showQuestions)}
               className="w-full"
             >
-              {showQuestions ? 'Ocultar Questões' : 'Mostrar Todas as Questões'}
+              {showQuestions ? getTranslation(language, 'hideQuestions') : getTranslation(language, 'showAllQuestions')}
             </Button>
           </div>
 
           {/* Questions details */}
           {showQuestions && (
             <div className="space-y-8 pt-2">
-              <h3 className="font-medium text-gray-800 mb-3">Detalhes das Questões</h3>
+              <h3 className="font-medium text-gray-800 mb-3">{getTranslation(language, 'questionDetails')}</h3>
               {questions.map((question, index) => (
                 <div 
                   key={question.id}
@@ -234,7 +236,7 @@ const QuizResult = ({
                 >
                   <div className="mb-2 flex justify-between items-center">
                     <span className="text-sm font-medium text-gray-500">
-                      Questão {index + 1} • {question.category}
+                      {getTranslation(language, 'question')} {index + 1} • {question.category}
                     </span>
                     <Badge
                       variant="default"
@@ -245,8 +247,8 @@ const QuizResult = ({
                       } text-white`}
                     >
                       {userAnswers[question.id] === question.correctAnswer
-                        ? 'Correta'
-                        : 'Incorreta'}
+                        ? getTranslation(language, 'correct')
+                        : getTranslation(language, 'incorrect')}
                     </Badge>
                   </div>
                   <QuizQuestion
@@ -271,7 +273,7 @@ const QuizResult = ({
             variant="default" 
             className="w-full sm:w-auto"
           >
-            Voltar para Início
+            {getTranslation(language, 'backToStart')}
           </Button>
           
           <Button 
@@ -280,7 +282,7 @@ const QuizResult = ({
             className="w-full sm:w-auto flex items-center gap-2"
           >
             <Printer size={16} />
-            Baixar Resultados (PDF)
+            {getTranslation(language, 'downloadResults')}
           </Button>
         </CardFooter>
       </Card>
