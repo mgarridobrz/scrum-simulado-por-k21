@@ -52,7 +52,47 @@ export type TranslationKey =
   | 'minute'
   | 'second'
   | 'restrictedArea'
-  | 'accessRestrictedArea';
+  | 'accessRestrictedArea'
+  | 'shareInstagram'
+  | 'talkToK21'
+  | 'shareText'
+  | 'shareShort'
+  | 'shareLinkedIn'
+  | 'shareTwitter'
+  | 'usefulLinks'
+  | 'k21Site'
+  | 'scrumGuide'
+  | 'courses'
+  | 'content'
+  | 'of'
+  | 'correctExplanation'
+  | 'incorrectExplanation'
+  | 'noExplanation'
+  | 'continue'
+  | 'quizResults'
+  | 'questionsCount'
+  | 'approved'
+  | 'notApproved'
+  | 'minimumToPass'
+  | 'performanceByCategory'
+  | 'hideQuestions'
+  | 'showAllQuestions'
+  | 'questionDetails'
+  | 'backToStart'
+  | 'downloadResults'
+  | 'quickQuiz'
+  | 'approxTime'
+  | 'intermediateQuiz'
+  | 'completeQuiz'
+  | 'selectQuestionCount'
+  | 'start'
+  | 'nameMinLength'
+  | 'invalidEmail'
+  | 'participantInfo'
+  | 'fullName'
+  | 'enterName'
+  | 'emailPlaceholder'
+  | 'startQuizWith';
 
 const translations = {
   pt: {
@@ -108,7 +148,47 @@ const translations = {
     minute: 'minuto',
     second: 'segundo',
     restrictedArea: 'Área Restrita',
-    accessRestrictedArea: 'Acessar Área Restrita'
+    accessRestrictedArea: 'Acessar Área Restrita',
+    shareInstagram: 'Compartilhar no Instagram',
+    talkToK21: 'Falar com K21',
+    shareText: 'Compartilhar',
+    shareShort: 'Compartilhar',
+    shareLinkedIn: 'Compartilhar no LinkedIn',
+    shareTwitter: 'Compartilhar no Twitter',
+    usefulLinks: 'Links Úteis',
+    k21Site: 'Site da K21',
+    scrumGuide: 'Guia do Scrum',
+    courses: 'Cursos',
+    content: 'Conteúdo',
+    of: 'de',
+    correctExplanation: 'Resposta Correta',
+    incorrectExplanation: 'Resposta Incorreta',
+    noExplanation: 'Sem explicação disponível',
+    continue: 'Continuar',
+    quizResults: 'Resultados do Simulado',
+    questionsCount: 'questões',
+    approved: 'Aprovado',
+    notApproved: 'Não Aprovado',
+    minimumToPass: 'Mínimo para aprovar',
+    performanceByCategory: 'Desempenho por Categoria',
+    hideQuestions: 'Ocultar Questões',
+    showAllQuestions: 'Mostrar Todas as Questões',
+    questionDetails: 'Detalhes das Questões',
+    backToStart: 'Voltar ao Início',
+    downloadResults: 'Baixar Resultados',
+    quickQuiz: 'Simulado Rápido',
+    approxTime: 'Tempo aproximado',
+    intermediateQuiz: 'Simulado Intermediário',
+    completeQuiz: 'Simulado Completo',
+    selectQuestionCount: 'Selecione a quantidade de questões',
+    start: 'Iniciar',
+    nameMinLength: 'Nome deve ter pelo menos 2 caracteres',
+    invalidEmail: 'Email inválido',
+    participantInfo: 'Informações do Participante',
+    fullName: 'Nome Completo',
+    enterName: 'Digite seu nome',
+    emailPlaceholder: 'Digite seu email (opcional)',
+    startQuizWith: 'Iniciar simulado com'
   },
   en: {
     certificationQuiz: 'Certification Quiz',
@@ -163,7 +243,47 @@ const translations = {
     minute: 'minute',
     second: 'second',
     restrictedArea: 'Restricted Area',
-    accessRestrictedArea: 'Access Restricted Area'
+    accessRestrictedArea: 'Access Restricted Area',
+    shareInstagram: 'Share on Instagram',
+    talkToK21: 'Talk to K21',
+    shareText: 'Share',
+    shareShort: 'Share',
+    shareLinkedIn: 'Share on LinkedIn',
+    shareTwitter: 'Share on Twitter',
+    usefulLinks: 'Useful Links',
+    k21Site: 'K21 Website',
+    scrumGuide: 'Scrum Guide',
+    courses: 'Courses',
+    content: 'Content',
+    of: 'of',
+    correctExplanation: 'Correct Answer',
+    incorrectExplanation: 'Incorrect Answer',
+    noExplanation: 'No explanation available',
+    continue: 'Continue',
+    quizResults: 'Quiz Results',
+    questionsCount: 'questions',
+    approved: 'Approved',
+    notApproved: 'Not Approved',
+    minimumToPass: 'Minimum to pass',
+    performanceByCategory: 'Performance by Category',
+    hideQuestions: 'Hide Questions',
+    showAllQuestions: 'Show All Questions',
+    questionDetails: 'Question Details',
+    backToStart: 'Back to Start',
+    downloadResults: 'Download Results',
+    quickQuiz: 'Quick Quiz',
+    approxTime: 'Approximate time',
+    intermediateQuiz: 'Intermediate Quiz',
+    completeQuiz: 'Complete Quiz',
+    selectQuestionCount: 'Select number of questions',
+    start: 'Start',
+    nameMinLength: 'Name must be at least 2 characters',
+    invalidEmail: 'Invalid email',
+    participantInfo: 'Participant Information',
+    fullName: 'Full Name',
+    enterName: 'Enter your name',
+    emailPlaceholder: 'Enter your email (optional)',
+    startQuizWith: 'Start quiz with'
   }
 };
 
