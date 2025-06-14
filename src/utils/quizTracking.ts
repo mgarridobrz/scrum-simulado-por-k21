@@ -122,6 +122,24 @@ export async function trackQuizAttempt(
   language: 'pt' | 'en' = 'pt'
 ): Promise<string | null> {
   try {
+    // Check if a similar attempt already exists to prevent duplicates
+    const { data: existingAttempts, error: checkError } = await supabase
+      .from('quiz_attempts')
+      .select('id')
+      .eq('name', name)
+      .eq('score', score)
+      .eq('quiz_size', totalQuestions)
+      .eq('completion_time_seconds', completionTimeSeconds)
+      .gte('created_at', new Date(Date.now() - 5000).toISOString()) // Within last 5 seconds
+      .limit(1);
+
+    if (checkError) {
+      console.error("Error checking for existing attempts:", checkError);
+    } else if (existingAttempts && existingAttempts.length > 0) {
+      console.log("Duplicate attempt detected, skipping insert");
+      return existingAttempts[0].id;
+    }
+
     const questionsData = questions.map(q => ({
       id: q.id,
       question: q.question,
@@ -160,7 +178,7 @@ export async function trackQuizAttempt(
 }
 
 /**
- * Gets tracked quiz attempts with pagination and optional filtering
+ * Gets tracked quiz attempts with pagination and optional filtering - now with duplicate prevention
  */
 export async function getTrackedQuizAttempts(options?: {
   page?: number;
@@ -173,6 +191,7 @@ export async function getTrackedQuizAttempts(options?: {
     let query = supabase
       .from('quiz_attempts')
       .select('*', { count: 'exact' })
+      .not('completion_time_seconds', 'is', null) // Only attempts with completion time
       .order('created_at', { ascending: false });
 
     // Add language filter if specified
@@ -212,6 +231,7 @@ export async function getTrackedQuizAttempts(options?: {
       language: row.language || 'pt'
     }));
 
+    console.log(`Fetched ${attempts.length} attempts from database`);
     return {
       attempts,
       totalCount: count || 0
@@ -232,10 +252,11 @@ export async function getGlobalQuizStats(): Promise<{
   languageBreakdown: { pt: number; en: number };
 }> {
   try {
-    // Get total attempts and average score
+    // Get total attempts and average score - only count attempts with completion times
     const { data: statsData, error: statsError } = await supabase
       .from('quiz_attempts')
-      .select('score, language');
+      .select('score, language')
+      .not('completion_time_seconds', 'is', null);
 
     if (statsError) {
       console.error("Error fetching global stats:", statsError);
@@ -303,6 +324,7 @@ export async function getRankingData(
       .select('name, score, completion_time_seconds, language')
       .eq('quiz_size', quizSize)
       .not('score', 'is', null)
+      .not('completion_time_seconds', 'is', null) // Only completed attempts
       .order('score', { ascending: false })
       .order('completion_time_seconds', { ascending: true })
       .limit(100);
@@ -332,13 +354,14 @@ export async function getRankingData(
 }
 
 /**
- * Gets quiz attempt statistics
+ * Gets quiz attempt statistics - with duplicate prevention
  */
 export async function getQuizAttemptStats(): Promise<QuizStats> {
   try {
     const { data, error } = await supabase
       .from('quiz_attempts')
       .select('quiz_size, score, completion_time_seconds, created_at')
+      .not('completion_time_seconds', 'is', null) // Only completed attempts
       .order('created_at', { ascending: false });
 
     if (error) {

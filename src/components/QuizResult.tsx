@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+
+import React, { useState, useEffect, useRef } from 'react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -40,6 +41,7 @@ const QuizResult = ({
   const [showQuestions, setShowQuestions] = useState(false);
   const [tracked, setTracked] = useState(false);
   const { toast } = useToast();
+  const trackingAttempted = useRef(false);
 
   // Calculate percentages
   const passPercentage = 74;
@@ -86,51 +88,53 @@ const QuizResult = ({
     return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
   };
 
-  // Prepare questions data for saving
-  const prepareQuestionsData = () => {
-    return questions.map(question => ({
-      id: question.id,
-      question: question.question,
-      category: question.category,
-      userAnswer: userAnswers[question.id],
-      correctAnswer: question.correctAnswer,
-      isCorrect: userAnswers[question.id] === question.correctAnswer
-    }));
-  };
-
-  // Track the quiz attempt - only when we have the user data and completion time is available
+  // Track the quiz attempt - only once with proper safeguards
   useEffect(() => {
-    // Only register attempt if we have user name, completion time, and haven't tracked it yet
-    if (userName && completionTime && !tracked) {
-      console.log(`Tracking quiz attempt with completion time: ${completionTime}s`);
-      
-      trackQuizAttempt(
-        userName,
-        null, // email
-        score,
-        totalQuestions,
-        userAnswers,
-        questions,
-        completionTime,
-        language
-      ).then(() => {
+    // Prevent multiple tracking attempts
+    if (trackingAttempted.current || tracked || !userName || !completionTime) {
+      return;
+    }
+
+    trackingAttempted.current = true;
+    
+    console.log(`Attempting to track quiz attempt with completion time: ${completionTime}s`);
+    
+    trackQuizAttempt(
+      userName,
+      null, // email
+      scorePercentage, // Use percentage score instead of raw score
+      totalQuestions,
+      userAnswers,
+      questions,
+      completionTime,
+      language
+    ).then((attemptId) => {
+      if (attemptId) {
         setTracked(true);
+        console.log(`Quiz attempt tracked successfully with ID: ${attemptId}`);
         toast({
           title: language === 'en' ? "Result saved" : "Resultado salvo",
           description: language === 'en' ? "Your result was successfully recorded." : "Seu resultado foi registrado com sucesso.",
         });
-      }).catch(error => {
-        console.error("Error tracking quiz attempt:", error);
+      } else {
+        console.error("Failed to track quiz attempt - no ID returned");
+        trackingAttempted.current = false; // Allow retry
         toast({
           title: language === 'en' ? "Save error" : "Erro ao salvar",
           description: language === 'en' ? "There was a problem recording your result." : "Houve um problema ao registrar seu resultado.",
           variant: "destructive"
         });
+      }
+    }).catch(error => {
+      console.error("Error tracking quiz attempt:", error);
+      trackingAttempted.current = false; // Allow retry
+      toast({
+        title: language === 'en' ? "Save error" : "Erro ao salvar",
+        description: language === 'en' ? "There was a problem recording your result." : "Houve um problema ao registrar seu resultado.",
+        variant: "destructive"
       });
-    } else if (!completionTime) {
-      console.log("Not tracking attempt: missing completion time");
-    }
-  }, [userName, totalQuestions, score, tracked, toast, userAnswers, questions, completionTime, language]);
+    });
+  }, [userName, totalQuestions, scorePercentage, tracked, toast, userAnswers, questions, completionTime, language]);
 
   return (
     <div className="max-w-3xl mx-auto w-full animate-fade-in">
