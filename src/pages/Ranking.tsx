@@ -1,8 +1,7 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Trophy, Clock, Users, Globe } from 'lucide-react';
+import { Trophy, Clock, Users } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { getRankingData, getGlobalQuizStats } from '@/utils/quizTracking';
@@ -26,8 +25,9 @@ interface GlobalStats {
 
 const Ranking = () => {
   const { language, isEnglish } = useLanguage();
-  const [selectedQuizSize, setSelectedQuizSize] = useState<number>(20);
-  const [selectedLanguage, setSelectedLanguage] = useState<'all' | 'pt' | 'en'>('all');
+  // Default quiz size is now 10
+  const [selectedQuizSize, setSelectedQuizSize] = useState<number>(10);
+  // Language filter state and filter are removed
   const [rankingData, setRankingData] = useState<RankingEntry[]>([]);
   const [globalStats, setGlobalStats] = useState<GlobalStats>({
     totalAttempts: 0,
@@ -37,11 +37,12 @@ const Ranking = () => {
   });
   const [loading, setLoading] = useState(true);
 
-  const quizSizes = [10, 20, 30, 50];
+  // Quiz sizes are now only 15, 25, and 50
+  const quizSizes = [15, 25, 50];
 
   useEffect(() => {
     loadData();
-  }, [selectedQuizSize, selectedLanguage]);
+  }, [selectedQuizSize]);
 
   useEffect(() => {
     loadGlobalStats();
@@ -50,8 +51,8 @@ const Ranking = () => {
   const loadData = async () => {
     setLoading(true);
     try {
-      const languageFilter = selectedLanguage === 'all' ? undefined : selectedLanguage;
-      const data = await getRankingData(selectedQuizSize, languageFilter);
+      // No language filter – only fetch by quiz size
+      const data = await getRankingData(selectedQuizSize, undefined);
       setRankingData(data);
     } catch (error) {
       console.error('Error loading ranking data:', error);
@@ -155,7 +156,7 @@ const Ranking = () => {
             </Card>
           </div>
 
-          {/* Filters */}
+          {/* Filters (only Quiz Size select remains) */}
           <Card className="mb-6">
             <CardHeader>
               <CardTitle>{isEnglish ? 'Filters' : 'Filtros'}</CardTitle>
@@ -179,35 +180,7 @@ const Ranking = () => {
                     </SelectContent>
                   </Select>
                 </div>
-
-                <div className="flex-1">
-                  <label className="text-sm font-medium mb-2 block">
-                    {isEnglish ? 'Language' : 'Idioma'}
-                  </label>
-                  <Select value={selectedLanguage} onValueChange={(value: 'all' | 'pt' | 'en') => setSelectedLanguage(value)}>
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">
-                        <div className="flex items-center gap-2">
-                          <Globe className="h-4 w-4" />
-                          {isEnglish ? 'All Languages' : 'Todos os idiomas'}
-                        </div>
-                      </SelectItem>
-                      <SelectItem value="pt">
-                        <div className="flex items-center gap-2">
-                          🇧🇷 {isEnglish ? 'Portuguese' : 'Português'}
-                        </div>
-                      </SelectItem>
-                      <SelectItem value="en">
-                        <div className="flex items-center gap-2">
-                          🇺🇸 {isEnglish ? 'English' : 'Inglês'}
-                        </div>
-                      </SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
+                {/* Language filter removed */}
               </div>
             </CardContent>
           </Card>
