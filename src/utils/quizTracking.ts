@@ -372,10 +372,13 @@ export async function getRankingData(
 }
 
 /**
- * Gets quiz attempt statistics - include ALL attempts (with and without completion time)
+ * Gets quiz attempt statistics - FIXED: include ALL attempts regardless of completion time
  */
 export async function getQuizAttemptStats(): Promise<QuizStats> {
   try {
+    console.log('[STATS] Iniciando busca de estatísticas...');
+    
+    // Buscar TODAS as tentativas, incluindo as sem completion_time_seconds
     const { data, error } = await supabase
       .from('quiz_attempts')
       .select('quiz_size, score, completion_time_seconds, created_at')
@@ -386,13 +389,20 @@ export async function getQuizAttemptStats(): Promise<QuizStats> {
       throw error;
     }
 
+    console.log(`[STATS] Total de registros encontrados na base: ${data?.length || 0}`);
+    console.log(`[STATS] Primeiros 3 registros:`, data?.slice(0, 3));
+    
     const attempts = data || [];
     const totalAttempts = attempts.length;
+    
+    console.log(`[STATS] Total de tentativas para estatísticas: ${totalAttempts}`);
     
     // Count by quiz size - include ALL attempts
     const size10Count = attempts.filter(a => a.quiz_size === 10).length;
     const size25Count = attempts.filter(a => a.quiz_size === 25).length;
     const size50Count = attempts.filter(a => a.quiz_size === 50).length;
+    
+    console.log(`[STATS] Contagens por tamanho: 10=${size10Count}, 25=${size25Count}, 50=${size50Count}`);
     
     // Get last 50 attempts for average - include ALL attempts
     const lastFifty = attempts.slice(0, 50);
@@ -431,7 +441,7 @@ export async function getQuizAttemptStats(): Promise<QuizStats> {
       ? Math.round(size50AttemptsWithTime.reduce((sum, a) => sum + (a.completion_time_seconds || 0), 0) / size50AttemptsWithTime.length)
       : null;
 
-    return {
+    const finalStats = {
       totalAttempts,
       size10Count,
       size25Count,
@@ -444,6 +454,10 @@ export async function getQuizAttemptStats(): Promise<QuizStats> {
       averageScore25,
       averageScore50
     };
+
+    console.log(`[STATS] Estatísticas finais calculadas:`, finalStats);
+    
+    return finalStats;
   } catch (error) {
     console.error("Error in getQuizAttemptStats:", error);
     return {
