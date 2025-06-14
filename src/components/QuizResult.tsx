@@ -99,14 +99,14 @@ const QuizResult = ({
     trackingAttempted.current = true;
     setIsTracking(true);
     
-    console.log(`[QUIZ_RESULT] Attempting to track quiz attempt with completion time: ${completionTime}s`);
+    console.log(`[QUIZ_RESULT] Attempting to track quiz attempt with completion time: ${completionTime}s, scorePercentage: ${scorePercentage}%`);
     
     // Add a small delay to prevent rapid successive submissions
     const trackingTimeout = setTimeout(() => {
       trackQuizAttempt(
         userName,
         null, // email
-        scorePercentage, // Use percentage score instead of raw score
+        scorePercentage, // Use percentage score (e.g., 60 for 60%)
         totalQuestions,
         userAnswers,
         questions,
@@ -293,7 +293,6 @@ const QuizResult = ({
             onClick={onRestart} 
             variant="default" 
             className="w-full sm:w-auto"
-            disabled={isTracking}
           >
             {getTranslation(language, 'backToStart')}
           </Button>
@@ -302,7 +301,6 @@ const QuizResult = ({
             onClick={() => generatePDF(questions, userAnswers, score, totalQuestions, categoryStats, { name: userName, email: '' })} 
             variant="outline" 
             className="w-full sm:w-auto flex items-center gap-2"
-            disabled={isTracking}
           >
             <Printer size={16} />
             {getTranslation(language, 'downloadResults')}
