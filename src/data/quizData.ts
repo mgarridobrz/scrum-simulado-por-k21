@@ -1,41 +1,43 @@
+
 import { QuestionWithCategory } from "./types";
+import { fetchRandomQuestions } from "@/utils/quizTracking";
+
+// Legacy questions for fallback if needed
 import { fundamentalsQuestions } from "./fundamentalsQuestions";
 import { rolesQuestions } from "./rolesQuestions";
 import { eventsQuestions } from "./eventsQuestions";
 import { artifactsQuestions } from "./artifactsQuestions";
 
-// Combine all questions into a single array for the base questions
-const baseQuestions: QuestionWithCategory[] = [
+// Combine all legacy questions into a single array for fallback
+const legacyQuestions: QuestionWithCategory[] = [
   ...fundamentalsQuestions,
   ...rolesQuestions,
   ...eventsQuestions,
   ...artifactsQuestions,
 ];
 
-// Create a function to get the current active questions
-export function getQuizQuestions(): QuestionWithCategory[] {
-  // First check if we have edited questions
-  const editedQuestions = getEditedQuestions();
-  const editedQuestionIds = Object.keys(editedQuestions).map(id => parseInt(id));
-  
-  // Get the base questions that have not been edited
-  const baseQuestionsNotEdited = baseQuestions.filter(q => !editedQuestionIds.includes(q.id));
-  
-  // Combine base questions that have not been edited with the edited versions
-  const activeQuestions = [
-    ...baseQuestionsNotEdited,
-    ...Object.values(editedQuestions)
-  ];
-  
-  console.log(`Using ${Object.keys(editedQuestions).length} edited questions and ${baseQuestionsNotEdited.length} base questions`);
-  
-  return activeQuestions;
+// Function to get approved questions from database or localStorage fallback
+export async function getQuizQuestions(language: 'pt' | 'en' = 'pt'): Promise<QuestionWithCategory[]> {
+  try {
+    // Try to fetch all questions from the database with language support
+    const dbQuestions = await fetchRandomQuestions(1000, language); // Fetch large number to get all
+    
+    if (dbQuestions && dbQuestions.length > 0) {
+      console.log(`Fetched ${dbQuestions.length} questions from database for language: ${language}`);
+      return dbQuestions;
+    }
+    
+    // Fallback to legacy questions if database is empty
+    console.warn("No questions found in database, falling back to legacy questions");
+    return getApprovedQuestions();
+  } catch (error) {
+    console.error("Error fetching questions from database:", error);
+    // Fallback to legacy questions on error
+    return getApprovedQuestions();
+  }
 }
 
-// Export the active questions to be used throughout the app
-export const quizQuestions = getQuizQuestions();
-
-// Function to get approved questions IDs from localStorage
+// Function to get approved question IDs from localStorage
 export function getApprovedQuestionIds(): number[] {
   const savedApprovedQuestions = localStorage.getItem('approvedQuestions');
   if (savedApprovedQuestions) {
@@ -49,22 +51,19 @@ export function getApprovedQuestionIds(): number[] {
   return [];
 }
 
-// Function to save edited questions to localStorage
+// Function to save edited questions to localStorage (legacy support)
 export function saveEditedQuestion(question: QuestionWithCategory): void {
   const editedQuestions = getEditedQuestions();
   editedQuestions[question.id] = question;
   try {
     localStorage.setItem('editedQuestions', JSON.stringify(editedQuestions));
     console.log(`Question ${question.id} saved successfully.`, question);
-    
-    // Force a refresh of the quizQuestions array to reflect changes immediately
-    Object.assign(quizQuestions, getQuizQuestions());
   } catch (error) {
     console.error("Error saving edited question:", error);
   }
 }
 
-// Function to get all edited questions from localStorage
+// Function to get all edited questions from localStorage (legacy support)
 export function getEditedQuestions(): Record<number, QuestionWithCategory> {
   const savedEditedQuestions = localStorage.getItem('editedQuestions');
   if (savedEditedQuestions) {
@@ -81,7 +80,7 @@ export function getEditedQuestions(): Record<number, QuestionWithCategory> {
   return {};
 }
 
-// Function to save approved question IDs to localStorage
+// Function to save approved question IDs to localStorage (legacy support)
 export function saveApprovedQuestionIds(ids: number[]): void {
   try {
     localStorage.setItem('approvedQuestions', JSON.stringify(ids));
@@ -91,59 +90,67 @@ export function saveApprovedQuestionIds(ids: number[]): void {
   }
 }
 
-// Helper function to ensure edited questions are always used
-function applyEditedQuestions(questions: QuestionWithCategory[]): QuestionWithCategory[] {
+// Legacy function to get approved questions (for fallback only)
+export function getApprovedQuestions(): QuestionWithCategory[] {
+  const approvedIds = getApprovedQuestionIds();
   const editedQuestions = getEditedQuestions();
   
-  return questions.map(question => {
+  // Apply edited questions to legacy questions
+  const questionsWithEdits = legacyQuestions.map(question => {
     if (editedQuestions[question.id]) {
       return editedQuestions[question.id];
     }
     return question;
   });
-}
-
-// Filter questions by their approval status and use edited versions when available
-export function getApprovedQuestions(): QuestionWithCategory[] {
-  const approvedIds = getApprovedQuestionIds();
   
-  // If no questions are approved yet, return the full set with edited versions applied
+  // If no questions are approved yet, return all legacy questions with edits applied
   if (approvedIds.length === 0) {
-    console.log("No approved questions found, returning all questions with edits applied.");
-    return quizQuestions;
+    console.log("No approved questions found, returning all legacy questions with edits applied.");
+    return questionsWithEdits;
   }
   
-  // Filter approved questions and ensure we're using edited versions
-  console.log(`Filtering ${approvedIds.length} approved questions from a total of ${quizQuestions.length}.`);
-  return quizQuestions.filter(question => approvedIds.includes(question.id));
+  // Filter approved questions
+  console.log(`Filtering ${approvedIds.length} approved questions from legacy questions.`);
+  return questionsWithEdits.filter(question => approvedIds.includes(question.id));
 }
 
-// Function to get a specified number of random questions from the question pool
-export function getRandomQuestions(count: number): QuestionWithCategory[] {
-  // Get only approved questions for the quiz
-  const approvedQuestions = getApprovedQuestions();
-  
-  // Log information for debugging
-  console.log(`Requested ${count} questions, ${approvedQuestions.length} approved questions available`);
-  
-  // Create a copy of the original array to avoid modifying it
-  const questionsCopy = [...approvedQuestions];
-  
-  // Shuffle the array using Fisher-Yates algorithm
-  for (let i = questionsCopy.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [questionsCopy[i], questionsCopy[j]] = [questionsCopy[j], questionsCopy[i]];
+// Function to get a specified number of random questions with language support
+export async function getRandomQuestions(count: number, language: 'pt' | 'en' = 'pt'): Promise<QuestionWithCategory[]> {
+  try {
+    // Try to get questions from database first
+    const randomQuestions = await fetchRandomQuestions(count, language);
+    
+    if (randomQuestions && randomQuestions.length > 0) {
+      console.log(`Fetched ${randomQuestions.length} random questions from database for language: ${language}`);
+      return randomQuestions;
+    }
+    
+    // Fallback to legacy questions
+    console.warn("No questions found in database, falling back to legacy questions");
+    const approvedQuestions = getApprovedQuestions();
+    
+    // Create a copy of the original array to avoid modifying it
+    const questionsCopy = [...approvedQuestions];
+    
+    // Shuffle the array using Fisher-Yates algorithm
+    for (let i = questionsCopy.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [questionsCopy[i], questionsCopy[j]] = [questionsCopy[j], questionsCopy[i]];
+    }
+    
+    // If count is greater than the number of available questions, return all available
+    if (count >= questionsCopy.length) {
+      console.log(`Returning all ${questionsCopy.length} available legacy questions`);
+      return questionsCopy;
+    }
+    
+    // Return the first 'count' questions
+    console.log(`Returning ${count} legacy questions out of ${questionsCopy.length} available`);
+    return questionsCopy.slice(0, count);
+  } catch (error) {
+    console.error("Error in getRandomQuestions:", error);
+    return [];
   }
-  
-  // If count is greater than the number of available questions, return all available
-  if (count >= questionsCopy.length) {
-    console.log(`Returning all ${questionsCopy.length} available questions`);
-    return questionsCopy;
-  }
-  
-  // Return the first 'count' questions
-  console.log(`Returning ${count} questions out of ${questionsCopy.length} available`);
-  return questionsCopy.slice(0, count);
 }
 
 // Function to calculate category-based statistics

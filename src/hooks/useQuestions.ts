@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { QuestionWithCategory } from '@/data/types';
 import { fetchQuestionsByCategory, updateQuestion } from '@/utils/quizTracking';
@@ -25,8 +26,8 @@ export function useQuestions() {
       } catch (error) {
         console.error("Error loading questions:", error);
         toast({
-          title: "Erro ao carregar questões",
-          description: "Houve um problema ao buscar as questões do banco de dados.",
+          title: language === 'en' ? "Error loading questions" : "Erro ao carregar questões",
+          description: language === 'en' ? "There was a problem fetching questions from the database." : "Houve um problema ao buscar as questões do banco de dados.",
           variant: "destructive"
         });
         setIsLoading(false);
@@ -63,13 +64,17 @@ export function useQuestions() {
       );
       
       toast({
-        title: "Questão salva",
-        description: `A questão #${updatedQuestion.id} foi atualizada com sucesso.`
+        title: language === 'en' ? "Question saved" : "Questão salva",
+        description: language === 'en' 
+          ? `Question #${updatedQuestion.id} was updated successfully.`
+          : `A questão #${updatedQuestion.id} foi atualizada com sucesso.`
       });
     } else {
       toast({
-        title: "Erro ao salvar",
-        description: `Não foi possível atualizar a questão #${updatedQuestion.id}.`,
+        title: language === 'en' ? "Error saving" : "Erro ao salvar",
+        description: language === 'en'
+          ? `Could not update question #${updatedQuestion.id}.`
+          : `Não foi possível atualizar a questão #${updatedQuestion.id}.`,
         variant: "destructive"
       });
     }

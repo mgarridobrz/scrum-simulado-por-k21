@@ -15,7 +15,7 @@ export type Database = {
           created_at: string
           email: string | null
           id: string
-          language: string
+          language: string | null
           name: string
           questions_data: Json | null
           quiz_size: number
@@ -26,7 +26,7 @@ export type Database = {
           created_at?: string
           email?: string | null
           id?: string
-          language?: string
+          language?: string | null
           name: string
           questions_data?: Json | null
           quiz_size: number
@@ -37,7 +37,7 @@ export type Database = {
           created_at?: string
           email?: string | null
           id?: string
-          language?: string
+          language?: string | null
           name?: string
           questions_data?: Json | null
           quiz_size?: number
