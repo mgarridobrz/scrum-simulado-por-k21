@@ -111,6 +111,7 @@ export async function updateQuestion(question: QuestionWithCategory): Promise<bo
 
 /**
  * Tracks a quiz attempt with language support and improved duplicate detection
+ * NOW SAVES SCORE AS PERCENTAGE
  */
 export async function trackQuizAttempt(
   name: string,
@@ -123,7 +124,10 @@ export async function trackQuizAttempt(
   language: 'pt' | 'en' = 'pt'
 ): Promise<string | null> {
   try {
-    console.log(`[TRACKING] Attempting to track quiz for user: ${name}, score: ${score}/${totalQuestions}, completion time: ${completionTimeSeconds}s`);
+    // Convert raw score to percentage
+    const scorePercentage = Math.round((score / totalQuestions) * 100);
+    
+    console.log(`[TRACKING] Attempting to track quiz for user: ${name}, raw score: ${score}/${totalQuestions}, percentage: ${scorePercentage}%, completion time: ${completionTimeSeconds}s`);
     
     // Enhanced duplicate detection with stricter criteria
     const currentTime = new Date();
@@ -144,9 +148,9 @@ export async function trackQuizAttempt(
     } else if (existingAttempts && existingAttempts.length > 0) {
       console.log(`[TRACKING] Found ${existingAttempts.length} recent attempts for ${name}:`, existingAttempts);
       
-      // Check for exact duplicates (same score and similar completion time)
+      // Check for exact duplicates (same score percentage and similar completion time)
       const exactDuplicate = existingAttempts.find(attempt => {
-        const scoreMatch = Math.abs(attempt.score - score) < 0.1;
+        const scoreMatch = Math.abs(attempt.score - scorePercentage) < 0.1;
         const timeMatch = completionTimeSeconds && attempt.completion_time_seconds ? 
           Math.abs((attempt.completion_time_seconds || 0) - completionTimeSeconds) < 2 : 
           !completionTimeSeconds && !attempt.completion_time_seconds;
@@ -169,14 +173,14 @@ export async function trackQuizAttempt(
       isCorrect: userAnswers[q.id] === q.correctAnswer
     }));
 
-    console.log(`[TRACKING] Inserting new attempt for ${name}: ${score}/${totalQuestions} in ${completionTimeSeconds || 'N/A'}s`);
+    console.log(`[TRACKING] Inserting new attempt for ${name}: ${scorePercentage}% (${score}/${totalQuestions}) in ${completionTimeSeconds || 'N/A'}s`);
 
     const { data, error } = await supabase
       .from('quiz_attempts')
       .insert({
         name,
         email,
-        score,
+        score: scorePercentage, // Save as percentage
         quiz_size: totalQuestions,
         questions_data: questionsData,
         completion_time_seconds: completionTimeSeconds,
@@ -190,7 +194,7 @@ export async function trackQuizAttempt(
       return null;
     }
 
-    console.log(`[TRACKING] Quiz attempt tracked successfully with ID: ${data.id} for language: ${language}`);
+    console.log(`[TRACKING] Quiz attempt tracked successfully with ID: ${data.id} for language: ${language}, score saved as: ${scorePercentage}%`);
     return data.id;
   } catch (error) {
     console.error("[TRACKING] Error in trackQuizAttempt:", error);
