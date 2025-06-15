@@ -3,9 +3,8 @@ import { useState, useEffect } from 'react';
 import { 
   QuestionWithCategory, 
   getApprovedQuestionIds,
-  getEditedQuestions,
   saveApprovedQuestionIds,
-  quizQuestions,
+  getApprovedQuestions,
 } from '@/data/quizData';
 import { useToast } from '@/hooks/use-toast';
 
@@ -24,10 +23,10 @@ export function useQuestionValidation() {
       const savedApprovedIds = getApprovedQuestionIds();
       setApprovedQuestions(savedApprovedIds);
       
-      // Set the questions to use the quiz questions directly
-      // This ensures we always get the most up-to-date edited versions
-      setQuestions(quizQuestions);
-      console.log(`Loaded ${quizQuestions.length} questions with latest edits applied.`);
+      // Get approved questions (legacy fallback)
+      const approvedQuestionsData = getApprovedQuestions();
+      setQuestions(approvedQuestionsData);
+      console.log(`Loaded ${approvedQuestionsData.length} questions from legacy data.`);
       
       setIsLoading(false);
     } catch (error) {
@@ -97,14 +96,12 @@ export function useQuestionValidation() {
     return approvedQuestions.includes(questionId);
   };
 
-  // This function is modified to update the global quizQuestions array
+  // This function updates the local questions state
   const updateQuestion = (updatedQuestion: QuestionWithCategory) => {
-    // Create a new array with the updated question
     const updatedQuestions = questions.map(q => 
       q.id === updatedQuestion.id ? updatedQuestion : q
     );
     
-    // Update the local state with the new questions
     setQuestions(updatedQuestions);
   };
 
