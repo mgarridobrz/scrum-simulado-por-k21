@@ -98,6 +98,10 @@ const AttemptsList = ({
     }).format(date);
   };
 
+  const calculatePercentage = (score: number, quizSize: number): number => {
+    return Math.round((score / quizSize) * 100);
+  };
+
   return (
     <Card className="p-6">
       <div className="flex justify-between items-center mb-4">
@@ -135,82 +139,87 @@ const AttemptsList = ({
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {attempts.map((attempt) => (
-                  <TableRow key={attempt.id}>
-                    <TableCell className="font-mono text-xs">
-                      <div className="flex items-center">
-                        <Calendar size={14} className="mr-1.5 text-muted-foreground" />
-                        {formatDate(attempt.createdAt)}
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div>
-                        <span className="font-medium">{attempt.name}</span>
-                        {attempt.email && (
-                          <span className="block text-xs text-muted-foreground">
-                            {attempt.email}
-                          </span>
-                        )}
-                      </div>
-                    </TableCell>
-                    <TableCell className="text-center">
-                      <Badge variant="outline">
-                        {attempt.quizSize}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="text-center">
-                      {attempt.score !== null ? (
-                        <Badge 
-                          className={`${
-                            (attempt.score >= 74) ? 'bg-green-100 text-green-800 hover:bg-green-100' : 
-                            'bg-amber-100 text-amber-800 hover:bg-amber-100'
-                          }`}
-                        >
-                          {attempt.score}%
+                {attempts.map((attempt) => {
+                  // Calculate the actual percentage
+                  const percentage = calculatePercentage(attempt.score, attempt.quizSize);
+                  
+                  return (
+                    <TableRow key={attempt.id}>
+                      <TableCell className="font-mono text-xs">
+                        <div className="flex items-center">
+                          <Calendar size={14} className="mr-1.5 text-muted-foreground" />
+                          {formatDate(attempt.createdAt)}
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div>
+                          <span className="font-medium">{attempt.name}</span>
+                          {attempt.email && (
+                            <span className="block text-xs text-muted-foreground">
+                              {attempt.email}
+                            </span>
+                          )}
+                        </div>
+                      </TableCell>
+                      <TableCell className="text-center">
+                        <Badge variant="outline">
+                          {attempt.quizSize}
                         </Badge>
-                      ) : (
-                        <span className="text-muted-foreground">-</span>
-                      )}
-                    </TableCell>
-                    <TableCell className="text-center">
-                      <div className="flex items-center justify-center gap-1 text-muted-foreground text-sm">
-                        <Clock size={14} />
-                        {formatTimeFromSeconds(attempt.completionTimeSeconds)}
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <AlertDialog>
-                        <AlertDialogTrigger asChild>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="h-8 w-8 text-muted-foreground hover:text-red-600"
+                      </TableCell>
+                      <TableCell className="text-center">
+                        {attempt.score !== null ? (
+                          <Badge 
+                            className={`${
+                              percentage >= 74 ? 'bg-green-100 text-green-800 hover:bg-green-100' : 
+                              'bg-amber-100 text-amber-800 hover:bg-amber-100'
+                            }`}
                           >
-                            <Trash2 size={16} />
-                          </Button>
-                        </AlertDialogTrigger>
-                        <AlertDialogContent>
-                          <AlertDialogHeader>
-                            <AlertDialogTitle>Excluir registro</AlertDialogTitle>
-                            <AlertDialogDescription>
-                              Você tem certeza que deseja excluir este registro?
-                              Esta ação não pode ser desfeita.
-                            </AlertDialogDescription>
-                          </AlertDialogHeader>
-                          <AlertDialogFooter>
-                            <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                            <AlertDialogAction
-                              onClick={() => handleDelete(attempt.id)}
-                              className="bg-red-600 hover:bg-red-700"
+                            {percentage}%
+                          </Badge>
+                        ) : (
+                          <span className="text-muted-foreground">-</span>
+                        )}
+                      </TableCell>
+                      <TableCell className="text-center">
+                        <div className="flex items-center justify-center gap-1 text-muted-foreground text-sm">
+                          <Clock size={14} />
+                          {formatTimeFromSeconds(attempt.completionTimeSeconds)}
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <AlertDialog>
+                          <AlertDialogTrigger asChild>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-8 w-8 text-muted-foreground hover:text-red-600"
                             >
-                              Excluir
-                            </AlertDialogAction>
-                          </AlertDialogFooter>
-                        </AlertDialogContent>
-                      </AlertDialog>
-                    </TableCell>
-                  </TableRow>
-                ))}
+                              <Trash2 size={16} />
+                            </Button>
+                          </AlertDialogTrigger>
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>Excluir registro</AlertDialogTitle>
+                              <AlertDialogDescription>
+                                Você tem certeza que deseja excluir este registro?
+                                Esta ação não pode ser desfeita.
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                              <AlertDialogAction
+                                onClick={() => handleDelete(attempt.id)}
+                                className="bg-red-600 hover:bg-red-700"
+                              >
+                                Excluir
+                              </AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
               </TableBody>
             </Table>
           </div>
