@@ -53,27 +53,22 @@ const AttemptsList = ({
 }: AttemptsListProps) => {
   const { toast } = useToast();
 
-  // We no longer need to filter here since the database queries now only return
-  // attempts with completion times
-
-  const handleDelete = async (id: string) => {
+  const handleDelete = async (id: string, attemptName: string) => {
     try {
-      console.log("Deleting attempt with ID:", id);
+      console.log("Attempting to delete quiz attempt with ID:", id);
       const success = await deleteQuizAttempt(id);
       
       if (success) {
         toast({
           title: "Registro excluído",
-          description: "O registro foi excluído com sucesso."
+          description: `A tentativa de ${attemptName} foi excluída com sucesso.`
         });
-        // Force refresh the list after deletion
-        setTimeout(() => {
-          onRefresh();
-        }, 100);
+        // Immediately refresh the list
+        onRefresh();
       } else {
         toast({
           title: "Erro ao excluir",
-          description: "Não foi possível excluir o registro.",
+          description: "Não foi possível excluir o registro. Tente novamente.",
           variant: "destructive"
         });
       }
@@ -81,7 +76,7 @@ const AttemptsList = ({
       console.error("Error deleting attempt:", error);
       toast({
         title: "Erro ao excluir",
-        description: "Ocorreu um erro ao excluir o registro.",
+        description: "Ocorreu um erro inesperado ao excluir o registro.",
         variant: "destructive"
       });
     }
@@ -96,10 +91,6 @@ const AttemptsList = ({
       hour: '2-digit',
       minute: '2-digit'
     }).format(date);
-  };
-
-  const calculatePercentage = (score: number, quizSize: number): number => {
-    return Math.round((score / quizSize) * 100);
   };
 
   return (
@@ -193,6 +184,7 @@ const AttemptsList = ({
                               variant="ghost"
                               size="icon"
                               className="h-8 w-8 text-muted-foreground hover:text-red-600"
+                              type="button"
                             >
                               <Trash2 size={16} />
                             </Button>
@@ -201,14 +193,14 @@ const AttemptsList = ({
                             <AlertDialogHeader>
                               <AlertDialogTitle>Excluir registro</AlertDialogTitle>
                               <AlertDialogDescription>
-                                Você tem certeza que deseja excluir este registro?
+                                Você tem certeza que deseja excluir a tentativa de <strong>{attempt.name}</strong>?
                                 Esta ação não pode ser desfeita.
                               </AlertDialogDescription>
                             </AlertDialogHeader>
                             <AlertDialogFooter>
                               <AlertDialogCancel>Cancelar</AlertDialogCancel>
                               <AlertDialogAction
-                                onClick={() => handleDelete(attempt.id)}
+                                onClick={() => handleDelete(attempt.id, attempt.name)}
                                 className="bg-red-600 hover:bg-red-700"
                               >
                                 Excluir
