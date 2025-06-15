@@ -1,6 +1,9 @@
 
 import { supabase } from "@/integrations/supabase/client";
-import { fundamentalsQuestions, rolesQuestions, eventsQuestions, artifactsQuestions } from "@/data/quizData";
+import { fundamentalsQuestions } from "@/data/fundamentalsQuestions";
+import { rolesQuestions } from "@/data/rolesQuestions";
+import { eventsQuestions } from "@/data/eventsQuestions";  
+import { artifactsQuestions } from "@/data/artifactsQuestions";
 import { QuestionWithCategory } from "@/data/types";
 
 /**
