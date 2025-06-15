@@ -140,8 +140,8 @@ const AttemptsList = ({
               </TableHeader>
               <TableBody>
                 {attempts.map((attempt) => {
-                  // Calculate the actual percentage
-                  const percentage = calculatePercentage(attempt.score, attempt.quizSize);
+                  // The score already comes as a percentage from the database
+                  const percentage = attempt.score;
                   
                   return (
                     <TableRow key={attempt.id}>
