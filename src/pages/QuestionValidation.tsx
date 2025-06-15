@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useQuestions } from '@/hooks/useQuestions';
+import { useQuestionValidation } from '@/hooks/useQuestionValidation';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import AuthScreen from '@/components/question-validation/AuthScreen';
@@ -30,8 +30,8 @@ const QuestionValidation = () => {
     setFilter,
     goToNextQuestion,
     goToPreviousQuestion,
-    saveQuestion
-  } = useQuestions();
+    updateQuestion
+  } = useQuestionValidation();
 
   useEffect(() => {
     const savedAuth = localStorage.getItem('validationPageAuthenticated');
@@ -105,7 +105,7 @@ const QuestionValidation = () => {
                 ) : currentQuestion ? (
                   <QuestionEditor
                     question={currentQuestion}
-                    onSave={saveQuestion}
+                    onSave={updateQuestion}
                   />
                 ) : (
                   <div className="text-center py-20">
