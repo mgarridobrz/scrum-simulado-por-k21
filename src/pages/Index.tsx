@@ -1,9 +1,10 @@
-
 import React, { useState, useEffect } from 'react';
 import { QuestionWithCategory } from '@/data/types';
 import { trackQuizAttempt, fetchRandomQuestions } from '@/utils/quizTracking';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { getTranslation } from '@/utils/translations';
+import { useMetadata } from '@/hooks/useMetadata';
+import { getPageMetadata } from '@/utils/metadata';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import StartScreen from '@/components/StartScreen';
@@ -16,6 +17,16 @@ import { Card } from '@/components/ui/card';
 
 const Index = () => {
   const { language } = useLanguage();
+  
+  // Use metadata hook
+  const metadata = getPageMetadata('home', language);
+  useMetadata({
+    title: metadata.title,
+    description: metadata.description,
+    url: window.location.href,
+    type: 'website'
+  });
+
   const [currentScreen, setCurrentScreen] = useState<'start' | 'quiz' | 'result'>('start');
   const [questions, setQuestions] = useState<QuestionWithCategory[]>([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
