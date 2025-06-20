@@ -1,8 +1,8 @@
-
 import React, { useState, useEffect } from 'react';
 import { QuestionWithCategory } from '@/data/types';
 import { trackQuizAttempt, fetchRandomQuestions } from '@/utils/quizTracking';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useMetaTags } from '@/hooks/useMetaTags';
 import { getTranslation } from '@/utils/translations';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
@@ -16,6 +16,8 @@ import { Card } from '@/components/ui/card';
 
 const Index = () => {
   const { language } = useLanguage();
+  useMetaTags(); // Add meta tags management
+  
   const [currentScreen, setCurrentScreen] = useState<'start' | 'quiz' | 'result'>('start');
   const [questions, setQuestions] = useState<QuestionWithCategory[]>([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);

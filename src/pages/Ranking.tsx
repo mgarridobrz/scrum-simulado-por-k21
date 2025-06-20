@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -7,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { getRankingData, getGlobalQuizStats } from '@/utils/quizTracking';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useMetaTags } from '@/hooks/useMetaTags';
 import { useNavigate } from 'react-router-dom';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
@@ -28,6 +28,8 @@ interface GlobalStats {
 const Ranking = () => {
   const { language, isEnglish } = useLanguage();
   const navigate = useNavigate();
+  useMetaTags(); // Add meta tags management
+  
   // Default quiz size is now 10
   const [selectedQuizSize, setSelectedQuizSize] = useState<number>(10);
   // Language filter state and filter are removed
