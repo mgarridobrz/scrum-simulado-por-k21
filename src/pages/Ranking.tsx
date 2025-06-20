@@ -1,89 +1,103 @@
+
 import React, { useState, useEffect } from 'react';
-import { useQuery } from '@tanstack/react-query';
-import { supabase } from '@/integrations/supabase/client';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Trophy, Clock, Users, ArrowLeft } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
+import { getRankingData, getGlobalQuizStats } from '@/utils/quizTracking';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { getTranslation } from '@/utils/translations';
-import { useMetadata } from '@/hooks/useMetadata';
-import { getPageMetadata } from '@/utils/metadata';
+import { useNavigate } from 'react-router-dom';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Button } from '@/components/ui/button';
-import { Trophy, Medal, Award, ArrowLeft, Users, Clock, Target } from 'lucide-react';
-import { Link } from 'react-router-dom';
-import GlobalStatsCounter from '@/components/GlobalStatsCounter';
 
 interface RankingEntry {
   name: string;
   score: number;
-  quiz_size: number;
-  completion_time_seconds: number;
-  created_at: string;
+  completionTimeSeconds: number;
   language: string;
 }
 
+interface GlobalStats {
+  totalAttempts: number;
+  averageScore: number;
+  totalQuestions: number;
+  languageBreakdown: { pt: number; en: number };
+}
+
 const Ranking = () => {
-  const { language } = useLanguage();
-  
-  // Use metadata hook
-  const metadata = getPageMetadata('ranking', language);
-  useMetadata({
-    title: metadata.title,
-    description: metadata.description,
-    url: window.location.href,
-    type: 'website'
+  const { language, isEnglish } = useLanguage();
+  const navigate = useNavigate();
+  // Default quiz size is now 10
+  const [selectedQuizSize, setSelectedQuizSize] = useState<number>(10);
+  // Language filter state and filter are removed
+  const [rankingData, setRankingData] = useState<RankingEntry[]>([]);
+  const [globalStats, setGlobalStats] = useState<GlobalStats>({
+    totalAttempts: 0,
+    averageScore: 0,
+    totalQuestions: 0,
+    languageBreakdown: { pt: 0, en: 0 }
   });
+  const [loading, setLoading] = useState(true);
 
-  const [quizSizeFilter, setQuizSizeFilter] = useState<string>('all');
-  const [languageFilter, setLanguageFilter] = useState<string>('all');
+  // Quiz sizes are now 10, 25, and 50
+  const quizSizes = [10, 25, 50];
 
-  const { data: rankings, isLoading } = useQuery({
-    queryKey: ['rankings', quizSizeFilter, languageFilter],
-    queryFn: async () => {
-      let query = supabase
-        .from('quiz_attempts')
-        .select('name, score, quiz_size, completion_time_seconds, created_at, language')
-        .not('score', 'is', null)
-        .order('score', { ascending: false })
-        .order('completion_time_seconds', { ascending: true })
-        .limit(100);
+  useEffect(() => {
+    loadData();
+  }, [selectedQuizSize]);
 
-      if (quizSizeFilter !== 'all') {
-        query = query.eq('quiz_size', parseInt(quizSizeFilter));
-      }
+  useEffect(() => {
+    loadGlobalStats();
+  }, []);
 
-      if (languageFilter !== 'all') {
-        query = query.eq('language', languageFilter);
-      }
-
-      const { data, error } = await query;
-      if (error) throw error;
-      return data as RankingEntry[];
-    },
-  });
-
-  const formatTime = (seconds: number) => {
-    if (!seconds) return '-';
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    if (mins === 0) {
-      return `${secs}${getTranslation(language, 'second')}${secs !== 1 ? 's' : ''}`;
+  const loadData = async () => {
+    setLoading(true);
+    try {
+      // No language filter – only fetch by quiz size
+      const data = await getRankingData(selectedQuizSize, undefined);
+      setRankingData(data);
+    } catch (error) {
+      console.error('Error loading ranking data:', error);
+    } finally {
+      setLoading(false);
     }
-    return `${mins}${getTranslation(language, 'minute')}${mins !== 1 ? 's' : ''} ${secs}${getTranslation(language, 'second')}${secs !== 1 ? 's' : ''}`;
   };
 
-  const getRankIcon = (position: number) => {
-    switch (position) {
-      case 1:
-        return <Trophy className="h-6 w-6 text-yellow-500" />;
-      case 2:
-        return <Medal className="h-6 w-6 text-gray-400" />;
-      case 3:
-        return <Award className="h-6 w-6 text-amber-600" />;
-      default:
-        return <span className="h-6 w-6 flex items-center justify-center text-sm font-bold text-gray-600">#{position}</span>;
+  const loadGlobalStats = async () => {
+    try {
+      const stats = await getGlobalQuizStats();
+      setGlobalStats(stats);
+    } catch (error) {
+      console.error('Error loading global stats:', error);
     }
+  };
+
+  const formatTime = (seconds: number): string => {
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+    return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+  };
+
+  const getLanguageFlag = (lang: string) => {
+    return lang === 'en' ? '🇺🇸' : '🇧🇷';
+  };
+
+  const getLanguageLabel = (lang: string) => {
+    if (isEnglish) {
+      return lang === 'en' ? 'English' : 'Portuguese';
+    }
+    return lang === 'en' ? 'Inglês' : 'Português';
+  };
+
+  const formatScoreAsPercentage = (score: number, totalQuestions: number): string => {
+    // Score is already stored as a percentage in the database
+    // Just format it properly
+    return `${Math.round(score)}%`;
+  };
+
+  const handleBackClick = () => {
+    navigate('/');
   };
 
   return (
@@ -92,102 +106,191 @@ const Ranking = () => {
       
       <main className="container mx-auto px-4 py-8">
         <div className="max-w-6xl mx-auto">
-          <div className="flex items-center gap-4 mb-6">
-            <Link 
-              to={language === 'en' ? '/us' : '/'}
-              className="flex items-center gap-2 text-k21-teal hover:text-k21-teal/80 transition-colors"
+          {/* Back Button and Header */}
+          <div className="mb-6">
+            <Button
+              onClick={handleBackClick}
+              variant="outline"
+              className="mb-4 flex items-center gap-2"
             >
-              <ArrowLeft size={20} />
-              <span>{getTranslation(language, 'backToHome')}</span>
-            </Link>
+              <ArrowLeft className="h-4 w-4" />
+              {isEnglish ? 'Back to Home' : 'Voltar ao Início'}
+            </Button>
+            
+            <div className="text-center">
+              <h1 className="text-3xl font-bold text-gray-900 mb-2">
+                {isEnglish ? 'Global Ranking' : 'Ranking Global'}
+              </h1>
+              <p className="text-gray-600">
+                {isEnglish 
+                  ? 'See how you rank among other CSM quiz participants worldwide' 
+                  : 'Veja como você se posiciona entre outros participantes do simulado CSM no mundo'}
+              </p>
+            </div>
           </div>
 
-          <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold text-k21-black mb-2">
-              {getTranslation(language, 'ranking')}
-            </h1>
-            <p className="text-muted-foreground">
-              {language === 'en' 
-                ? 'Top performers in the CSM certification quiz'
-                : 'Melhores desempenhos no simulado de certificação CSM'
-              }
-            </p>
+          {/* Global Stats */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">
+                  {isEnglish ? 'Total Attempts' : 'Total de Tentativas'}
+                </CardTitle>
+                <Users className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">{globalStats.totalAttempts.toLocaleString()}</div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">
+                  {isEnglish ? 'Average Score' : 'Pontuação Média'}
+                </CardTitle>
+                <Trophy className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">{globalStats.averageScore.toFixed(1)}</div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">
+                  {isEnglish ? 'Portuguese Tests' : 'Testes em Português'}
+                </CardTitle>
+                <div className="text-lg">🇧🇷</div>
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">{globalStats.languageBreakdown.pt.toLocaleString()}</div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">
+                  {isEnglish ? 'English Tests' : 'Testes em Inglês'}
+                </CardTitle>
+                <div className="text-lg">🇺🇸</div>
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">{globalStats.languageBreakdown.en.toLocaleString()}</div>
+              </CardContent>
+            </Card>
           </div>
 
-          <GlobalStatsCounter />
+          {/* Quiz Size Selection with Toggle Buttons */}
+          <Card className="mb-6">
+            <CardHeader>
+              <CardTitle>{isEnglish ? 'Quiz Size' : 'Tamanho do Quiz'}</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ToggleGroup 
+                type="single" 
+                value={selectedQuizSize.toString()} 
+                onValueChange={(value) => value && setSelectedQuizSize(parseInt(value))}
+                className="justify-start"
+              >
+                {quizSizes.map(size => (
+                  <ToggleGroupItem 
+                    key={size} 
+                    value={size.toString()}
+                    className="px-6 py-2"
+                  >
+                    {size} {isEnglish ? 'questions' : 'questões'}
+                  </ToggleGroupItem>
+                ))}
+              </ToggleGroup>
+            </CardContent>
+          </Card>
 
-          <div className="flex flex-col sm:flex-row gap-4 mb-6">
-            <Select value={quizSizeFilter} onValueChange={setQuizSizeFilter}>
-              <SelectTrigger className="w-full sm:w-48">
-                <SelectValue placeholder={getTranslation(language, 'quizSizeFilter')} />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">{getTranslation(language, 'all')}</SelectItem>
-                <SelectItem value="10">10 {getTranslation(language, 'questions')}</SelectItem>
-                <SelectItem value="20">20 {getTranslation(language, 'questions')}</SelectItem>
-                <SelectItem value="50">50 {getTranslation(language, 'questions')}</SelectItem>
-              </SelectContent>
-            </Select>
-
-            <Select value={languageFilter} onValueChange={setLanguageFilter}>
-              <SelectTrigger className="w-full sm:w-48">
-                <SelectValue placeholder={getTranslation(language, 'languageFilter')} />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">{getTranslation(language, 'all')}</SelectItem>
-                <SelectItem value="pt">{getTranslation(language, 'portuguese')}</SelectItem>
-                <SelectItem value="en">{getTranslation(language, 'english')}</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-
+          {/* Ranking Table */}
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Trophy className="h-5 w-5 text-k21-gold" />
-                {getTranslation(language, 'ranking')}
+                {isEnglish ? 'Top Performers' : 'Melhores Performances'}
               </CardTitle>
+              <CardDescription>
+                {isEnglish 
+                  ? `Top performers for ${selectedQuizSize} question quizzes` 
+                  : `Melhores performances para quizzes de ${selectedQuizSize} questões`}
+              </CardDescription>
             </CardHeader>
             <CardContent>
-              {isLoading ? (
+              {loading ? (
                 <div className="text-center py-8">
-                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-k21-teal mx-auto"></div>
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-k21-teal mx-auto mb-2"></div>
+                  <p className="text-gray-600">
+                    {isEnglish ? 'Loading ranking...' : 'Carregando ranking...'}
+                  </p>
                 </div>
-              ) : rankings && rankings.length > 0 ? (
-                <div className="space-y-2">
-                  {rankings.map((entry, index) => (
-                    <div 
-                      key={`${entry.name}-${entry.created_at}-${index}`}
-                      className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
-                    >
-                      <div className="flex items-center gap-4">
-                        {getRankIcon(index + 1)}
-                        <div>
-                          <div className="font-medium text-k21-black">{entry.name}</div>
-                          <div className="text-sm text-muted-foreground">
-                            {entry.score} {getTranslation(language, 'of')} {entry.quiz_size} • {formatTime(entry.completion_time_seconds)}
-                            {entry.language && (
-                              <span className="ml-2 px-2 py-1 bg-k21-teal/10 text-k21-teal rounded text-xs">
-                                {entry.language === 'en' ? 'EN' : 'PT'}
-                              </span>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                      <div className="text-right">
-                        <div className="text-lg font-bold text-k21-teal">
-                          {Math.round((entry.score / entry.quiz_size) * 100)}%
-                        </div>
-                      </div>
-                    </div>
-                  ))}
+              ) : rankingData.length === 0 ? (
+                <div className="text-center py-8">
+                  <p className="text-gray-600">
+                    {isEnglish 
+                      ? 'No quiz attempts found for the selected filters.' 
+                      : 'Nenhuma tentativa de quiz encontrada para os filtros selecionados.'}
+                  </p>
                 </div>
               ) : (
-                <div className="text-center py-8 text-muted-foreground">
-                  {language === 'en' 
-                    ? 'No rankings available for the selected filters.'
-                    : 'Nenhum ranking disponível para os filtros selecionados.'
-                  }
+                <div className="overflow-x-auto">
+                  <table className="w-full">
+                    <thead>
+                      <tr className="border-b">
+                        <th className="text-left py-3 px-2">
+                          {isEnglish ? 'Position' : 'Posição'}
+                        </th>
+                        <th className="text-left py-3 px-2">
+                          {isEnglish ? 'Name' : 'Nome'}
+                        </th>
+                        <th className="text-left py-3 px-2">
+                          {isEnglish ? 'Score' : 'Pontuação'}
+                        </th>
+                        <th className="text-left py-3 px-2">
+                          {isEnglish ? 'Time' : 'Tempo'}
+                        </th>
+                        <th className="text-left py-3 px-2">
+                          {isEnglish ? 'Language' : 'Idioma'}
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {rankingData.map((entry, index) => (
+                        <tr key={index} className="border-b hover:bg-gray-50">
+                          <td className="py-3 px-2">
+                            <div className="flex items-center gap-2">
+                              {index === 0 && <Trophy className="h-4 w-4 text-yellow-500" />}
+                              {index === 1 && <Trophy className="h-4 w-4 text-gray-400" />}
+                              {index === 2 && <Trophy className="h-4 w-4 text-amber-600" />}
+                              <span className="font-medium">#{index + 1}</span>
+                            </div>
+                          </td>
+                          <td className="py-3 px-2 font-medium">{entry.name}</td>
+                          <td className="py-3 px-2">
+                            <Badge variant="secondary">
+                              {formatScoreAsPercentage(entry.score, selectedQuizSize)}
+                            </Badge>
+                          </td>
+                          <td className="py-3 px-2">
+                            <div className="flex items-center gap-1">
+                              <Clock className="h-3 w-3 text-gray-400" />
+                              {formatTime(entry.completionTimeSeconds)}
+                            </div>
+                          </td>
+                          <td className="py-3 px-2">
+                            <div className="flex items-center gap-1">
+                              {getLanguageFlag(entry.language)}
+                              <span className="text-sm text-gray-600">
+                                {getLanguageLabel(entry.language)}
+                              </span>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
                 </div>
               )}
             </CardContent>

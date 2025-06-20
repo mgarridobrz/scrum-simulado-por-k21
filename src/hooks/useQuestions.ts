@@ -5,23 +5,24 @@ import { fetchQuestionsByCategory, updateQuestion } from '@/utils/quizTracking';
 import { useToast } from '@/hooks/use-toast';
 import { useLanguage } from '@/contexts/LanguageContext';
 
-export function useQuestions(language: 'pt' | 'en') {
+export function useQuestions() {
   const { toast } = useToast();
+  const { language } = useLanguage();
   const [questions, setQuestions] = useState<QuestionWithCategory[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [filter, setFilter] = useState<string>('all');
-  const [loading, setLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
 
   // Load questions from the database with language support
   useEffect(() => {
     const loadQuestions = async () => {
       try {
-        setLoading(true);
+        setIsLoading(true);
         const fetchedQuestions = await fetchQuestionsByCategory(filter === 'all' ? undefined : filter, language);
         setQuestions(fetchedQuestions);
         setCurrentIndex(0);
         console.log(`Loaded ${fetchedQuestions.length} questions from database with filter: ${filter} and language: ${language}`);
-        setLoading(false);
+        setIsLoading(false);
       } catch (error) {
         console.error("Error loading questions:", error);
         toast({
@@ -29,7 +30,7 @@ export function useQuestions(language: 'pt' | 'en') {
           description: language === 'en' ? "There was a problem fetching questions from the database." : "Houve um problema ao buscar as questões do banco de dados.",
           variant: "destructive"
         });
-        setLoading(false);
+        setIsLoading(false);
       }
     };
     
@@ -82,12 +83,11 @@ export function useQuestions(language: 'pt' | 'en') {
   };
 
   return {
-    questions,
-    loading,
     currentQuestion,
     currentIndex,
     filteredQuestions,
     filter,
+    isLoading,
     setFilter,
     goToNextQuestion,
     goToPreviousQuestion,
