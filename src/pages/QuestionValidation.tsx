@@ -10,6 +10,7 @@ import AttemptsList from '@/components/question-validation/AttemptsList';
 import GlobalStatsCounter from '@/components/question-validation/GlobalStatsCounter';
 import AssessmentTrendsChart from '@/components/question-validation/AssessmentTrendsChart';
 import { useQuestions } from '@/hooks/useQuestions';
+import { useAttempts } from '@/hooks/useAttempts';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 
@@ -37,6 +38,9 @@ const QuestionValidation = () => {
   const filteredQuestions = questions.filter(q => 
     filter === 'all' || q.category === filter
   );
+
+  // For attempts view
+  const attemptsData = useAttempts();
 
   const handleAuthSuccess = () => {
     setIsAuthenticated(true);
@@ -107,7 +111,7 @@ const QuestionValidation = () => {
       )}
       
       <main className="container mx-auto px-4 py-8">
-        {currentView === 'attempts' && <AttemptsList />}
+        {currentView === 'attempts' && <AttemptsList {...attemptsData} />}
         {currentView === 'stats' && <GlobalStatsCounter />}
         {currentView === 'trends' && <AssessmentTrendsChart />}
       </main>
