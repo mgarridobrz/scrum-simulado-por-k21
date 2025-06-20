@@ -18,13 +18,13 @@ export const useMetadata = (config: MetadataConfig) => {
     document.title = config.title;
 
     // Update or create meta tags
-    const updateMetaTag = (name: string, content: string, property?: string) => {
-      const selector = property ? `meta[property="${name}"]` : `meta[name="${name}"]`;
+    const updateMetaTag = (name: string, content: string, isProperty?: boolean) => {
+      const selector = isProperty ? `meta[property="${name}"]` : `meta[name="${name}"]`;
       let meta = document.querySelector(selector) as HTMLMetaElement;
       
       if (!meta) {
         meta = document.createElement('meta');
-        if (property) {
+        if (isProperty) {
           meta.setAttribute('property', name);
         } else {
           meta.setAttribute('name', name);
