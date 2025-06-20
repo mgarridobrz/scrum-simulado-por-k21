@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from 'react';
 import { QuizAttempt } from '@/data/types';
-import { fetchAllQuizAttempts } from '@/utils/quizTracking';
+import { getTrackedQuizAttempts } from '@/utils/quizTracking';
 import { useToast } from '@/hooks/use-toast';
 
 const ITEMS_PER_PAGE = 20;
@@ -16,7 +16,10 @@ export function useAttempts() {
   const loadAttempts = async () => {
     try {
       setLoading(true);
-      const fetchedAttempts = await fetchAllQuizAttempts();
+      const { attempts: fetchedAttempts } = await getTrackedQuizAttempts({
+        page: 1,
+        pageSize: 1000 // Get all attempts for now, we'll paginate client-side
+      });
       setAttempts(fetchedAttempts);
       setTotalPages(Math.ceil(fetchedAttempts.length / ITEMS_PER_PAGE));
       console.log(`Loaded ${fetchedAttempts.length} attempts from database`);
