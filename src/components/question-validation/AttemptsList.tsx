@@ -93,6 +93,14 @@ const AttemptsList = ({
     }).format(date);
   };
 
+  const getLanguageFlag = (language: string) => {
+    return language === 'en' ? '🇺🇸' : '🇧🇷';
+  };
+
+  const getLanguageLabel = (language: string) => {
+    return language === 'en' ? 'Inglês' : 'Português';
+  };
+
   return (
     <Card className="p-6">
       <div className="flex justify-between items-center mb-4">
@@ -126,6 +134,7 @@ const AttemptsList = ({
                   <TableHead className="text-center">Tamanho</TableHead>
                   <TableHead className="text-center">Pontuação</TableHead>
                   <TableHead className="text-center">Tempo</TableHead>
+                  <TableHead className="text-center">Idioma</TableHead>
                   <TableHead className="w-[100px]"></TableHead>
                 </TableRow>
               </TableHeader>
@@ -175,6 +184,16 @@ const AttemptsList = ({
                         <div className="flex items-center justify-center gap-1 text-muted-foreground text-sm">
                           <Clock size={14} />
                           {formatTimeFromSeconds(attempt.completionTimeSeconds)}
+                        </div>
+                      </TableCell>
+                      <TableCell className="text-center">
+                        <div className="flex items-center justify-center gap-2">
+                          <span className="text-lg">
+                            {getLanguageFlag(attempt.language || 'pt')}
+                          </span>
+                          <span className="text-sm text-muted-foreground">
+                            {getLanguageLabel(attempt.language || 'pt')}
+                          </span>
                         </div>
                       </TableCell>
                       <TableCell>
