@@ -9,10 +9,838 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      action_initiatives: {
+        Row: {
+          action_id: string
+          created_at: string
+          id: string
+          initiative_id: string
+        }
+        Insert: {
+          action_id: string
+          created_at?: string
+          id?: string
+          initiative_id: string
+        }
+        Update: {
+          action_id?: string
+          created_at?: string
+          id?: string
+          initiative_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "action_initiatives_action_id_fkey"
+            columns: ["action_id"]
+            isOneToOne: false
+            referencedRelation: "actions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "action_initiatives_initiative_id_fkey"
+            columns: ["initiative_id"]
+            isOneToOne: false
+            referencedRelation: "initiatives"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      action_users: {
+        Row: {
+          action_id: string
+          created_at: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          action_id: string
+          created_at?: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          action_id?: string
+          created_at?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "action_users_action_id_fkey"
+            columns: ["action_id"]
+            isOneToOne: false
+            referencedRelation: "actions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "action_users_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "action_users_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "user_engagement_scores"
+            referencedColumns: ["user_id"]
+          },
+        ]
+      }
+      actions: {
+        Row: {
+          assigned_to: string | null
+          created_at: string | null
+          created_by: string
+          description: string | null
+          id: string
+          initiative_id: string | null
+          status: Database["public"]["Enums"]["action_status"] | null
+          test_card_id: string | null
+          title: string
+          updated_at: string | null
+          workspace_id: string
+        }
+        Insert: {
+          assigned_to?: string | null
+          created_at?: string | null
+          created_by: string
+          description?: string | null
+          id?: string
+          initiative_id?: string | null
+          status?: Database["public"]["Enums"]["action_status"] | null
+          test_card_id?: string | null
+          title: string
+          updated_at?: string | null
+          workspace_id: string
+        }
+        Update: {
+          assigned_to?: string | null
+          created_at?: string | null
+          created_by?: string
+          description?: string | null
+          id?: string
+          initiative_id?: string | null
+          status?: Database["public"]["Enums"]["action_status"] | null
+          test_card_id?: string | null
+          title?: string
+          updated_at?: string | null
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "actions_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "actions_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "user_engagement_scores"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "actions_initiative_id_fkey"
+            columns: ["initiative_id"]
+            isOneToOne: false
+            referencedRelation: "initiatives"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "actions_test_card_id_fkey"
+            columns: ["test_card_id"]
+            isOneToOne: false
+            referencedRelation: "test_cards"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "actions_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      impediments: {
+        Row: {
+          created_at: string
+          description: string
+          id: string
+          initiative_id: string | null
+          resolved: boolean
+          resolved_at: string | null
+          test_card_id: string | null
+          title: string
+          updated_at: string
+          user_id: string
+          workspace_id: string
+        }
+        Insert: {
+          created_at?: string
+          description: string
+          id?: string
+          initiative_id?: string | null
+          resolved?: boolean
+          resolved_at?: string | null
+          test_card_id?: string | null
+          title: string
+          updated_at?: string
+          user_id: string
+          workspace_id: string
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          id?: string
+          initiative_id?: string | null
+          resolved?: boolean
+          resolved_at?: string | null
+          test_card_id?: string | null
+          title?: string
+          updated_at?: string
+          user_id?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "impediments_initiative_id_fkey"
+            columns: ["initiative_id"]
+            isOneToOne: false
+            referencedRelation: "initiatives"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      initiative_users: {
+        Row: {
+          created_at: string
+          id: string
+          initiative_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          initiative_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          initiative_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_initiative_users_initiative"
+            columns: ["initiative_id"]
+            isOneToOne: false
+            referencedRelation: "initiatives"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "initiative_users_initiative_id_fkey"
+            columns: ["initiative_id"]
+            isOneToOne: false
+            referencedRelation: "initiatives"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "initiative_users_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "initiative_users_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "user_engagement_scores"
+            referencedColumns: ["user_id"]
+          },
+        ]
+      }
+      initiatives: {
+        Row: {
+          created_at: string
+          created_by: string
+          description: string | null
+          id: string
+          is_archived: boolean
+          title: string
+          updated_at: string
+          workspace_id: string
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          description?: string | null
+          id?: string
+          is_archived?: boolean
+          title: string
+          updated_at?: string
+          workspace_id: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          description?: string | null
+          id?: string
+          is_archived?: boolean
+          title?: string
+          updated_at?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "initiatives_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "initiatives_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "user_engagement_scores"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "initiatives_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      key_result_progress_history: {
+        Row: {
+          id: string
+          key_result_id: string
+          new_progress: number
+          new_value: number
+          notes: string | null
+          old_progress: number | null
+          old_value: number | null
+          updated_at: string
+          updated_by: string
+        }
+        Insert: {
+          id?: string
+          key_result_id: string
+          new_progress: number
+          new_value: number
+          notes?: string | null
+          old_progress?: number | null
+          old_value?: number | null
+          updated_at?: string
+          updated_by: string
+        }
+        Update: {
+          id?: string
+          key_result_id?: string
+          new_progress?: number
+          new_value?: number
+          notes?: string | null
+          old_progress?: number | null
+          old_value?: number | null
+          updated_at?: string
+          updated_by?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "key_result_progress_history_key_result_id_fkey"
+            columns: ["key_result_id"]
+            isOneToOne: false
+            referencedRelation: "key_results"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "key_result_progress_history_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "key_result_progress_history_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "user_engagement_scores"
+            referencedColumns: ["user_id"]
+          },
+        ]
+      }
+      key_result_test_cards: {
+        Row: {
+          created_at: string
+          id: string
+          key_result_id: string
+          test_card_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          key_result_id: string
+          test_card_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          key_result_id?: string
+          test_card_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "key_result_test_cards_key_result_id_fkey1"
+            columns: ["key_result_id"]
+            isOneToOne: false
+            referencedRelation: "key_results"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "key_result_test_cards_test_card_id_fkey1"
+            columns: ["test_card_id"]
+            isOneToOne: false
+            referencedRelation: "test_cards"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      key_result_types: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          id: string
+          name: string
+          type_key: Database["public"]["Enums"]["key_result_type"]
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          name: string
+          type_key: Database["public"]["Enums"]["key_result_type"]
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          name?: string
+          type_key?: Database["public"]["Enums"]["key_result_type"]
+        }
+        Relationships: []
+      }
+      key_result_users: {
+        Row: {
+          created_at: string
+          id: string
+          key_result_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          key_result_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          key_result_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "key_result_users_key_result_id_fkey"
+            columns: ["key_result_id"]
+            isOneToOne: false
+            referencedRelation: "key_results"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "key_result_users_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "key_result_users_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "user_engagement_scores"
+            referencedColumns: ["user_id"]
+          },
+        ]
+      }
+      key_results: {
+        Row: {
+          created_at: string
+          current_value: number | null
+          description: string | null
+          id: string
+          initial_value: number | null
+          key_result_type_id: string
+          okr_id: string
+          progress: number | null
+          responsible_user_id: string | null
+          status: Database["public"]["Enums"]["okr_status"]
+          target_value: number
+          title: string
+          unit: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          current_value?: number | null
+          description?: string | null
+          id?: string
+          initial_value?: number | null
+          key_result_type_id: string
+          okr_id: string
+          progress?: number | null
+          responsible_user_id?: string | null
+          status?: Database["public"]["Enums"]["okr_status"]
+          target_value: number
+          title: string
+          unit: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          current_value?: number | null
+          description?: string | null
+          id?: string
+          initial_value?: number | null
+          key_result_type_id?: string
+          okr_id?: string
+          progress?: number | null
+          responsible_user_id?: string | null
+          status?: Database["public"]["Enums"]["okr_status"]
+          target_value?: number
+          title?: string
+          unit?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "key_results_key_result_type_id_fkey"
+            columns: ["key_result_type_id"]
+            isOneToOne: false
+            referencedRelation: "key_result_types"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "key_results_okr_id_fkey"
+            columns: ["okr_id"]
+            isOneToOne: false
+            referencedRelation: "okrs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "key_results_responsible_user_id_fkey"
+            columns: ["responsible_user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "key_results_responsible_user_id_fkey"
+            columns: ["responsible_user_id"]
+            isOneToOne: false
+            referencedRelation: "user_engagement_scores"
+            referencedColumns: ["user_id"]
+          },
+        ]
+      }
+      learnings: {
+        Row: {
+          created_at: string
+          description: string
+          id: string
+          initiative_id: string | null
+          test_card_id: string | null
+          title: string
+          updated_at: string
+          user_id: string
+          workspace_id: string
+        }
+        Insert: {
+          created_at?: string
+          description: string
+          id?: string
+          initiative_id?: string | null
+          test_card_id?: string | null
+          title: string
+          updated_at?: string
+          user_id: string
+          workspace_id: string
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          id?: string
+          initiative_id?: string | null
+          test_card_id?: string | null
+          title?: string
+          updated_at?: string
+          user_id?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "learnings_initiative_id_fkey"
+            columns: ["initiative_id"]
+            isOneToOne: false
+            referencedRelation: "initiatives"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "learnings_test_card_id_fkey"
+            columns: ["test_card_id"]
+            isOneToOne: false
+            referencedRelation: "test_cards"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "learnings_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      magic_link_tokens: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          expires_at: string
+          id: string
+          token: string
+          used: boolean
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          expires_at?: string
+          id?: string
+          token: string
+          used?: boolean
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          expires_at?: string
+          id?: string
+          token?: string
+          used?: boolean
+          user_id?: string
+        }
+        Relationships: []
+      }
+      okr_initiatives: {
+        Row: {
+          created_at: string
+          id: string
+          initiative_id: string
+          okr_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          initiative_id: string
+          okr_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          initiative_id?: string
+          okr_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "okr_initiatives_initiative_id_fkey"
+            columns: ["initiative_id"]
+            isOneToOne: false
+            referencedRelation: "initiatives"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "okr_initiatives_okr_id_fkey"
+            columns: ["okr_id"]
+            isOneToOne: false
+            referencedRelation: "okrs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      okr_test_cards: {
+        Row: {
+          created_at: string
+          id: string
+          okr_id: string
+          test_card_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          okr_id: string
+          test_card_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          okr_id?: string
+          test_card_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "okr_test_cards_okr_id_fkey"
+            columns: ["okr_id"]
+            isOneToOne: false
+            referencedRelation: "okrs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "okr_test_cards_test_card_id_fkey"
+            columns: ["test_card_id"]
+            isOneToOne: false
+            referencedRelation: "test_cards"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      okrs: {
+        Row: {
+          created_at: string
+          created_by: string
+          description: string | null
+          display_order: number | null
+          end_date: string
+          frequency: Database["public"]["Enums"]["okr_frequency"]
+          id: string
+          progress: number | null
+          responsible_user_id: string | null
+          start_date: string
+          status: Database["public"]["Enums"]["okr_status"]
+          title: string
+          updated_at: string
+          workspace_id: string
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          description?: string | null
+          display_order?: number | null
+          end_date: string
+          frequency?: Database["public"]["Enums"]["okr_frequency"]
+          id?: string
+          progress?: number | null
+          responsible_user_id?: string | null
+          start_date: string
+          status?: Database["public"]["Enums"]["okr_status"]
+          title: string
+          updated_at?: string
+          workspace_id: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          description?: string | null
+          display_order?: number | null
+          end_date?: string
+          frequency?: Database["public"]["Enums"]["okr_frequency"]
+          id?: string
+          progress?: number | null
+          responsible_user_id?: string | null
+          start_date?: string
+          status?: Database["public"]["Enums"]["okr_status"]
+          title?: string
+          updated_at?: string
+          workspace_id?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          approved_at: string | null
+          approved_by: string | null
+          created_at: string | null
+          email: string
+          id: string
+          is_admin: boolean | null
+          name: string
+          preferred_language: string
+          primary_workspace_id: string | null
+          status: string
+          updated_at: string | null
+        }
+        Insert: {
+          approved_at?: string | null
+          approved_by?: string | null
+          created_at?: string | null
+          email: string
+          id: string
+          is_admin?: boolean | null
+          name: string
+          preferred_language?: string
+          primary_workspace_id?: string | null
+          status?: string
+          updated_at?: string | null
+        }
+        Update: {
+          approved_at?: string | null
+          approved_by?: string | null
+          created_at?: string | null
+          email?: string
+          id?: string
+          is_admin?: boolean | null
+          name?: string
+          preferred_language?: string
+          primary_workspace_id?: string | null
+          status?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "profiles_approved_by_fkey"
+            columns: ["approved_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "profiles_approved_by_fkey"
+            columns: ["approved_by"]
+            isOneToOne: false
+            referencedRelation: "user_engagement_scores"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "profiles_primary_workspace_id_fkey"
+            columns: ["primary_workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       quiz_attempts: {
         Row: {
           completion_time_seconds: number | null
-          created_at: string
+          created_at: string | null
           email: string | null
           id: string
           language: string | null
@@ -23,7 +851,7 @@ export type Database = {
         }
         Insert: {
           completion_time_seconds?: number | null
-          created_at?: string
+          created_at?: string | null
           email?: string | null
           id?: string
           language?: string | null
@@ -34,7 +862,7 @@ export type Database = {
         }
         Update: {
           completion_time_seconds?: number | null
-          created_at?: string
+          created_at?: string | null
           email?: string | null
           id?: string
           language?: string | null
@@ -110,11 +938,395 @@ export type Database = {
           },
         ]
       }
+      test_card_users: {
+        Row: {
+          created_at: string | null
+          id: string
+          test_card_id: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          test_card_id?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          test_card_id?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      test_cards: {
+        Row: {
+          created_at: string | null
+          created_by: string
+          criteria: string
+          hypothesis: string
+          id: string
+          is_archived: boolean
+          is_completed: boolean
+          metric: string
+          test_description: string
+          title: string
+          updated_at: string | null
+          workspace_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          created_by: string
+          criteria: string
+          hypothesis: string
+          id?: string
+          is_archived?: boolean
+          is_completed?: boolean
+          metric: string
+          test_description: string
+          title: string
+          updated_at?: string | null
+          workspace_id: string
+        }
+        Update: {
+          created_at?: string | null
+          created_by?: string
+          criteria?: string
+          hypothesis?: string
+          id?: string
+          is_archived?: boolean
+          is_completed?: boolean
+          metric?: string
+          test_description?: string
+          title?: string
+          updated_at?: string | null
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "test_cards_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "test_cards_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "user_engagement_scores"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "test_cards_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_invitations: {
+        Row: {
+          accepted_at: string | null
+          created_at: string
+          email: string
+          expires_at: string
+          id: string
+          invited_by: string
+          status: string
+          token: string
+          workspace_id: string
+        }
+        Insert: {
+          accepted_at?: string | null
+          created_at?: string
+          email: string
+          expires_at: string
+          id?: string
+          invited_by: string
+          status?: string
+          token: string
+          workspace_id: string
+        }
+        Update: {
+          accepted_at?: string | null
+          created_at?: string
+          email?: string
+          expires_at?: string
+          id?: string
+          invited_by?: string
+          status?: string
+          token?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_invitations_invited_by_fkey"
+            columns: ["invited_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_invitations_invited_by_fkey"
+            columns: ["invited_by"]
+            isOneToOne: false
+            referencedRelation: "user_engagement_scores"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "user_invitations_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_last_activity: {
+        Row: {
+          created_at: string
+          id: string
+          last_visit: string
+          updated_at: string
+          user_id: string
+          workspace_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          last_visit?: string
+          updated_at?: string
+          user_id: string
+          workspace_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          last_visit?: string
+          updated_at?: string
+          user_id?: string
+          workspace_id?: string
+        }
+        Relationships: []
+      }
+      workspace_events: {
+        Row: {
+          created_at: string
+          entity_id: string
+          entity_title: string
+          entity_type: string
+          event_type: string
+          id: string
+          metadata: Json | null
+          test_card_id: string | null
+          user_id: string | null
+          workspace_id: string
+        }
+        Insert: {
+          created_at?: string
+          entity_id: string
+          entity_title: string
+          entity_type: string
+          event_type: string
+          id?: string
+          metadata?: Json | null
+          test_card_id?: string | null
+          user_id?: string | null
+          workspace_id: string
+        }
+        Update: {
+          created_at?: string
+          entity_id?: string
+          entity_title?: string
+          entity_type?: string
+          event_type?: string
+          id?: string
+          metadata?: Json | null
+          test_card_id?: string | null
+          user_id?: string | null
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "workspace_events_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "workspace_events_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "user_engagement_scores"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "workspace_events_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      workspace_users: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["workspace_role"]
+          user_id: string
+          workspace_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["workspace_role"]
+          user_id: string
+          workspace_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["workspace_role"]
+          user_id?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "workspace_users_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "workspace_users_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "user_engagement_scores"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "workspace_users_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      workspaces: {
+        Row: {
+          created_at: string
+          created_by: string
+          description: string | null
+          id: string
+          initiatives_enabled: boolean | null
+          name: string
+          okr_enabled: boolean | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          description?: string | null
+          id?: string
+          initiatives_enabled?: boolean | null
+          name: string
+          okr_enabled?: boolean | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          description?: string | null
+          id?: string
+          initiatives_enabled?: boolean | null
+          name?: string
+          okr_enabled?: boolean | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "workspaces_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "workspaces_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "user_engagement_scores"
+            referencedColumns: ["user_id"]
+          },
+        ]
+      }
     }
     Views: {
-      [_ in never]: never
+      user_engagement_scores: {
+        Row: {
+          completed_actions: number | null
+          email: string | null
+          engagement_level: string | null
+          last_activity: string | null
+          name: string | null
+          total_actions: number | null
+          total_impediments: number | null
+          total_learnings: number | null
+          total_score: number | null
+          total_test_cards: number | null
+          user_id: string | null
+          workspace_id: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "workspace_users_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Functions: {
+      audit_rls_status: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          table_name: string
+          rls_enabled: boolean
+          policy_count: number
+        }[]
+      }
+      can_delete_user: {
+        Args: { user_id: string }
+        Returns: boolean
+      }
+      cleanup_expired_magic_tokens: {
+        Args: Record<PropertyKey, never>
+        Returns: number
+      }
+      generate_magic_link_token: {
+        Args: { target_user_id: string; created_by_user_id?: string }
+        Returns: string
+      }
+      get_action_workspace: {
+        Args: { action_id: string }
+        Returns: string
+      }
+      get_current_user_status: {
+        Args: Record<PropertyKey, never>
+        Returns: string
+      }
+      get_test_card_workspace: {
+        Args: { test_card_id: string }
+        Returns: string
+      }
       get_top_performers_for_quarter: {
         Args: { quarter: string; quiz_size: number }
         Returns: {
@@ -123,9 +1335,122 @@ export type Database = {
           completion_time_seconds: number
         }[]
       }
+      get_user_engagement_ranking: {
+        Args: { p_workspace_id: string; p_limit?: number }
+        Returns: {
+          user_id: string
+          name: string
+          email: string
+          total_score: number
+          engagement_level: string
+          total_actions: number
+          completed_actions: number
+          total_learnings: number
+          total_impediments: number
+          total_test_cards: number
+          last_activity: string
+          rank_position: number
+        }[]
+      }
+      get_user_last_activity: {
+        Args: { p_workspace_id: string }
+        Returns: {
+          user_id: string
+          user_name: string
+          user_email: string
+          last_visit: string
+        }[]
+      }
+      get_user_workspace_role: {
+        Args: { workspace_id: string; user_id: string }
+        Returns: Database["public"]["Enums"]["workspace_role"]
+      }
+      get_user_workspaces: {
+        Args: { user_id?: string }
+        Returns: {
+          workspace_id: string
+        }[]
+      }
+      is_admin: {
+        Args: { user_id: string }
+        Returns: boolean
+      }
+      is_system_admin_simple: {
+        Args: { user_id?: string }
+        Returns: boolean
+      }
+      is_user_approved: {
+        Args: { user_id: string }
+        Returns: boolean
+      }
+      is_workspace_admin_simple: {
+        Args: { workspace_id: string; user_id?: string }
+        Returns: boolean
+      }
+      is_workspace_member_simple: {
+        Args: { workspace_id: string; user_id?: string }
+        Returns: boolean
+      }
+      log_workspace_event: {
+        Args: {
+          p_workspace_id: string
+          p_event_type: string
+          p_entity_id: string
+          p_entity_type: string
+          p_entity_title: string
+          p_user_id?: string
+          p_test_card_id?: string
+          p_metadata?: Json
+        }
+        Returns: undefined
+      }
+      test_rls_recursion: {
+        Args: Record<PropertyKey, never>
+        Returns: string
+      }
+      user_in_workspace: {
+        Args: { workspace_id: string; user_id: string }
+        Returns: boolean
+      }
+      user_in_workspace_rls: {
+        Args: { workspace_id: string }
+        Returns: boolean
+      }
+      user_in_workspace_safe: {
+        Args: { workspace_id: string; user_id?: string }
+        Returns: boolean
+      }
+      user_is_system_admin: {
+        Args: { user_id?: string }
+        Returns: boolean
+      }
+      user_is_workspace_admin: {
+        Args: { workspace_id: string; user_id?: string }
+        Returns: boolean
+      }
+      validate_magic_link_token: {
+        Args: { token_value: string }
+        Returns: string
+      }
+      validate_permission_hierarchy: {
+        Args: { test_workspace_id: string }
+        Returns: {
+          test_name: string
+          result: boolean
+          details: string
+        }[]
+      }
     }
     Enums: {
-      [_ in never]: never
+      action_status: "todo" | "doing" | "done"
+      key_result_type:
+        | "increase"
+        | "reduce"
+        | "maintain_above"
+        | "maintain_below"
+      okr_frequency: "quarterly" | "annual" | "semestral"
+      okr_status: "not_started" | "in_progress" | "completed" | "paused"
+      workspace_role: "admin" | "member"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -240,6 +1565,17 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      action_status: ["todo", "doing", "done"],
+      key_result_type: [
+        "increase",
+        "reduce",
+        "maintain_above",
+        "maintain_below",
+      ],
+      okr_frequency: ["quarterly", "annual", "semestral"],
+      okr_status: ["not_started", "in_progress", "completed", "paused"],
+      workspace_role: ["admin", "member"],
+    },
   },
 } as const
