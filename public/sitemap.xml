@@ -1,16 +1,47 @@
 
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  <!-- Portuguese main page -->
   <url>
-    <loc>https://simuladocsm.com/</loc>
-    <lastmod>2025-04-07</lastmod>
+    <loc>https://simulado-csm.k21.global/</loc>
+    <lastmod>2025-06-29</lastmod>
     <changefreq>monthly</changefreq>
     <priority>1.0</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://simulado-csm.k21.global/us" />
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://simulado-csm.k21.global/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://simulado-csm.k21.global/" />
   </url>
+  
+  <!-- English main page -->
   <url>
-    <loc>https://simuladocsm.com/ranking</loc>
-    <lastmod>2025-04-07</lastmod>
+    <loc>https://simulado-csm.k21.global/us</loc>
+    <lastmod>2025-06-29</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>1.0</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://simulado-csm.k21.global/us" />
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://simulado-csm.k21.global/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://simulado-csm.k21.global/" />
+  </url>
+  
+  <!-- Portuguese ranking page -->
+  <url>
+    <loc>https://simulado-csm.k21.global/ranking</loc>
+    <lastmod>2025-06-29</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://simulado-csm.k21.global/us/ranking" />
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://simulado-csm.k21.global/ranking" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://simulado-csm.k21.global/ranking" />
+  </url>
+  
+  <!-- English ranking page -->
+  <url>
+    <loc>https://simulado-csm.k21.global/us/ranking</loc>
+    <lastmod>2025-06-29</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://simulado-csm.k21.global/us/ranking" />
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://simulado-csm.k21.global/ranking" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://simulado-csm.k21.global/ranking" />
   </url>
 </urlset>

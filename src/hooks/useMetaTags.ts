@@ -14,6 +14,7 @@ interface MetaTagsConfig {
   twitterDescription?: string;
   canonical?: string;
   structuredData?: object;
+  lang?: string;
 }
 
 const defaultMetaTags = {
@@ -33,7 +34,7 @@ const defaultMetaTags = {
 
 const getPageMetaTags = (pathname: string, language: 'pt' | 'en'): MetaTagsConfig => {
   const isEnglish = language === 'en';
-  const baseUrl = window.location.origin;
+  const baseUrl = 'https://simulado-csm.k21.global';
   
   // Remove /us prefix for canonical URL generation
   const cleanPath = pathname.replace('/us', '');
@@ -50,6 +51,7 @@ const getPageMetaTags = (pathname: string, language: 'pt' | 'en'): MetaTagsConfi
         twitterTitle: defaultMetaTags[language].title,
         twitterDescription: defaultMetaTags[language].description,
         canonical: isEnglish ? `${baseUrl}/us` : baseUrl,
+        lang: isEnglish ? 'en' : 'pt-BR',
         structuredData: {
           "@context": "https://schema.org",
           "@type": "EducationalOrganization",
@@ -77,14 +79,35 @@ const getPageMetaTags = (pathname: string, language: 'pt' | 'en'): MetaTagsConfi
         keywords: isEnglish
           ? 'CSM ranking, Scrum leaderboard, certification ranking, K21'
           : 'ranking CSM, classificação Scrum, ranking certificação, K21',
-        canonical: isEnglish ? `${baseUrl}/us/ranking` : `${baseUrl}/ranking`
+        ogTitle: isEnglish 
+          ? 'Global CSM Quiz Ranking - K21 Brasil'
+          : 'Ranking Global do Simulado CSM - K21 Brasil',
+        ogDescription: isEnglish
+          ? 'See how you rank among CSM quiz participants worldwide. Compare your Scrum knowledge with other professionals.'
+          : 'Veja como você se posiciona entre participantes do simulado CSM no mundo. Compare seu conhecimento em Scrum com outros profissionais.',
+        ogImage: defaultMetaTags[language].ogImage,
+        twitterTitle: isEnglish 
+          ? 'Global CSM Quiz Ranking - K21 Brasil'
+          : 'Ranking Global do Simulado CSM - K21 Brasil',
+        twitterDescription: isEnglish
+          ? 'See how you rank among CSM quiz participants worldwide. Compare your Scrum knowledge with other professionals.'
+          : 'Veja como você se posiciona entre participantes do simulado CSM no mundo. Compare seu conhecimento em Scrum com outros profissionais.',
+        canonical: isEnglish ? `${baseUrl}/us/ranking` : `${baseUrl}/ranking`,
+        lang: isEnglish ? 'en' : 'pt-BR'
       };
       
     default:
       return {
         title: defaultMetaTags[language].title,
         description: defaultMetaTags[language].description,
-        canonical: isEnglish ? `${baseUrl}/us${cleanPath}` : `${baseUrl}${cleanPath}`
+        keywords: defaultMetaTags[language].keywords,
+        ogTitle: defaultMetaTags[language].title,
+        ogDescription: defaultMetaTags[language].description,
+        ogImage: defaultMetaTags[language].ogImage,
+        twitterTitle: defaultMetaTags[language].title,
+        twitterDescription: defaultMetaTags[language].description,
+        canonical: isEnglish ? `${baseUrl}/us${cleanPath}` : `${baseUrl}${cleanPath}`,
+        lang: isEnglish ? 'en' : 'pt-BR'
       };
   }
 };
@@ -95,6 +118,11 @@ export const useMetaTags = () => {
 
   useEffect(() => {
     const metaTags = getPageMetaTags(location.pathname, language);
+    
+    // Update document language
+    if (metaTags.lang) {
+      document.documentElement.lang = metaTags.lang;
+    }
     
     // Update title
     document.title = metaTags.title;
@@ -118,23 +146,29 @@ export const useMetaTags = () => {
     };
     
     // Update basic meta tags
+    updateMetaTag('title', metaTags.title);
     updateMetaTag('description', metaTags.description);
     if (metaTags.keywords) {
       updateMetaTag('keywords', metaTags.keywords);
     }
     updateMetaTag('author', 'K21 Brasil');
+    updateMetaTag('robots', 'index, follow');
+    updateMetaTag('language', language === 'en' ? 'English' : 'Portuguese');
     
     // Update Open Graph tags
-    updateMetaTag('og:title', metaTags.ogTitle || metaTags.title, true);
-    updateMetaTag('og:description', metaTags.ogDescription || metaTags.description, true);
     updateMetaTag('og:type', 'website', true);
     updateMetaTag('og:url', window.location.href, true);
+    updateMetaTag('og:title', metaTags.ogTitle || metaTags.title, true);
+    updateMetaTag('og:description', metaTags.ogDescription || metaTags.description, true);
+    updateMetaTag('og:site_name', 'K21 Brasil', true);
+    updateMetaTag('og:locale', language === 'en' ? 'en_US' : 'pt_BR', true);
     if (metaTags.ogImage) {
       updateMetaTag('og:image', `${window.location.origin}${metaTags.ogImage}`, true);
     }
     
     // Update Twitter tags
     updateMetaTag('twitter:card', 'summary_large_image');
+    updateMetaTag('twitter:url', window.location.href);
     updateMetaTag('twitter:title', metaTags.twitterTitle || metaTags.title);
     updateMetaTag('twitter:description', metaTags.twitterDescription || metaTags.description);
     if (metaTags.ogImage) {

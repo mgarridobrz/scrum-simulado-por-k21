@@ -14,5 +14,4 @@ Allow: /
 User-agent: *
 Allow: /
 
-Sitemap: https://simuladocsm.com/sitemap.xml
-
+Sitemap: https://simulado-csm.k21.global/sitemap.xml
