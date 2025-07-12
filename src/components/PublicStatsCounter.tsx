@@ -16,8 +16,9 @@ const PublicStatsCounter = () => {
   useEffect(() => {
     const loadStats = async () => {
       try {
+        console.log('🔄 PublicStatsCounter - Carregando estatísticas...', new Date().toISOString());
         const statsData = await getQuizAttemptStats();
-        console.log('Estatísticas carregadas:', statsData);
+        console.log('✅ PublicStatsCounter - Estatísticas carregadas:', statsData);
         setStats(statsData);
       } catch (error) {
         console.error("Error loading stats:", error);
@@ -30,10 +31,37 @@ const PublicStatsCounter = () => {
     };
     
     loadStats();
+    
+    // Add interval to refresh every 30 seconds
+    const interval = setInterval(loadStats, 30000);
+    return () => clearInterval(interval);
   }, [toast]);
   
+  // Debug function to manually reload stats
+  const debugReloadStats = async () => {
+    console.log('🚀 DEBUG - Forçando reload das estatísticas...');
+    try {
+      const statsData = await getQuizAttemptStats();
+      console.log('🚀 DEBUG - Estatísticas recarregadas:', statsData);
+      setStats(statsData);
+    } catch (error) {
+      console.error('🚀 DEBUG - Erro:', error);
+    }
+  };
+
   return (
     <Card className="bg-gradient-to-r from-white to-gray-50 shadow-md p-6 mt-8">
+      {/* DEBUG BUTTON - TEMPORÁRIO */}
+      <div className="mb-4 text-center">
+        <button 
+          onClick={debugReloadStats}
+          className="px-4 py-2 bg-red-500 text-white rounded text-sm"
+        >
+          🚀 DEBUG: Recarregar Stats
+        </button>
+        <p className="text-xs text-gray-500 mt-1">Total atual: {stats?.totalAttempts || 0}</p>
+      </div>
+      
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="text-center space-y-2">
           <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-k21-teal/10 mb-2">
