@@ -381,33 +381,46 @@ export async function getRankingData(
  */
 export async function getQuizAttemptStats(): Promise<QuizStats> {
   try {
-    console.log('🔥 NOVA VERSÃO - Iniciando busca de estatísticas...');
+    console.log('🔥 VERSÃO FINAL - Iniciando busca de estatísticas...');
     
-    // Use count to get total first, then fetch data without limit
-    const { count: totalCount, error: countError } = await supabase
-      .from('quiz_attempts')
-      .select('*', { count: 'exact', head: true });
+    // Fetch ALL data without any limits - using a different approach
+    let allData: any[] = [];
+    let from = 0;
+    const batchSize = 1000;
+    let hasMore = true;
     
-    if (countError) {
-      console.error('Error counting records:', countError);
-      throw countError;
+    while (hasMore) {
+      console.log(`🔥 Buscando batch ${from}-${from + batchSize - 1}`);
+      
+      const { data: batchData, error } = await supabase
+        .from('quiz_attempts')
+        .select('quiz_size, score, completion_time_seconds, created_at')
+        .order('created_at', { ascending: false })
+        .range(from, from + batchSize - 1);
+      
+      if (error) {
+        console.error('Error fetching batch:', error);
+        throw error;
+      }
+      
+      if (!batchData || batchData.length === 0) {
+        hasMore = false;
+      } else {
+        allData = [...allData, ...batchData];
+        from += batchSize;
+        
+        if (batchData.length < batchSize) {
+          hasMore = false;
+        }
+      }
+      
+      console.log(`🔥 Total coletado até agora: ${allData.length}`);
     }
     
-    console.log(`🔥 TOTAL COUNT from database: ${totalCount}`);
-    
-    // Now fetch all data in batches if needed
-    const { data, error } = await supabase
-      .from('quiz_attempts')
-      .select('quiz_size, score, completion_time_seconds, created_at')
-      .order('created_at', { ascending: false });
+    const data = allData;
 
-    if (error) {
-      console.error("Error fetching quiz stats:", error);
-      throw error;
-    }
-
-    console.log(`[STATS] Total de registros encontrados na base: ${data?.length || 0}`);
-    console.log(`[STATS] Primeiros 3 registros:`, data?.slice(0, 3));
+    console.log(`🔥 FINAL: Total de registros encontrados na base: ${data?.length || 0}`);
+    console.log(`🔥 FINAL: Primeiros 3 registros:`, data?.slice(0, 3));
     
     const attempts = data || [];
     const totalAttempts = attempts.length;
