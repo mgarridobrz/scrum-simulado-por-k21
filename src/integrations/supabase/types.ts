@@ -7,6 +7,11 @@ export type Json =
   | Json[]
 
 export type Database = {
+  // Allows to automatically instanciate createClient with right options
+  // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
+  __InternalSupabase: {
+    PostgrestVersion: "12.2.3 (519615d)"
+  }
   public: {
     Tables: {
       action_initiatives: {
@@ -159,6 +164,217 @@ export type Database = {
           },
           {
             foreignKeyName: "actions_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      broadcast_user_views: {
+        Row: {
+          broadcast_id: string
+          id: string
+          user_id: string
+          viewed_at: string
+          workspace_id: string
+        }
+        Insert: {
+          broadcast_id: string
+          id?: string
+          user_id: string
+          viewed_at?: string
+          workspace_id: string
+        }
+        Update: {
+          broadcast_id?: string
+          id?: string
+          user_id?: string
+          viewed_at?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "broadcast_user_views_broadcast_id_fkey"
+            columns: ["broadcast_id"]
+            isOneToOne: false
+            referencedRelation: "broadcasts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "broadcast_user_views_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "broadcast_user_views_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "user_engagement_scores"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "broadcast_user_views_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      broadcast_workspaces: {
+        Row: {
+          broadcast_id: string
+          created_at: string
+          id: string
+          workspace_id: string
+        }
+        Insert: {
+          broadcast_id: string
+          created_at?: string
+          id?: string
+          workspace_id: string
+        }
+        Update: {
+          broadcast_id?: string
+          created_at?: string
+          id?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "broadcast_workspaces_broadcast_id_fkey"
+            columns: ["broadcast_id"]
+            isOneToOne: false
+            referencedRelation: "broadcasts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "broadcast_workspaces_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      broadcasts: {
+        Row: {
+          broadcast_type: string
+          created_at: string
+          created_by: string
+          expires_at: string | null
+          id: string
+          is_active: boolean
+          message: string
+          priority: number
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          broadcast_type?: string
+          created_at?: string
+          created_by: string
+          expires_at?: string | null
+          id?: string
+          is_active?: boolean
+          message: string
+          priority?: number
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          broadcast_type?: string
+          created_at?: string
+          created_by?: string
+          expires_at?: string | null
+          id?: string
+          is_active?: boolean
+          message?: string
+          priority?: number
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "broadcasts_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "broadcasts_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "user_engagement_scores"
+            referencedColumns: ["user_id"]
+          },
+        ]
+      }
+      error_logs: {
+        Row: {
+          additional_data: Json | null
+          category: Database["public"]["Enums"]["error_category"]
+          created_at: string
+          error_code: string | null
+          error_message: string
+          error_stack: string | null
+          feature_context: string | null
+          id: string
+          page_url: string | null
+          resolved: boolean
+          resolved_at: string | null
+          resolved_by: string | null
+          severity: Database["public"]["Enums"]["error_severity"]
+          updated_at: string
+          user_agent: string | null
+          user_id: string | null
+          workspace_id: string | null
+        }
+        Insert: {
+          additional_data?: Json | null
+          category?: Database["public"]["Enums"]["error_category"]
+          created_at?: string
+          error_code?: string | null
+          error_message: string
+          error_stack?: string | null
+          feature_context?: string | null
+          id?: string
+          page_url?: string | null
+          resolved?: boolean
+          resolved_at?: string | null
+          resolved_by?: string | null
+          severity?: Database["public"]["Enums"]["error_severity"]
+          updated_at?: string
+          user_agent?: string | null
+          user_id?: string | null
+          workspace_id?: string | null
+        }
+        Update: {
+          additional_data?: Json | null
+          category?: Database["public"]["Enums"]["error_category"]
+          created_at?: string
+          error_code?: string | null
+          error_message?: string
+          error_stack?: string | null
+          feature_context?: string | null
+          id?: string
+          page_url?: string | null
+          resolved?: boolean
+          resolved_at?: string | null
+          resolved_by?: string | null
+          severity?: Database["public"]["Enums"]["error_severity"]
+          updated_at?: string
+          user_agent?: string | null
+          user_id?: string | null
+          workspace_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "error_logs_workspace_id_fkey"
             columns: ["workspace_id"]
             isOneToOne: false
             referencedRelation: "workspaces"
@@ -487,6 +703,7 @@ export type Database = {
           created_at: string
           current_value: number | null
           description: string | null
+          display_order: number | null
           id: string
           initial_value: number | null
           key_result_type_id: string
@@ -503,6 +720,7 @@ export type Database = {
           created_at?: string
           current_value?: number | null
           description?: string | null
+          display_order?: number | null
           id?: string
           initial_value?: number | null
           key_result_type_id: string
@@ -519,6 +737,7 @@ export type Database = {
           created_at?: string
           current_value?: number | null
           description?: string | null
+          display_order?: number | null
           id?: string
           initial_value?: number | null
           key_result_type_id?: string
@@ -773,6 +992,48 @@ export type Database = {
         }
         Relationships: []
       }
+      organizations: {
+        Row: {
+          created_at: string
+          created_by: string
+          description: string | null
+          id: string
+          name: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          description?: string | null
+          id?: string
+          name: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          description?: string | null
+          id?: string
+          name?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "organizations_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "organizations_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "user_engagement_scores"
+            referencedColumns: ["user_id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           approved_at: string | null
@@ -780,8 +1041,10 @@ export type Database = {
           created_at: string | null
           email: string
           id: string
+          is_active: boolean
           is_admin: boolean | null
           name: string
+          organization_id: string | null
           preferred_language: string
           primary_workspace_id: string | null
           status: string
@@ -793,8 +1056,10 @@ export type Database = {
           created_at?: string | null
           email: string
           id: string
+          is_active?: boolean
           is_admin?: boolean | null
           name: string
+          organization_id?: string | null
           preferred_language?: string
           primary_workspace_id?: string | null
           status?: string
@@ -806,8 +1071,10 @@ export type Database = {
           created_at?: string | null
           email?: string
           id?: string
+          is_active?: boolean
           is_admin?: boolean | null
           name?: string
+          organization_id?: string | null
           preferred_language?: string
           primary_workspace_id?: string | null
           status?: string
@@ -827,6 +1094,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "user_engagement_scores"
             referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "profiles_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "profiles_primary_workspace_id_fkey"
@@ -1086,25 +1360,31 @@ export type Database = {
       }
       user_last_activity: {
         Row: {
+          activity_context: string | null
           created_at: string
           id: string
           last_visit: string
+          page_path: string | null
           updated_at: string
           user_id: string
           workspace_id: string
         }
         Insert: {
+          activity_context?: string | null
           created_at?: string
           id?: string
           last_visit?: string
+          page_path?: string | null
           updated_at?: string
           user_id: string
           workspace_id: string
         }
         Update: {
+          activity_context?: string | null
           created_at?: string
           id?: string
           last_visit?: string
+          page_path?: string | null
           updated_at?: string
           user_id?: string
           workspace_id?: string
@@ -1225,8 +1505,10 @@ export type Database = {
           description: string | null
           id: string
           initiatives_enabled: boolean | null
+          is_active: boolean
           name: string
           okr_enabled: boolean | null
+          organization_id: string | null
           updated_at: string
         }
         Insert: {
@@ -1235,8 +1517,10 @@ export type Database = {
           description?: string | null
           id?: string
           initiatives_enabled?: boolean | null
+          is_active?: boolean
           name: string
           okr_enabled?: boolean | null
+          organization_id?: string | null
           updated_at?: string
         }
         Update: {
@@ -1245,8 +1529,10 @@ export type Database = {
           description?: string | null
           id?: string
           initiatives_enabled?: boolean | null
+          is_active?: boolean
           name?: string
           okr_enabled?: boolean | null
+          organization_id?: string | null
           updated_at?: string
         }
         Relationships: [
@@ -1263,6 +1549,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "user_engagement_scores"
             referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "workspaces_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
           },
         ]
       }
@@ -1295,6 +1588,15 @@ export type Database = {
       }
     }
     Functions: {
+      accept_user_invitation: {
+        Args: { p_token: string; p_user_id: string }
+        Returns: {
+          success: boolean
+          workspace_id: string
+          workspace_name: string
+          error_message: string
+        }[]
+      }
       audit_rls_status: {
         Args: Record<PropertyKey, never>
         Returns: {
@@ -1303,8 +1605,20 @@ export type Database = {
           policy_count: number
         }[]
       }
+      can_deactivate_user: {
+        Args: { user_id: string }
+        Returns: boolean
+      }
       can_delete_user: {
         Args: { user_id: string }
+        Returns: boolean
+      }
+      can_manage_broadcasts_in_workspace: {
+        Args: { p_workspace_id: string; p_user_id?: string }
+        Returns: boolean
+      }
+      check_admin_status: {
+        Args: { check_user_id: string }
         Returns: boolean
       }
       cleanup_expired_magic_tokens: {
@@ -1319,9 +1633,76 @@ export type Database = {
         Args: { action_id: string }
         Returns: string
       }
+      get_active_broadcasts_for_user: {
+        Args: { p_user_id: string; p_workspace_id: string }
+        Returns: {
+          id: string
+          title: string
+          message: string
+          broadcast_type: string
+          priority: number
+          created_at: string
+        }[]
+      }
+      get_all_user_activity: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          user_id: string
+          user_name: string
+          user_email: string
+          workspace_id: string
+          workspace_name: string
+          last_visit: string
+          activity_context: string
+          page_path: string
+        }[]
+      }
+      get_broadcast_view_stats: {
+        Args: { p_broadcast_id: string; p_workspace_id: string }
+        Returns: {
+          total_users: number
+          viewed_users: number
+        }[]
+      }
       get_current_user_status: {
         Args: Record<PropertyKey, never>
         Returns: string
+      }
+      get_error_statistics: {
+        Args: { p_workspace_id?: string; p_hours_back?: number }
+        Returns: {
+          total_errors: number
+          unresolved_errors: number
+          critical_errors: number
+          high_severity_errors: number
+          most_common_category: string
+          most_common_feature: string
+          error_trend_percentage: number
+        }[]
+      }
+      get_invitation_details: {
+        Args: { p_token: string }
+        Returns: {
+          valid: boolean
+          workspace_name: string
+          workspace_id: string
+          invited_email: string
+          inviter_name: string
+          expires_at: string
+          error_message: string
+        }[]
+      }
+      get_system_activity_stats: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          total_workspaces: number
+          total_users: number
+          users_with_activity: number
+          recent_activity_1h: number
+          workspaces_with_activity: number
+          oldest_activity: string
+          newest_activity: string
+        }[]
       }
       get_test_card_workspace: {
         Args: { test_card_id: string }
@@ -1359,7 +1740,13 @@ export type Database = {
           user_name: string
           user_email: string
           last_visit: string
+          activity_context: string
+          page_path: string
         }[]
+      }
+      get_user_organization: {
+        Args: { user_id?: string }
+        Returns: string
       }
       get_user_workspace_role: {
         Args: { workspace_id: string; user_id: string }
@@ -1373,6 +1760,10 @@ export type Database = {
       }
       is_admin: {
         Args: { user_id: string }
+        Returns: boolean
+      }
+      is_organization_admin_simple: {
+        Args: { org_id: string; user_id?: string }
         Returns: boolean
       }
       is_system_admin_simple: {
@@ -1404,9 +1795,34 @@ export type Database = {
         }
         Returns: undefined
       }
+      mark_broadcast_as_viewed: {
+        Args: {
+          p_broadcast_id: string
+          p_user_id: string
+          p_workspace_id: string
+        }
+        Returns: boolean
+      }
+      safe_track_activity: {
+        Args: {
+          p_user_id: string
+          p_workspace_id: string
+          p_activity_context?: string
+          p_page_path?: string
+        }
+        Returns: {
+          success: boolean
+          error_message: string
+          validation_details: Json
+        }[]
+      }
       test_rls_recursion: {
         Args: Record<PropertyKey, never>
         Returns: string
+      }
+      toggle_user_active_status: {
+        Args: { target_user_id: string }
+        Returns: boolean
       }
       user_in_workspace: {
         Args: { workspace_id: string; user_id: string }
@@ -1428,6 +1844,17 @@ export type Database = {
         Args: { workspace_id: string; user_id?: string }
         Returns: boolean
       }
+      validate_activity_tracking_permissions: {
+        Args: { p_user_id: string; p_workspace_id: string }
+        Returns: {
+          can_track: boolean
+          user_exists: boolean
+          workspace_exists: boolean
+          is_member: boolean
+          user_status: string
+          error_message: string
+        }[]
+      }
       validate_magic_link_token: {
         Args: { token_value: string }
         Returns: string
@@ -1443,6 +1870,16 @@ export type Database = {
     }
     Enums: {
       action_status: "todo" | "doing" | "done"
+      error_category:
+        | "api"
+        | "ui"
+        | "auth"
+        | "database"
+        | "network"
+        | "validation"
+        | "system"
+        | "unknown"
+      error_severity: "low" | "medium" | "high" | "critical"
       key_result_type:
         | "increase"
         | "reduce"
@@ -1458,21 +1895,25 @@ export type Database = {
   }
 }
 
-type DefaultSchema = Database[Extract<keyof Database, "public">]
+type DatabaseWithoutInternals = Omit<Database, "__InternalSupabase">
+
+type DefaultSchema = DatabaseWithoutInternals[Extract<keyof Database, "public">]
 
 export type Tables<
   DefaultSchemaTableNameOrOptions extends
     | keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
-    | { schema: keyof Database },
+    | { schema: keyof DatabaseWithoutInternals },
   TableName extends DefaultSchemaTableNameOrOptions extends {
-    schema: keyof Database
+    schema: keyof DatabaseWithoutInternals
   }
-    ? keyof (Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
-        Database[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
+    ? keyof (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
+        DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
     : never = never,
-> = DefaultSchemaTableNameOrOptions extends { schema: keyof Database }
-  ? (Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
-      Database[DefaultSchemaTableNameOrOptions["schema"]]["Views"])[TableName] extends {
+> = DefaultSchemaTableNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
+      DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])[TableName] extends {
       Row: infer R
     }
     ? R
@@ -1490,14 +1931,16 @@ export type Tables<
 export type TablesInsert<
   DefaultSchemaTableNameOrOptions extends
     | keyof DefaultSchema["Tables"]
-    | { schema: keyof Database },
+    | { schema: keyof DatabaseWithoutInternals },
   TableName extends DefaultSchemaTableNameOrOptions extends {
-    schema: keyof Database
+    schema: keyof DatabaseWithoutInternals
   }
-    ? keyof Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
+    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
     : never = never,
-> = DefaultSchemaTableNameOrOptions extends { schema: keyof Database }
-  ? Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
+> = DefaultSchemaTableNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
       Insert: infer I
     }
     ? I
@@ -1513,14 +1956,16 @@ export type TablesInsert<
 export type TablesUpdate<
   DefaultSchemaTableNameOrOptions extends
     | keyof DefaultSchema["Tables"]
-    | { schema: keyof Database },
+    | { schema: keyof DatabaseWithoutInternals },
   TableName extends DefaultSchemaTableNameOrOptions extends {
-    schema: keyof Database
+    schema: keyof DatabaseWithoutInternals
   }
-    ? keyof Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
+    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
     : never = never,
-> = DefaultSchemaTableNameOrOptions extends { schema: keyof Database }
-  ? Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
+> = DefaultSchemaTableNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
       Update: infer U
     }
     ? U
@@ -1536,14 +1981,16 @@ export type TablesUpdate<
 export type Enums<
   DefaultSchemaEnumNameOrOptions extends
     | keyof DefaultSchema["Enums"]
-    | { schema: keyof Database },
+    | { schema: keyof DatabaseWithoutInternals },
   EnumName extends DefaultSchemaEnumNameOrOptions extends {
-    schema: keyof Database
+    schema: keyof DatabaseWithoutInternals
   }
-    ? keyof Database[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
+    ? keyof DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
     : never = never,
-> = DefaultSchemaEnumNameOrOptions extends { schema: keyof Database }
-  ? Database[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"][EnumName]
+> = DefaultSchemaEnumNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"][EnumName]
   : DefaultSchemaEnumNameOrOptions extends keyof DefaultSchema["Enums"]
     ? DefaultSchema["Enums"][DefaultSchemaEnumNameOrOptions]
     : never
@@ -1551,14 +1998,16 @@ export type Enums<
 export type CompositeTypes<
   PublicCompositeTypeNameOrOptions extends
     | keyof DefaultSchema["CompositeTypes"]
-    | { schema: keyof Database },
+    | { schema: keyof DatabaseWithoutInternals },
   CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
-    schema: keyof Database
+    schema: keyof DatabaseWithoutInternals
   }
-    ? keyof Database[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
+    ? keyof DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
     : never = never,
-> = PublicCompositeTypeNameOrOptions extends { schema: keyof Database }
-  ? Database[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"][CompositeTypeName]
+> = PublicCompositeTypeNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"][CompositeTypeName]
   : PublicCompositeTypeNameOrOptions extends keyof DefaultSchema["CompositeTypes"]
     ? DefaultSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
     : never
@@ -1567,6 +2016,17 @@ export const Constants = {
   public: {
     Enums: {
       action_status: ["todo", "doing", "done"],
+      error_category: [
+        "api",
+        "ui",
+        "auth",
+        "database",
+        "network",
+        "validation",
+        "system",
+        "unknown",
+      ],
+      error_severity: ["low", "medium", "high", "critical"],
       key_result_type: [
         "increase",
         "reduce",
