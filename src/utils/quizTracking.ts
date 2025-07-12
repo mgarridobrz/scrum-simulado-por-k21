@@ -381,16 +381,25 @@ export async function getRankingData(
  */
 export async function getQuizAttemptStats(): Promise<QuizStats> {
   try {
-    console.log('[STATS] VERSÃO CORRIGIDA - Iniciando busca de estatísticas...');
-    console.log('[STATS] Usando limit(100000) para buscar todos os registros');
+    console.log('🔥 NOVA VERSÃO - Iniciando busca de estatísticas...');
     
-    // Buscar TODAS as tentativas, incluindo as sem completion_time_seconds
-    // Remove the default 1000 record limit by setting a higher limit
+    // Use count to get total first, then fetch data without limit
+    const { count: totalCount, error: countError } = await supabase
+      .from('quiz_attempts')
+      .select('*', { count: 'exact', head: true });
+    
+    if (countError) {
+      console.error('Error counting records:', countError);
+      throw countError;
+    }
+    
+    console.log(`🔥 TOTAL COUNT from database: ${totalCount}`);
+    
+    // Now fetch all data in batches if needed
     const { data, error } = await supabase
       .from('quiz_attempts')
       .select('quiz_size, score, completion_time_seconds, created_at')
-      .order('created_at', { ascending: false })
-      .limit(100000); // Set a very high limit to get all records
+      .order('created_at', { ascending: false });
 
     if (error) {
       console.error("Error fetching quiz stats:", error);
