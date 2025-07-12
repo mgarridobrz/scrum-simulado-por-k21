@@ -6,7 +6,7 @@ import { fetchRandomQuestions } from "@/utils/quizTracking";
 export async function getQuizQuestions(language: 'pt' | 'en' = 'pt'): Promise<QuestionWithCategory[]> {
   try {
     // Fetch all questions from the database with language support
-    const dbQuestions = await fetchRandomQuestions(1000, language); // Fetch large number to get all
+    const dbQuestions = await fetchRandomQuestions(100000, language); // Fetch large number to get all
     
     if (dbQuestions && dbQuestions.length > 0) {
       console.log(`Fetched ${dbQuestions.length} questions from database for language: ${language}`);
