@@ -279,7 +279,8 @@ export async function getGlobalQuizStats(): Promise<{
     // Get total attempts and average score - include ALL attempts (with and without completion time)
     const { data: statsData, error: statsError } = await supabase
       .from('quiz_attempts')
-      .select('score, language');
+      .select('score, language')
+      .limit(100000); // Set a very high limit to get all records
 
     if (statsError) {
       console.error("Error fetching global stats:", statsError);
@@ -380,7 +381,8 @@ export async function getRankingData(
  */
 export async function getQuizAttemptStats(): Promise<QuizStats> {
   try {
-    console.log('[STATS] Iniciando busca de estatísticas...');
+    console.log('[STATS] VERSÃO CORRIGIDA - Iniciando busca de estatísticas...');
+    console.log('[STATS] Usando limit(100000) para buscar todos os registros');
     
     // Buscar TODAS as tentativas, incluindo as sem completion_time_seconds
     // Remove the default 1000 record limit by setting a higher limit
