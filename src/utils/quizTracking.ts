@@ -276,18 +276,32 @@ export async function getGlobalQuizStats(): Promise<{
   languageBreakdown: { pt: number; en: number };
 }> {
   try {
-    // Get total attempts and average score - include ALL attempts (with and without completion time)
-    const { data: statsData, error: statsError } = await supabase
+    // 1. Get total attempts count efficiently
+    const { count: totalAttempts, error: countError } = await supabase
       .from('quiz_attempts')
-      .select('score, language')
-      .limit(100000); // Set a very high limit to get all records
+      .select('*', { count: 'exact', head: true });
 
-    if (statsError) {
-      console.error("Error fetching global stats:", statsError);
-      throw statsError;
+    if (countError) {
+      console.error("Error counting attempts:", countError);
+      throw countError;
     }
 
-    // Get total questions count
+    // 2. Get average score efficiently (only scores field)
+    const { data: scoresData, error: scoresError } = await supabase
+      .from('quiz_attempts')
+      .select('score');
+
+    if (scoresError) {
+      console.error("Error fetching scores:", scoresError);
+      throw scoresError;
+    }
+
+    const scores = scoresData || [];
+    const averageScore = scores.length > 0 
+      ? scores.reduce((sum, attempt) => sum + (attempt.score || 0), 0) / scores.length 
+      : 0;
+
+    // 3. Get total questions count
     const { count: totalQuestions, error: questionsError } = await supabase
       .from('quiz_questions')
       .select('*', { count: 'exact', head: true });
@@ -297,14 +311,17 @@ export async function getGlobalQuizStats(): Promise<{
       throw questionsError;
     }
 
-    const attempts = statsData || [];
-    const totalAttempts = attempts.length;
-    const averageScore = totalAttempts > 0 
-      ? attempts.reduce((sum, attempt) => sum + (attempt.score || 0), 0) / totalAttempts 
-      : 0;
+    // 4. Get language breakdown efficiently (only language field)
+    const { data: languagesData, error: languagesError } = await supabase
+      .from('quiz_attempts')
+      .select('language');
 
-    // Calculate language breakdown
-    const languageBreakdown = attempts.reduce(
+    if (languagesError) {
+      console.error("Error fetching languages:", languagesError);
+      throw languagesError;
+    }
+
+    const languageBreakdown = (languagesData || []).reduce(
       (acc, attempt) => {
         const lang = attempt.language || 'pt';
         acc[lang as 'pt' | 'en'] = (acc[lang as 'pt' | 'en'] || 0) + 1;
@@ -314,7 +331,7 @@ export async function getGlobalQuizStats(): Promise<{
     );
 
     return {
-      totalAttempts,
+      totalAttempts: totalAttempts || 0,
       averageScore: Math.round(averageScore * 100) / 100,
       totalQuestions: totalQuestions || 0,
       languageBreakdown
@@ -377,102 +394,86 @@ export async function getRankingData(
 }
 
 /**
- * Gets quiz attempt statistics - FIXED: include ALL attempts regardless of completion time
+ * Gets quiz attempt statistics - OPTIMIZED: uses efficient queries with minimal data transfer
  */
 export async function getQuizAttemptStats(): Promise<QuizStats> {
   try {
-    console.log('🔥 VERSÃO FINAL - Iniciando busca de estatísticas...');
+    console.log('📊 Iniciando busca otimizada de estatísticas...');
     
-    // Fetch ALL data without any limits - using a different approach
-    let allData: any[] = [];
-    let from = 0;
-    const batchSize = 1000;
-    let hasMore = true;
-    
-    while (hasMore) {
-      console.log(`🔥 Buscando batch ${from}-${from + batchSize - 1}`);
-      
-      const { data: batchData, error } = await supabase
-        .from('quiz_attempts')
-        .select('quiz_size, score, completion_time_seconds, created_at')
-        .order('created_at', { ascending: false })
-        .range(from, from + batchSize - 1);
-      
-      if (error) {
-        console.error('Error fetching batch:', error);
-        throw error;
-      }
-      
-      if (!batchData || batchData.length === 0) {
-        hasMore = false;
-      } else {
-        allData = [...allData, ...batchData];
-        from += batchSize;
-        
-        if (batchData.length < batchSize) {
-          hasMore = false;
-        }
-      }
-      
-      console.log(`🔥 Total coletado até agora: ${allData.length}`);
-    }
-    
-    const data = allData;
+    // 1. Get total count efficiently (only metadata, no data transfer)
+    const { count: totalAttempts, error: countError } = await supabase
+      .from('quiz_attempts')
+      .select('*', { count: 'exact', head: true });
 
-    console.log(`🔥 FINAL: Total de registros encontrados na base: ${data?.length || 0}`);
-    console.log(`🔥 FINAL: Primeiros 3 registros:`, data?.slice(0, 3));
-    
-    const attempts = data || [];
-    const totalAttempts = attempts.length;
-    
-    console.log(`[STATS] Total de tentativas para estatísticas: ${totalAttempts}`);
-    
-    // Count by quiz size - include ALL attempts
-    const size10Count = attempts.filter(a => a.quiz_size === 10).length;
-    const size25Count = attempts.filter(a => a.quiz_size === 25).length;
-    const size50Count = attempts.filter(a => a.quiz_size === 50).length;
-    
-    console.log(`[STATS] Contagens por tamanho: 10=${size10Count}, 25=${size25Count}, 50=${size50Count}`);
-    
-    // Get last 50 attempts for average - include ALL attempts
-    const lastFifty = attempts.slice(0, 50);
-    const averageLastFifty = lastFifty.length > 0 
+    if (countError) {
+      console.error('Error getting total count:', countError);
+      throw countError;
+    }
+
+    // 2. Get counts by quiz size efficiently in parallel
+    const [count10, count25, count50] = await Promise.all([
+      supabase.from('quiz_attempts').select('*', { count: 'exact', head: true }).eq('quiz_size', 10),
+      supabase.from('quiz_attempts').select('*', { count: 'exact', head: true }).eq('quiz_size', 25),
+      supabase.from('quiz_attempts').select('*', { count: 'exact', head: true }).eq('quiz_size', 50)
+    ]);
+
+    const size10Count = count10.count || 0;
+    const size25Count = count25.count || 0;
+    const size50Count = count50.count || 0;
+
+    // 3. Get average of last 50 attempts efficiently (only 50 records, only score field)
+    const { data: lastFifty, error: lastFiftyError } = await supabase
+      .from('quiz_attempts')
+      .select('score')
+      .order('created_at', { ascending: false })
+      .limit(50);
+
+    if (lastFiftyError) {
+      console.error('Error getting last 50:', lastFiftyError);
+      throw lastFiftyError;
+    }
+
+    const averageLastFifty = lastFifty && lastFifty.length > 0
       ? Math.round((lastFifty.reduce((sum, a) => sum + (a.score || 0), 0) / lastFifty.length))
       : 0;
-    
-    // Calculate averages by quiz size - only for time averages use attempts with completion time
-    const size10AttemptsWithTime = attempts.filter(a => a.quiz_size === 10 && a.completion_time_seconds);
-    const size25AttemptsWithTime = attempts.filter(a => a.quiz_size === 25 && a.completion_time_seconds);
-    const size50AttemptsWithTime = attempts.filter(a => a.quiz_size === 50 && a.completion_time_seconds);
-    
-    // Score averages include ALL attempts
-    const size10AllAttempts = attempts.filter(a => a.quiz_size === 10);
-    const size25AllAttempts = attempts.filter(a => a.quiz_size === 25);
-    const size50AllAttempts = attempts.filter(a => a.quiz_size === 50);
-    
-    const averageScore10 = size10AllAttempts.length > 0 
-      ? Math.round(size10AllAttempts.reduce((sum, a) => sum + (a.score || 0), 0) / size10AllAttempts.length)
-      : null;
-    const averageScore25 = size25AllAttempts.length > 0 
-      ? Math.round(size25AllAttempts.reduce((sum, a) => sum + (a.score || 0), 0) / size25AllAttempts.length)
-      : null;
-    const averageScore50 = size50AllAttempts.length > 0 
-      ? Math.round(size50AllAttempts.reduce((sum, a) => sum + (a.score || 0), 0) / size50AllAttempts.length)
-      : null;
-    
-    // Time averages only for attempts with completion time
-    const averageTime10 = size10AttemptsWithTime.length > 0 
-      ? Math.round(size10AttemptsWithTime.reduce((sum, a) => sum + (a.completion_time_seconds || 0), 0) / size10AttemptsWithTime.length)
-      : null;
-    const averageTime25 = size25AttemptsWithTime.length > 0 
-      ? Math.round(size25AttemptsWithTime.reduce((sum, a) => sum + (a.completion_time_seconds || 0), 0) / size25AttemptsWithTime.length)
-      : null;
-    const averageTime50 = size50AttemptsWithTime.length > 0 
-      ? Math.round(size50AttemptsWithTime.reduce((sum, a) => sum + (a.completion_time_seconds || 0), 0) / size50AttemptsWithTime.length)
-      : null;
+
+    // 4. Get averages by quiz size efficiently (only necessary fields)
+    const [data10, data25, data50] = await Promise.all([
+      supabase.from('quiz_attempts').select('score, completion_time_seconds').eq('quiz_size', 10),
+      supabase.from('quiz_attempts').select('score, completion_time_seconds').eq('quiz_size', 25),
+      supabase.from('quiz_attempts').select('score, completion_time_seconds').eq('quiz_size', 50)
+    ]);
+
+    // Calculate averages
+    let averageScore10 = null, averageScore25 = null, averageScore50 = null;
+    let averageTime10 = null, averageTime25 = null, averageTime50 = null;
+
+    if (data10.data && data10.data.length > 0) {
+      averageScore10 = Math.round(data10.data.reduce((sum, a) => sum + (a.score || 0), 0) / data10.data.length);
+      const withTime10 = data10.data.filter(a => a.completion_time_seconds);
+      if (withTime10.length > 0) {
+        averageTime10 = Math.round(withTime10.reduce((sum, a) => sum + (a.completion_time_seconds || 0), 0) / withTime10.length);
+      }
+    }
+
+    if (data25.data && data25.data.length > 0) {
+      averageScore25 = Math.round(data25.data.reduce((sum, a) => sum + (a.score || 0), 0) / data25.data.length);
+      const withTime25 = data25.data.filter(a => a.completion_time_seconds);
+      if (withTime25.length > 0) {
+        averageTime25 = Math.round(withTime25.reduce((sum, a) => sum + (a.completion_time_seconds || 0), 0) / withTime25.length);
+      }
+    }
+
+    if (data50.data && data50.data.length > 0) {
+      averageScore50 = Math.round(data50.data.reduce((sum, a) => sum + (a.score || 0), 0) / data50.data.length);
+      const withTime50 = data50.data.filter(a => a.completion_time_seconds);
+      if (withTime50.length > 0) {
+        averageTime50 = Math.round(withTime50.reduce((sum, a) => sum + (a.completion_time_seconds || 0), 0) / withTime50.length);
+      }
+    }
 
     const finalStats = {
-      totalAttempts,
+      totalAttempts: totalAttempts || 0,
       size10Count,
       size25Count,
       size50Count,
@@ -485,7 +486,7 @@ export async function getQuizAttemptStats(): Promise<QuizStats> {
       averageScore50
     };
 
-    console.log(`[STATS] Estatísticas finais calculadas:`, finalStats);
+    console.log(`📊 Estatísticas otimizadas calculadas:`, finalStats);
     
     return finalStats;
   } catch (error) {
