@@ -311,10 +311,11 @@ export async function getGlobalQuizStats(): Promise<{
       throw questionsError;
     }
 
-    // 4. Get language breakdown efficiently (only language field)
+    // 4. Get language breakdown with explicit SQL query to avoid caching
     const { data: languagesData, error: languagesError } = await supabase
       .from('quiz_attempts')
-      .select('language');
+      .select('language')
+      .order('created_at', { ascending: false }); // Add order to break potential cache
 
     if (languagesError) {
       console.error("Error fetching languages:", languagesError);

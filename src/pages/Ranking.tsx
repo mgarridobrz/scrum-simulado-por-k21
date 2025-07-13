@@ -71,6 +71,14 @@ const Ranking = () => {
 
   const loadGlobalStats = async () => {
     try {
+      // Force cache busting by clearing the state first
+      setGlobalStats({
+        totalAttempts: 0,
+        averageScore: 0,
+        totalQuestions: 0,
+        languageBreakdown: { pt: 0, en: 0 }
+      });
+      
       const stats = await getGlobalQuizStats();
       setGlobalStats(stats);
     } catch (error) {
@@ -132,6 +140,15 @@ const Ranking = () => {
                   : 'Veja como você se posiciona entre outros participantes do simulado CSM no mundo'}
               </p>
             </div>
+            
+            <Button 
+              onClick={loadGlobalStats}
+              variant="outline" 
+              size="sm"
+              className="mb-4"
+            >
+              🔄 Atualizar Estatísticas
+            </Button>
           </div>
 
           {/* Global Stats */}
@@ -145,14 +162,6 @@ const Ranking = () => {
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold text-blue-600">{globalStats.totalAttempts.toLocaleString()}</div>
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
-                  onClick={loadGlobalStats}
-                  className="mt-2 text-xs"
-                >
-                  🔄 Atualizar
-                </Button>
               </CardContent>
             </Card>
 
