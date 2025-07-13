@@ -33,7 +33,9 @@ export const LanguageProvider: React.FC<LanguageProviderProps> = ({ children }) 
   useEffect(() => {
     // Check URL for language preference on initial load
     const path = location.pathname;
-    if (path.startsWith('/us')) {
+    const isCustomDomain = window.location.hostname === 'csmpracticeexam.com';
+    
+    if (path.startsWith('/us') || isCustomDomain) {
       setLanguageState('en');
     } else {
       setLanguageState('pt');
@@ -41,6 +43,13 @@ export const LanguageProvider: React.FC<LanguageProviderProps> = ({ children }) 
   }, [location.pathname]);
 
   const setLanguage = (lang: Language) => {
+    const isCustomDomain = window.location.hostname === 'csmpracticeexam.com';
+    
+    // For custom domain, always force English
+    if (isCustomDomain && lang === 'pt') {
+      return; // Don't allow switching to Portuguese on custom domain
+    }
+    
     setLanguageState(lang);
     
     // Update URL based on language
@@ -53,8 +62,8 @@ export const LanguageProvider: React.FC<LanguageProviderProps> = ({ children }) 
         newPath = '/us' + (currentPath === '/' ? '' : currentPath);
       }
     } else {
-      // Remove /us prefix if present
-      if (currentPath.startsWith('/us')) {
+      // Remove /us prefix if present (only for main domain)
+      if (currentPath.startsWith('/us') && !isCustomDomain) {
         newPath = currentPath.replace('/us', '') || '/';
       }
     }

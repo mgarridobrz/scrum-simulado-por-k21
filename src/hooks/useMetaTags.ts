@@ -34,7 +34,8 @@ const defaultMetaTags = {
 
 const getPageMetaTags = (pathname: string, language: 'pt' | 'en'): MetaTagsConfig => {
   const isEnglish = language === 'en';
-  const baseUrl = 'https://simulado-csm.k21.global';
+  const isCustomDomain = window.location.hostname === 'csmpracticeexam.com';
+  const baseUrl = isCustomDomain ? 'https://csmpracticeexam.com' : 'https://simulado-csm.k21.global';
   
   // Remove /us prefix for canonical URL generation
   const cleanPath = pathname.replace('/us', '');
@@ -50,7 +51,7 @@ const getPageMetaTags = (pathname: string, language: 'pt' | 'en'): MetaTagsConfi
         ogImage: defaultMetaTags[language].ogImage,
         twitterTitle: defaultMetaTags[language].title,
         twitterDescription: defaultMetaTags[language].description,
-        canonical: isEnglish ? `${baseUrl}/us` : baseUrl,
+        canonical: isCustomDomain ? baseUrl : (isEnglish ? `${baseUrl}/us` : baseUrl),
         lang: isEnglish ? 'en' : 'pt-BR',
         structuredData: {
           "@context": "https://schema.org",
@@ -92,7 +93,7 @@ const getPageMetaTags = (pathname: string, language: 'pt' | 'en'): MetaTagsConfi
         twitterDescription: isEnglish
           ? 'See how you rank among CSM quiz participants worldwide. Compare your Scrum knowledge with other professionals.'
           : 'Veja como você se posiciona entre participantes do simulado CSM no mundo. Compare seu conhecimento em Scrum com outros profissionais.',
-        canonical: isEnglish ? `${baseUrl}/us/ranking` : `${baseUrl}/ranking`,
+        canonical: isCustomDomain ? `${baseUrl}/ranking` : (isEnglish ? `${baseUrl}/us/ranking` : `${baseUrl}/ranking`),
         lang: isEnglish ? 'en' : 'pt-BR'
       };
       
@@ -106,7 +107,7 @@ const getPageMetaTags = (pathname: string, language: 'pt' | 'en'): MetaTagsConfi
         ogImage: defaultMetaTags[language].ogImage,
         twitterTitle: defaultMetaTags[language].title,
         twitterDescription: defaultMetaTags[language].description,
-        canonical: isEnglish ? `${baseUrl}/us${cleanPath}` : `${baseUrl}${cleanPath}`,
+        canonical: isCustomDomain ? `${baseUrl}${cleanPath}` : (isEnglish ? `${baseUrl}/us${cleanPath}` : `${baseUrl}${cleanPath}`),
         lang: isEnglish ? 'en' : 'pt-BR'
       };
   }
