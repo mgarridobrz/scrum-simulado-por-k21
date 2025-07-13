@@ -1212,6 +1212,33 @@ export type Database = {
           },
         ]
       }
+      restricted_access_tokens: {
+        Row: {
+          created_at: string
+          description: string | null
+          expires_at: string | null
+          id: string
+          is_active: boolean
+          token_hash: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          expires_at?: string | null
+          id?: string
+          is_active?: boolean
+          token_hash: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          expires_at?: string | null
+          id?: string
+          is_active?: boolean
+          token_hash?: string
+        }
+        Relationships: []
+      }
       test_card_users: {
         Row: {
           created_at: string | null
@@ -1866,6 +1893,10 @@ export type Database = {
           result: boolean
           details: string
         }[]
+      }
+      validate_restricted_access: {
+        Args: { input_password: string }
+        Returns: boolean
       }
     }
     Enums: {

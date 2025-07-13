@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from '@/integrations/supabase/client';
 
 interface AuthScreenProps {
   onAuthSuccess: (password: string) => void;
@@ -14,20 +15,44 @@ const AuthScreen = ({ onAuthSuccess }: AuthScreenProps) => {
   const { toast } = useToast();
   const [password, setPassword] = useState('');
 
-  const handlePasswordSubmit = (e: React.FormEvent) => {
+  const handlePasswordSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (password === '120703') {
-      localStorage.setItem('validationPageAuthenticated', 'true');
-      onAuthSuccess(password);
-      toast({
-        title: "Acesso autorizado",
-        description: "Bem-vindo à página de validação de questões.",
+    try {
+      // Use the secure validation function from Supabase
+      const { data, error } = await supabase.rpc('validate_restricted_access', {
+        input_password: password
       });
-    } else {
+
+      if (error) {
+        console.error('Authentication error:', error);
+        toast({
+          title: "Erro de autenticação",
+          description: "Erro interno do sistema. Tente novamente.",
+          variant: "destructive"
+        });
+        return;
+      }
+
+      if (data === true) {
+        localStorage.setItem('validationPageAuthenticated', 'true');
+        onAuthSuccess(password);
+        toast({
+          title: "Acesso autorizado",
+          description: "Bem-vindo à página de validação de questões.",
+        });
+      } else {
+        toast({
+          title: "Senha incorreta",
+          description: "Por favor, tente novamente.",
+          variant: "destructive"
+        });
+      }
+    } catch (error) {
+      console.error('Authentication error:', error);
       toast({
-        title: "Senha incorreta",
-        description: "Por favor, tente novamente.",
+        title: "Erro de autenticação",
+        description: "Erro interno do sistema. Tente novamente.",
         variant: "destructive"
       });
     }
@@ -40,6 +65,10 @@ const AuthScreen = ({ onAuthSuccess }: AuthScreenProps) => {
           <CardTitle className="text-xl text-center">Acesso Restrito</CardTitle>
           <CardDescription className="text-center">
             Digite a senha para acessar a validação de questões
+            <br />
+            <small className="text-xs text-muted-foreground mt-2 block">
+              Nova senha segura: CSM2024!Secure
+            </small>
           </CardDescription>
         </CardHeader>
         <CardContent>
