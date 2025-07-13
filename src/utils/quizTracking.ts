@@ -323,12 +323,14 @@ export async function getGlobalQuizStats(): Promise<{
 
     const languageBreakdown = (languagesData || []).reduce(
       (acc, attempt) => {
-        // Handle null/undefined language values properly
+        // Count each language exactly as stored in database
         const lang = attempt.language;
         if (lang === 'en') {
           acc.en = (acc.en || 0) + 1;
+        } else if (lang === 'pt') {
+          acc.pt = (acc.pt || 0) + 1;
         } else {
-          // Default to 'pt' for null, undefined, or 'pt' values
+          // Handle any null/undefined values as Portuguese (fallback)
           acc.pt = (acc.pt || 0) + 1;
         }
         return acc;

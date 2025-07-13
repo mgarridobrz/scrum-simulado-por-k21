@@ -145,6 +145,14 @@ const Ranking = () => {
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold text-blue-600">{globalStats.totalAttempts.toLocaleString()}</div>
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  onClick={loadGlobalStats}
+                  className="mt-2 text-xs"
+                >
+                  🔄 Atualizar
+                </Button>
               </CardContent>
             </Card>
 
