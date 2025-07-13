@@ -311,33 +311,22 @@ export async function getGlobalQuizStats(): Promise<{
       throw questionsError;
     }
 
-    // 4. Get language breakdown with explicit SQL query to avoid caching
-    const { data: languagesData, error: languagesError } = await supabase
-      .from('quiz_attempts')
-      .select('language')
-      .order('created_at', { ascending: false }); // Add order to break potential cache
+    // 4. Get language breakdown using efficient COUNT queries
+    const [ptResult, enResult] = await Promise.all([
+      supabase
+        .from('quiz_attempts')
+        .select('*', { count: 'exact', head: true })
+        .eq('language', 'pt'),
+      supabase
+        .from('quiz_attempts')
+        .select('*', { count: 'exact', head: true })
+        .eq('language', 'en')
+    ]);
 
-    if (languagesError) {
-      console.error("Error fetching languages:", languagesError);
-      throw languagesError;
-    }
-
-    const languageBreakdown = (languagesData || []).reduce(
-      (acc, attempt) => {
-        // Count each language exactly as stored in database
-        const lang = attempt.language;
-        if (lang === 'en') {
-          acc.en = (acc.en || 0) + 1;
-        } else if (lang === 'pt') {
-          acc.pt = (acc.pt || 0) + 1;
-        } else {
-          // Handle any null/undefined values as Portuguese (fallback)
-          acc.pt = (acc.pt || 0) + 1;
-        }
-        return acc;
-      },
-      { pt: 0, en: 0 }
-    );
+    const languageBreakdown = {
+      pt: ptResult.count || 0,
+      en: enResult.count || 0
+    };
 
     return {
       totalAttempts: totalAttempts || 0,
