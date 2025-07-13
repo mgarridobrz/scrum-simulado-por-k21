@@ -348,31 +348,47 @@ export async function getGlobalQuizStats(): Promise<{
 }
 
 /**
- * Gets ranking data for specific quiz size with language support
+ * Gets ranking data for specific quiz size with language and time period support
  */
 export async function getRankingData(
   quizSize: number,
-  language?: 'pt' | 'en'
+  language?: 'pt' | 'en',
+  timePeriod?: '30days' | '90days' | 'alltime'
 ): Promise<Array<{
   name: string;
   score: number;
   completionTimeSeconds: number;
   language: string;
+  created_at: string;
 }>> {
   try {
     let query = supabase
       .from('quiz_attempts')
-      .select('name, score, completion_time_seconds, language')
+      .select('name, score, completion_time_seconds, language, created_at')
       .eq('quiz_size', quizSize)
-      .not('score', 'is', null)
-      .order('score', { ascending: false })
-      .order('completion_time_seconds', { ascending: true })
-      .limit(100);
+      .not('score', 'is', null);
+
+    // Add time period filter
+    if (timePeriod === '30days') {
+      const thirtyDaysAgo = new Date();
+      thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+      query = query.gte('created_at', thirtyDaysAgo.toISOString());
+    } else if (timePeriod === '90days') {
+      const ninetyDaysAgo = new Date();
+      ninetyDaysAgo.setDate(ninetyDaysAgo.getDate() - 90);
+      query = query.gte('created_at', ninetyDaysAgo.toISOString());
+    }
+    // For 'alltime' or undefined, no time filter is applied
 
     // Add language filter if specified
     if (language) {
       query = query.eq('language', language);
     }
+
+    query = query
+      .order('score', { ascending: false })
+      .order('completion_time_seconds', { ascending: true })
+      .limit(100);
 
     const { data, error } = await query;
 
@@ -385,7 +401,8 @@ export async function getRankingData(
       name: row.name,
       score: row.score,
       completionTimeSeconds: row.completion_time_seconds || 0,
-      language: row.language || 'pt'
+      language: row.language || 'pt',
+      created_at: row.created_at
     }));
   } catch (error) {
     console.error("Error in getRankingData:", error);

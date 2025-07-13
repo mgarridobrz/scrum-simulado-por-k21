@@ -16,6 +16,7 @@ interface RankingEntry {
   score: number;
   completionTimeSeconds: number;
   language: string;
+  created_at: string;
 }
 
 interface GlobalStats {
@@ -32,6 +33,8 @@ const Ranking = () => {
   
   // Default quiz size is now 10
   const [selectedQuizSize, setSelectedQuizSize] = useState<number>(10);
+  // Time period filter
+  const [selectedTimePeriod, setSelectedTimePeriod] = useState<'30days' | '90days' | 'alltime'>('30days');
   // Language filter state and filter are removed
   const [rankingData, setRankingData] = useState<RankingEntry[]>([]);
   const [globalStats, setGlobalStats] = useState<GlobalStats>({
@@ -47,7 +50,7 @@ const Ranking = () => {
 
   useEffect(() => {
     loadData();
-  }, [selectedQuizSize]);
+  }, [selectedQuizSize, selectedTimePeriod]);
 
   useEffect(() => {
     loadGlobalStats();
@@ -56,8 +59,8 @@ const Ranking = () => {
   const loadData = async () => {
     setLoading(true);
     try {
-      // No language filter – only fetch by quiz size
-      const data = await getRankingData(selectedQuizSize, undefined);
+      // Fetch by quiz size and time period
+      const data = await getRankingData(selectedQuizSize, undefined, selectedTimePeriod);
       setRankingData(data);
     } catch (error) {
       console.error('Error loading ranking data:', error);
@@ -141,7 +144,7 @@ const Ranking = () => {
                 <Users className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{globalStats.totalAttempts.toLocaleString()}</div>
+                <div className="text-2xl font-bold text-blue-600">{globalStats.totalAttempts.toLocaleString()}</div>
               </CardContent>
             </Card>
 
@@ -153,7 +156,7 @@ const Ranking = () => {
                 <Trophy className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{globalStats.averageScore.toFixed(1)}</div>
+                <div className="text-2xl font-bold text-green-600">{globalStats.averageScore.toFixed(1)}%</div>
               </CardContent>
             </Card>
 
@@ -165,7 +168,7 @@ const Ranking = () => {
                 <div className="text-lg">🇧🇷</div>
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{globalStats.languageBreakdown.pt.toLocaleString()}</div>
+                <div className="text-2xl font-bold text-purple-600">{globalStats.languageBreakdown.pt.toLocaleString()}</div>
               </CardContent>
             </Card>
 
@@ -177,35 +180,61 @@ const Ranking = () => {
                 <div className="text-lg">🇺🇸</div>
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{globalStats.languageBreakdown.en.toLocaleString()}</div>
+                <div className="text-2xl font-bold text-orange-600">{globalStats.languageBreakdown.en.toLocaleString()}</div>
               </CardContent>
             </Card>
           </div>
 
-          {/* Quiz Size Selection with Toggle Buttons */}
-          <Card className="mb-6">
-            <CardHeader>
-              <CardTitle>{isEnglish ? 'Quiz Size' : 'Tamanho do Quiz'}</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <ToggleGroup 
-                type="single" 
-                value={selectedQuizSize.toString()} 
-                onValueChange={(value) => value && setSelectedQuizSize(parseInt(value))}
-                className="justify-start"
-              >
-                {quizSizes.map(size => (
-                  <ToggleGroupItem 
-                    key={size} 
-                    value={size.toString()}
-                    className="px-6 py-2"
-                  >
-                    {size} {isEnglish ? 'questions' : 'questões'}
+          {/* Quiz Size and Time Period Selection */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>{isEnglish ? 'Quiz Size' : 'Tamanho do Quiz'}</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <ToggleGroup 
+                  type="single" 
+                  value={selectedQuizSize.toString()} 
+                  onValueChange={(value) => value && setSelectedQuizSize(parseInt(value))}
+                  className="justify-start"
+                >
+                  {quizSizes.map(size => (
+                    <ToggleGroupItem 
+                      key={size} 
+                      value={size.toString()}
+                      className="px-6 py-2"
+                    >
+                      {size} {isEnglish ? 'questions' : 'questões'}
+                    </ToggleGroupItem>
+                  ))}
+                </ToggleGroup>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>{isEnglish ? 'Time Period' : 'Período'}</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <ToggleGroup 
+                  type="single" 
+                  value={selectedTimePeriod} 
+                  onValueChange={(value) => value && setSelectedTimePeriod(value as '30days' | '90days' | 'alltime')}
+                  className="justify-start"
+                >
+                  <ToggleGroupItem value="30days" className="px-4 py-2">
+                    {isEnglish ? '30 Days' : '30 Dias'}
                   </ToggleGroupItem>
-                ))}
-              </ToggleGroup>
-            </CardContent>
-          </Card>
+                  <ToggleGroupItem value="90days" className="px-4 py-2">
+                    {isEnglish ? '90 Days' : '90 Dias'}
+                  </ToggleGroupItem>
+                  <ToggleGroupItem value="alltime" className="px-4 py-2">
+                    {isEnglish ? 'All Time' : 'Todos os Tempos'}
+                  </ToggleGroupItem>
+                </ToggleGroup>
+              </CardContent>
+            </Card>
+          </div>
 
           {/* Ranking Table */}
           <Card>
@@ -216,8 +245,14 @@ const Ranking = () => {
               </CardTitle>
               <CardDescription>
                 {isEnglish 
-                  ? `Top performers for ${selectedQuizSize} question quizzes` 
-                  : `Melhores performances para quizzes de ${selectedQuizSize} questões`}
+                  ? `Top performers for ${selectedQuizSize} question quizzes in the ${
+                      selectedTimePeriod === '30days' ? 'last 30 days' :
+                      selectedTimePeriod === '90days' ? 'last 90 days' : 'all time'
+                    }` 
+                  : `Melhores performances para quizzes de ${selectedQuizSize} questões ${
+                      selectedTimePeriod === '30days' ? 'nos últimos 30 dias' :
+                      selectedTimePeriod === '90days' ? 'nos últimos 90 dias' : 'de todos os tempos'
+                    }`}
               </CardDescription>
             </CardHeader>
             <CardContent>
