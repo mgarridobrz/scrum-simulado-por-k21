@@ -140,15 +140,6 @@ const Ranking = () => {
                   : 'Veja como você se posiciona entre outros participantes do simulado CSM no mundo'}
               </p>
             </div>
-            
-            <Button 
-              onClick={loadGlobalStats}
-              variant="outline" 
-              size="sm"
-              className="mb-4"
-            >
-              🔄 Atualizar Estatísticas
-            </Button>
           </div>
 
           {/* Global Stats */}
