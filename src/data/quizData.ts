@@ -21,14 +21,14 @@ export async function getQuizQuestions(language: 'pt' | 'en' = 'pt'): Promise<Qu
   }
 }
 
-// Function to get a specified number of random questions with language support
-export async function getRandomQuestions(count: number, language: 'pt' | 'en' = 'pt'): Promise<QuestionWithCategory[]> {
+// Function to get a specified number of random questions with language support and category filter
+export async function getRandomQuestions(count: number, language: 'pt' | 'en' = 'pt', category?: string): Promise<QuestionWithCategory[]> {
   try {
-    // Get questions from database
-    const randomQuestions = await fetchRandomQuestions(count, language);
+    // Get questions from database with category filter
+    const randomQuestions = await fetchRandomQuestions(count, language, category);
     
     if (randomQuestions && randomQuestions.length > 0) {
-      console.log(`Fetched ${randomQuestions.length} random questions from database for language: ${language}`);
+      console.log(`Fetched ${randomQuestions.length} random questions from database for language: ${language}, category: ${category || 'all'}`);
       return randomQuestions;
     }
     

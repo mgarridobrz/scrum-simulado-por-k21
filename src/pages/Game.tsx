@@ -44,7 +44,7 @@ const Game: React.FC = () => {
       // Evitar múltiplas chamadas
       setShowUserForm(false);
       
-      const questions = await getRandomQuestions(gameConfig.questionCount, language);
+      const questions = await getRandomQuestions(gameConfig.questionCount, language, gameConfig.category);
       if (questions.length === 0) {
         toast({
           title: "Erro",
@@ -241,11 +241,19 @@ const Game: React.FC = () => {
               </div>
             </div>
             
-            <GameTimer 
-              isActive={isTimerActive}
-              onTick={handleTimerTick}
-              className="bg-card p-4 rounded-lg border"
-            />
+            <div className="flex items-center gap-4">
+              <button
+                onClick={resetGame}
+                className="px-4 py-2 text-sm bg-destructive text-destructive-foreground hover:bg-destructive/90 rounded-md transition-colors"
+              >
+                {language === 'pt' ? 'Cancelar' : 'Cancel'}
+              </button>
+              <GameTimer 
+                isActive={isTimerActive}
+                onTick={handleTimerTick}
+                className="bg-card p-4 rounded-lg border"
+              />
+            </div>
           </div>
 
           {/* Game Content */}

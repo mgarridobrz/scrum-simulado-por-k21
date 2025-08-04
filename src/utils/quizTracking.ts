@@ -48,15 +48,16 @@ export async function fetchQuestionsByCategory(
 }
 
 /**
- * Fetches random questions for quiz with language support
+ * Fetches random questions for quiz with language support and category filter
  */
 export async function fetchRandomQuestions(
   count: number, 
-  language: 'pt' | 'en' = 'pt'
+  language: 'pt' | 'en' = 'pt',
+  category?: string
 ): Promise<QuestionWithCategory[]> {
   try {
-    // Get all questions first, then randomize in JavaScript
-    const allQuestions = await fetchQuestionsByCategory(undefined, language);
+    // Get questions filtered by category if specified, then randomize in JavaScript
+    const allQuestions = await fetchQuestionsByCategory(category, language);
     
     if (allQuestions.length === 0) {
       return [];
