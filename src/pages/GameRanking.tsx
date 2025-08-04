@@ -103,47 +103,47 @@ const GameRanking: React.FC = () => {
           </div>
 
           {/* Stats Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-            <Card className="p-4 text-center">
-              <div className="text-2xl font-bold text-primary">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+            <Card className="p-4 text-center bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200">
+              <div className="text-3xl font-bold text-blue-600">
                 {stats.totalAttempts}
               </div>
-              <div className="text-sm text-muted-foreground">
-                Total de Jogos
+              <div className="text-sm text-blue-700 font-medium">
+                {language === 'pt' ? 'Total de Jogos' : 'Total Games'}
               </div>
             </Card>
             
-            <Card className="p-4 text-center">
-              <div className="text-2xl font-bold text-primary">
+            <Card className="p-4 text-center bg-gradient-to-br from-green-50 to-green-100 border-green-200">
+              <div className="text-3xl font-bold text-green-600">
                 {formatTime(stats.averageTime)}
               </div>
-              <div className="text-sm text-muted-foreground">
-                {getTranslation(language, 'averageLast50')}
+              <div className="text-sm text-green-700 font-medium">
+                {language === 'pt' ? 'Tempo Médio' : 'Average Time'}
               </div>
             </Card>
             
-            <Card className="p-4 text-center">
-              <div className="text-2xl font-bold text-primary">
+            <Card className="p-4 text-center bg-gradient-to-br from-yellow-50 to-yellow-100 border-yellow-200">
+              <div className="text-3xl font-bold text-yellow-600">
                 {stats.averageCorrectAnswers.toFixed(1)}
               </div>
-              <div className="text-sm text-muted-foreground">
-                Média de Acertos
+              <div className="text-sm text-yellow-700 font-medium">
+                {language === 'pt' ? 'Média de Acertos' : 'Average Correct'}
               </div>
             </Card>
             
-            <Card className="p-4 text-center">
-              <div className="text-2xl font-bold text-primary">
+            <Card className="p-4 text-center bg-gradient-to-br from-purple-50 to-purple-100 border-purple-200">
+              <div className="text-3xl font-bold text-purple-600">
                 {ranking.length > 0 ? formatTime(ranking[0].final_score_ms) : '-'}
               </div>
-              <div className="text-sm text-muted-foreground">
-                Melhor Tempo
+              <div className="text-sm text-purple-700 font-medium">
+                {language === 'pt' ? 'Melhor Tempo' : 'Best Time'}
               </div>
             </Card>
           </div>
 
           {/* Filters */}
-          <div className="flex flex-col sm:flex-row gap-4 mb-8">
-            <div className="space-y-2">
+          <div className="flex flex-col sm:flex-row gap-4 mb-8 bg-card p-4 rounded-lg border">
+            <div className="space-y-2 flex-1">
               <label className="text-sm font-medium">
                 {getTranslation(language, 'categoryFilter')}
               </label>
@@ -151,10 +151,10 @@ const GameRanking: React.FC = () => {
                 type="single" 
                 value={selectedCategory} 
                 onValueChange={(value) => value && setSelectedCategory(value)}
-                className="justify-start"
+                className="justify-start flex-wrap"
               >
                 {categories.map((category) => (
-                  <ToggleGroupItem key={category.id} value={category.id}>
+                  <ToggleGroupItem key={category.id} value={category.id} className="text-xs">
                     {language === 'pt' ? category.name : category.nameEn}
                   </ToggleGroupItem>
                 ))}
@@ -172,7 +172,7 @@ const GameRanking: React.FC = () => {
                 className="justify-start"
               >
                 {questionCounts.map((count) => (
-                  <ToggleGroupItem key={count.id} value={count.id}>
+                  <ToggleGroupItem key={count.id} value={count.id} className="text-xs">
                     {language === 'pt' ? count.label : count.labelEn}
                   </ToggleGroupItem>
                 ))}

@@ -41,6 +41,9 @@ const Game: React.FC = () => {
     if (!gameConfig) return;
 
     try {
+      // Evitar múltiplas chamadas
+      setShowUserForm(false);
+      
       const questions = await getRandomQuestions(gameConfig.questionCount, language);
       if (questions.length === 0) {
         toast({
@@ -48,6 +51,7 @@ const Game: React.FC = () => {
           description: "Não foi possível carregar as questões. Tente novamente.",
           variant: "destructive"
         });
+        setShowUserForm(true); // Voltar para o formulário em caso de erro
         return;
       }
 
@@ -70,6 +74,7 @@ const Game: React.FC = () => {
         description: "Erro ao carregar questões. Tente novamente.",
         variant: "destructive"
       });
+      setShowUserForm(true); // Voltar para o formulário em caso de erro
     }
   };
 
@@ -80,7 +85,7 @@ const Game: React.FC = () => {
     setGameState(prev => prev ? {
       ...prev,
       phase: 'question',
-      startTime: now,
+      startTime: prev.startTime === 0 ? now : prev.startTime, // Só define startTime na primeira questão
       questionStartTime: now
     } : null);
   };
@@ -114,20 +119,18 @@ const Game: React.FC = () => {
     // Show feedback for 2 seconds, then continue
     setTimeout(() => {
       if (gameState.currentQuestionIndex < gameState.questions.length - 1) {
-        // Next question
-        const nextStartTime = Date.now();
+        // Next question - go to countdown first
         setGameState(prev => prev ? {
           ...prev,
           phase: 'countdown',
-          currentQuestionIndex: prev.currentQuestionIndex + 1,
-          questionStartTime: nextStartTime
+          currentQuestionIndex: prev.currentQuestionIndex + 1
         } : null);
       } else {
         // Game finished
         finishGame(newAnswers, gameState.penaltyTime + penaltyToAdd);
       }
     }, 2000);
-  }, [gameState, gameConfig]);
+  }, [gameState?.phase, gameState?.currentQuestionIndex, gameState?.questions, gameState?.questionStartTime, gameState?.penaltyTime, gameConfig]);
 
   const finishGame = async (finalAnswers: any[], finalPenaltyTime: number) => {
     if (!gameState || !gameConfig) return;

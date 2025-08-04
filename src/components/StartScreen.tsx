@@ -91,12 +91,22 @@ const StartScreen = ({ onStart }: StartScreenProps) => {
             </div>
           </Card>
           
-          <Button
-            onClick={handleStartClick}
-            className="bg-k21-teal hover:bg-k21-teal/90 text-white px-8 py-6 text-lg"
-          >
-            {getTranslation(language, 'startQuiz')}
-          </Button>
+          <div className="flex flex-col sm:flex-row gap-4">
+            <Button
+              onClick={handleStartClick}
+              className="bg-k21-teal hover:bg-k21-teal/90 text-white px-8 py-6 text-lg flex-1"
+            >
+              {getTranslation(language, 'startQuiz')}
+            </Button>
+            
+            <Button
+              onClick={() => window.location.href = '/game'}
+              variant="outline"
+              className="border-k21-teal text-k21-teal hover:bg-k21-teal hover:text-white px-8 py-6 text-lg flex-1"
+            >
+              🎮 {getTranslation(language, 'gameMode')}
+            </Button>
+          </div>
         </>
       ) : selectedSize ? (
         <UserInfoForm onSubmit={handleUserInfoSubmit} selectedSize={selectedSize} />

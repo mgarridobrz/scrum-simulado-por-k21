@@ -81,7 +81,7 @@ const UserInfoForm = ({ onSubmit, selectedSize }: UserInfoFormProps) => {
                 type="submit" 
                 className="w-full bg-k21-teal hover:bg-k21-teal/90"
               >
-                {getTranslation(language, 'startQuizWith')} {selectedSize} {getTranslation(language, 'questions')}
+                {getTranslation(language, 'start')} ({selectedSize} {getTranslation(language, 'questions')})
               </Button>
             </div>
           </form>
