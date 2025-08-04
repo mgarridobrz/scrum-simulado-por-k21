@@ -9,30 +9,31 @@ interface GameTimerProps {
 
 export const GameTimer: React.FC<GameTimerProps> = ({ isActive, onTick, className = "" }) => {
   const [time, setTime] = useState(0);
-  const [lastActiveTime, setLastActiveTime] = useState<number | null>(null);
+  const [startTime, setStartTime] = useState<number | null>(null);
   const [accumulatedTime, setAccumulatedTime] = useState(0);
 
   useEffect(() => {
     let interval: NodeJS.Timeout | null = null;
 
     if (isActive) {
-      // Start timing from now
-      const now = Date.now();
-      setLastActiveTime(now);
+      if (!startTime) {
+        setStartTime(Date.now());
+      }
       
       interval = setInterval(() => {
-        const currentTime = Date.now();
-        const newTime = accumulatedTime + (currentTime - now);
-        setTime(newTime);
-        onTick?.(newTime);
-      }, 10);
-    } else if (lastActiveTime) {
-      // Paused - accumulate the time that passed
-      const now = Date.now();
-      const timeToAdd = now - lastActiveTime;
-      setAccumulatedTime(prev => prev + timeToAdd);
-      setTime(prev => prev + timeToAdd);
-      setLastActiveTime(null);
+        if (startTime) {
+          const currentTime = Date.now();
+          const sessionTime = currentTime - startTime;
+          const totalTime = accumulatedTime + sessionTime;
+          setTime(totalTime);
+          onTick?.(totalTime);
+        }
+      }, 1); // 1ms precision
+    } else if (startTime) {
+      // Paused - accumulate the time that passed in this session
+      const sessionTime = Date.now() - startTime;
+      setAccumulatedTime(prev => prev + sessionTime);
+      setStartTime(null);
     }
 
     return () => {
@@ -40,13 +41,13 @@ export const GameTimer: React.FC<GameTimerProps> = ({ isActive, onTick, classNam
         clearInterval(interval);
       }
     };
-  }, [isActive, onTick]);
+  }, [isActive, startTime, accumulatedTime, onTick]);
 
   // Reset when component unmounts
   useEffect(() => {
     return () => {
       setTime(0);
-      setLastActiveTime(null);
+      setStartTime(null);
       setAccumulatedTime(0);
     };
   }, []);
@@ -55,9 +56,9 @@ export const GameTimer: React.FC<GameTimerProps> = ({ isActive, onTick, classNam
     const totalSeconds = Math.floor(ms / 1000);
     const minutes = Math.floor(totalSeconds / 60);
     const seconds = totalSeconds % 60;
-    const milliseconds = Math.floor((ms % 1000) / 10);
+    const milliseconds = Math.floor(ms % 1000);
     
-    return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}.${milliseconds.toString().padStart(2, '0')}`;
+    return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}.${milliseconds.toString().padStart(3, '0')}`;
   };
 
   return (
