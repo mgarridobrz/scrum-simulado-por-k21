@@ -96,7 +96,20 @@ export type TranslationKey =
   | 'totalQuizzes'
   | 'questionsAnswered'
   | 'averageLast50'
-  | 'backToHome';
+  | 'backToHome'
+  | 'gameStartingSoon'
+  | 'game'
+  | 'gameMode'
+  | 'selectCategory'
+  | 'categoryFilter'
+  | 'timeToAnswer'
+  | 'penalty'
+  | 'gameRanking'
+  | 'totalTime'
+  | 'penaltyTime'
+  | 'finalScore'
+  | 'typeAnswer'
+  | 'typeLetterToAnswer';
 
 const translations = {
   pt: {
@@ -196,7 +209,20 @@ const translations = {
     totalQuizzes: 'Total de Simulados',
     questionsAnswered: 'Questões Respondidas',
     averageLast50: 'Média Últimos 50',
-    backToHome: 'Voltar ao Início'
+    backToHome: 'Voltar ao Início',
+    gameStartingSoon: 'O jogo começará em breve',
+    game: 'Jogo',
+    gameMode: 'Modo Jogo',
+    selectCategory: 'Selecione a Categoria',
+    categoryFilter: 'Categoria',
+    timeToAnswer: 'Tempo para Responder',
+    penalty: 'Penalidade',
+    gameRanking: 'Ranking do Jogo',
+    totalTime: 'Tempo Total',
+    penaltyTime: 'Tempo de Penalidade',
+    finalScore: 'Pontuação Final',
+    typeAnswer: 'Digite a Resposta',
+    typeLetterToAnswer: 'Digite a letra da resposta (A, B, C, D)'
   },
   en: {
     certificationQuiz: 'Certification Quiz',
@@ -295,7 +321,20 @@ const translations = {
     totalQuizzes: 'Total Quizzes',
     questionsAnswered: 'Questions Answered',
     averageLast50: 'Average Last 50',
-    backToHome: 'Back to Home'
+    backToHome: 'Back to Home',
+    gameStartingSoon: 'Game starting soon',
+    game: 'Game',
+    gameMode: 'Game Mode',
+    selectCategory: 'Select Category',
+    categoryFilter: 'Category',
+    timeToAnswer: 'Time to Answer',
+    penalty: 'Penalty',
+    gameRanking: 'Game Ranking',
+    totalTime: 'Total Time',
+    penaltyTime: 'Penalty Time',
+    finalScore: 'Final Score',
+    typeAnswer: 'Type Answer',
+    typeLetterToAnswer: 'Type the letter of the answer (A, B, C, D)'
   }
 };
 

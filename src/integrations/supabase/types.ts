@@ -100,7 +100,6 @@ export type Database = {
           created_by: string
           description: string | null
           id: string
-          initiative_id: string | null
           status: Database["public"]["Enums"]["action_status"] | null
           test_card_id: string | null
           title: string
@@ -113,7 +112,6 @@ export type Database = {
           created_by: string
           description?: string | null
           id?: string
-          initiative_id?: string | null
           status?: Database["public"]["Enums"]["action_status"] | null
           test_card_id?: string | null
           title: string
@@ -126,7 +124,6 @@ export type Database = {
           created_by?: string
           description?: string | null
           id?: string
-          initiative_id?: string | null
           status?: Database["public"]["Enums"]["action_status"] | null
           test_card_id?: string | null
           title?: string
@@ -147,13 +144,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "user_engagement_scores"
             referencedColumns: ["user_id"]
-          },
-          {
-            foreignKeyName: "actions_initiative_id_fkey"
-            columns: ["initiative_id"]
-            isOneToOne: false
-            referencedRelation: "initiatives"
-            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "actions_test_card_id_fkey"
@@ -379,6 +369,106 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "workspaces"
             referencedColumns: ["id"]
+          },
+        ]
+      }
+      game_attempts: {
+        Row: {
+          category: string
+          correct_answers: number
+          created_at: string
+          email: string | null
+          final_score_ms: number
+          id: string
+          language: string
+          name: string
+          penalty_time_ms: number
+          question_count: number
+          questions_data: Json
+          total_time_ms: number
+          updated_at: string
+        }
+        Insert: {
+          category: string
+          correct_answers?: number
+          created_at?: string
+          email?: string | null
+          final_score_ms: number
+          id?: string
+          language?: string
+          name: string
+          penalty_time_ms?: number
+          question_count: number
+          questions_data: Json
+          total_time_ms: number
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          correct_answers?: number
+          created_at?: string
+          email?: string | null
+          final_score_ms?: number
+          id?: string
+          language?: string
+          name?: string
+          penalty_time_ms?: number
+          question_count?: number
+          questions_data?: Json
+          total_time_ms?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      hawk_user_status: {
+        Row: {
+          created_at: string
+          id: string
+          is_admin: boolean
+          organization_id: string
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_admin?: boolean
+          organization_id: string
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_admin?: boolean
+          organization_id?: string
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "hawk_user_status_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "hawk_user_status_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "hawk_user_status_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "user_engagement_scores"
+            referencedColumns: ["user_id"]
           },
         ]
       }
@@ -781,6 +871,282 @@ export type Database = {
           },
         ]
       }
+      kudos: {
+        Row: {
+          created_at: string
+          from_user_id: string
+          gif_url: string | null
+          id: string
+          message: string
+          organization_id: string
+          points: number
+          tags: string[] | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          from_user_id: string
+          gif_url?: string | null
+          id?: string
+          message: string
+          organization_id: string
+          points?: number
+          tags?: string[] | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          from_user_id?: string
+          gif_url?: string | null
+          id?: string
+          message?: string
+          organization_id?: string
+          points?: number
+          tags?: string[] | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "kudos_from_user_id_fkey"
+            columns: ["from_user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "kudos_from_user_id_fkey"
+            columns: ["from_user_id"]
+            isOneToOne: false
+            referencedRelation: "user_engagement_scores"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "kudos_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      kudos_organization_settings: {
+        Row: {
+          created_at: string
+          engagement_enabled: boolean
+          id: string
+          min_days_for_max_bonus: number
+          min_recognitions_for_bonus: number
+          monthly_points_per_user: number
+          organization_id: string
+          point_value_brl: number | null
+          recognized_values: string[] | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          engagement_enabled?: boolean
+          id?: string
+          min_days_for_max_bonus?: number
+          min_recognitions_for_bonus?: number
+          monthly_points_per_user?: number
+          organization_id: string
+          point_value_brl?: number | null
+          recognized_values?: string[] | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          engagement_enabled?: boolean
+          id?: string
+          min_days_for_max_bonus?: number
+          min_recognitions_for_bonus?: number
+          monthly_points_per_user?: number
+          organization_id?: string
+          point_value_brl?: number | null
+          recognized_values?: string[] | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "kudos_organization_settings_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: true
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      kudos_reactions: {
+        Row: {
+          created_at: string
+          id: string
+          kudos_id: string
+          reaction_type: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          kudos_id: string
+          reaction_type: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          kudos_id?: string
+          reaction_type?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "kudos_reactions_kudos_id_fkey"
+            columns: ["kudos_id"]
+            isOneToOne: false
+            referencedRelation: "kudos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      kudos_recipients: {
+        Row: {
+          created_at: string
+          id: string
+          kudos_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          kudos_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          kudos_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "kudos_recipients_kudos_id_fkey"
+            columns: ["kudos_id"]
+            isOneToOne: false
+            referencedRelation: "kudos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "kudos_recipients_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "kudos_recipients_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "user_engagement_scores"
+            referencedColumns: ["user_id"]
+          },
+        ]
+      }
+      kudos_user_balances: {
+        Row: {
+          available_points: number
+          created_at: string
+          id: string
+          last_reset_at: string | null
+          organization_id: string
+          total_points_given: number
+          total_points_received: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          available_points?: number
+          created_at?: string
+          id?: string
+          last_reset_at?: string | null
+          organization_id: string
+          total_points_given?: number
+          total_points_received?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          available_points?: number
+          created_at?: string
+          id?: string
+          last_reset_at?: string | null
+          organization_id?: string
+          total_points_given?: number
+          total_points_received?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "kudos_user_balances_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      kudos_user_status: {
+        Row: {
+          created_at: string
+          id: string
+          is_admin: boolean
+          organization_id: string
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_admin?: boolean
+          organization_id: string
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_admin?: boolean
+          organization_id?: string
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "kudos_user_status_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "kudos_user_status_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "kudos_user_status_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "user_engagement_scores"
+            referencedColumns: ["user_id"]
+          },
+        ]
+      }
       learnings: {
         Row: {
           created_at: string
@@ -866,6 +1232,120 @@ export type Database = {
           token?: string
           used?: boolean
           user_id?: string
+        }
+        Relationships: []
+      }
+      message_mentions: {
+        Row: {
+          created_at: string
+          id: string
+          mentioned_user_id: string
+          message_id: string
+          workspace_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          mentioned_user_id: string
+          message_id: string
+          workspace_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          mentioned_user_id?: string
+          message_id?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "message_mentions_message_id_fkey"
+            columns: ["message_id"]
+            isOneToOne: false
+            referencedRelation: "messages"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "message_mentions_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      message_reads: {
+        Row: {
+          created_at: string
+          id: string
+          message_id: string
+          read_at: string
+          user_id: string
+          workspace_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          message_id: string
+          read_at?: string
+          user_id: string
+          workspace_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          message_id?: string
+          read_at?: string
+          user_id?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "message_reads_message_id_fkey"
+            columns: ["message_id"]
+            isOneToOne: false
+            referencedRelation: "messages"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "message_reads_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      messages: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          initiative_id: string | null
+          test_card_id: string | null
+          updated_at: string
+          user_id: string
+          workspace_id: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          id?: string
+          initiative_id?: string | null
+          test_card_id?: string | null
+          updated_at?: string
+          user_id: string
+          workspace_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          initiative_id?: string | null
+          test_card_id?: string | null
+          updated_at?: string
+          user_id?: string
+          workspace_id?: string
         }
         Relationships: []
       }
@@ -1536,6 +2016,7 @@ export type Database = {
           name: string
           okr_enabled: boolean | null
           organization_id: string | null
+          test_cards_enabled: boolean
           updated_at: string
         }
         Insert: {
@@ -1548,6 +2029,7 @@ export type Database = {
           name: string
           okr_enabled?: boolean | null
           organization_id?: string | null
+          test_cards_enabled?: boolean
           updated_at?: string
         }
         Update: {
@@ -1560,6 +2042,7 @@ export type Database = {
           name?: string
           okr_enabled?: boolean | null
           organization_id?: string | null
+          test_cards_enabled?: boolean
           updated_at?: string
         }
         Relationships: [
@@ -1632,6 +2115,19 @@ export type Database = {
           policy_count: number
         }[]
       }
+      calculate_user_engagement_bonus: {
+        Args: {
+          p_user_id: string
+          p_organization_id: string
+          p_month_start?: string
+          p_month_end?: string
+        }
+        Returns: {
+          total_recognitions: number
+          distinct_days: number
+          bonus_percentage: number
+        }[]
+      }
       can_deactivate_user: {
         Args: { user_id: string }
         Returns: boolean
@@ -1644,6 +2140,10 @@ export type Database = {
         Args: { p_workspace_id: string; p_user_id?: string }
         Returns: boolean
       }
+      can_reset_monthly_points: {
+        Args: { p_organization_id: string; p_user_id?: string }
+        Returns: boolean
+      }
       check_admin_status: {
         Args: { check_user_id: string }
         Returns: boolean
@@ -1651,6 +2151,14 @@ export type Database = {
       cleanup_expired_magic_tokens: {
         Args: Record<PropertyKey, never>
         Returns: number
+      }
+      distribute_monthly_points: {
+        Args: { p_organization_id: string }
+        Returns: number
+      }
+      ensure_user_balance: {
+        Args: { p_user_id: string; p_organization_id: string }
+        Returns: undefined
       }
       generate_magic_link_token: {
         Args: { target_user_id: string; created_by_user_id?: string }
@@ -1670,6 +2178,10 @@ export type Database = {
           priority: number
           created_at: string
         }[]
+      }
+      get_active_users_count: {
+        Args: { org_id: string }
+        Returns: number
       }
       get_all_user_activity: {
         Args: Record<PropertyKey, never>
@@ -1719,6 +2231,21 @@ export type Database = {
           error_message: string
         }[]
       }
+      get_last_reset_info: {
+        Args: { p_organization_id: string }
+        Returns: {
+          last_reset_date: string
+          total_users_reset: number
+          monthly_points: number
+        }[]
+      }
+      get_organization_settings: {
+        Args: { p_organization_id: string }
+        Returns: {
+          monthly_points_per_user: number
+          recognized_values: string[]
+        }[]
+      }
       get_system_activity_stats: {
         Args: Record<PropertyKey, never>
         Returns: {
@@ -1742,6 +2269,14 @@ export type Database = {
           score: number
           completion_time_seconds: number
         }[]
+      }
+      get_unread_mentions_count: {
+        Args: { p_workspace_id: string; p_user_id?: string }
+        Returns: number
+      }
+      get_unread_message_count: {
+        Args: { p_workspace_id: string; p_user_id?: string }
+        Returns: number
       }
       get_user_engagement_ranking: {
         Args: { p_workspace_id: string; p_limit?: number }
@@ -1789,6 +2324,14 @@ export type Database = {
         Args: { user_id: string }
         Returns: boolean
       }
+      is_hawk_admin_simple: {
+        Args: { org_id: string; user_id?: string }
+        Returns: boolean
+      }
+      is_kudos_admin_simple: {
+        Args: { org_id: string; user_id?: string }
+        Returns: boolean
+      }
       is_organization_admin_simple: {
         Args: { org_id: string; user_id?: string }
         Returns: boolean
@@ -1822,6 +2365,10 @@ export type Database = {
         }
         Returns: undefined
       }
+      mark_all_messages_read: {
+        Args: { p_workspace_id: string; p_user_id?: string }
+        Returns: undefined
+      }
       mark_broadcast_as_viewed: {
         Args: {
           p_broadcast_id: string
@@ -1850,6 +2397,15 @@ export type Database = {
       toggle_user_active_status: {
         Args: { target_user_id: string }
         Returns: boolean
+      }
+      update_user_points_on_kudos: {
+        Args: {
+          p_from_user_id: string
+          p_to_user_id: string
+          p_points: number
+          p_organization_id: string
+        }
+        Returns: undefined
       }
       user_in_workspace: {
         Args: { workspace_id: string; user_id: string }

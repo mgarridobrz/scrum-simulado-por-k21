@@ -8,6 +8,8 @@ import { LanguageProvider } from "@/contexts/LanguageContext";
 import Index from "./pages/Index";
 import QuestionValidation from "./pages/QuestionValidation";
 import Ranking from "./pages/Ranking";
+import Game from "./pages/Game";
+import GameRanking from "./pages/GameRanking";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -26,6 +28,10 @@ const App = () => (
             <Route path="/us/validate-questions" element={<QuestionValidation />} />
             <Route path="/ranking" element={<Ranking />} />
             <Route path="/us/ranking" element={<Ranking />} />
+            <Route path="/game" element={<Game />} />
+            <Route path="/us/game" element={<Game />} />
+            <Route path="/game/ranking" element={<GameRanking />} />
+            <Route path="/us/game/ranking" element={<GameRanking />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </TooltipProvider>
