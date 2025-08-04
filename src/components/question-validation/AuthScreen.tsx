@@ -65,10 +65,6 @@ const AuthScreen = ({ onAuthSuccess }: AuthScreenProps) => {
           <CardTitle className="text-xl text-center">Acesso Restrito</CardTitle>
           <CardDescription className="text-center">
             Digite a senha para acessar a validação de questões
-            <br />
-            <small className="text-xs text-muted-foreground mt-2 block">
-              Nova senha segura: CSM2024!Secure
-            </small>
           </CardDescription>
         </CardHeader>
         <CardContent>
