@@ -9,24 +9,28 @@ interface GameTimerProps {
 
 export const GameTimer: React.FC<GameTimerProps> = ({ isActive, onTick, className = "" }) => {
   const [time, setTime] = useState(0);
-  const [startTime, setStartTime] = useState<number | null>(null);
+  const [lastActiveTime, setLastActiveTime] = useState<number | null>(null);
+  const [accumulatedTime, setAccumulatedTime] = useState(0);
 
   useEffect(() => {
     let interval: NodeJS.Timeout | null = null;
 
     if (isActive) {
-      // Set start time on first activation
-      if (!startTime) {
-        setStartTime(Date.now());
-      }
+      // Start timing from now
+      const now = Date.now();
+      setLastActiveTime(now);
       
       interval = setInterval(() => {
-        if (startTime) {
-          const newTime = Date.now() - startTime;
-          setTime(newTime);
-          onTick?.(newTime);
-        }
+        const currentTime = Date.now();
+        const newTime = accumulatedTime + (currentTime - now);
+        setTime(newTime);
+        onTick?.(newTime);
       }, 10);
+    } else if (lastActiveTime) {
+      // Paused - accumulate the time that passed
+      const now = Date.now();
+      setAccumulatedTime(prev => prev + (now - lastActiveTime));
+      setLastActiveTime(null);
     }
 
     return () => {
@@ -34,13 +38,14 @@ export const GameTimer: React.FC<GameTimerProps> = ({ isActive, onTick, classNam
         clearInterval(interval);
       }
     };
-  }, [isActive, startTime, onTick]);
+  }, [isActive, lastActiveTime, accumulatedTime, onTick]);
 
-  // Reset when component unmounts or game restarts
+  // Reset when component unmounts
   useEffect(() => {
     return () => {
       setTime(0);
-      setStartTime(null);
+      setLastActiveTime(null);
+      setAccumulatedTime(0);
     };
   }, []);
 

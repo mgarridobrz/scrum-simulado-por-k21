@@ -186,6 +186,7 @@ const Game: React.FC = () => {
     setCurrentTime(time);
   };
 
+  // Timer só deve ser ativo durante as questões, não nos countdowns
   const isTimerActive = gameState?.phase === 'question';
 
   if (!gameConfig) {
