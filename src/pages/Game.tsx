@@ -94,7 +94,19 @@ const Game: React.FC = () => {
     if (!gameState || !gameConfig || gameState.phase !== 'question') return;
 
     const currentQuestion = gameState.questions[gameState.currentQuestionIndex];
+    
+    // Debug logs para investigar o problema
+    console.log('🔍 DEBUG - Resposta do usuário:', answer);
+    console.log('🔍 DEBUG - Resposta correta:', currentQuestion.correctAnswer);
+    console.log('🔍 DEBUG - Tipo da resposta do usuário:', typeof answer);
+    console.log('🔍 DEBUG - Tipo da resposta correta:', typeof currentQuestion.correctAnswer);
+    console.log('🔍 DEBUG - Questão completa:', currentQuestion);
+    console.log('🔍 DEBUG - Opções da questão:', currentQuestion.options);
+    
     const isCorrect = answer === currentQuestion.correctAnswer;
+    console.log('🔍 DEBUG - Comparação (===):', isCorrect);
+    console.log('🔍 DEBUG - Comparação loose (==):', answer == currentQuestion.correctAnswer);
+    
     const now = Date.now();
     const timeSpent = now - gameState.questionStartTime;
     

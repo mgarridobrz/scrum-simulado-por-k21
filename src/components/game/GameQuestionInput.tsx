@@ -44,8 +44,10 @@ export const GameQuestionInput: React.FC<GameQuestionInputProps> = ({
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
     const key = e.key.toUpperCase();
+    console.log('🔍 GameQuestionInput - Tecla pressionada:', e.key, '-> Normalizada:', key);
     if (['A', 'B', 'C', 'D'].includes(key) && !isAnswered) {
       setAnswer(key);
+      console.log('🔍 GameQuestionInput - Enviando resposta:', key);
       onAnswer(key);
     }
   };
