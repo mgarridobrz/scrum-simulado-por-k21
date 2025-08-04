@@ -9,17 +9,23 @@ interface GameTimerProps {
 
 export const GameTimer: React.FC<GameTimerProps> = ({ isActive, onTick, className = "" }) => {
   const [time, setTime] = useState(0);
+  const [startTime, setStartTime] = useState<number | null>(null);
 
   useEffect(() => {
     let interval: NodeJS.Timeout | null = null;
 
     if (isActive) {
+      // Set start time on first activation
+      if (!startTime) {
+        setStartTime(Date.now());
+      }
+      
       interval = setInterval(() => {
-        setTime(prevTime => {
-          const newTime = prevTime + 10; // Update every 10ms for precision
+        if (startTime) {
+          const newTime = Date.now() - startTime;
+          setTime(newTime);
           onTick?.(newTime);
-          return newTime;
-        });
+        }
       }, 10);
     }
 
@@ -28,7 +34,15 @@ export const GameTimer: React.FC<GameTimerProps> = ({ isActive, onTick, classNam
         clearInterval(interval);
       }
     };
-  }, [isActive, onTick]);
+  }, [isActive, startTime, onTick]);
+
+  // Reset when component unmounts or game restarts
+  useEffect(() => {
+    return () => {
+      setTime(0);
+      setStartTime(null);
+    };
+  }, []);
 
   const formatTime = (ms: number) => {
     const totalSeconds = Math.floor(ms / 1000);

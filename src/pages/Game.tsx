@@ -147,7 +147,8 @@ const Game: React.FC = () => {
   const finishGame = async (finalAnswers: any[], finalPenaltyTime: number) => {
     if (!gameState || !gameConfig) return;
 
-    const totalTime = Date.now() - gameState.startTime;
+    // Use o tempo do timer ao invés de calcular separadamente
+    const totalTime = currentTime;
     const correctAnswers = finalAnswers.filter(a => a.isCorrect).length;
 
     try {
