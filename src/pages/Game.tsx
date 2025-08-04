@@ -103,9 +103,9 @@ const Game: React.FC = () => {
     console.log('🔍 DEBUG - Questão completa:', currentQuestion);
     console.log('🔍 DEBUG - Opções da questão:', currentQuestion.options);
     
-    const isCorrect = answer === currentQuestion.correctAnswer;
+    const isCorrect = answer === currentQuestion.correctAnswer.toUpperCase();
     console.log('🔍 DEBUG - Comparação (===):', isCorrect);
-    console.log('🔍 DEBUG - Comparação loose (==):', answer == currentQuestion.correctAnswer);
+    console.log('🔍 DEBUG - Resposta correta normalizada:', currentQuestion.correctAnswer.toUpperCase());
     
     const now = Date.now();
     const timeSpent = now - gameState.questionStartTime;

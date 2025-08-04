@@ -55,11 +55,14 @@ export const GameQuestionInput: React.FC<GameQuestionInputProps> = ({
   const getOptionStyle = (optionId: string) => {
     if (!isAnswered) return '';
     
-    if (optionId === correctAnswer) {
+    const normalizedCorrectAnswer = correctAnswer?.toUpperCase();
+    const normalizedOptionId = optionId.toUpperCase();
+    
+    if (normalizedOptionId === normalizedCorrectAnswer) {
       return 'border-green-500 bg-green-50 text-green-700';
     }
     
-    if (optionId === userAnswer && optionId !== correctAnswer) {
+    if (optionId.toUpperCase() === userAnswer?.toUpperCase() && normalizedOptionId !== normalizedCorrectAnswer) {
       return 'border-red-500 bg-red-50 text-red-700';
     }
     
@@ -118,13 +121,13 @@ export const GameQuestionInput: React.FC<GameQuestionInputProps> = ({
       {isAnswered && (
         <div className="text-center space-y-2">
           <div className={`text-lg font-semibold ${
-            userAnswer === correctAnswer ? 'text-green-600' : 'text-red-600'
+            userAnswer?.toUpperCase() === correctAnswer?.toUpperCase() ? 'text-green-600' : 'text-red-600'
           }`}>
-            {userAnswer === correctAnswer ? '✅ Correto!' : '❌ Incorreto!'}
+            {userAnswer?.toUpperCase() === correctAnswer?.toUpperCase() ? '✅ Correto!' : '❌ Incorreto!'}
           </div>
-          {userAnswer !== correctAnswer && (
+          {userAnswer?.toUpperCase() !== correctAnswer?.toUpperCase() && (
             <p className="text-sm text-muted-foreground">
-              {getTranslation(language, 'correctAnswer')}: {correctAnswer}
+              {getTranslation(language, 'correctAnswer')}: {correctAnswer?.toUpperCase()}
             </p>
           )}
         </div>
