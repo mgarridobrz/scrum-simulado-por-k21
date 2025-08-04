@@ -63,16 +63,35 @@ export async function fetchRandomQuestions(
       return [];
     }
     
+    // Remove duplicates based on question ID to ensure no duplicate questions
+    const uniqueQuestions = allQuestions.filter((question, index, array) => 
+      array.findIndex(q => q.id === question.id) === index
+    );
+    
+    console.log(`Found ${allQuestions.length} questions, ${uniqueQuestions.length} unique questions`);
+    
     // Shuffle using Fisher-Yates algorithm
-    const shuffled = [...allQuestions];
+    const shuffled = [...uniqueQuestions];
     for (let i = shuffled.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
     }
     
-    // Return the requested count
+    // Return the requested count, ensuring we don't exceed available unique questions
     const result = shuffled.slice(0, Math.min(count, shuffled.length));
-    console.log(`Selected ${result.length} random questions for language: ${language}`);
+    console.log(`Selected ${result.length} random questions for language: ${language}, category: ${category || 'all'}`);
+    
+    // Double-check for duplicates in the final result
+    const finalIds = result.map(q => q.id);
+    const uniqueIds = [...new Set(finalIds)];
+    if (finalIds.length !== uniqueIds.length) {
+      console.error("Duplicate questions detected in final result!", { 
+        total: finalIds.length, 
+        unique: uniqueIds.length,
+        duplicates: finalIds.filter((id, index) => finalIds.indexOf(id) !== index)
+      });
+    }
+    
     return result;
   } catch (error) {
     console.error("Error fetching random questions:", error);
