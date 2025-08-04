@@ -29,7 +29,9 @@ export const GameTimer: React.FC<GameTimerProps> = ({ isActive, onTick, classNam
     } else if (lastActiveTime) {
       // Paused - accumulate the time that passed
       const now = Date.now();
-      setAccumulatedTime(prev => prev + (now - lastActiveTime));
+      const timeToAdd = now - lastActiveTime;
+      setAccumulatedTime(prev => prev + timeToAdd);
+      setTime(prev => prev + timeToAdd);
       setLastActiveTime(null);
     }
 
@@ -38,7 +40,7 @@ export const GameTimer: React.FC<GameTimerProps> = ({ isActive, onTick, classNam
         clearInterval(interval);
       }
     };
-  }, [isActive, lastActiveTime, accumulatedTime, onTick]);
+  }, [isActive, onTick]);
 
   // Reset when component unmounts
   useEffect(() => {
