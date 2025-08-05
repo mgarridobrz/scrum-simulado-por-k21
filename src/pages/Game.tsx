@@ -149,7 +149,14 @@ const Game: React.FC = () => {
       correctAnswers: prev.correctAnswers + (isCorrect ? 1 : 0)
     } : null);
 
-    // Show feedback for 2 seconds, then continue
+    // Verificar se é a última pergunta e finalizar o jogo imediatamente
+    if (gameState.currentQuestionIndex >= gameState.questions.length - 1) {
+      // Game finished - capturar o tempo atual incluindo a última pergunta
+      console.log('🔍 GAME PROGRESSION - Jogo finalizado! Total de respostas:', newAnswers.length);
+      finishGame(newAnswers, gameState.penaltyTime + penaltyToAdd);
+    }
+
+    // Show feedback for 2 seconds, then continue to next question
     setTimeout(() => {
       setGameState(prev => {
         if (!prev) return null;
@@ -168,9 +175,7 @@ const Game: React.FC = () => {
             currentQuestionIndex: prev.currentQuestionIndex + 1
           };
         } else {
-          // Game finished
-          console.log('🔍 GAME PROGRESSION - Jogo finalizado! Total de respostas:', newAnswers.length);
-          finishGame(newAnswers, prev.penaltyTime + penaltyToAdd);
+          // Game already finished above, just return current state
           return prev;
         }
       });
