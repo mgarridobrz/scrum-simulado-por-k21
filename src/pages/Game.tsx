@@ -154,8 +154,14 @@ const Game: React.FC = () => {
       setGameState(prev => {
         if (!prev) return null;
         
+        console.log('🔍 GAME PROGRESSION - Índice atual no setTimeout:', prev.currentQuestionIndex);
+        console.log('🔍 GAME PROGRESSION - Total de questões:', prev.questions.length);
+        console.log('🔍 GAME PROGRESSION - Condição para próxima questão:', prev.currentQuestionIndex < prev.questions.length - 1);
+        console.log('🔍 GAME PROGRESSION - Total de respostas até agora:', prev.answers.length);
+        
         if (prev.currentQuestionIndex < prev.questions.length - 1) {
           // Next question - go to countdown first
+          console.log('🔍 GAME PROGRESSION - Indo para próxima questão, novo índice será:', prev.currentQuestionIndex + 1);
           return {
             ...prev,
             phase: 'countdown',
@@ -163,6 +169,7 @@ const Game: React.FC = () => {
           };
         } else {
           // Game finished
+          console.log('🔍 GAME PROGRESSION - Jogo finalizado! Total de respostas:', newAnswers.length);
           finishGame(newAnswers, prev.penaltyTime + penaltyToAdd);
           return prev;
         }
