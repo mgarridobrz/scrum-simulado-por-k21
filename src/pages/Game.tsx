@@ -185,7 +185,7 @@ const Game: React.FC = () => {
   const finishGame = async (finalAnswers: any[], finalPenaltyTime: number) => {
     if (!gameState || !gameConfig) return;
 
-    // Use o tempo do timer ao invés de calcular separadamente
+    // Use EXATAMENTE o tempo do timer laranja - não calcule nada
     const totalTime = currentTime;
     const correctAnswers = finalAnswers.filter(a => a.isCorrect).length;
 
@@ -323,9 +323,9 @@ const Game: React.FC = () => {
               <GameResults
                 correctAnswers={gameState.correctAnswers}
                 totalQuestions={gameState.questions.length}
-                totalTimeMs={gameState.totalTime}
+                totalTimeMs={currentTime}
                 penaltyTimeMs={gameState.penaltyTime}
-                finalScoreMs={gameState.totalTime + gameState.penaltyTime}
+                finalScoreMs={currentTime + gameState.penaltyTime}
                 category={gameConfig.category}
                 onPlayAgain={resetGame}
                 onViewRanking={() => navigate('/game/ranking')}
