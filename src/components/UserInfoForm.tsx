@@ -12,9 +12,10 @@ import { getTranslation } from '@/utils/translations';
 interface UserInfoFormProps {
   onSubmit: (data: { name: string; email: string }) => void;
   selectedSize: number;
+  onBack?: () => void;
 }
 
-const UserInfoForm = ({ onSubmit, selectedSize }: UserInfoFormProps) => {
+const UserInfoForm = ({ onSubmit, selectedSize, onBack }: UserInfoFormProps) => {
   const { language } = useLanguage();
   
   const formSchema = z.object({
@@ -76,7 +77,17 @@ const UserInfoForm = ({ onSubmit, selectedSize }: UserInfoFormProps) => {
               )}
             />
             
-            <div className="pt-4">
+            <div className="pt-4 space-y-3">
+              {onBack && (
+                <Button 
+                  type="button"
+                  variant="outline"
+                  className="w-full"
+                  onClick={onBack}
+                >
+                  {getTranslation(language, 'backToStart')}
+                </Button>
+              )}
               <Button 
                 type="submit" 
                 className="w-full bg-k21-teal hover:bg-k21-teal/90"

@@ -32,8 +32,15 @@ const Game: React.FC = () => {
     setCurrentTime(0);
   };
 
+  const handleBackToSelection = () => {
+    setShowUserForm(false);
+    setGameConfig(null);
+  };
+
   const handleCategorySelection = async (category: string, questionCount: 5 | 10) => {
-    setGameConfig({ category, questionCount, name: '', email: '' });
+    // Converter 'all' para undefined para buscar todas as categorias
+    const categoryFilter = category === 'all' ? undefined : category;
+    setGameConfig({ category: category, questionCount, name: '', email: '' });
     setShowUserForm(true);
   };
 
@@ -44,7 +51,9 @@ const Game: React.FC = () => {
       // Evitar múltiplas chamadas
       setShowUserForm(false);
       
-      const questions = await getRandomQuestions(gameConfig.questionCount, language, gameConfig.category);
+      // Converter 'all' para undefined para buscar todas as categorias
+      const categoryFilter = gameConfig.category === 'all' ? undefined : gameConfig.category;
+      const questions = await getRandomQuestions(gameConfig.questionCount, language, categoryFilter);
       if (questions.length === 0) {
         toast({
           title: "Erro",
@@ -209,6 +218,7 @@ const Game: React.FC = () => {
             <UserInfoForm 
               onSubmit={handleUserInfoSubmit} 
               selectedSize={gameConfig.questionCount}
+              onBack={handleBackToSelection}
             />
           </div>
         </main>
