@@ -151,9 +151,12 @@ const Game: React.FC = () => {
 
     // Verificar se é a última pergunta e finalizar o jogo imediatamente
     if (gameState.currentQuestionIndex >= gameState.questions.length - 1) {
-      // Game finished - capturar o tempo atual incluindo a última pergunta
-      console.log('🔍 GAME PROGRESSION - Jogo finalizado! Total de respostas:', newAnswers.length);
-      finishGame(newAnswers, gameState.penaltyTime + penaltyToAdd);
+      // Game finished - aguardar para capturar o tempo final correto
+      setTimeout(() => {
+        console.log('🔍 GAME PROGRESSION - Jogo finalizado! Total de respostas:', newAnswers.length);
+        console.log('🔍 CURRENT TIME no finish:', currentTime);
+        finishGame(newAnswers, gameState.penaltyTime + penaltyToAdd);
+      }, 100); // Pequeno delay para garantir que o timer atualize
     }
 
     // Show feedback for 2 seconds, then continue to next question
