@@ -1692,6 +1692,48 @@ export type Database = {
           },
         ]
       }
+      quiz_questions_backup: {
+        Row: {
+          category_id: string | null
+          correct_answer: string | null
+          created_at: string | null
+          explanation: string | null
+          explanation_en: string | null
+          id: number | null
+          options: Json | null
+          options_en: Json | null
+          question: string | null
+          question_en: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          category_id?: string | null
+          correct_answer?: string | null
+          created_at?: string | null
+          explanation?: string | null
+          explanation_en?: string | null
+          id?: number | null
+          options?: Json | null
+          options_en?: Json | null
+          question?: string | null
+          question_en?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          category_id?: string | null
+          correct_answer?: string | null
+          created_at?: string | null
+          explanation?: string | null
+          explanation_en?: string | null
+          id?: number | null
+          options?: Json | null
+          options_en?: Json | null
+          question?: string | null
+          question_en?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       restricted_access_tokens: {
         Row: {
           created_at: string
@@ -2107,6 +2149,17 @@ export type Database = {
           error_message: string
         }[]
       }
+      analyze_quiz_distribution: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          category: string
+          correct_a: number
+          correct_b: number
+          correct_c: number
+          correct_d: number
+          total_questions: number
+        }[]
+      }
       audit_rls_status: {
         Args: Record<PropertyKey, never>
         Returns: {
@@ -2114,6 +2167,10 @@ export type Database = {
           rls_enabled: boolean
           policy_count: number
         }[]
+      }
+      backup_quiz_questions: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
       }
       calculate_user_engagement_bonus: {
         Args: {
@@ -2376,6 +2433,18 @@ export type Database = {
           p_workspace_id: string
         }
         Returns: boolean
+      }
+      rebalance_quiz_answers: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          category: string
+          questions_processed: number
+          changes_made: number
+        }[]
+      }
+      restore_quiz_questions_from_backup: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
       }
       safe_track_activity: {
         Args: {
