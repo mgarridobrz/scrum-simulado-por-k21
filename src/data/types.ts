@@ -6,13 +6,16 @@ export type UserAnswers = Record<number, string>;
 export interface QuestionWithCategory {
   id: number;
   question: string;
+  question_en?: string;
   category: QuizCategory;
   options: {
     id: string;
     text: string;
+    text_en?: string;
   }[];
   correctAnswer: string;
   explanation?: string;
+  explanation_en?: string;
 }
 
 export interface QuizAttempt {

@@ -4,12 +4,12 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Check, X } from 'lucide-react';
-import { QuestionWithCategory } from '@/data/quizData';
+import { QuestionWithCategory } from '@/data/types';
 
 interface QuestionOptionTableProps {
   question: QuestionWithCategory;
   editMode: boolean;
-  onOptionChange: (id: string, text: string) => void;
+  onOptionChange: (id: string, text: string, language?: 'pt' | 'en') => void;
   onCorrectAnswerChange: (value: string) => void;
 }
 
@@ -24,7 +24,8 @@ const QuestionOptionTable = ({
       <TableHeader>
         <TableRow>
           <TableHead className="w-[100px]">ID</TableHead>
-          <TableHead>Texto</TableHead>
+          <TableHead>Português</TableHead>
+          <TableHead>English</TableHead>
           <TableHead className="w-[100px]">Correta</TableHead>
         </TableRow>
       </TableHeader>
@@ -36,10 +37,22 @@ const QuestionOptionTable = ({
               {editMode ? (
                 <Input 
                   value={option.text} 
-                  onChange={(e) => onOptionChange(option.id, e.target.value)} 
+                  onChange={(e) => onOptionChange(option.id, e.target.value, 'pt')} 
+                  placeholder="Texto em português"
                 />
               ) : (
                 option.text
+              )}
+            </TableCell>
+            <TableCell>
+              {editMode ? (
+                <Input 
+                  value={option.text_en || ''} 
+                  onChange={(e) => onOptionChange(option.id, e.target.value, 'en')} 
+                  placeholder="English text"
+                />
+              ) : (
+                option.text_en || '-'
               )}
             </TableCell>
             <TableCell>

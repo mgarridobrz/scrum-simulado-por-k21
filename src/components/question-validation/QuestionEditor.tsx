@@ -23,18 +23,21 @@ const QuestionEditor = ({ question, onSave }: QuestionEditorProps) => {
     setEditMode(false);
   }, [question]);
 
-  const handleQuestionChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+  const handleQuestionChange = (e: React.ChangeEvent<HTMLTextAreaElement>, language: 'pt' | 'en' = 'pt') => {
     setCurrentQuestion({
       ...currentQuestion,
-      question: e.target.value
+      [language === 'pt' ? 'question' : 'question_en']: e.target.value
     });
   };
 
-  const handleOptionChange = (id: string, text: string) => {
+  const handleOptionChange = (id: string, text: string, language: 'pt' | 'en' = 'pt') => {
     setCurrentQuestion({
       ...currentQuestion,
       options: currentQuestion.options.map(option => 
-        option.id === id ? { ...option, text } : option
+        option.id === id ? { 
+          ...option, 
+          [language === 'pt' ? 'text' : 'text_en']: text 
+        } : option
       )
     });
   };
@@ -46,10 +49,10 @@ const QuestionEditor = ({ question, onSave }: QuestionEditorProps) => {
     });
   };
 
-  const handleExplanationChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+  const handleExplanationChange = (e: React.ChangeEvent<HTMLTextAreaElement>, language: 'pt' | 'en' = 'pt') => {
     setCurrentQuestion({
       ...currentQuestion,
-      explanation: e.target.value
+      [language === 'pt' ? 'explanation' : 'explanation_en']: e.target.value
     });
   };
 
@@ -115,15 +118,34 @@ const QuestionEditor = ({ question, onSave }: QuestionEditorProps) => {
         <div className="space-y-4">
           <div>
             <h3 className="text-sm font-medium mb-2">Pergunta:</h3>
-            {editMode ? (
-              <Textarea 
-                value={currentQuestion.question} 
-                onChange={handleQuestionChange} 
-                className="min-h-[80px]"
-              />
-            ) : (
-              <p className="p-3 bg-muted rounded-md">{currentQuestion.question}</p>
-            )}
+            <div className="space-y-3">
+              <div>
+                <label className="text-xs text-muted-foreground">Português</label>
+                {editMode ? (
+                  <Textarea 
+                    value={currentQuestion.question} 
+                    onChange={(e) => handleQuestionChange(e, 'pt')} 
+                    className="min-h-[80px]"
+                    placeholder="Pergunta em português"
+                  />
+                ) : (
+                  <p className="p-3 bg-muted rounded-md">{currentQuestion.question}</p>
+                )}
+              </div>
+              <div>
+                <label className="text-xs text-muted-foreground">English</label>
+                {editMode ? (
+                  <Textarea 
+                    value={currentQuestion.question_en || ''} 
+                    onChange={(e) => handleQuestionChange(e, 'en')} 
+                    className="min-h-[80px]"
+                    placeholder="Question in English"
+                  />
+                ) : (
+                  <p className="p-3 bg-muted rounded-md">{currentQuestion.question_en || '-'}</p>
+                )}
+              </div>
+            </div>
           </div>
 
           <div>
@@ -138,15 +160,34 @@ const QuestionEditor = ({ question, onSave }: QuestionEditorProps) => {
 
           <div>
             <h3 className="text-sm font-medium mb-2">Explicação:</h3>
-            {editMode ? (
-              <Textarea 
-                value={currentQuestion.explanation || ''} 
-                onChange={handleExplanationChange} 
-                className="min-h-[120px]"
-              />
-            ) : (
-              <p className="p-3 bg-muted rounded-md">{currentQuestion.explanation || 'Sem explicação'}</p>
-            )}
+            <div className="space-y-3">
+              <div>
+                <label className="text-xs text-muted-foreground">Português</label>
+                {editMode ? (
+                  <Textarea 
+                    value={currentQuestion.explanation || ''} 
+                    onChange={(e) => handleExplanationChange(e, 'pt')} 
+                    className="min-h-[120px]"
+                    placeholder="Explicação em português"
+                  />
+                ) : (
+                  <p className="p-3 bg-muted rounded-md">{currentQuestion.explanation || 'Sem explicação'}</p>
+                )}
+              </div>
+              <div>
+                <label className="text-xs text-muted-foreground">English</label>
+                {editMode ? (
+                  <Textarea 
+                    value={currentQuestion.explanation_en || ''} 
+                    onChange={(e) => handleExplanationChange(e, 'en')} 
+                    className="min-h-[120px]"
+                    placeholder="Explanation in English"
+                  />
+                ) : (
+                  <p className="p-3 bg-muted rounded-md">{currentQuestion.explanation_en || '-'}</p>
+                )}
+              </div>
+            </div>
           </div>
         </div>
       </CardContent>

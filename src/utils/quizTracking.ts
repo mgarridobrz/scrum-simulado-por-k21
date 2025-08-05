@@ -29,15 +29,30 @@ export async function fetchQuestionsByCategory(
       return [];
     }
     
-    // Transform database records to QuestionWithCategory format with language support
-    const questions: QuestionWithCategory[] = data.map(row => ({
-      id: row.id,
-      question: language === 'en' && row.question_en ? row.question_en : row.question,
-      category: row.category_id as QuizCategory,
-      options: (language === 'en' && row.options_en ? row.options_en : row.options) as { id: string; text: string; }[],
-      correctAnswer: row.correct_answer,
-      explanation: language === 'en' && row.explanation_en ? row.explanation_en : row.explanation
-    }));
+    // Transform database records to QuestionWithCategory format with bilingual support
+    const questions: QuestionWithCategory[] = data.map(row => {
+      // Parse options ensuring bilingual support
+      const optionsPt = row.options as { id: string; text: string; }[];
+      const optionsEn = row.options_en as { id: string; text: string; }[] | null;
+      
+      // Merge options with bilingual text
+      const mergedOptions = optionsPt.map(optPt => ({
+        id: optPt.id,
+        text: optPt.text,
+        text_en: optionsEn?.find(optEn => optEn.id === optPt.id)?.text || ''
+      }));
+
+      return {
+        id: row.id,
+        question: row.question,
+        question_en: row.question_en || '',
+        category: row.category_id as QuizCategory,
+        options: mergedOptions,
+        correctAnswer: row.correct_answer,
+        explanation: row.explanation || '',
+        explanation_en: row.explanation_en || ''
+      };
+    });
     
     console.log(`Fetched ${questions.length} questions from database for language: ${language}`);
     return questions;
@@ -104,14 +119,28 @@ export async function fetchRandomQuestions(
  */
 export async function updateQuestion(question: QuestionWithCategory): Promise<boolean> {
   try {
+    // Separate Portuguese and English options
+    const optionsPt = question.options.map(opt => ({
+      id: opt.id,
+      text: opt.text
+    }));
+    
+    const optionsEn = question.options.map(opt => ({
+      id: opt.id,
+      text: opt.text_en || ''
+    }));
+
     const { error } = await supabase
       .from('quiz_questions')
       .update({
         question: question.question,
+        question_en: question.question_en || '',
         category_id: question.category,
-        options: question.options,
+        options: optionsPt,
+        options_en: optionsEn,
         correct_answer: question.correctAnswer,
-        explanation: question.explanation,
+        explanation: question.explanation || '',
+        explanation_en: question.explanation_en || '',
         updated_at: new Date().toISOString()
       })
       .eq('id', question.id);
@@ -121,7 +150,7 @@ export async function updateQuestion(question: QuestionWithCategory): Promise<bo
       return false;
     }
     
-    console.log(`Question ${question.id} updated successfully`);
+    console.log(`Question ${question.id} updated successfully with bilingual content`);
     return true;
   } catch (error) {
     console.error("Error in updateQuestion:", error);
