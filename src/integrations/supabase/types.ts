@@ -2377,6 +2377,15 @@ export type Database = {
           workspace_id: string
         }[]
       }
+      improved_rebalance_quiz_answers: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          category: string
+          questions_processed: number
+          changes_made: number
+          distribution_summary: Json
+        }[]
+      }
       is_admin: {
         Args: { user_id: string }
         Returns: boolean
