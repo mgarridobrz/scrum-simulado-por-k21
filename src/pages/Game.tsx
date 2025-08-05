@@ -191,6 +191,11 @@ const Game: React.FC = () => {
     const finalScoreMs = currentTime + finalPenaltyTime;
     const correctAnswers = finalAnswers.filter(a => a.isCorrect).length;
 
+    console.log('🔍 FINISH GAME - Valores sendo salvos:');
+    console.log('🔍 FINISH GAME - currentTime (timer laranja):', currentTime);
+    console.log('🔍 FINISH GAME - finalPenaltyTime:', finalPenaltyTime);
+    console.log('🔍 FINISH GAME - finalScoreMs (que vai para o banco):', finalScoreMs);
+
     try {
       await saveGameAttempt(
         gameConfig.name,

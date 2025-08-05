@@ -23,6 +23,12 @@ export async function saveGameAttempt(
     // Usar o finalScoreMs se fornecido, senão calcular como antes
     const finalScore = finalScoreMs !== undefined ? finalScoreMs : totalTimeMs + penaltyTimeMs;
     
+    console.log('🔍 SAVE GAME ATTEMPT - Valores recebidos:');
+    console.log('🔍 SAVE GAME ATTEMPT - totalTimeMs:', totalTimeMs);
+    console.log('🔍 SAVE GAME ATTEMPT - penaltyTimeMs:', penaltyTimeMs);
+    console.log('🔍 SAVE GAME ATTEMPT - finalScoreMs (parâmetro):', finalScoreMs);
+    console.log('🔍 SAVE GAME ATTEMPT - finalScore (será salvo no banco):', finalScore);
+    
     const questionsData = questions.map((question, index) => {
       const userAnswer = userAnswers[index];
       return {

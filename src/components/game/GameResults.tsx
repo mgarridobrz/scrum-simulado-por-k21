@@ -43,6 +43,12 @@ export const GameResults: React.FC<GameResultsProps> = ({
   const percentage = Math.round((correctAnswers / totalQuestions) * 100);
   const isGoodScore = percentage >= 70;
 
+  console.log('🔍 GAME RESULTS - Valores sendo exibidos:');
+  console.log('🔍 GAME RESULTS - totalTimeMs:', totalTimeMs);
+  console.log('🔍 GAME RESULTS - penaltyTimeMs:', penaltyTimeMs);
+  console.log('🔍 GAME RESULTS - finalScoreMs:', finalScoreMs);
+  console.log('🔍 GAME RESULTS - formatTime(finalScoreMs):', formatTime(finalScoreMs));
+
   return (
     <div className="space-y-6">
       <div className="text-center">
