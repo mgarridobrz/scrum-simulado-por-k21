@@ -104,6 +104,18 @@ const Game: React.FC = () => {
 
     const currentQuestion = gameState.questions[gameState.currentQuestionIndex];
     
+    // Debug logs para investigar questões repetidas
+    console.log('🔍 QUESTION TRACKING - Índice atual:', gameState.currentQuestionIndex);
+    console.log('🔍 QUESTION TRACKING - ID da questão:', currentQuestion.id);
+    console.log('🔍 QUESTION TRACKING - Total de respostas até agora:', gameState.answers.length);
+    console.log('🔍 QUESTION TRACKING - IDs das questões já respondidas:', gameState.answers.map(a => a.questionId));
+    
+    // Verificar se esta questão já foi respondida
+    const alreadyAnswered = gameState.answers.find(a => a.questionId === currentQuestion.id);
+    if (alreadyAnswered) {
+      console.warn('🚨 QUESTÃO REPETIDA DETECTADA! ID:', currentQuestion.id);
+    }
+    
     // Debug logs para investigar o problema
     console.log('🔍 DEBUG - Resposta do usuário:', answer);
     console.log('🔍 DEBUG - Resposta correta:', currentQuestion.correctAnswer);
@@ -139,17 +151,22 @@ const Game: React.FC = () => {
 
     // Show feedback for 2 seconds, then continue
     setTimeout(() => {
-      if (gameState.currentQuestionIndex < gameState.questions.length - 1) {
-        // Next question - go to countdown first
-        setGameState(prev => prev ? {
-          ...prev,
-          phase: 'countdown',
-          currentQuestionIndex: prev.currentQuestionIndex + 1
-        } : null);
-      } else {
-        // Game finished
-        finishGame(newAnswers, gameState.penaltyTime + penaltyToAdd);
-      }
+      setGameState(prev => {
+        if (!prev) return null;
+        
+        if (prev.currentQuestionIndex < prev.questions.length - 1) {
+          // Next question - go to countdown first
+          return {
+            ...prev,
+            phase: 'countdown',
+            currentQuestionIndex: prev.currentQuestionIndex + 1
+          };
+        } else {
+          // Game finished
+          finishGame(newAnswers, prev.penaltyTime + penaltyToAdd);
+          return prev;
+        }
+      });
     }, 2000);
   }, [gameState?.phase, gameState?.currentQuestionIndex, gameState?.questions, gameState?.questionStartTime, gameState?.penaltyTime, gameConfig]);
 
