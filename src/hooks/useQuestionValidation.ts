@@ -38,11 +38,11 @@ export function useQuestionValidation() {
     loadQuestions();
   }, [filter, language, toast]);
 
-  // Handle filter changes
+  // Handle filter changes - only reset index when filter actually changes
   useEffect(() => {
     if (questions.length === 0) return;
     setCurrentIndex(0);
-  }, [filter, questions]);
+  }, [filter]); // Removed 'questions' dependency to prevent reset on question updates
 
   // Derived state
   const filteredQuestions = questions;
