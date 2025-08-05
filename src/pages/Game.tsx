@@ -139,7 +139,7 @@ const Game: React.FC = () => {
     };
 
     const newAnswers = [...gameState.answers, newAnswer];
-    const penaltyToAdd = isCorrect ? 0 : 10000; // 10 seconds penalty
+    const penaltyToAdd = isCorrect ? 0 : 15000; // 15 seconds penalty
     
     setGameState(prev => prev ? {
       ...prev,
