@@ -187,6 +187,8 @@ const Game: React.FC = () => {
 
     // Use EXATAMENTE o tempo do timer laranja - não calcule nada
     const totalTime = currentTime;
+    // Calcular o score final EXATO que aparece na tela
+    const finalScoreMs = currentTime + finalPenaltyTime;
     const correctAnswers = finalAnswers.filter(a => a.isCorrect).length;
 
     try {
@@ -200,7 +202,8 @@ const Game: React.FC = () => {
         finalPenaltyTime,
         gameState.questions,
         finalAnswers,
-        language
+        language,
+        finalScoreMs  // Passar o valor final calculado
       );
 
       setGameState(prev => prev ? {

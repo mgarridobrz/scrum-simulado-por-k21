@@ -16,10 +16,12 @@ export async function saveGameAttempt(
     isCorrect: boolean;
     timeSpent: number;
   }>,
-  language: 'pt' | 'en' = 'pt'
+  language: 'pt' | 'en' = 'pt',
+  finalScoreMs?: number  // Parâmetro opcional para score exato
 ): Promise<string | null> {
   try {
-    const finalScoreMs = totalTimeMs + penaltyTimeMs;
+    // Usar o finalScoreMs se fornecido, senão calcular como antes
+    const finalScore = finalScoreMs !== undefined ? finalScoreMs : totalTimeMs + penaltyTimeMs;
     
     const questionsData = questions.map((question, index) => {
       const userAnswer = userAnswers[index];
@@ -45,7 +47,7 @@ export async function saveGameAttempt(
         correct_answers: correctAnswers,
         total_time_ms: totalTimeMs,
         penalty_time_ms: penaltyTimeMs,
-        final_score_ms: finalScoreMs,
+        final_score_ms: finalScore,
         questions_data: questionsData,
         language
       })
