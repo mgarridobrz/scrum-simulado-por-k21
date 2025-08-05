@@ -259,7 +259,7 @@ const Game: React.FC = () => {
               <h1 className="text-2xl font-bold">
                 {getTranslation(language, 'gameMode')}
               </h1>
-              <div className="flex items-center space-x-4 text-sm text-muted-foreground">
+              <div className="flex items-center space-x-4 text-lg text-muted-foreground">
                 <span>
                   {gameState.currentQuestionIndex + 1}/{gameState.questions.length}
                 </span>
