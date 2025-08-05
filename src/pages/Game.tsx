@@ -151,12 +151,19 @@ const Game: React.FC = () => {
 
     // Verificar se é a última pergunta e finalizar o jogo imediatamente
     if (gameState.currentQuestionIndex >= gameState.questions.length - 1) {
-      // Game finished - aguardar para capturar o tempo final correto
+      // Game finished - calcular o tempo final exato que será mostrado na tela
       setTimeout(() => {
+        const finalTimeMs = currentTime; // Tempo atual do timer
+        const finalPenaltyMs = gameState.penaltyTime + penaltyToAdd;
+        const finalScoreMs = finalTimeMs + finalPenaltyMs; // Pontuação final exata da tela
+        
         console.log('🔍 GAME PROGRESSION - Jogo finalizado! Total de respostas:', newAnswers.length);
-        console.log('🔍 CURRENT TIME no finish:', currentTime);
-        finishGame(newAnswers, gameState.penaltyTime + penaltyToAdd);
-      }, 100); // Pequeno delay para garantir que o timer atualize
+        console.log('🔍 GAME PROGRESSION - Tempo final do timer:', finalTimeMs);
+        console.log('🔍 GAME PROGRESSION - Penalidade final:', finalPenaltyMs);
+        console.log('🔍 GAME PROGRESSION - Pontuação final (que aparece na tela):', finalScoreMs);
+        
+        finishGame(newAnswers, finalPenaltyMs, finalScoreMs);
+      }, 100);
     }
 
     // Show feedback for 2 seconds, then continue to next question
@@ -185,17 +192,18 @@ const Game: React.FC = () => {
     }, 2000);
   }, [gameState?.phase, gameState?.currentQuestionIndex, gameState?.questions, gameState?.questionStartTime, gameState?.penaltyTime, gameConfig]);
 
-  const finishGame = async (finalAnswers: any[], finalPenaltyTime: number) => {
+  const finishGame = async (finalAnswers: any[], finalPenaltyTime: number, exactFinalScore?: number) => {
     if (!gameState || !gameConfig) return;
 
-    // Usar EXATAMENTE o valor atual do timer que aparece na tela
-    const timerValue = currentTime;
-    const finalScoreMs = timerValue + finalPenaltyTime;
+    // Se um score exato foi fornecido, usar ele. Senão, usar o currentTime
+    const finalScoreToSave = exactFinalScore || (currentTime + finalPenaltyTime);
+    const timerValue = exactFinalScore ? (exactFinalScore - finalPenaltyTime) : currentTime;
     const correctAnswers = finalAnswers.filter(a => a.isCorrect).length;
 
-    console.log('🔍 FINISH GAME - Timer value na tela final:', timerValue);
+    console.log('🔍 FINISH GAME - Score exato da tela final:', exactFinalScore);
+    console.log('🔍 FINISH GAME - Timer value calculado:', timerValue);
     console.log('🔍 FINISH GAME - Penalty:', finalPenaltyTime);
-    console.log('🔍 FINISH GAME - Final score para salvar:', finalScoreMs);
+    console.log('🔍 FINISH GAME - Final score para salvar no banco:', finalScoreToSave);
 
     try {
       await saveGameAttempt(
@@ -204,12 +212,12 @@ const Game: React.FC = () => {
         gameConfig.category,
         gameConfig.questionCount,
         correctAnswers,
-        timerValue,  // Salvar o valor exato do timer
+        timerValue,  // Tempo base calculado
         finalPenaltyTime,
         gameState.questions,
         finalAnswers,
         language,
-        finalScoreMs  // E o score final correto
+        finalScoreToSave  // Score final exato da tela
       );
 
       setGameState(prev => prev ? {
@@ -332,9 +340,9 @@ const Game: React.FC = () => {
               <GameResults
                 correctAnswers={gameState.correctAnswers}
                 totalQuestions={gameState.questions.length}
-                totalTimeMs={currentTime}
+                totalTimeMs={gameState.totalTime}
                 penaltyTimeMs={gameState.penaltyTime}
-                finalScoreMs={currentTime + gameState.penaltyTime}
+                finalScoreMs={gameState.totalTime + gameState.penaltyTime}
                 category={gameConfig.category}
                 onPlayAgain={resetGame}
                 onViewRanking={() => navigate('/game/ranking')}
