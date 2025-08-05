@@ -28,10 +28,8 @@ const GameRanking: React.FC = () => {
 
   const categories = [
     { id: 'all', name: 'Todas', nameEn: 'All' },
-    { id: 'fundamentals', name: 'Fundamentos', nameEn: 'Fundamentals' },
-    { id: 'roles', name: 'Papéis', nameEn: 'Roles' },
-    { id: 'events', name: 'Eventos', nameEn: 'Events' },
-    { id: 'artifacts', name: 'Artefatos', nameEn: 'Artifacts' }
+    { id: 'fundamentals-roles', name: 'Fundamentos + Papéis', nameEn: 'Fundamentals + Roles' },
+    { id: 'events-artifacts', name: 'Eventos + Artefatos + Disfunções', nameEn: 'Events + Artifacts + Dysfunctions' }
   ];
 
   const questionCounts = [
@@ -50,10 +48,17 @@ const GameRanking: React.FC = () => {
       const category = selectedCategory === 'all' ? undefined : selectedCategory;
       const questionCount = selectedQuestionCount === 'all' ? undefined : parseInt(selectedQuestionCount);
       
+      console.log('🔍 RANKING - Loading data with filters:', { category, questionCount, language });
+      
       const [rankingData, statsData] = await Promise.all([
         getGameRanking(category, questionCount, language),
         getGameStats(category, questionCount)
       ]);
+      
+      console.log('🔍 RANKING - Received data:', { 
+        rankingCount: rankingData.length, 
+        stats: statsData 
+      });
       
       setRanking(rankingData);
       setStats(statsData);

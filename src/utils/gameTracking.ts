@@ -81,11 +81,18 @@ export async function getGameRanking(
   try {
     let query = supabase
       .from('game_attempts')
-      .select('name, final_score_ms, correct_answers, question_count, penalty_time_ms, total_time_ms, language, created_at')
+      .select('name, final_score_ms, correct_answers, question_count, penalty_time_ms, total_time_ms, language, created_at, category')
       .order('final_score_ms', { ascending: true });
 
-    if (category) {
-      query = query.eq('category', category);
+    if (category && category !== 'all') {
+      // Handle combined categories
+      if (category === 'fundamentals-roles') {
+        query = query.in('category', ['fundamentals', 'roles', 'fundamentals-roles']);
+      } else if (category === 'events-artifacts') {
+        query = query.in('category', ['events', 'artifacts', 'dysfunctions', 'events-artifacts']);
+      } else {
+        query = query.eq('category', category);
+      }
     }
 
     if (questionCount) {
@@ -116,10 +123,17 @@ export async function getGameStats(category?: string, questionCount?: number) {
   try {
     let query = supabase
       .from('game_attempts')
-      .select('final_score_ms, correct_answers, question_count, total_time_ms, penalty_time_ms');
+      .select('final_score_ms, correct_answers, question_count, total_time_ms, penalty_time_ms, category');
 
-    if (category) {
-      query = query.eq('category', category);
+    if (category && category !== 'all') {
+      // Handle combined categories
+      if (category === 'fundamentals-roles') {
+        query = query.in('category', ['fundamentals', 'roles', 'fundamentals-roles']);
+      } else if (category === 'events-artifacts') {
+        query = query.in('category', ['events', 'artifacts', 'dysfunctions', 'events-artifacts']);
+      } else {
+        query = query.eq('category', category);
+      }
     }
 
     if (questionCount) {

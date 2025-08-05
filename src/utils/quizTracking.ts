@@ -71,8 +71,26 @@ export async function fetchRandomQuestions(
   category?: string
 ): Promise<QuestionWithCategory[]> {
   try {
-    // Get questions filtered by category if specified, then randomize in JavaScript
-    const allQuestions = await fetchQuestionsByCategory(category, language);
+    let allQuestions: QuestionWithCategory[] = [];
+
+    // Handle combined categories
+    if (category === 'fundamentals-roles') {
+      const [fundamentalsQuestions, rolesQuestions] = await Promise.all([
+        fetchQuestionsByCategory('fundamentals', language),
+        fetchQuestionsByCategory('roles', language)
+      ]);
+      allQuestions = [...fundamentalsQuestions, ...rolesQuestions];
+    } else if (category === 'events-artifacts') {
+      const [eventsQuestions, artifactsQuestions, dysfunctionsQuestions] = await Promise.all([
+        fetchQuestionsByCategory('events', language),
+        fetchQuestionsByCategory('artifacts', language),
+        fetchQuestionsByCategory('dysfunctions', language)
+      ]);
+      allQuestions = [...eventsQuestions, ...artifactsQuestions, ...dysfunctionsQuestions];
+    } else {
+      // Single category or all categories
+      allQuestions = await fetchQuestionsByCategory(category, language);
+    }
     
     if (allQuestions.length === 0) {
       return [];

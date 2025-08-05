@@ -12,10 +12,8 @@ interface GameCategorySelectorProps {
 }
 
 const categories = [
-  { id: 'fundamentals', name: 'Fundamentos', nameEn: 'Fundamentals' },
-  { id: 'roles', name: 'Papéis', nameEn: 'Roles' },
-  { id: 'events', name: 'Eventos', nameEn: 'Events' },
-  { id: 'artifacts', name: 'Artefatos', nameEn: 'Artifacts' },
+  { id: 'fundamentals-roles', name: 'Fundamentos + Papéis', nameEn: 'Fundamentals + Roles' },
+  { id: 'events-artifacts', name: 'Eventos + Artefatos + Disfunções', nameEn: 'Events + Artifacts + Dysfunctions' },
   { id: 'all', name: 'Todas as Categorias', nameEn: 'All Categories' }
 ];
 
@@ -79,7 +77,10 @@ export const GameCategorySelector: React.FC<GameCategorySelectorProps> = ({ onSe
                 {questionCounts.map((option) => (
                   <Button
                     key={option.count}
-                    onClick={() => onSelectCategory(category.id, option.count)}
+                    onClick={() => {
+                      console.log('🔍 CATEGORY SELECTOR - Selected:', { category: category.id, count: option.count });
+                      onSelectCategory(category.id, option.count);
+                    }}
                     variant="default"
                     size="sm"
                     className="flex flex-col p-3 h-auto space-y-1"
