@@ -2,7 +2,7 @@ import React from 'react';
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Trophy, Clock, Target } from 'lucide-react';
+import { Trophy, Clock, Target, ArrowLeft } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { getTranslation } from '@/utils/translations';
 import { useNavigate } from 'react-router-dom';
@@ -28,14 +28,28 @@ export const GameCategorySelector: React.FC<GameCategorySelectorProps> = ({ onSe
 
   return (
     <div className="max-w-4xl mx-auto space-y-6">
-      {/* Header com botão de ranking */}
+      {/* Header com botão de voltar */}
       <div className="text-center space-y-4">
-        <div className="flex items-center justify-center space-x-4">
-          <Target className="h-8 w-8 text-primary" />
-          <h1 className="text-3xl font-bold">
-            {getTranslation(language, 'gameMode')}
-          </h1>
-          <Clock className="h-8 w-8 text-primary" />
+        <div className="flex items-center justify-between">
+          <Button 
+            onClick={() => navigate('/')}
+            variant="outline"
+            size="sm"
+            className="flex items-center gap-2"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            {language === 'pt' ? 'Voltar' : 'Back'}
+          </Button>
+          
+          <div className="flex items-center space-x-4">
+            <Target className="h-8 w-8 text-primary" />
+            <h1 className="text-3xl font-bold">
+              {getTranslation(language, 'gameMode')}
+            </h1>
+            <Clock className="h-8 w-8 text-primary" />
+          </div>
+          
+          <div className="w-20"></div> {/* Espaçador para centralizar o título */}
         </div>
         
         <p className="text-muted-foreground">
