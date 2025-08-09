@@ -146,6 +146,7 @@ export async function getGameStats(category?: string, questionCount?: number) {
       console.error('Error fetching game stats:', error);
       return {
         totalAttempts: 0,
+        totalQuestions: 0,
         averageTime: 0,
         averageScore: 0,
         averageCorrectAnswers: 0
@@ -154,10 +155,12 @@ export async function getGameStats(category?: string, questionCount?: number) {
 
     const attempts = data || [];
     const totalAttempts = attempts.length;
+    const totalQuestions = attempts.reduce((sum, attempt) => sum + attempt.question_count, 0);
 
     if (totalAttempts === 0) {
       return {
         totalAttempts: 0,
+        totalQuestions: 0,
         averageTime: 0,
         averageScore: 0,
         averageCorrectAnswers: 0
@@ -169,6 +172,7 @@ export async function getGameStats(category?: string, questionCount?: number) {
 
     return {
       totalAttempts,
+      totalQuestions,
       averageTime: Math.round(averageTime),
       averageScore: Math.round(averageTime),
       averageCorrectAnswers: Math.round(averageCorrectAnswers * 100) / 100
@@ -177,6 +181,7 @@ export async function getGameStats(category?: string, questionCount?: number) {
     console.error('Error fetching game stats:', error);
     return {
       totalAttempts: 0,
+      totalQuestions: 0,
       averageTime: 0,
       averageScore: 0,
       averageCorrectAnswers: 0

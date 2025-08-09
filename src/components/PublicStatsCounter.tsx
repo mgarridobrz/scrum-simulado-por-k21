@@ -11,7 +11,7 @@ import type { QuizStats } from '@/data/types';
 
 const PublicStatsCounter = () => {
   const [stats, setStats] = useState<QuizStats | null>(null);
-  const [gameStats, setGameStats] = useState<{ totalAttempts: number } | null>(null);
+  const [gameStats, setGameStats] = useState<{ totalAttempts: number; totalQuestions: number } | null>(null);
   const { toast } = useToast();
   const { language } = useLanguage();
   
@@ -71,7 +71,9 @@ const PublicStatsCounter = () => {
           </div>
           <h3 className="text-sm font-medium text-gray-500">{getTranslation(language, 'questionsAnswered')}</h3>
           <p className="text-3xl font-bold text-k21-gold">
-            {stats ? stats.size10Count * 10 + stats.size25Count * 25 + stats.size50Count * 50 : 0}
+            {stats && gameStats ? 
+              (stats.size10Count * 10 + stats.size25Count * 25 + stats.size50Count * 50) + gameStats.totalQuestions
+              : 0}
           </p>
         </div>
         
