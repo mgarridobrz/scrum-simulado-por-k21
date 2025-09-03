@@ -31,7 +31,7 @@ const Index = () => {
 
   // Load questions when quiz starts or language changes
   useEffect(() => {
-    if (currentScreen === 'quiz' && questions.length === 0) {
+    if (currentScreen === 'quiz') {
       loadQuestions();
     }
   }, [currentScreen, quizSize, language]);
@@ -61,7 +61,8 @@ const Index = () => {
     setStartTime(new Date());
     setUserAnswers({});
     setCurrentQuestionIndex(0);
-    setQuestions([]); // Reset questions to trigger reload with new size/language
+    // Clear questions to force reload with current language
+    setQuestions([]);
   };
 
   const handleAnswerSelect = (questionId: number, answer: string) => {
