@@ -47,22 +47,36 @@ const QuizQuestion = ({
   const handleOptionSelect = (optionId: string) => {
     onSelectOption(question.id, optionId);
   };
+
+  // Get language-specific text
+  const questionText = language === 'en' && (question as any).question_en 
+    ? (question as any).question_en 
+    : question.question;
+  
+  const explanationText = language === 'en' && (question as any).explanation_en 
+    ? (question as any).explanation_en 
+    : (question as any).explanation;
   
   return (
     <div className={cn("space-y-4", className)}>
-      <h3 className="text-lg font-medium text-gray-800 mb-6">{question.question}</h3>
+      <h3 className="text-lg font-medium text-gray-800 mb-6">{questionText}</h3>
       <div className="space-y-3">
-        {question.options.map((option) => (
-          <QuizOption
-            key={option.id}
-            id={option.id}
-            label={option.text}
-            isSelected={selectedOption === option.id}
-            isCorrect={option.id === question.correctAnswer}
-            showResult={!!selectedOption || showResult}
-            onSelect={handleOptionSelect}
-          />
-        ))}
+        {question.options.map((option) => {
+          const optionText = language === 'en' && (option as any).text_en 
+            ? (option as any).text_en 
+            : option.text;
+          return (
+            <QuizOption
+              key={option.id}
+              id={option.id}
+              label={optionText}
+              isSelected={selectedOption === option.id}
+              isCorrect={option.id === question.correctAnswer}
+              showResult={!!selectedOption || showResult}
+              onSelect={handleOptionSelect}
+            />
+          );
+        })}
       </div>
       
       {selectedOption && (
@@ -71,7 +85,7 @@ const QuizQuestion = ({
             {isCorrect ? getTranslation(language, 'correctExplanation') : getTranslation(language, 'incorrectExplanation')}
           </h4>
           <p className="text-sm text-blue-700">
-            {question.explanation || getTranslation(language, 'noExplanation')}
+            {explanationText || getTranslation(language, 'noExplanation')}
           </p>
           
           {onContinue && (

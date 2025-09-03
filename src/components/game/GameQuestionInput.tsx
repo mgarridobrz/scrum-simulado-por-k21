@@ -29,6 +29,11 @@ export const GameQuestionInput: React.FC<GameQuestionInputProps> = ({
   const [answer, setAnswer] = useState('');
   const { language } = useLanguage();
 
+  // Get language-specific text
+  const questionText = language === 'en' && (question as any).question_en 
+    ? (question as any).question_en 
+    : question.question;
+
   useEffect(() => {
     if (userAnswer) {
       setAnswer(userAnswer);
@@ -76,26 +81,31 @@ export const GameQuestionInput: React.FC<GameQuestionInputProps> = ({
           {question.category}
         </Badge>
         <h2 className="text-xl font-semibold mb-6">
-          {question.question}
+          {questionText}
         </h2>
       </div>
 
       <div className="space-y-3">
-        {question.options.map((option) => (
-          <Card 
-            key={option.id} 
-            className={`p-4 transition-all ${getOptionStyle(option.id)}`}
-          >
-            <div className="flex items-center space-x-3">
-              <span className="font-bold text-lg">
-                {option.id}.
-              </span>
-              <span className="flex-1">
-                {option.text}
-              </span>
-            </div>
-          </Card>
-        ))}
+        {question.options.map((option) => {
+          const optionText = language === 'en' && (option as any).text_en 
+            ? (option as any).text_en 
+            : option.text;
+          return (
+            <Card 
+              key={option.id} 
+              className={`p-4 transition-all ${getOptionStyle(option.id)}`}
+            >
+              <div className="flex items-center space-x-3">
+                <span className="font-bold text-lg">
+                  {option.id}.
+                </span>
+                <span className="flex-1">
+                  {optionText}
+                </span>
+              </div>
+            </Card>
+          );
+        })}
       </div>
 
       {!isAnswered && (
