@@ -3,12 +3,14 @@ import { useNavigate } from 'react-router-dom';
 import { useQuestionValidation } from '@/hooks/useQuestionValidation';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import AuthScreen from '@/components/question-validation/AuthScreen';
 import QuestionEditor from '@/components/question-validation/QuestionEditor';
 import NavigationBar from '@/components/question-validation/NavigationBar';
 import AttemptsList from '@/components/question-validation/AttemptsList';
 import GlobalStatsCounter from '@/components/question-validation/GlobalStatsCounter';
 import AssessmentTrendsChart from "@/components/question-validation/AssessmentTrendsChart";
+import GameStatsCounter from '@/components/admin/GameStatsCounter';
 import { getTrackedQuizAttempts } from '@/utils/quizTracking';
 import type { QuizAttempt } from '@/data/types';
 import { supabase } from '@/integrations/supabase/client';
@@ -145,91 +147,123 @@ const QuestionValidation = () => {
 
   return (
     <div className="container mx-auto py-8 px-4">
-      {activeTab === 'editor' ? (
-        <>
-          <NavigationBar
-            currentIndex={currentIndex}
-            totalQuestions={filteredQuestions.length}
-            filter={filter}
-            onFilterChange={setFilter}
-            onNavigatePrevious={goToPreviousQuestion}
-            onNavigateNext={goToNextQuestion}
-            onShowAttempts={handleShowAttempts}
-            onNavigateHome={handleNavigateHome}
-          />
+      <div className="mb-6">
+        <h1 className="text-3xl font-bold">Painel de Administração</h1>
+        <p className="text-muted-foreground">Gerencie questões, visualize estatísticas e controle dados do sistema</p>
+      </div>
 
-          {/* Game Backup Controls */}
-          <div className="mb-6 p-4 bg-muted rounded-lg">
-            <h3 className="text-lg font-semibold mb-3">Controles de Backup do Game</h3>
-            <div className="flex gap-4">
-              <Button
-                onClick={handleBackupGameAttempts}
-                disabled={isBackingUp}
-                variant="destructive"
-                className="flex-1"
-              >
-                {isBackingUp ? "Fazendo Backup..." : "Backup Game Attempts"}
-              </Button>
-              <Button
-                onClick={handleRestoreGameAttempts}
-                disabled={isRestoring}
-                variant="secondary"
-                className="flex-1"
-              >
-                {isRestoring ? "Restaurando..." : "Restaurar Game Attempts"}
-              </Button>
-            </div>
-            <p className="text-sm text-muted-foreground mt-2">
-              Use o backup para zerar o ranking do game temporariamente. A restauração recupera todos os dados.
-            </p>
-          </div>
+      <Tabs defaultValue="questions" className="w-full">
+        <TabsList className="grid w-full grid-cols-2">
+          <TabsTrigger value="questions">Edição de Questões</TabsTrigger>
+          <TabsTrigger value="statistics">Estatísticas</TabsTrigger>
+        </TabsList>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="md:col-span-2">
-              <Card className="p-6">
-                {isLoading ? (
-                  <div className="text-center py-20">Carregando...</div>
-                ) : currentQuestion ? (
-                  <QuestionEditor
-                    question={currentQuestion}
-                    onSave={updateQuestion}
-                  />
-                ) : (
-                  <div className="text-center py-20">
-                    Nenhuma questão encontrada para os filtros selecionados.
-                  </div>
-                )}
-              </Card>
+        <TabsContent value="questions" className="space-y-6">
+          {activeTab === 'editor' ? (
+            <>
+              <NavigationBar
+                currentIndex={currentIndex}
+                totalQuestions={filteredQuestions.length}
+                filter={filter}
+                onFilterChange={setFilter}
+                onNavigatePrevious={goToPreviousQuestion}
+                onNavigateNext={goToNextQuestion}
+                onShowAttempts={handleShowAttempts}
+                onNavigateHome={handleNavigateHome}
+              />
+
+              {/* Game Backup Controls */}
+              <div className="p-4 bg-muted rounded-lg">
+                <h3 className="text-lg font-semibold mb-3">Controles de Backup do Game</h3>
+                <div className="flex gap-4">
+                  <Button
+                    onClick={handleBackupGameAttempts}
+                    disabled={isBackingUp}
+                    variant="destructive"
+                    className="flex-1"
+                  >
+                    {isBackingUp ? "Fazendo Backup..." : "Backup Game Attempts"}
+                  </Button>
+                  <Button
+                    onClick={handleRestoreGameAttempts}
+                    disabled={isRestoring}
+                    variant="secondary"
+                    className="flex-1"
+                  >
+                    {isRestoring ? "Restaurando..." : "Restaurar Game Attempts"}
+                  </Button>
+                </div>
+                <p className="text-sm text-muted-foreground mt-2">
+                  Use o backup para zerar o ranking do game temporariamente. A restauração recupera todos os dados.
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="md:col-span-2">
+                  <Card className="p-6">
+                    {isLoading ? (
+                      <div className="text-center py-20">Carregando...</div>
+                    ) : currentQuestion ? (
+                      <QuestionEditor
+                        question={currentQuestion}
+                        onSave={updateQuestion}
+                      />
+                    ) : (
+                      <div className="text-center py-20">
+                        Nenhuma questão encontrada para os filtros selecionados.
+                      </div>
+                    )}
+                  </Card>
+                </div>
+                
+                <div>
+                  <GlobalStatsCounter />
+                </div>
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="flex justify-between items-center">
+                <h2 className="text-2xl font-bold">Tentativas de Simulado</h2>
+                <Button
+                  variant="outline"
+                  onClick={() => setActiveTab('editor')}
+                >
+                  Voltar para editor
+                </Button>
+              </div>
+              
+              <AttemptsList 
+                attempts={attempts} 
+                loading={loading} 
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={handlePageChange}
+                onRefresh={() => loadAttempts(currentPage)}
+              />
+            </>
+          )}
+        </TabsContent>
+
+        <TabsContent value="statistics" className="space-y-6">
+          <div className="grid gap-6">
+            <div>
+              <h2 className="text-2xl font-bold mb-4">Estatísticas do Simulado</h2>
+              <GlobalStatsCounter />
             </div>
             
             <div>
-              <GlobalStatsCounter />
+              <h2 className="text-2xl font-bold mb-4">Estatísticas do Game</h2>
+              <GameStatsCounter />
+            </div>
+            
+            <div>
+              <h2 className="text-2xl font-bold mb-4">Tendências de Avaliação</h2>
+              <AssessmentTrendsChart />
             </div>
           </div>
-        </>
-      ) : (
-        <>
-          <div className="flex justify-between items-center mb-6">
-            <h1 className="text-2xl font-bold">Tentativas de Simulado</h1>
-            <Button
-              variant="outline"
-              onClick={() => setActiveTab('editor')}
-            >
-              Voltar para editor
-            </Button>
-          </div>
-          
-          <AttemptsList 
-            attempts={attempts} 
-            loading={loading} 
-            currentPage={currentPage}
-            totalPages={totalPages}
-            onPageChange={handlePageChange}
-            onRefresh={() => loadAttempts(currentPage)}
-          />
-        </>
-      )}
-      <AssessmentTrendsChart />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };
