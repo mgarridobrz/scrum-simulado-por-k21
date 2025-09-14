@@ -11,6 +11,8 @@ import GlobalStatsCounter from '@/components/question-validation/GlobalStatsCoun
 import AssessmentTrendsChart from "@/components/question-validation/AssessmentTrendsChart";
 import { getTrackedQuizAttempts } from '@/utils/quizTracking';
 import type { QuizAttempt } from '@/data/types';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
 
 const QuestionValidation = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -19,7 +21,10 @@ const QuestionValidation = () => {
   const [loading, setLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [isBackingUp, setIsBackingUp] = useState(false);
+  const [isRestoring, setIsRestoring] = useState(false);
   const navigate = useNavigate();
+  const { toast } = useToast();
   
   const { 
     currentQuestion, 
@@ -73,6 +78,62 @@ const QuestionValidation = () => {
     navigate('/');
   };
 
+  const handleBackupGameAttempts = async () => {
+    setIsBackingUp(true);
+    try {
+      const { data, error } = await supabase.rpc('backup_all_game_attempts');
+      
+      if (error) throw error;
+      
+      const result = data[0];
+      if (result.error_message) {
+        throw new Error(result.error_message);
+      }
+      
+      toast({
+        title: "Backup realizado com sucesso",
+        description: `${result.moved_count} tentativas foram movidas para backup`,
+      });
+    } catch (error) {
+      console.error('Error backing up game attempts:', error);
+      toast({
+        variant: "destructive",
+        title: "Erro ao fazer backup",
+        description: error.message || "Ocorreu um erro inesperado",
+      });
+    } finally {
+      setIsBackingUp(false);
+    }
+  };
+
+  const handleRestoreGameAttempts = async () => {
+    setIsRestoring(true);
+    try {
+      const { data, error } = await supabase.rpc('restore_all_game_attempts');
+      
+      if (error) throw error;
+      
+      const result = data[0];
+      if (result.error_message) {
+        throw new Error(result.error_message);
+      }
+      
+      toast({
+        title: "Restauração realizada com sucesso",
+        description: `${result.restored_count} tentativas foram restauradas`,
+      });
+    } catch (error) {
+      console.error('Error restoring game attempts:', error);
+      toast({
+        variant: "destructive",
+        title: "Erro ao restaurar",
+        description: error.message || "Ocorreu um erro inesperado",
+      });
+    } finally {
+      setIsRestoring(false);
+    }
+  };
+
   const handleAuthSuccess = () => {
     setIsAuthenticated(true);
     localStorage.setItem('validationPageAuthenticated', 'true');
@@ -96,6 +157,32 @@ const QuestionValidation = () => {
             onShowAttempts={handleShowAttempts}
             onNavigateHome={handleNavigateHome}
           />
+
+          {/* Game Backup Controls */}
+          <div className="mb-6 p-4 bg-muted rounded-lg">
+            <h3 className="text-lg font-semibold mb-3">Controles de Backup do Game</h3>
+            <div className="flex gap-4">
+              <Button
+                onClick={handleBackupGameAttempts}
+                disabled={isBackingUp}
+                variant="destructive"
+                className="flex-1"
+              >
+                {isBackingUp ? "Fazendo Backup..." : "Backup Game Attempts"}
+              </Button>
+              <Button
+                onClick={handleRestoreGameAttempts}
+                disabled={isRestoring}
+                variant="secondary"
+                className="flex-1"
+              >
+                {isRestoring ? "Restaurando..." : "Restaurar Game Attempts"}
+              </Button>
+            </div>
+            <p className="text-sm text-muted-foreground mt-2">
+              Use o backup para zerar o ranking do game temporariamente. A restauração recupera todos os dados.
+            </p>
+          </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="md:col-span-2">

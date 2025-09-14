@@ -7,7 +7,7 @@ export type Json =
   | Json[]
 
 export type Database = {
-  // Allows to automatically instanciate createClient with right options
+  // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
     PostgrestVersion: "12.2.3 (519615d)"
@@ -49,6 +49,66 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      action_suggestions: {
+        Row: {
+          context_id: string
+          context_type: string
+          created_at: string
+          description: string
+          id: string
+          is_used: boolean
+          title: string
+          updated_at: string
+          user_id: string
+          workspace_id: string
+        }
+        Insert: {
+          context_id: string
+          context_type: string
+          created_at?: string
+          description: string
+          id?: string
+          is_used?: boolean
+          title: string
+          updated_at?: string
+          user_id: string
+          workspace_id: string
+        }
+        Update: {
+          context_id?: string
+          context_type?: string
+          created_at?: string
+          description?: string
+          id?: string
+          is_used?: boolean
+          title?: string
+          updated_at?: string
+          user_id?: string
+          workspace_id?: string
+        }
+        Relationships: []
+      }
+      action_test_cards: {
+        Row: {
+          action_id: string
+          created_at: string
+          id: string
+          test_card_id: string
+        }
+        Insert: {
+          action_id: string
+          created_at?: string
+          id?: string
+          test_card_id: string
+        }
+        Update: {
+          action_id?: string
+          created_at?: string
+          id?: string
+          test_card_id?: string
+        }
+        Relationships: []
       }
       action_users: {
         Row: {
@@ -99,9 +159,9 @@ export type Database = {
           created_at: string | null
           created_by: string
           description: string | null
+          due_date: string | null
           id: string
           status: Database["public"]["Enums"]["action_status"] | null
-          test_card_id: string | null
           title: string
           updated_at: string | null
           workspace_id: string
@@ -111,9 +171,9 @@ export type Database = {
           created_at?: string | null
           created_by: string
           description?: string | null
+          due_date?: string | null
           id?: string
           status?: Database["public"]["Enums"]["action_status"] | null
-          test_card_id?: string | null
           title: string
           updated_at?: string | null
           workspace_id: string
@@ -123,9 +183,9 @@ export type Database = {
           created_at?: string | null
           created_by?: string
           description?: string | null
+          due_date?: string | null
           id?: string
           status?: Database["public"]["Enums"]["action_status"] | null
-          test_card_id?: string | null
           title?: string
           updated_at?: string | null
           workspace_id?: string
@@ -146,13 +206,6 @@ export type Database = {
             referencedColumns: ["user_id"]
           },
           {
-            foreignKeyName: "actions_test_card_id_fkey"
-            columns: ["test_card_id"]
-            isOneToOne: false
-            referencedRelation: "test_cards"
-            referencedColumns: ["id"]
-          },
-          {
             foreignKeyName: "actions_workspace_id_fkey"
             columns: ["workspace_id"]
             isOneToOne: false
@@ -160,6 +213,233 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      ai_function_usage: {
+        Row: {
+          created_at: string
+          error_message: string | null
+          execution_time_ms: number | null
+          function_name: string
+          id: string
+          request_data: Json | null
+          response_data: Json | null
+          status: string
+          tokens_used: number | null
+          updated_at: string
+          user_id: string | null
+          workspace_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          error_message?: string | null
+          execution_time_ms?: number | null
+          function_name: string
+          id?: string
+          request_data?: Json | null
+          response_data?: Json | null
+          status: string
+          tokens_used?: number | null
+          updated_at?: string
+          user_id?: string | null
+          workspace_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          error_message?: string | null
+          execution_time_ms?: number | null
+          function_name?: string
+          id?: string
+          request_data?: Json | null
+          response_data?: Json | null
+          status?: string
+          tokens_used?: number | null
+          updated_at?: string
+          user_id?: string | null
+          workspace_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_function_usage_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      battle_areas: {
+        Row: {
+          color: string
+          created_at: string
+          created_by: string | null
+          description: string | null
+          id: string
+          map_id: string
+          name: string
+          updated_at: string
+        }
+        Insert: {
+          color?: string
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          map_id: string
+          name: string
+          updated_at?: string
+        }
+        Update: {
+          color?: string
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          map_id?: string
+          name?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      battle_maps: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          description: string | null
+          id: string
+          is_public: boolean | null
+          name: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          is_public?: boolean | null
+          name: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          is_public?: boolean | null
+          name?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      battle_relationships: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          hierarchy_type: Database["public"]["Enums"]["hierarchy_type"] | null
+          id: string
+          influence_type: Database["public"]["Enums"]["influence_type"] | null
+          map_id: string | null
+          notes: string | null
+          relationship_type: Database["public"]["Enums"]["relationship_type"]
+          source_id: string
+          strength: number | null
+          target_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          hierarchy_type?: Database["public"]["Enums"]["hierarchy_type"] | null
+          id?: string
+          influence_type?: Database["public"]["Enums"]["influence_type"] | null
+          map_id?: string | null
+          notes?: string | null
+          relationship_type?: Database["public"]["Enums"]["relationship_type"]
+          source_id: string
+          strength?: number | null
+          target_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          hierarchy_type?: Database["public"]["Enums"]["hierarchy_type"] | null
+          id?: string
+          influence_type?: Database["public"]["Enums"]["influence_type"] | null
+          map_id?: string | null
+          notes?: string | null
+          relationship_type?: Database["public"]["Enums"]["relationship_type"]
+          source_id?: string
+          strength?: number | null
+          target_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "battle_relationships_source_id_fkey"
+            columns: ["source_id"]
+            isOneToOne: false
+            referencedRelation: "battle_stakeholders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "battle_relationships_target_id_fkey"
+            columns: ["target_id"]
+            isOneToOne: false
+            referencedRelation: "battle_stakeholders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      battle_stakeholders: {
+        Row: {
+          area_id: string | null
+          color: string | null
+          created_at: string
+          created_by: string | null
+          description: string | null
+          id: string
+          influence_level: Database["public"]["Enums"]["stakeholder_influence_level"]
+          map_id: string | null
+          name: string
+          title: string | null
+          updated_at: string
+          workspace_id: string | null
+          x_position: number | null
+          y_position: number | null
+        }
+        Insert: {
+          area_id?: string | null
+          color?: string | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          influence_level?: Database["public"]["Enums"]["stakeholder_influence_level"]
+          map_id?: string | null
+          name: string
+          title?: string | null
+          updated_at?: string
+          workspace_id?: string | null
+          x_position?: number | null
+          y_position?: number | null
+        }
+        Update: {
+          area_id?: string | null
+          color?: string | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          influence_level?: Database["public"]["Enums"]["stakeholder_influence_level"]
+          map_id?: string | null
+          name?: string
+          title?: string | null
+          updated_at?: string
+          workspace_id?: string | null
+          x_position?: number | null
+          y_position?: number | null
+        }
+        Relationships: []
       }
       broadcast_user_views: {
         Row: {
@@ -420,6 +700,87 @@ export type Database = {
         }
         Relationships: []
       }
+      game_attempts_backup: {
+        Row: {
+          backed_up_at: string
+          backed_up_by: string | null
+          category: string
+          correct_answers: number
+          created_at: string
+          email: string | null
+          final_score_ms: number
+          id: string
+          language: string
+          name: string
+          original_id: string
+          penalty_time_ms: number
+          question_count: number
+          questions_data: Json
+          total_time_ms: number
+          updated_at: string
+        }
+        Insert: {
+          backed_up_at?: string
+          backed_up_by?: string | null
+          category: string
+          correct_answers?: number
+          created_at?: string
+          email?: string | null
+          final_score_ms: number
+          id?: string
+          language?: string
+          name: string
+          original_id: string
+          penalty_time_ms?: number
+          question_count: number
+          questions_data: Json
+          total_time_ms: number
+          updated_at?: string
+        }
+        Update: {
+          backed_up_at?: string
+          backed_up_by?: string | null
+          category?: string
+          correct_answers?: number
+          created_at?: string
+          email?: string | null
+          final_score_ms?: number
+          id?: string
+          language?: string
+          name?: string
+          original_id?: string
+          penalty_time_ms?: number
+          question_count?: number
+          questions_data?: Json
+          total_time_ms?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      global_settings: {
+        Row: {
+          created_at: string | null
+          id: string
+          setting_key: string
+          setting_value: boolean
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          setting_key: string
+          setting_value?: boolean
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          setting_key?: string
+          setting_value?: boolean
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       hawk_user_status: {
         Row: {
           created_at: string
@@ -579,6 +940,7 @@ export type Database = {
           description: string | null
           id: string
           is_archived: boolean
+          star_rating: number
           title: string
           updated_at: string
           workspace_id: string
@@ -589,6 +951,7 @@ export type Database = {
           description?: string | null
           id?: string
           is_archived?: boolean
+          star_rating?: number
           title: string
           updated_at?: string
           workspace_id: string
@@ -599,6 +962,7 @@ export type Database = {
           description?: string | null
           id?: string
           is_archived?: boolean
+          star_rating?: number
           title?: string
           updated_at?: string
           workspace_id?: string
@@ -877,6 +1241,7 @@ export type Database = {
           from_user_id: string
           gif_url: string | null
           id: string
+          important_delivery: boolean
           message: string
           organization_id: string
           points: number
@@ -888,6 +1253,7 @@ export type Database = {
           from_user_id: string
           gif_url?: string | null
           id?: string
+          important_delivery?: boolean
           message: string
           organization_id: string
           points?: number
@@ -899,6 +1265,7 @@ export type Database = {
           from_user_id?: string
           gif_url?: string | null
           id?: string
+          important_delivery?: boolean
           message?: string
           organization_id?: string
           points?: number
@@ -940,6 +1307,9 @@ export type Database = {
           organization_id: string
           point_value_brl: number | null
           recognized_values: string[] | null
+          telegram_bot_name: string | null
+          telegram_bot_token: string | null
+          telegram_channel_id: string | null
           updated_at: string
         }
         Insert: {
@@ -952,6 +1322,9 @@ export type Database = {
           organization_id: string
           point_value_brl?: number | null
           recognized_values?: string[] | null
+          telegram_bot_name?: string | null
+          telegram_bot_token?: string | null
+          telegram_channel_id?: string | null
           updated_at?: string
         }
         Update: {
@@ -964,6 +1337,9 @@ export type Database = {
           organization_id?: string
           point_value_brl?: number | null
           recognized_values?: string[] | null
+          telegram_bot_name?: string | null
+          telegram_bot_token?: string | null
+          telegram_channel_id?: string | null
           updated_at?: string
         }
         Relationships: [
@@ -1153,6 +1529,7 @@ export type Database = {
           description: string
           id: string
           initiative_id: string | null
+          tags: string[] | null
           test_card_id: string | null
           title: string
           updated_at: string
@@ -1164,6 +1541,7 @@ export type Database = {
           description: string
           id?: string
           initiative_id?: string | null
+          tags?: string[] | null
           test_card_id?: string | null
           title: string
           updated_at?: string
@@ -1175,6 +1553,7 @@ export type Database = {
           description?: string
           id?: string
           initiative_id?: string | null
+          tags?: string[] | null
           test_card_id?: string | null
           title?: string
           updated_at?: string
@@ -1204,36 +1583,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
-      }
-      magic_link_tokens: {
-        Row: {
-          created_at: string
-          created_by: string | null
-          expires_at: string
-          id: string
-          token: string
-          used: boolean
-          user_id: string
-        }
-        Insert: {
-          created_at?: string
-          created_by?: string | null
-          expires_at?: string
-          id?: string
-          token: string
-          used?: boolean
-          user_id: string
-        }
-        Update: {
-          created_at?: string
-          created_by?: string | null
-          expires_at?: string
-          id?: string
-          token?: string
-          used?: boolean
-          user_id?: string
-        }
-        Relationships: []
       }
       message_mentions: {
         Row: {
@@ -1322,6 +1671,7 @@ export type Database = {
           created_at: string
           id: string
           initiative_id: string | null
+          message_type: string | null
           test_card_id: string | null
           updated_at: string
           user_id: string
@@ -1332,6 +1682,7 @@ export type Database = {
           created_at?: string
           id?: string
           initiative_id?: string | null
+          message_type?: string | null
           test_card_id?: string | null
           updated_at?: string
           user_id: string
@@ -1342,6 +1693,7 @@ export type Database = {
           created_at?: string
           id?: string
           initiative_id?: string | null
+          message_type?: string | null
           test_card_id?: string | null
           updated_at?: string
           user_id?: string
@@ -1430,6 +1782,7 @@ export type Database = {
           end_date: string
           frequency: Database["public"]["Enums"]["okr_frequency"]
           id: string
+          is_archived: boolean
           progress: number | null
           responsible_user_id: string | null
           start_date: string
@@ -1446,6 +1799,7 @@ export type Database = {
           end_date: string
           frequency?: Database["public"]["Enums"]["okr_frequency"]
           id?: string
+          is_archived?: boolean
           progress?: number | null
           responsible_user_id?: string | null
           start_date: string
@@ -1462,6 +1816,7 @@ export type Database = {
           end_date?: string
           frequency?: Database["public"]["Enums"]["okr_frequency"]
           id?: string
+          is_archived?: boolean
           progress?: number | null
           responsible_user_id?: string | null
           start_date?: string
@@ -1474,26 +1829,32 @@ export type Database = {
       }
       organizations: {
         Row: {
+          account_type: Database["public"]["Enums"]["account_type"]
           created_at: string
           created_by: string
           description: string | null
           id: string
+          joinkey_creation_enabled: boolean
           name: string
           updated_at: string
         }
         Insert: {
+          account_type?: Database["public"]["Enums"]["account_type"]
           created_at?: string
           created_by: string
           description?: string | null
           id?: string
+          joinkey_creation_enabled?: boolean
           name: string
           updated_at?: string
         }
         Update: {
+          account_type?: Database["public"]["Enums"]["account_type"]
           created_at?: string
           created_by?: string
           description?: string | null
           id?: string
+          joinkey_creation_enabled?: boolean
           name?: string
           updated_at?: string
         }
@@ -1523,10 +1884,10 @@ export type Database = {
           id: string
           is_active: boolean
           is_admin: boolean | null
+          last_accessed_workspace_id: string | null
           name: string
           organization_id: string | null
           preferred_language: string
-          primary_workspace_id: string | null
           status: string
           updated_at: string | null
         }
@@ -1538,10 +1899,10 @@ export type Database = {
           id: string
           is_active?: boolean
           is_admin?: boolean | null
+          last_accessed_workspace_id?: string | null
           name: string
           organization_id?: string | null
           preferred_language?: string
-          primary_workspace_id?: string | null
           status?: string
           updated_at?: string | null
         }
@@ -1553,10 +1914,10 @@ export type Database = {
           id?: string
           is_active?: boolean
           is_admin?: boolean | null
+          last_accessed_workspace_id?: string | null
           name?: string
           organization_id?: string | null
           preferred_language?: string
-          primary_workspace_id?: string | null
           status?: string
           updated_at?: string | null
         }
@@ -1576,18 +1937,63 @@ export type Database = {
             referencedColumns: ["user_id"]
           },
           {
+            foreignKeyName: "profiles_last_accessed_workspace_id_fkey"
+            columns: ["last_accessed_workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "profiles_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
+        ]
+      }
+      pulse_user_status: {
+        Row: {
+          created_at: string
+          id: string
+          is_admin: boolean
+          organization_id: string
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_admin?: boolean
+          organization_id: string
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_admin?: boolean
+          organization_id?: string
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
           {
-            foreignKeyName: "profiles_primary_workspace_id_fkey"
-            columns: ["primary_workspace_id"]
+            foreignKeyName: "pulse_user_status_user_id_fkey"
+            columns: ["user_id"]
             isOneToOne: false
-            referencedRelation: "workspaces"
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pulse_user_status_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "user_engagement_scores"
+            referencedColumns: ["user_id"]
           },
         ]
       }
@@ -1761,6 +2167,85 @@ export type Database = {
         }
         Relationships: []
       }
+      security_audit_log: {
+        Row: {
+          action: string | null
+          created_at: string | null
+          details: Json | null
+          id: string
+          user_email: string | null
+          user_id: string | null
+        }
+        Insert: {
+          action?: string | null
+          created_at?: string | null
+          details?: Json | null
+          id?: string
+          user_email?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          action?: string | null
+          created_at?: string | null
+          details?: Json | null
+          id?: string
+          user_email?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      subscriptions: {
+        Row: {
+          created_at: string | null
+          entity_id: string
+          entity_type: string
+          id: string
+          updated_at: string | null
+          user_id: string
+          workspace_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          entity_id: string
+          entity_type: string
+          id?: string
+          updated_at?: string | null
+          user_id: string
+          workspace_id: string
+        }
+        Update: {
+          created_at?: string | null
+          entity_id?: string
+          entity_type?: string
+          id?: string
+          updated_at?: string | null
+          user_id?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "subscriptions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "subscriptions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "user_engagement_scores"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "subscriptions_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       test_card_users: {
         Row: {
           created_at: string | null
@@ -1792,6 +2277,7 @@ export type Database = {
           is_archived: boolean
           is_completed: boolean
           metric: string
+          star_rating: number
           test_description: string
           title: string
           updated_at: string | null
@@ -1806,6 +2292,7 @@ export type Database = {
           is_archived?: boolean
           is_completed?: boolean
           metric: string
+          star_rating?: number
           test_description: string
           title: string
           updated_at?: string | null
@@ -1820,6 +2307,7 @@ export type Database = {
           is_archived?: boolean
           is_completed?: boolean
           metric?: string
+          star_rating?: number
           test_description?: string
           title?: string
           updated_at?: string | null
@@ -1842,64 +2330,6 @@ export type Database = {
           },
           {
             foreignKeyName: "test_cards_workspace_id_fkey"
-            columns: ["workspace_id"]
-            isOneToOne: false
-            referencedRelation: "workspaces"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      user_invitations: {
-        Row: {
-          accepted_at: string | null
-          created_at: string
-          email: string
-          expires_at: string
-          id: string
-          invited_by: string
-          status: string
-          token: string
-          workspace_id: string
-        }
-        Insert: {
-          accepted_at?: string | null
-          created_at?: string
-          email: string
-          expires_at: string
-          id?: string
-          invited_by: string
-          status?: string
-          token: string
-          workspace_id: string
-        }
-        Update: {
-          accepted_at?: string | null
-          created_at?: string
-          email?: string
-          expires_at?: string
-          id?: string
-          invited_by?: string
-          status?: string
-          token?: string
-          workspace_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "user_invitations_invited_by_fkey"
-            columns: ["invited_by"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "user_invitations_invited_by_fkey"
-            columns: ["invited_by"]
-            isOneToOne: false
-            referencedRelation: "user_engagement_scores"
-            referencedColumns: ["user_id"]
-          },
-          {
-            foreignKeyName: "user_invitations_workspace_id_fkey"
             columns: ["workspace_id"]
             isOneToOne: false
             referencedRelation: "workspaces"
@@ -2055,6 +2485,7 @@ export type Database = {
           id: string
           initiatives_enabled: boolean | null
           is_active: boolean
+          join_key: string
           name: string
           okr_enabled: boolean | null
           organization_id: string | null
@@ -2068,6 +2499,7 @@ export type Database = {
           id?: string
           initiatives_enabled?: boolean | null
           is_active?: boolean
+          join_key: string
           name: string
           okr_enabled?: boolean | null
           organization_id?: string | null
@@ -2081,6 +2513,7 @@ export type Database = {
           id?: string
           initiatives_enabled?: boolean | null
           is_active?: boolean
+          join_key?: string
           name?: string
           okr_enabled?: boolean | null
           organization_id?: string | null
@@ -2140,15 +2573,6 @@ export type Database = {
       }
     }
     Functions: {
-      accept_user_invitation: {
-        Args: { p_token: string; p_user_id: string }
-        Returns: {
-          success: boolean
-          workspace_id: string
-          workspace_name: string
-          error_message: string
-        }[]
-      }
       analyze_quiz_distribution: {
         Args: Record<PropertyKey, never>
         Returns: {
@@ -2163,9 +2587,27 @@ export type Database = {
       audit_rls_status: {
         Args: Record<PropertyKey, never>
         Returns: {
-          table_name: string
-          rls_enabled: boolean
           policy_count: number
+          rls_enabled: boolean
+          table_name: string
+        }[]
+      }
+      audit_user_privileges: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          created_at: string
+          email: string
+          is_admin: boolean
+          organization_id: string
+          user_id: string
+          workspace_admin_count: number
+        }[]
+      }
+      backup_all_game_attempts: {
+        Args: { backup_user_id?: string }
+        Returns: {
+          error_message: string
+          moved_count: number
         }[]
       }
       backup_quiz_questions: {
@@ -2174,15 +2616,15 @@ export type Database = {
       }
       calculate_user_engagement_bonus: {
         Args: {
-          p_user_id: string
-          p_organization_id: string
-          p_month_start?: string
           p_month_end?: string
+          p_month_start?: string
+          p_organization_id: string
+          p_user_id: string
         }
         Returns: {
-          total_recognitions: number
-          distinct_days: number
           bonus_percentage: number
+          distinct_days: number
+          total_recognitions: number
         }[]
       }
       can_deactivate_user: {
@@ -2194,7 +2636,7 @@ export type Database = {
         Returns: boolean
       }
       can_manage_broadcasts_in_workspace: {
-        Args: { p_workspace_id: string; p_user_id?: string }
+        Args: { p_user_id?: string; p_workspace_id: string }
         Returns: boolean
       }
       can_reset_monthly_points: {
@@ -2205,20 +2647,56 @@ export type Database = {
         Args: { check_user_id: string }
         Returns: boolean
       }
-      cleanup_expired_magic_tokens: {
-        Args: Record<PropertyKey, never>
-        Returns: number
+      check_user_addition_limit: {
+        Args: { org_id: string }
+        Returns: boolean
+      }
+      check_workspace_creation_limit: {
+        Args: { org_id: string }
+        Returns: boolean
+      }
+      cleanup_kudos_before_date: {
+        Args: { cutoff_date: string }
+        Returns: {
+          points_restored_summary: Json
+          total_kudos_removed: number
+          total_users_affected: number
+        }[]
+      }
+      create_kudos_with_recipients: {
+        Args: {
+          p_from_user_id: string
+          p_gif_url?: string
+          p_important_delivery?: boolean
+          p_message: string
+          p_organization_id: string
+          p_points: number
+          p_recipient_ids: string[]
+          p_tags: string[]
+        }
+        Returns: Json
+      }
+      create_organization_user_transaction: {
+        Args: {
+          org_description: string
+          org_name: string
+          user_email: string
+          user_id: string
+          workspace_description: string
+          workspace_name: string
+        }
+        Returns: Json
       }
       distribute_monthly_points: {
         Args: { p_organization_id: string }
         Returns: number
       }
       ensure_user_balance: {
-        Args: { p_user_id: string; p_organization_id: string }
+        Args: { p_organization_id: string; p_user_id: string }
         Returns: undefined
       }
-      generate_magic_link_token: {
-        Args: { target_user_id: string; created_by_user_id?: string }
+      generate_join_key: {
+        Args: Record<PropertyKey, never>
         Returns: string
       }
       get_action_workspace: {
@@ -2228,12 +2706,12 @@ export type Database = {
       get_active_broadcasts_for_user: {
         Args: { p_user_id: string; p_workspace_id: string }
         Returns: {
-          id: string
-          title: string
-          message: string
           broadcast_type: string
-          priority: number
           created_at: string
+          id: string
+          message: string
+          priority: number
+          title: string
         }[]
       }
       get_active_users_count: {
@@ -2243,14 +2721,14 @@ export type Database = {
       get_all_user_activity: {
         Args: Record<PropertyKey, never>
         Returns: {
+          activity_context: string
+          last_visit: string
+          page_path: string
+          user_email: string
           user_id: string
           user_name: string
-          user_email: string
           workspace_id: string
           workspace_name: string
-          last_visit: string
-          activity_context: string
-          page_path: string
         }[]
       }
       get_broadcast_view_stats: {
@@ -2265,35 +2743,30 @@ export type Database = {
         Returns: string
       }
       get_error_statistics: {
-        Args: { p_workspace_id?: string; p_hours_back?: number }
+        Args: { p_hours_back?: number; p_workspace_id?: string }
         Returns: {
-          total_errors: number
-          unresolved_errors: number
           critical_errors: number
+          error_trend_percentage: number
           high_severity_errors: number
           most_common_category: string
           most_common_feature: string
-          error_trend_percentage: number
-        }[]
-      }
-      get_invitation_details: {
-        Args: { p_token: string }
-        Returns: {
-          valid: boolean
-          workspace_name: string
-          workspace_id: string
-          invited_email: string
-          inviter_name: string
-          expires_at: string
-          error_message: string
+          total_errors: number
+          unresolved_errors: number
         }[]
       }
       get_last_reset_info: {
         Args: { p_organization_id: string }
         Returns: {
           last_reset_date: string
-          total_users_reset: number
           monthly_points: number
+          total_users_reset: number
+        }[]
+      }
+      get_organization_limits: {
+        Args: { org_id: string }
+        Returns: {
+          max_users: number
+          max_workspaces: number
         }[]
       }
       get_organization_settings: {
@@ -2303,16 +2776,44 @@ export type Database = {
           recognized_values: string[]
         }[]
       }
+      get_organization_usage_stats: {
+        Args: { org_id: string }
+        Returns: {
+          account_type: string
+          can_add_user: boolean
+          can_create_workspace: boolean
+          current_users: number
+          current_workspaces: number
+          max_users: number
+          max_workspaces: number
+        }[]
+      }
+      get_recognitions_for_analysis: {
+        Args: {
+          p_end_date: string
+          p_organization_id: string
+          p_start_date: string
+        }
+        Returns: {
+          created_at: string
+          gif_url: string
+          message: string
+          points: number
+          recipients: string[]
+          sender_name: string
+          tags: string[]
+        }[]
+      }
       get_system_activity_stats: {
         Args: Record<PropertyKey, never>
         Returns: {
-          total_workspaces: number
-          total_users: number
-          users_with_activity: number
-          recent_activity_1h: number
-          workspaces_with_activity: number
-          oldest_activity: string
           newest_activity: string
+          oldest_activity: string
+          recent_activity_1h: number
+          total_users: number
+          total_workspaces: number
+          users_with_activity: number
+          workspaces_with_activity: number
         }[]
       }
       get_test_card_workspace: {
@@ -2322,45 +2823,45 @@ export type Database = {
       get_top_performers_for_quarter: {
         Args: { quarter: string; quiz_size: number }
         Returns: {
+          completion_time_seconds: number
           name: string
           score: number
-          completion_time_seconds: number
         }[]
       }
       get_unread_mentions_count: {
-        Args: { p_workspace_id: string; p_user_id?: string }
+        Args: { p_user_id?: string; p_workspace_id: string }
         Returns: number
       }
       get_unread_message_count: {
-        Args: { p_workspace_id: string; p_user_id?: string }
+        Args: { p_user_id?: string; p_workspace_id: string }
         Returns: number
       }
       get_user_engagement_ranking: {
-        Args: { p_workspace_id: string; p_limit?: number }
+        Args: { p_limit?: number; p_workspace_id: string }
         Returns: {
-          user_id: string
-          name: string
-          email: string
-          total_score: number
-          engagement_level: string
-          total_actions: number
           completed_actions: number
-          total_learnings: number
-          total_impediments: number
-          total_test_cards: number
+          email: string
+          engagement_level: string
           last_activity: string
+          name: string
           rank_position: number
+          total_actions: number
+          total_impediments: number
+          total_learnings: number
+          total_score: number
+          total_test_cards: number
+          user_id: string
         }[]
       }
       get_user_last_activity: {
         Args: { p_workspace_id: string }
         Returns: {
+          activity_context: string
+          last_visit: string
+          page_path: string
+          user_email: string
           user_id: string
           user_name: string
-          user_email: string
-          last_visit: string
-          activity_context: string
-          page_path: string
         }[]
       }
       get_user_organization: {
@@ -2368,7 +2869,7 @@ export type Database = {
         Returns: string
       }
       get_user_workspace_role: {
-        Args: { workspace_id: string; user_id: string }
+        Args: { user_id: string; workspace_id: string }
         Returns: Database["public"]["Enums"]["workspace_role"]
       }
       get_user_workspaces: {
@@ -2381,9 +2882,9 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: {
           category: string
-          questions_processed: number
           changes_made: number
           distribution_summary: Json
+          questions_processed: number
         }[]
       }
       is_admin: {
@@ -2402,6 +2903,10 @@ export type Database = {
         Args: { org_id: string; user_id?: string }
         Returns: boolean
       }
+      is_pulse_admin_simple: {
+        Args: { org_id: string; user_id?: string }
+        Returns: boolean
+      }
       is_system_admin_simple: {
         Args: { user_id?: string }
         Returns: boolean
@@ -2411,28 +2916,28 @@ export type Database = {
         Returns: boolean
       }
       is_workspace_admin_simple: {
-        Args: { workspace_id: string; user_id?: string }
+        Args: { user_id?: string; workspace_id: string }
         Returns: boolean
       }
       is_workspace_member_simple: {
-        Args: { workspace_id: string; user_id?: string }
+        Args: { user_id?: string; workspace_id: string }
         Returns: boolean
       }
       log_workspace_event: {
         Args: {
-          p_workspace_id: string
-          p_event_type: string
           p_entity_id: string
-          p_entity_type: string
           p_entity_title: string
-          p_user_id?: string
-          p_test_card_id?: string
+          p_entity_type: string
+          p_event_type: string
           p_metadata?: Json
+          p_test_card_id?: string
+          p_user_id?: string
+          p_workspace_id: string
         }
         Returns: undefined
       }
       mark_all_messages_read: {
-        Args: { p_workspace_id: string; p_user_id?: string }
+        Args: { p_user_id?: string; p_workspace_id: string }
         Returns: undefined
       }
       mark_broadcast_as_viewed: {
@@ -2443,12 +2948,51 @@ export type Database = {
         }
         Returns: boolean
       }
+      notify_subscribers: {
+        Args: {
+          p_action_title: string
+          p_actor_user_id: string
+          p_entity_id: string
+          p_entity_type: string
+          p_event_type: string
+          p_workspace_id: string
+        }
+        Returns: undefined
+      }
+      notify_subscribers_for_action_deletion: {
+        Args: {
+          p_action_id: string
+          p_action_title: string
+          p_actor_user_id: string
+          p_workspace_id: string
+        }
+        Returns: undefined
+      }
       rebalance_quiz_answers: {
         Args: Record<PropertyKey, never>
         Returns: {
           category: string
-          questions_processed: number
           changes_made: number
+          questions_processed: number
+        }[]
+      }
+      reconcile_user_monthly_balance: {
+        Args: { p_organization_id: string; p_user_id?: string }
+        Returns: {
+          after_available: number
+          after_given: number
+          before_available: number
+          before_given: number
+          calculated_given: number
+          delta_available: number
+          user_id: string
+        }[]
+      }
+      restore_all_game_attempts: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          error_message: string
+          restored_count: number
         }[]
       }
       restore_quiz_questions_from_backup: {
@@ -2457,14 +3001,14 @@ export type Database = {
       }
       safe_track_activity: {
         Args: {
-          p_user_id: string
-          p_workspace_id: string
           p_activity_context?: string
           p_page_path?: string
+          p_user_id: string
+          p_workspace_id: string
         }
         Returns: {
-          success: boolean
           error_message: string
+          success: boolean
           validation_details: Json
         }[]
       }
@@ -2479,14 +3023,14 @@ export type Database = {
       update_user_points_on_kudos: {
         Args: {
           p_from_user_id: string
-          p_to_user_id: string
-          p_points: number
           p_organization_id: string
+          p_points: number
+          p_to_user_id: string
         }
         Returns: undefined
       }
       user_in_workspace: {
-        Args: { workspace_id: string; user_id: string }
+        Args: { user_id: string; workspace_id: string }
         Returns: boolean
       }
       user_in_workspace_rls: {
@@ -2494,7 +3038,7 @@ export type Database = {
         Returns: boolean
       }
       user_in_workspace_safe: {
-        Args: { workspace_id: string; user_id?: string }
+        Args: { user_id?: string; workspace_id: string }
         Returns: boolean
       }
       user_is_system_admin: {
@@ -2502,30 +3046,26 @@ export type Database = {
         Returns: boolean
       }
       user_is_workspace_admin: {
-        Args: { workspace_id: string; user_id?: string }
+        Args: { user_id?: string; workspace_id: string }
         Returns: boolean
       }
       validate_activity_tracking_permissions: {
         Args: { p_user_id: string; p_workspace_id: string }
         Returns: {
           can_track: boolean
-          user_exists: boolean
-          workspace_exists: boolean
-          is_member: boolean
-          user_status: string
           error_message: string
+          is_member: boolean
+          user_exists: boolean
+          user_status: string
+          workspace_exists: boolean
         }[]
-      }
-      validate_magic_link_token: {
-        Args: { token_value: string }
-        Returns: string
       }
       validate_permission_hierarchy: {
         Args: { test_workspace_id: string }
         Returns: {
-          test_name: string
-          result: boolean
           details: string
+          result: boolean
+          test_name: string
         }[]
       }
       validate_restricted_access: {
@@ -2534,6 +3074,7 @@ export type Database = {
       }
     }
     Enums: {
+      account_type: "free" | "pro"
       action_status: "todo" | "doing" | "done"
       error_category:
         | "api"
@@ -2545,6 +3086,8 @@ export type Database = {
         | "system"
         | "unknown"
       error_severity: "low" | "medium" | "high" | "critical"
+      hierarchy_type: "above" | "equal" | "below"
+      influence_type: "promoter" | "neutral" | "detractor"
       key_result_type:
         | "increase"
         | "reduce"
@@ -2552,6 +3095,8 @@ export type Database = {
         | "maintain_below"
       okr_frequency: "quarterly" | "annual" | "semestral"
       okr_status: "not_started" | "in_progress" | "completed" | "paused"
+      relationship_type: "promoter" | "neutral" | "detractor"
+      stakeholder_influence_level: "high" | "medium" | "low"
       workspace_role: "admin" | "member"
     }
     CompositeTypes: {
@@ -2680,6 +3225,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      account_type: ["free", "pro"],
       action_status: ["todo", "doing", "done"],
       error_category: [
         "api",
@@ -2692,6 +3238,8 @@ export const Constants = {
         "unknown",
       ],
       error_severity: ["low", "medium", "high", "critical"],
+      hierarchy_type: ["above", "equal", "below"],
+      influence_type: ["promoter", "neutral", "detractor"],
       key_result_type: [
         "increase",
         "reduce",
@@ -2700,6 +3248,8 @@ export const Constants = {
       ],
       okr_frequency: ["quarterly", "annual", "semestral"],
       okr_status: ["not_started", "in_progress", "completed", "paused"],
+      relationship_type: ["promoter", "neutral", "detractor"],
+      stakeholder_influence_level: ["high", "medium", "low"],
       workspace_role: ["admin", "member"],
     },
   },
