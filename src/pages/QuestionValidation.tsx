@@ -198,28 +198,20 @@ const QuestionValidation = () => {
                 </p>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div className="md:col-span-2">
-                  <Card className="p-6">
-                    {isLoading ? (
-                      <div className="text-center py-20">Carregando...</div>
-                    ) : currentQuestion ? (
-                      <QuestionEditor
-                        question={currentQuestion}
-                        onSave={updateQuestion}
-                      />
-                    ) : (
-                      <div className="text-center py-20">
-                        Nenhuma questão encontrada para os filtros selecionados.
-                      </div>
-                    )}
-                  </Card>
-                </div>
-                
-                <div>
-                  <GlobalStatsCounter />
-                </div>
-              </div>
+              <Card className="p-6">
+                {isLoading ? (
+                  <div className="text-center py-20">Carregando...</div>
+                ) : currentQuestion ? (
+                  <QuestionEditor
+                    question={currentQuestion}
+                    onSave={updateQuestion}
+                  />
+                ) : (
+                  <div className="text-center py-20">
+                    Nenhuma questão encontrada para os filtros selecionados.
+                  </div>
+                )}
+              </Card>
             </>
           ) : (
             <>
