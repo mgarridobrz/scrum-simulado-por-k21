@@ -757,6 +757,36 @@ export type Database = {
         }
         Relationships: []
       }
+      garridinho_resolve: {
+        Row: {
+          created_at: string
+          id: string
+          persona_name: string | null
+          persona_plan: Json | null
+          problem_description: string | null
+          questions_and_answers: Json | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          persona_name?: string | null
+          persona_plan?: Json | null
+          problem_description?: string | null
+          questions_and_answers?: Json | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          persona_name?: string | null
+          persona_plan?: Json | null
+          problem_description?: string | null
+          questions_and_answers?: Json | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       global_settings: {
         Row: {
           created_at: string | null
