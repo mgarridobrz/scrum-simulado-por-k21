@@ -109,7 +109,11 @@ export type TranslationKey =
   | 'penaltyTime'
   | 'finalScore'
   | 'typeAnswer'
-  | 'typeLetterToAnswer';
+  | 'typeLetterToAnswer'
+  | 'couponTitle'
+  | 'couponDiscount'
+  | 'couponDescription'
+  | 'accessTrainings';
 
 const translations = {
   pt: {
@@ -222,7 +226,11 @@ const translations = {
     penaltyTime: 'Tempo de Penalidade',
     finalScore: 'Pontuação Final',
     typeAnswer: 'Digite a Resposta',
-    typeLetterToAnswer: 'Digite a letra da resposta (A, B, C, D)'
+    typeLetterToAnswer: 'Digite a letra da resposta (A, B, C, D)',
+    couponTitle: 'CUPOM: K21SIMULADO',
+    couponDiscount: '20% via Pix | 15% no Cartão de Crédito',
+    couponDescription: 'Válido para todos os treinamentos ao vivo da K21',
+    accessTrainings: 'Acessar Treinamentos'
   },
   en: {
     certificationQuiz: 'Certification Quiz',
@@ -334,7 +342,11 @@ const translations = {
     penaltyTime: 'Penalty Time',
     finalScore: 'Final Score',
     typeAnswer: 'Type Answer',
-    typeLetterToAnswer: 'Type the letter of the answer (A, B, C, D)'
+    typeLetterToAnswer: 'Type the letter of the answer (A, B, C, D)',
+    couponTitle: 'COUPON: K21SIMULADO',
+    couponDiscount: '20% via Pix | 15% on Credit Card',
+    couponDescription: 'Valid for all K21 live trainings',
+    accessTrainings: 'Access Trainings'
   }
 };
 

@@ -3,7 +3,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { AlertCircle, CheckCircle, Clock, Printer } from 'lucide-react';
+import { AlertCircle, CheckCircle, Clock, Printer, ExternalLink } from 'lucide-react';
 import { QuestionWithCategory } from '@/data/types';
 import QuizQuestion from './QuizQuestion';
 import { trackQuizAttempt } from '@/utils/quizTracking';
@@ -232,6 +232,37 @@ const QuizResult = ({
               ))}
             </div>
           </div>
+
+          {/* Discount Coupon Section */}
+          <Card className="bg-gradient-to-br from-amber-50 to-orange-50 border-2 border-k21-gold shadow-md">
+            <CardContent className="p-6 space-y-4">
+              <div className="text-center space-y-3">
+                <div className="text-3xl md:text-4xl font-bold text-k21-gold">
+                  {getTranslation(language, 'couponTitle')}
+                </div>
+                <div className="text-xl md:text-2xl font-bold text-amber-700">
+                  {getTranslation(language, 'couponDiscount')}
+                </div>
+                <p className="text-sm md:text-base text-gray-700">
+                  {getTranslation(language, 'couponDescription')}
+                </p>
+                <Button 
+                  asChild
+                  className="w-full md:w-auto bg-k21-gold hover:bg-k21-gold/90 text-white font-semibold px-8 py-6 text-lg"
+                >
+                  <a 
+                    href="https://br.k21.global/treinamentos" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-center gap-2"
+                  >
+                    {getTranslation(language, 'accessTrainings')}
+                    <ExternalLink size={20} />
+                  </a>
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
 
           {/* Toggle questions button */}
           <div className="pt-2">
