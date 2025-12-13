@@ -10,7 +10,7 @@ export type Database = {
   // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
-    PostgrestVersion: "12.2.3 (519615d)"
+    PostgrestVersion: "13.0.5"
   }
   public: {
     Tables: {
@@ -144,13 +144,6 @@ export type Database = {
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "action_users_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "user_engagement_scores"
-            referencedColumns: ["user_id"]
-          },
         ]
       }
       actions: {
@@ -197,13 +190,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "actions_created_by_fkey"
-            columns: ["created_by"]
-            isOneToOne: false
-            referencedRelation: "user_engagement_scores"
-            referencedColumns: ["user_id"]
           },
           {
             foreignKeyName: "actions_workspace_id_fkey"
@@ -259,6 +245,13 @@ export type Database = {
         }
         Relationships: [
           {
+            foreignKeyName: "ai_function_usage_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "ai_function_usage_workspace_id_fkey"
             columns: ["workspace_id"]
             isOneToOne: false
@@ -267,177 +260,461 @@ export type Database = {
           },
         ]
       }
-      battle_areas: {
-        Row: {
-          color: string
-          created_at: string
-          created_by: string | null
-          description: string | null
-          id: string
-          map_id: string
-          name: string
-          updated_at: string
-        }
-        Insert: {
-          color?: string
-          created_at?: string
-          created_by?: string | null
-          description?: string | null
-          id?: string
-          map_id: string
-          name: string
-          updated_at?: string
-        }
-        Update: {
-          color?: string
-          created_at?: string
-          created_by?: string | null
-          description?: string | null
-          id?: string
-          map_id?: string
-          name?: string
-          updated_at?: string
-        }
-        Relationships: []
-      }
-      battle_maps: {
+      auth_cleanup_logs: {
         Row: {
           created_at: string
-          created_by: string | null
-          description: string | null
+          deleted_data_summary: Json | null
+          deleted_user_emails: string[] | null
+          dry_run: boolean
+          executed_by: string | null
+          execution_time_ms: number | null
           id: string
-          is_public: boolean | null
-          name: string
-          updated_at: string
+          orphaned_users_found: number
+          users_deleted: number
         }
         Insert: {
           created_at?: string
-          created_by?: string | null
-          description?: string | null
+          deleted_data_summary?: Json | null
+          deleted_user_emails?: string[] | null
+          dry_run?: boolean
+          executed_by?: string | null
+          execution_time_ms?: number | null
           id?: string
-          is_public?: boolean | null
-          name: string
-          updated_at?: string
+          orphaned_users_found?: number
+          users_deleted?: number
         }
         Update: {
           created_at?: string
-          created_by?: string | null
-          description?: string | null
+          deleted_data_summary?: Json | null
+          deleted_user_emails?: string[] | null
+          dry_run?: boolean
+          executed_by?: string | null
+          execution_time_ms?: number | null
           id?: string
-          is_public?: boolean | null
-          name?: string
-          updated_at?: string
-        }
-        Relationships: []
-      }
-      battle_relationships: {
-        Row: {
-          created_at: string
-          created_by: string | null
-          hierarchy_type: Database["public"]["Enums"]["hierarchy_type"] | null
-          id: string
-          influence_type: Database["public"]["Enums"]["influence_type"] | null
-          map_id: string | null
-          notes: string | null
-          relationship_type: Database["public"]["Enums"]["relationship_type"]
-          source_id: string
-          strength: number | null
-          target_id: string
-          updated_at: string
-        }
-        Insert: {
-          created_at?: string
-          created_by?: string | null
-          hierarchy_type?: Database["public"]["Enums"]["hierarchy_type"] | null
-          id?: string
-          influence_type?: Database["public"]["Enums"]["influence_type"] | null
-          map_id?: string | null
-          notes?: string | null
-          relationship_type?: Database["public"]["Enums"]["relationship_type"]
-          source_id: string
-          strength?: number | null
-          target_id: string
-          updated_at?: string
-        }
-        Update: {
-          created_at?: string
-          created_by?: string | null
-          hierarchy_type?: Database["public"]["Enums"]["hierarchy_type"] | null
-          id?: string
-          influence_type?: Database["public"]["Enums"]["influence_type"] | null
-          map_id?: string | null
-          notes?: string | null
-          relationship_type?: Database["public"]["Enums"]["relationship_type"]
-          source_id?: string
-          strength?: number | null
-          target_id?: string
-          updated_at?: string
+          orphaned_users_found?: number
+          users_deleted?: number
         }
         Relationships: [
           {
-            foreignKeyName: "battle_relationships_source_id_fkey"
-            columns: ["source_id"]
+            foreignKeyName: "auth_cleanup_logs_executed_by_fkey"
+            columns: ["executed_by"]
             isOneToOne: false
-            referencedRelation: "battle_stakeholders"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "battle_relationships_target_id_fkey"
-            columns: ["target_id"]
-            isOneToOne: false
-            referencedRelation: "battle_stakeholders"
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
         ]
       }
-      battle_stakeholders: {
+      beacon_tag_semantic_relationships: {
         Row: {
-          area_id: string | null
-          color: string | null
           created_at: string
           created_by: string | null
-          description: string | null
           id: string
-          influence_level: Database["public"]["Enums"]["stakeholder_influence_level"]
-          map_id: string | null
-          name: string
-          title: string | null
+          organization_id: string | null
+          relationship_type: Database["public"]["Enums"]["tag_relationship_type"]
+          similarity_score: number
+          tag1: string
+          tag2: string
           updated_at: string
+          validated: boolean
           workspace_id: string | null
-          x_position: number | null
-          y_position: number | null
         }
         Insert: {
-          area_id?: string | null
-          color?: string | null
           created_at?: string
           created_by?: string | null
-          description?: string | null
           id?: string
-          influence_level?: Database["public"]["Enums"]["stakeholder_influence_level"]
-          map_id?: string | null
-          name: string
-          title?: string | null
+          organization_id?: string | null
+          relationship_type?: Database["public"]["Enums"]["tag_relationship_type"]
+          similarity_score: number
+          tag1: string
+          tag2: string
           updated_at?: string
+          validated?: boolean
           workspace_id?: string | null
-          x_position?: number | null
-          y_position?: number | null
         }
         Update: {
-          area_id?: string | null
-          color?: string | null
           created_at?: string
           created_by?: string | null
-          description?: string | null
           id?: string
-          influence_level?: Database["public"]["Enums"]["stakeholder_influence_level"]
-          map_id?: string | null
-          name?: string
-          title?: string | null
+          organization_id?: string | null
+          relationship_type?: Database["public"]["Enums"]["tag_relationship_type"]
+          similarity_score?: number
+          tag1?: string
+          tag2?: string
           updated_at?: string
+          validated?: boolean
           workspace_id?: string | null
-          x_position?: number | null
-          y_position?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "beacon_tag_semantic_relationships_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "beacon_tag_semantic_relationships_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      beacon_user_status: {
+        Row: {
+          created_at: string
+          id: string
+          is_admin: boolean
+          organization_id: string
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_admin?: boolean
+          organization_id: string
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_admin?: boolean
+          organization_id?: string
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "beacon_user_status_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      beacon_wiki_article_comments: {
+        Row: {
+          article_id: string
+          content: string
+          created_at: string
+          id: string
+          organization_id: string
+          parent_comment_id: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          article_id: string
+          content: string
+          created_at?: string
+          id?: string
+          organization_id: string
+          parent_comment_id?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          article_id?: string
+          content?: string
+          created_at?: string
+          id?: string
+          organization_id?: string
+          parent_comment_id?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "beacon_wiki_article_comments_article_id_fkey"
+            columns: ["article_id"]
+            isOneToOne: false
+            referencedRelation: "beacon_wiki_articles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "beacon_wiki_article_comments_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "beacon_wiki_article_comments_parent_comment_id_fkey"
+            columns: ["parent_comment_id"]
+            isOneToOne: false
+            referencedRelation: "beacon_wiki_article_comments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      beacon_wiki_article_favorites: {
+        Row: {
+          article_id: string
+          created_at: string
+          id: string
+          organization_id: string
+          user_id: string
+        }
+        Insert: {
+          article_id: string
+          created_at?: string
+          id?: string
+          organization_id: string
+          user_id: string
+        }
+        Update: {
+          article_id?: string
+          created_at?: string
+          id?: string
+          organization_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "beacon_wiki_article_favorites_article_id_fkey"
+            columns: ["article_id"]
+            isOneToOne: false
+            referencedRelation: "beacon_wiki_articles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "beacon_wiki_article_favorites_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      beacon_wiki_article_versions: {
+        Row: {
+          article_id: string
+          change_summary: string | null
+          changed_by: string
+          content: string
+          created_at: string
+          id: string
+          title: string
+          version: number
+        }
+        Insert: {
+          article_id: string
+          change_summary?: string | null
+          changed_by: string
+          content: string
+          created_at?: string
+          id?: string
+          title: string
+          version: number
+        }
+        Update: {
+          article_id?: string
+          change_summary?: string | null
+          changed_by?: string
+          content?: string
+          created_at?: string
+          id?: string
+          title?: string
+          version?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "beacon_wiki_article_versions_article_id_fkey"
+            columns: ["article_id"]
+            isOneToOne: false
+            referencedRelation: "beacon_wiki_articles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      beacon_wiki_articles: {
+        Row: {
+          author_id: string
+          category_id: string | null
+          content: string
+          created_at: string
+          id: string
+          organization_id: string
+          parent_article_id: string | null
+          slug: string
+          status: string
+          tags: string[] | null
+          title: string
+          updated_at: string
+          version: number
+          view_count: number
+        }
+        Insert: {
+          author_id: string
+          category_id?: string | null
+          content: string
+          created_at?: string
+          id?: string
+          organization_id: string
+          parent_article_id?: string | null
+          slug: string
+          status?: string
+          tags?: string[] | null
+          title: string
+          updated_at?: string
+          version?: number
+          view_count?: number
+        }
+        Update: {
+          author_id?: string
+          category_id?: string | null
+          content?: string
+          created_at?: string
+          id?: string
+          organization_id?: string
+          parent_article_id?: string | null
+          slug?: string
+          status?: string
+          tags?: string[] | null
+          title?: string
+          updated_at?: string
+          version?: number
+          view_count?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "beacon_wiki_articles_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "beacon_wiki_categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "beacon_wiki_articles_parent_article_id_fkey"
+            columns: ["parent_article_id"]
+            isOneToOne: false
+            referencedRelation: "beacon_wiki_articles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      beacon_wiki_categories: {
+        Row: {
+          color: string | null
+          created_at: string
+          created_by: string
+          description: string | null
+          icon: string | null
+          id: string
+          name: string
+          organization_id: string
+          parent_category_id: string | null
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          color?: string | null
+          created_at?: string
+          created_by: string
+          description?: string | null
+          icon?: string | null
+          id?: string
+          name: string
+          organization_id: string
+          parent_category_id?: string | null
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          color?: string | null
+          created_at?: string
+          created_by?: string
+          description?: string | null
+          icon?: string | null
+          id?: string
+          name?: string
+          organization_id?: string
+          parent_category_id?: string | null
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "beacon_wiki_categories_parent_category_id_fkey"
+            columns: ["parent_category_id"]
+            isOneToOne: false
+            referencedRelation: "beacon_wiki_categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      book_audio_mappings: {
+        Row: {
+          audio_urls: Json
+          book_id: string
+          created_at: string
+          id: string
+          page_spread_index: number
+          updated_at: string
+        }
+        Insert: {
+          audio_urls?: Json
+          book_id: string
+          created_at?: string
+          id?: string
+          page_spread_index: number
+          updated_at?: string
+        }
+        Update: {
+          audio_urls?: Json
+          book_id?: string
+          created_at?: string
+          id?: string
+          page_spread_index?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "book_audio_mappings_book_id_fkey"
+            columns: ["book_id"]
+            isOneToOne: false
+            referencedRelation: "books"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      books: {
+        Row: {
+          cover_image_url: string | null
+          created_at: string
+          id: string
+          is_active: boolean
+          pdf_url: string
+          title: string
+          total_pages: number
+          updated_at: string
+        }
+        Insert: {
+          cover_image_url?: string | null
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          pdf_url: string
+          title: string
+          total_pages: number
+          updated_at?: string
+        }
+        Update: {
+          cover_image_url?: string | null
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          pdf_url?: string
+          title?: string
+          total_pages?: number
+          updated_at?: string
         }
         Relationships: []
       }
@@ -477,13 +754,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "broadcast_user_views_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "user_engagement_scores"
-            referencedColumns: ["user_id"]
           },
           {
             foreignKeyName: "broadcast_user_views_workspace_id_fkey"
@@ -574,13 +844,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "broadcasts_created_by_fkey"
-            columns: ["created_by"]
-            isOneToOne: false
-            referencedRelation: "user_engagement_scores"
-            referencedColumns: ["user_id"]
           },
         ]
       }
@@ -757,35 +1020,312 @@ export type Database = {
         }
         Relationships: []
       }
-      garridinho_resolve: {
+      gecko_proposal_categories: {
         Row: {
           created_at: string
           id: string
-          persona_name: string | null
-          persona_plan: Json | null
-          problem_description: string | null
-          questions_and_answers: Json | null
+          name: string
+          organization_id: string
+          pricing_type: Database["public"]["Enums"]["gecko_pricing_type"]
+          sort_order: number
           updated_at: string
         }
         Insert: {
           created_at?: string
           id?: string
-          persona_name?: string | null
-          persona_plan?: Json | null
-          problem_description?: string | null
-          questions_and_answers?: Json | null
+          name: string
+          organization_id: string
+          pricing_type: Database["public"]["Enums"]["gecko_pricing_type"]
+          sort_order?: number
           updated_at?: string
         }
         Update: {
           created_at?: string
           id?: string
-          persona_name?: string | null
-          persona_plan?: Json | null
-          problem_description?: string | null
-          questions_and_answers?: Json | null
+          name?: string
+          organization_id?: string
+          pricing_type?: Database["public"]["Enums"]["gecko_pricing_type"]
+          sort_order?: number
           updated_at?: string
         }
         Relationships: []
+      }
+      gecko_proposal_item_slides: {
+        Row: {
+          created_at: string | null
+          id: string
+          item_id: string
+          slide_id: string
+          sort_order: number
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          item_id: string
+          slide_id: string
+          sort_order?: number
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          item_id?: string
+          slide_id?: string
+          sort_order?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "gecko_proposal_item_slides_item_id_fkey"
+            columns: ["item_id"]
+            isOneToOne: false
+            referencedRelation: "gecko_proposal_items"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "gecko_proposal_item_slides_slide_id_fkey"
+            columns: ["slide_id"]
+            isOneToOne: false
+            referencedRelation: "gecko_proposal_slides"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      gecko_proposal_items: {
+        Row: {
+          base_price: number
+          category_id: string
+          created_at: string
+          hours: number | null
+          id: string
+          is_active: boolean
+          name: string
+          organization_id: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          base_price?: number
+          category_id: string
+          created_at?: string
+          hours?: number | null
+          id?: string
+          is_active?: boolean
+          name: string
+          organization_id: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          base_price?: number
+          category_id?: string
+          created_at?: string
+          hours?: number | null
+          id?: string
+          is_active?: boolean
+          name?: string
+          organization_id?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "gecko_proposal_items_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "gecko_proposal_categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      gecko_proposal_selected_items: {
+        Row: {
+          created_at: string
+          hours: number
+          id: string
+          item_id: string
+          proposal_id: string
+          quantity: number
+          subtotal: number
+          unit_price: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          hours?: number
+          id?: string
+          item_id: string
+          proposal_id: string
+          quantity?: number
+          subtotal: number
+          unit_price: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          hours?: number
+          id?: string
+          item_id?: string
+          proposal_id?: string
+          quantity?: number
+          subtotal?: number
+          unit_price?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "gecko_proposal_selected_items_item_id_fkey"
+            columns: ["item_id"]
+            isOneToOne: false
+            referencedRelation: "gecko_proposal_items"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "gecko_proposal_selected_items_proposal_id_fkey"
+            columns: ["proposal_id"]
+            isOneToOne: false
+            referencedRelation: "gecko_proposals"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      gecko_proposal_slides: {
+        Row: {
+          created_at: string | null
+          id: string
+          organization_id: string
+          section_position: string | null
+          slide_type: Database["public"]["Enums"]["gecko_slide_type"]
+          slide_url: string
+          sort_order: number
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          organization_id: string
+          section_position?: string | null
+          slide_type: Database["public"]["Enums"]["gecko_slide_type"]
+          slide_url: string
+          sort_order?: number
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          organization_id?: string
+          section_position?: string | null
+          slide_type?: Database["public"]["Enums"]["gecko_slide_type"]
+          slide_url?: string
+          sort_order?: number
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      gecko_proposals: {
+        Row: {
+          company: string
+          created_at: string
+          created_by: string | null
+          description: string | null
+          hours: number
+          id: string
+          investment: number
+          organization_id: string | null
+          public_code: string | null
+          public_link: string | null
+          security_pin: string | null
+          start_date: string
+          status: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          company: string
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          hours: number
+          id?: string
+          investment: number
+          organization_id?: string | null
+          public_code?: string | null
+          public_link?: string | null
+          security_pin?: string | null
+          start_date: string
+          status?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          company?: string
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          hours?: number
+          id?: string
+          investment?: number
+          organization_id?: string | null
+          public_code?: string | null
+          public_link?: string | null
+          security_pin?: string | null
+          start_date?: string
+          status?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "gecko_proposals_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "gecko_proposals_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      gecko_user_status: {
+        Row: {
+          created_at: string
+          id: string
+          is_admin: boolean
+          organization_id: string
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_admin?: boolean
+          organization_id: string
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_admin?: boolean
+          organization_id?: string
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "gecko_user_status_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       global_settings: {
         Row: {
@@ -793,6 +1333,8 @@ export type Database = {
           id: string
           setting_key: string
           setting_value: boolean
+          setting_value_int: number | null
+          setting_value_text: string | null
           updated_at: string | null
         }
         Insert: {
@@ -800,6 +1342,8 @@ export type Database = {
           id?: string
           setting_key: string
           setting_value?: boolean
+          setting_value_int?: number | null
+          setting_value_text?: string | null
           updated_at?: string | null
         }
         Update: {
@@ -807,6 +1351,8 @@ export type Database = {
           id?: string
           setting_key?: string
           setting_value?: boolean
+          setting_value_int?: number | null
+          setting_value_text?: string | null
           updated_at?: string | null
         }
         Relationships: []
@@ -853,13 +1399,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "hawk_user_status_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "user_engagement_scores"
-            referencedColumns: ["user_id"]
           },
         ]
       }
@@ -954,13 +1493,6 @@ export type Database = {
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "initiative_users_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "user_engagement_scores"
-            referencedColumns: ["user_id"]
-          },
         ]
       }
       initiatives: {
@@ -1006,13 +1538,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "initiatives_created_by_fkey"
-            columns: ["created_by"]
-            isOneToOne: false
-            referencedRelation: "user_engagement_scores"
-            referencedColumns: ["user_id"]
-          },
-          {
             foreignKeyName: "initiatives_workspace_id_fkey"
             columns: ["workspace_id"]
             isOneToOne: false
@@ -1025,10 +1550,8 @@ export type Database = {
         Row: {
           id: string
           key_result_id: string
-          new_progress: number
           new_value: number
           notes: string | null
-          old_progress: number | null
           old_value: number | null
           updated_at: string
           updated_by: string
@@ -1036,10 +1559,8 @@ export type Database = {
         Insert: {
           id?: string
           key_result_id: string
-          new_progress: number
           new_value: number
           notes?: string | null
-          old_progress?: number | null
           old_value?: number | null
           updated_at?: string
           updated_by: string
@@ -1047,10 +1568,8 @@ export type Database = {
         Update: {
           id?: string
           key_result_id?: string
-          new_progress?: number
           new_value?: number
           notes?: string | null
-          old_progress?: number | null
           old_value?: number | null
           updated_at?: string
           updated_by?: string
@@ -1069,13 +1588,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "key_result_progress_history_updated_by_fkey"
-            columns: ["updated_by"]
-            isOneToOne: false
-            referencedRelation: "user_engagement_scores"
-            referencedColumns: ["user_id"]
           },
         ]
       }
@@ -1173,13 +1685,6 @@ export type Database = {
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "key_result_users_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "user_engagement_scores"
-            referencedColumns: ["user_id"]
-          },
         ]
       }
       key_results: {
@@ -1256,13 +1761,6 @@ export type Database = {
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "key_results_responsible_user_id_fkey"
-            columns: ["responsible_user_id"]
-            isOneToOne: false
-            referencedRelation: "user_engagement_scores"
-            referencedColumns: ["user_id"]
-          },
         ]
       }
       kudos: {
@@ -1311,13 +1809,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "kudos_from_user_id_fkey"
-            columns: ["from_user_id"]
-            isOneToOne: false
-            referencedRelation: "user_engagement_scores"
-            referencedColumns: ["user_id"]
-          },
-          {
             foreignKeyName: "kudos_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
@@ -1328,9 +1819,11 @@ export type Database = {
       }
       kudos_organization_settings: {
         Row: {
+          auto_reset_enabled: boolean | null
           created_at: string
           engagement_enabled: boolean
           id: string
+          last_auto_reset_date: string | null
           min_days_for_max_bonus: number
           min_recognitions_for_bonus: number
           monthly_points_per_user: number
@@ -1343,9 +1836,11 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          auto_reset_enabled?: boolean | null
           created_at?: string
           engagement_enabled?: boolean
           id?: string
+          last_auto_reset_date?: string | null
           min_days_for_max_bonus?: number
           min_recognitions_for_bonus?: number
           monthly_points_per_user?: number
@@ -1358,9 +1853,11 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          auto_reset_enabled?: boolean | null
           created_at?: string
           engagement_enabled?: boolean
           id?: string
+          last_auto_reset_date?: string | null
           min_days_for_max_bonus?: number
           min_recognitions_for_bonus?: number
           monthly_points_per_user?: number
@@ -1447,13 +1944,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "kudos_recipients_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "user_engagement_scores"
-            referencedColumns: ["user_id"]
           },
         ]
       }
@@ -1543,13 +2033,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "kudos_user_status_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "user_engagement_scores"
-            referencedColumns: ["user_id"]
           },
         ]
       }
@@ -1857,6 +2340,44 @@ export type Database = {
         }
         Relationships: []
       }
+      organization_apps: {
+        Row: {
+          app_name: string
+          created_at: string | null
+          enabled_at: string | null
+          id: string
+          is_enabled: boolean
+          organization_id: string
+          updated_at: string | null
+        }
+        Insert: {
+          app_name: string
+          created_at?: string | null
+          enabled_at?: string | null
+          id?: string
+          is_enabled?: boolean
+          organization_id: string
+          updated_at?: string | null
+        }
+        Update: {
+          app_name?: string
+          created_at?: string | null
+          enabled_at?: string | null
+          id?: string
+          is_enabled?: boolean
+          organization_id?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "organization_apps_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       organizations: {
         Row: {
           account_type: Database["public"]["Enums"]["account_type"]
@@ -1865,7 +2386,9 @@ export type Database = {
           description: string | null
           id: string
           joinkey_creation_enabled: boolean
+          manual_trial_days: number | null
           name: string
+          trial_started_at: string | null
           updated_at: string
         }
         Insert: {
@@ -1875,7 +2398,9 @@ export type Database = {
           description?: string | null
           id?: string
           joinkey_creation_enabled?: boolean
+          manual_trial_days?: number | null
           name: string
+          trial_started_at?: string | null
           updated_at?: string
         }
         Update: {
@@ -1885,7 +2410,9 @@ export type Database = {
           description?: string | null
           id?: string
           joinkey_creation_enabled?: boolean
+          manual_trial_days?: number | null
           name?: string
+          trial_started_at?: string | null
           updated_at?: string
         }
         Relationships: [
@@ -1895,13 +2422,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "organizations_created_by_fkey"
-            columns: ["created_by"]
-            isOneToOne: false
-            referencedRelation: "user_engagement_scores"
-            referencedColumns: ["user_id"]
           },
         ]
       }
@@ -1960,13 +2480,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "profiles_approved_by_fkey"
-            columns: ["approved_by"]
-            isOneToOne: false
-            referencedRelation: "user_engagement_scores"
-            referencedColumns: ["user_id"]
-          },
-          {
             foreignKeyName: "profiles_last_accessed_workspace_id_fkey"
             columns: ["last_accessed_workspace_id"]
             isOneToOne: false
@@ -1978,6 +2491,268 @@ export type Database = {
             columns: ["organization_id"]
             isOneToOne: false
             referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      pulse_dimensions: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          order_index: number
+          organization_id: string
+          questionnaire_id: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          order_index?: number
+          organization_id: string
+          questionnaire_id: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          order_index?: number
+          organization_id?: string
+          questionnaire_id?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pulse_dimensions_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pulse_dimensions_questionnaire_id_fkey"
+            columns: ["questionnaire_id"]
+            isOneToOne: false
+            referencedRelation: "pulse_questionnaires"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      pulse_questionnaires: {
+        Row: {
+          activated_at: string | null
+          created_at: string
+          created_by: string
+          deactivated_at: string | null
+          description: string | null
+          id: string
+          organization_id: string
+          status: Database["public"]["Enums"]["pulse_questionnaire_status"]
+          title: string
+          type: Database["public"]["Enums"]["pulse_questionnaire_type"]
+          updated_at: string
+        }
+        Insert: {
+          activated_at?: string | null
+          created_at?: string
+          created_by: string
+          deactivated_at?: string | null
+          description?: string | null
+          id?: string
+          organization_id: string
+          status?: Database["public"]["Enums"]["pulse_questionnaire_status"]
+          title: string
+          type?: Database["public"]["Enums"]["pulse_questionnaire_type"]
+          updated_at?: string
+        }
+        Update: {
+          activated_at?: string | null
+          created_at?: string
+          created_by?: string
+          deactivated_at?: string | null
+          description?: string | null
+          id?: string
+          organization_id?: string
+          status?: Database["public"]["Enums"]["pulse_questionnaire_status"]
+          title?: string
+          type?: Database["public"]["Enums"]["pulse_questionnaire_type"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pulse_questionnaires_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pulse_questionnaires_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      pulse_questions: {
+        Row: {
+          created_at: string
+          dimension_id: string
+          id: string
+          is_required: boolean
+          options: Json | null
+          order_index: number
+          organization_id: string
+          question_text: string
+          question_type: Database["public"]["Enums"]["pulse_question_type"]
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          dimension_id: string
+          id?: string
+          is_required?: boolean
+          options?: Json | null
+          order_index?: number
+          organization_id: string
+          question_text: string
+          question_type?: Database["public"]["Enums"]["pulse_question_type"]
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          dimension_id?: string
+          id?: string
+          is_required?: boolean
+          options?: Json | null
+          order_index?: number
+          organization_id?: string
+          question_text?: string
+          question_type?: Database["public"]["Enums"]["pulse_question_type"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pulse_questions_dimension_id_fkey"
+            columns: ["dimension_id"]
+            isOneToOne: false
+            referencedRelation: "pulse_dimensions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pulse_questions_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      pulse_responses: {
+        Row: {
+          answers: Json
+          completed: boolean
+          completed_at: string | null
+          created_at: string
+          id: string
+          organization_id: string
+          questionnaire_id: string
+          started_at: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          answers?: Json
+          completed?: boolean
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          organization_id: string
+          questionnaire_id: string
+          started_at?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          answers?: Json
+          completed?: boolean
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          organization_id?: string
+          questionnaire_id?: string
+          started_at?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      pulse_survey_assignments: {
+        Row: {
+          access_token: string
+          accessed_at: string | null
+          completed_at: string | null
+          created_at: string
+          expires_at: string
+          id: string
+          organization_id: string
+          questionnaire_id: string
+          status: Database["public"]["Enums"]["pulse_assignment_status"]
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          access_token: string
+          accessed_at?: string | null
+          completed_at?: string | null
+          created_at?: string
+          expires_at: string
+          id?: string
+          organization_id: string
+          questionnaire_id: string
+          status?: Database["public"]["Enums"]["pulse_assignment_status"]
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          access_token?: string
+          accessed_at?: string | null
+          completed_at?: string | null
+          created_at?: string
+          expires_at?: string
+          id?: string
+          organization_id?: string
+          questionnaire_id?: string
+          status?: Database["public"]["Enums"]["pulse_assignment_status"]
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pulse_survey_assignments_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pulse_survey_assignments_questionnaire_id_fkey"
+            columns: ["questionnaire_id"]
+            isOneToOne: false
+            referencedRelation: "pulse_questionnaires"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pulse_survey_assignments_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
         ]
@@ -2017,13 +2792,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "pulse_user_status_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "user_engagement_scores"
-            referencedColumns: ["user_id"]
           },
         ]
       }
@@ -2261,13 +3029,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "subscriptions_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "user_engagement_scores"
-            referencedColumns: ["user_id"]
-          },
-          {
             foreignKeyName: "subscriptions_workspace_id_fkey"
             columns: ["workspace_id"]
             isOneToOne: false
@@ -2350,13 +3111,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "test_cards_created_by_fkey"
-            columns: ["created_by"]
-            isOneToOne: false
-            referencedRelation: "user_engagement_scores"
-            referencedColumns: ["user_id"]
           },
           {
             foreignKeyName: "test_cards_workspace_id_fkey"
@@ -2446,13 +3200,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "workspace_events_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "user_engagement_scores"
-            referencedColumns: ["user_id"]
-          },
-          {
             foreignKeyName: "workspace_events_workspace_id_fkey"
             columns: ["workspace_id"]
             isOneToOne: false
@@ -2490,13 +3237,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "workspace_users_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "user_engagement_scores"
-            referencedColumns: ["user_id"]
           },
           {
             foreignKeyName: "workspace_users_workspace_id_fkey"
@@ -2559,13 +3299,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "workspaces_created_by_fkey"
-            columns: ["created_by"]
-            isOneToOne: false
-            referencedRelation: "user_engagement_scores"
-            referencedColumns: ["user_id"]
-          },
-          {
             foreignKeyName: "workspaces_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
@@ -2576,27 +3309,52 @@ export type Database = {
       }
     }
     Views: {
-      user_engagement_scores: {
+      auth_cleanup_stats: {
         Row: {
-          completed_actions: number | null
-          email: string | null
-          engagement_level: string | null
-          last_activity: string | null
-          name: string | null
-          total_actions: number | null
-          total_impediments: number | null
-          total_learnings: number | null
-          total_score: number | null
-          total_test_cards: number | null
-          user_id: string | null
-          workspace_id: string | null
+          created_at: string | null
+          deleted_data_summary: Json | null
+          deleted_user_emails: string[] | null
+          dry_run: boolean | null
+          executed_by: string | null
+          execution_time_ms: number | null
+          id: string | null
+          orphaned_users_found: number | null
+          total_dependencies_cleaned: number | null
+          users_deleted: number | null
+          users_with_dependencies: number | null
+        }
+        Insert: {
+          created_at?: string | null
+          deleted_data_summary?: Json | null
+          deleted_user_emails?: string[] | null
+          dry_run?: boolean | null
+          executed_by?: string | null
+          execution_time_ms?: number | null
+          id?: string | null
+          orphaned_users_found?: number | null
+          total_dependencies_cleaned?: never
+          users_deleted?: number | null
+          users_with_dependencies?: never
+        }
+        Update: {
+          created_at?: string | null
+          deleted_data_summary?: Json | null
+          deleted_user_emails?: string[] | null
+          dry_run?: boolean | null
+          executed_by?: string | null
+          execution_time_ms?: number | null
+          id?: string | null
+          orphaned_users_found?: number | null
+          total_dependencies_cleaned?: never
+          users_deleted?: number | null
+          users_with_dependencies?: never
         }
         Relationships: [
           {
-            foreignKeyName: "workspace_users_workspace_id_fkey"
-            columns: ["workspace_id"]
+            foreignKeyName: "auth_cleanup_logs_executed_by_fkey"
+            columns: ["executed_by"]
             isOneToOne: false
-            referencedRelation: "workspaces"
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
         ]
@@ -2604,7 +3362,7 @@ export type Database = {
     }
     Functions: {
       analyze_quiz_distribution: {
-        Args: Record<PropertyKey, never>
+        Args: never
         Returns: {
           category: string
           correct_a: number
@@ -2615,7 +3373,7 @@ export type Database = {
         }[]
       }
       audit_rls_status: {
-        Args: Record<PropertyKey, never>
+        Args: never
         Returns: {
           policy_count: number
           rls_enabled: boolean
@@ -2623,7 +3381,7 @@ export type Database = {
         }[]
       }
       audit_user_privileges: {
-        Args: Record<PropertyKey, never>
+        Args: never
         Returns: {
           created_at: string
           email: string
@@ -2640,10 +3398,7 @@ export type Database = {
           moved_count: number
         }[]
       }
-      backup_quiz_questions: {
-        Args: Record<PropertyKey, never>
-        Returns: undefined
-      }
+      backup_quiz_questions: { Args: never; Returns: undefined }
       calculate_user_engagement_bonus: {
         Args: {
           p_month_end?: string
@@ -2657,14 +3412,8 @@ export type Database = {
           total_recognitions: number
         }[]
       }
-      can_deactivate_user: {
-        Args: { user_id: string }
-        Returns: boolean
-      }
-      can_delete_user: {
-        Args: { user_id: string }
-        Returns: boolean
-      }
+      can_deactivate_user: { Args: { user_id: string }; Returns: boolean }
+      can_delete_user: { Args: { user_id: string }; Returns: boolean }
       can_manage_broadcasts_in_workspace: {
         Args: { p_user_id?: string; p_workspace_id: string }
         Returns: boolean
@@ -2673,14 +3422,12 @@ export type Database = {
         Args: { p_organization_id: string; p_user_id?: string }
         Returns: boolean
       }
-      check_admin_status: {
-        Args: { check_user_id: string }
+      check_admin_status: { Args: { check_user_id: string }; Returns: boolean }
+      check_app_user_limit: {
+        Args: { p_app_name: string; p_org_id: string }
         Returns: boolean
       }
-      check_user_addition_limit: {
-        Args: { org_id: string }
-        Returns: boolean
-      }
+      check_user_addition_limit: { Args: { org_id: string }; Returns: boolean }
       check_workspace_creation_limit: {
         Args: { org_id: string }
         Returns: boolean
@@ -2725,14 +3472,21 @@ export type Database = {
         Args: { p_organization_id: string; p_user_id: string }
         Returns: undefined
       }
-      generate_join_key: {
-        Args: Record<PropertyKey, never>
-        Returns: string
+      fix_existing_organization_owners: {
+        Args: never
+        Returns: {
+          apps_fixed: number
+          org_id: string
+          org_name: string
+          owner_email: string
+          owner_id: string
+          owner_name: string
+          was_global_admin: boolean
+        }[]
       }
-      get_action_workspace: {
-        Args: { action_id: string }
-        Returns: string
-      }
+      generate_join_key: { Args: never; Returns: string }
+      generate_survey_token: { Args: never; Returns: string }
+      get_action_workspace: { Args: { action_id: string }; Returns: string }
       get_active_broadcasts_for_user: {
         Args: { p_user_id: string; p_workspace_id: string }
         Returns: {
@@ -2744,12 +3498,9 @@ export type Database = {
           title: string
         }[]
       }
-      get_active_users_count: {
-        Args: { org_id: string }
-        Returns: number
-      }
+      get_active_users_count: { Args: { org_id: string }; Returns: number }
       get_all_user_activity: {
-        Args: Record<PropertyKey, never>
+        Args: never
         Returns: {
           activity_context: string
           last_visit: string
@@ -2761,6 +3512,13 @@ export type Database = {
           workspace_name: string
         }[]
       }
+      get_app_limits: {
+        Args: { p_app_name: string; p_org_id: string }
+        Returns: {
+          max_users: number
+          max_workspaces: number
+        }[]
+      }
       get_broadcast_view_stats: {
         Args: { p_broadcast_id: string; p_workspace_id: string }
         Returns: {
@@ -2768,9 +3526,13 @@ export type Database = {
           viewed_users: number
         }[]
       }
-      get_current_user_status: {
-        Args: Record<PropertyKey, never>
-        Returns: string
+      get_current_user_status: { Args: never; Returns: string }
+      get_daily_kudos: {
+        Args: { days_back?: number; org_id: string }
+        Returns: {
+          count: number
+          date: string
+        }[]
       }
       get_error_statistics: {
         Args: { p_hours_back?: number; p_workspace_id?: string }
@@ -2790,6 +3552,28 @@ export type Database = {
           last_reset_date: string
           monthly_points: number
           total_users_reset: number
+        }[]
+      }
+      get_monthly_kudos: {
+        Args: { months_back?: number; org_id: string }
+        Returns: {
+          count: number
+          month: string
+          points: number
+        }[]
+      }
+      get_org_last_activity: {
+        Args: never
+        Returns: {
+          last_activity: string
+          organization_id: string
+        }[]
+      }
+      get_organization_last_activity: {
+        Args: { org_id: string }
+        Returns: {
+          activity_type: string
+          last_activity_date: string
         }[]
       }
       get_organization_limits: {
@@ -2814,8 +3598,12 @@ export type Database = {
           can_create_workspace: boolean
           current_users: number
           current_workspaces: number
+          is_trial_expired: boolean
           max_users: number
           max_workspaces: number
+          trial_days_remaining: number
+          trial_duration_days: number
+          trial_started_at: string
         }[]
       }
       get_recognitions_for_analysis: {
@@ -2834,8 +3622,20 @@ export type Database = {
           tags: string[]
         }[]
       }
+      get_survey_by_token: {
+        Args: { p_token: string }
+        Returns: {
+          assignment_id: string
+          assignment_status: Database["public"]["Enums"]["pulse_assignment_status"]
+          expires_at: string
+          is_expired: boolean
+          questionnaire_description: string
+          questionnaire_id: string
+          questionnaire_title: string
+        }[]
+      }
       get_system_activity_stats: {
-        Args: Record<PropertyKey, never>
+        Args: never
         Returns: {
           newest_activity: string
           oldest_activity: string
@@ -2850,6 +3650,24 @@ export type Database = {
         Args: { test_card_id: string }
         Returns: string
       }
+      get_top_kudos_givers: {
+        Args: { p_limit?: number; p_organization_id: string }
+        Returns: {
+          total_kudos: number
+          user_email: string
+          user_id: string
+          user_name: string
+        }[]
+      }
+      get_top_kudos_receivers: {
+        Args: { p_limit?: number; p_organization_id: string }
+        Returns: {
+          total_kudos: number
+          user_email: string
+          user_id: string
+          user_name: string
+        }[]
+      }
       get_top_performers_for_quarter: {
         Args: { quarter: string; quiz_size: number }
         Returns: {
@@ -2858,6 +3676,7 @@ export type Database = {
           score: number
         }[]
       }
+      get_trial_days_remaining: { Args: { org_id: string }; Returns: number }
       get_unread_mentions_count: {
         Args: { p_user_id?: string; p_workspace_id: string }
         Returns: number
@@ -2894,10 +3713,8 @@ export type Database = {
           user_name: string
         }[]
       }
-      get_user_organization: {
-        Args: { user_id?: string }
-        Returns: string
-      }
+      get_user_organization: { Args: { user_id?: string }; Returns: string }
+      get_user_organization_id: { Args: { user_id: string }; Returns: string }
       get_user_workspace_role: {
         Args: { user_id: string; workspace_id: string }
         Returns: Database["public"]["Enums"]["workspace_role"]
@@ -2908,8 +3725,16 @@ export type Database = {
           workspace_id: string
         }[]
       }
+      get_weekly_cfd_data: {
+        Args: { org_id: string }
+        Returns: {
+          tag: string
+          tag_count: number
+          week_start: string
+        }[]
+      }
       improved_rebalance_quiz_answers: {
-        Args: Record<PropertyKey, never>
+        Args: never
         Returns: {
           category: string
           changes_made: number
@@ -2917,15 +3742,45 @@ export type Database = {
           questions_processed: number
         }[]
       }
-      is_admin: {
-        Args: { user_id: string }
+      initialize_organization_trial: {
+        Args: { org_id: string }
+        Returns: undefined
+      }
+      is_active_beacon_user: {
+        Args: { org_id: string; user_id?: string }
         Returns: boolean
       }
+      is_active_gecko_user: {
+        Args: { org_id: string; user_id?: string }
+        Returns: boolean
+      }
+      is_active_pulse_user: {
+        Args: { org_id: string; user_id?: string }
+        Returns: boolean
+      }
+      is_admin: { Args: { user_id: string }; Returns: boolean }
+      is_beacon_admin_simple: {
+        Args: { org_id: string; user_id?: string }
+        Returns: boolean
+      }
+      is_gecko_admin_simple: {
+        Args: { org_id: string; user_id?: string }
+        Returns: boolean
+      }
+      is_gecko_user_active: { Args: { user_id?: string }; Returns: boolean }
       is_hawk_admin_simple: {
         Args: { org_id: string; user_id?: string }
         Returns: boolean
       }
+      is_kudos_admin_for_org: {
+        Args: { p_organization_id: string; p_user_id?: string }
+        Returns: boolean
+      }
       is_kudos_admin_simple: {
+        Args: { org_id: string; user_id?: string }
+        Returns: boolean
+      }
+      is_org_owner: {
         Args: { org_id: string; user_id?: string }
         Returns: boolean
       }
@@ -2937,14 +3792,13 @@ export type Database = {
         Args: { org_id: string; user_id?: string }
         Returns: boolean
       }
-      is_system_admin_simple: {
-        Args: { user_id?: string }
+      is_system_admin_simple: { Args: { user_id?: string }; Returns: boolean }
+      is_test_card_member: {
+        Args: { p_test_card_id: string; p_user_id?: string }
         Returns: boolean
       }
-      is_user_approved: {
-        Args: { user_id: string }
-        Returns: boolean
-      }
+      is_trial_expired: { Args: { org_id: string }; Returns: boolean }
+      is_user_approved: { Args: { user_id: string }; Returns: boolean }
       is_workspace_admin_simple: {
         Args: { user_id?: string; workspace_id: string }
         Returns: boolean
@@ -2998,8 +3852,9 @@ export type Database = {
         }
         Returns: undefined
       }
+      populate_existing_gecko_users: { Args: never; Returns: number }
       rebalance_quiz_answers: {
-        Args: Record<PropertyKey, never>
+        Args: never
         Returns: {
           category: string
           changes_made: number
@@ -3019,16 +3874,13 @@ export type Database = {
         }[]
       }
       restore_all_game_attempts: {
-        Args: Record<PropertyKey, never>
+        Args: never
         Returns: {
           error_message: string
           restored_count: number
         }[]
       }
-      restore_quiz_questions_from_backup: {
-        Args: Record<PropertyKey, never>
-        Returns: undefined
-      }
+      restore_quiz_questions_from_backup: { Args: never; Returns: undefined }
       safe_track_activity: {
         Args: {
           p_activity_context?: string
@@ -3042,10 +3894,22 @@ export type Database = {
           validation_details: Json
         }[]
       }
-      test_rls_recursion: {
-        Args: Record<PropertyKey, never>
-        Returns: string
+      select_random_respondents: {
+        Args: {
+          p_count: number
+          p_days_to_expire?: number
+          p_questionnaire_id: string
+        }
+        Returns: {
+          access_token: string
+          assignment_id: string
+          expires_at: string
+          user_email: string
+          user_id: string
+          user_name: string
+        }[]
       }
+      test_rls_recursion: { Args: never; Returns: string }
       toggle_user_active_status: {
         Args: { target_user_id: string }
         Returns: boolean
@@ -3071,10 +3935,7 @@ export type Database = {
         Args: { user_id?: string; workspace_id: string }
         Returns: boolean
       }
-      user_is_system_admin: {
-        Args: { user_id?: string }
-        Returns: boolean
-      }
+      user_is_system_admin: { Args: { user_id?: string }; Returns: boolean }
       user_is_workspace_admin: {
         Args: { user_id?: string; workspace_id: string }
         Returns: boolean
@@ -3098,6 +3959,10 @@ export type Database = {
           test_name: string
         }[]
       }
+      validate_questionnaire_activation: {
+        Args: { p_organization_id: string; p_questionnaire_id: string }
+        Returns: boolean
+      }
       validate_restricted_access: {
         Args: { input_password: string }
         Returns: boolean
@@ -3116,6 +3981,8 @@ export type Database = {
         | "system"
         | "unknown"
       error_severity: "low" | "medium" | "high" | "critical"
+      gecko_pricing_type: "per_individual" | "per_month" | "total_value"
+      gecko_slide_type: "global" | "contextual"
       hierarchy_type: "above" | "equal" | "below"
       influence_type: "promoter" | "neutral" | "detractor"
       key_result_type:
@@ -3125,8 +3992,13 @@ export type Database = {
         | "maintain_below"
       okr_frequency: "quarterly" | "annual" | "semestral"
       okr_status: "not_started" | "in_progress" | "completed" | "paused"
+      pulse_assignment_status: "pending" | "completed" | "expired"
+      pulse_question_type: "multiple_choice" | "open_text"
+      pulse_questionnaire_status: "draft" | "active" | "inactive" | "archived"
+      pulse_questionnaire_type: "complete" | "pulse"
       relationship_type: "promoter" | "neutral" | "detractor"
       stakeholder_influence_level: "high" | "medium" | "low"
+      tag_relationship_type: "semantic" | "contextual" | "conceptual"
       workspace_role: "admin" | "member"
     }
     CompositeTypes: {
@@ -3268,6 +4140,8 @@ export const Constants = {
         "unknown",
       ],
       error_severity: ["low", "medium", "high", "critical"],
+      gecko_pricing_type: ["per_individual", "per_month", "total_value"],
+      gecko_slide_type: ["global", "contextual"],
       hierarchy_type: ["above", "equal", "below"],
       influence_type: ["promoter", "neutral", "detractor"],
       key_result_type: [
@@ -3278,8 +4152,13 @@ export const Constants = {
       ],
       okr_frequency: ["quarterly", "annual", "semestral"],
       okr_status: ["not_started", "in_progress", "completed", "paused"],
+      pulse_assignment_status: ["pending", "completed", "expired"],
+      pulse_question_type: ["multiple_choice", "open_text"],
+      pulse_questionnaire_status: ["draft", "active", "inactive", "archived"],
+      pulse_questionnaire_type: ["complete", "pulse"],
       relationship_type: ["promoter", "neutral", "detractor"],
       stakeholder_influence_level: ["high", "medium", "low"],
+      tag_relationship_type: ["semantic", "contextual", "conceptual"],
       workspace_role: ["admin", "member"],
     },
   },
