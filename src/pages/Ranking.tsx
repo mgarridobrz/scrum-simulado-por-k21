@@ -38,9 +38,10 @@ const Ranking: React.FC<RankingProps> = ({ themeSlug = 'csm' }) => {
   useMetaTags(); // Add meta tags management
   
   const [theme, setTheme] = useState<QuizTheme | null>(null);
+  const [showQuizSizeFilter, setShowQuizSizeFilter] = useState(true);
   
-  // Default quiz size is now 10
-  const [selectedQuizSize, setSelectedQuizSize] = useState<number>(10);
+  // Default quiz size is now 10 for CSM, 'all' for themes without categories
+  const [selectedQuizSize, setSelectedQuizSize] = useState<number | 'all'>(10);
   // Time period filter
   const [selectedTimePeriod, setSelectedTimePeriod] = useState<'30days' | '90days' | 'alltime'>('30days');
   // Language filter state and filter are removed
@@ -53,14 +54,20 @@ const Ranking: React.FC<RankingProps> = ({ themeSlug = 'csm' }) => {
   });
   const [loading, setLoading] = useState(true);
 
-  // Quiz sizes are now 10, 25, and 50
-  const quizSizes = [10, 25, 50];
+  // Quiz sizes depend on whether the theme has categories
+  const quizSizes = showQuizSizeFilter ? [10, 25, 50] : [];
 
   // Load theme on mount
   useEffect(() => {
     const loadTheme = async () => {
       const loadedTheme = await fetchThemeBySlug(themeSlug);
       setTheme(loadedTheme);
+      // For non-CSM themes, hide quiz size filter and default to 'all'
+      const hasCategories = themeSlug === 'csm';
+      setShowQuizSizeFilter(hasCategories);
+      if (!hasCategories) {
+        setSelectedQuizSize('all');
+      }
     };
     loadTheme();
   }, [themeSlug]);
@@ -81,8 +88,9 @@ const Ranking: React.FC<RankingProps> = ({ themeSlug = 'csm' }) => {
     if (!theme) return;
     setLoading(true);
     try {
-      // Fetch by quiz size, time period, and theme
-      const data = await getRankingData(selectedQuizSize, undefined, selectedTimePeriod, theme.id);
+      // Fetch by quiz size (or undefined if 'all'), time period, and theme
+      const quizSizeParam = selectedQuizSize === 'all' ? undefined : selectedQuizSize;
+      const data = await getRankingData(quizSizeParam, undefined, selectedTimePeriod, theme.id);
       setRankingData(data);
     } catch (error) {
       console.error('Error loading ranking data:', error);
@@ -126,7 +134,7 @@ const Ranking: React.FC<RankingProps> = ({ themeSlug = 'csm' }) => {
     return lang === 'en' ? 'Inglês' : 'Português';
   };
 
-  const formatScoreAsPercentage = (score: number, totalQuestions: number): string => {
+  const formatScoreAsPercentage = (score: number): string => {
     // Score is already stored as a percentage in the database
     // Just format it properly
     return `${Math.round(score)}%`;
@@ -225,30 +233,32 @@ const Ranking: React.FC<RankingProps> = ({ themeSlug = 'csm' }) => {
           </div>
 
           {/* Quiz Size and Time Period Selection */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>{isEnglish ? 'Quiz Size' : 'Tamanho do Quiz'}</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <ToggleGroup 
-                  type="single" 
-                  value={selectedQuizSize.toString()} 
-                  onValueChange={(value) => value && setSelectedQuizSize(parseInt(value))}
-                  className="justify-start"
-                >
-                  {quizSizes.map(size => (
-                    <ToggleGroupItem 
-                      key={size} 
-                      value={size.toString()}
-                      className="px-6 py-2"
-                    >
-                      {size} {isEnglish ? 'questions' : 'questões'}
-                    </ToggleGroupItem>
-                  ))}
-                </ToggleGroup>
-              </CardContent>
-            </Card>
+          <div className={`grid grid-cols-1 ${showQuizSizeFilter ? 'lg:grid-cols-2' : ''} gap-6 mb-6`}>
+            {showQuizSizeFilter && (
+              <Card>
+                <CardHeader>
+                  <CardTitle>{isEnglish ? 'Quiz Size' : 'Tamanho do Quiz'}</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <ToggleGroup 
+                    type="single" 
+                    value={selectedQuizSize.toString()} 
+                    onValueChange={(value) => value && setSelectedQuizSize(parseInt(value))}
+                    className="justify-start"
+                  >
+                    {quizSizes.map(size => (
+                      <ToggleGroupItem 
+                        key={size} 
+                        value={size.toString()}
+                        className="px-6 py-2"
+                      >
+                        {size} {isEnglish ? 'questions' : 'questões'}
+                      </ToggleGroupItem>
+                    ))}
+                  </ToggleGroup>
+                </CardContent>
+              </Card>
+            )}
 
             <Card>
               <CardHeader>
@@ -346,7 +356,7 @@ const Ranking: React.FC<RankingProps> = ({ themeSlug = 'csm' }) => {
                           <td className="py-3 px-2 font-medium">{entry.name}</td>
                           <td className="py-3 px-2">
                             <Badge variant="secondary">
-                              {formatScoreAsPercentage(entry.score, selectedQuizSize)}
+                              {formatScoreAsPercentage(entry.score)}
                             </Badge>
                           </td>
                           <td className="py-3 px-2">
