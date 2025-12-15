@@ -138,10 +138,15 @@ const Ranking: React.FC<RankingProps> = ({ themeSlug = 'csm' }) => {
   };
 
   const themeName = theme?.name || 'CSM';
+  
+  // Determine ranking path for this theme
+  const rankingPath = themeSlug === 'csm' 
+    ? (language === 'en' ? '/us/ranking' : '/ranking')
+    : `/${themeSlug === 'k212025' ? 'fimdeano' : themeSlug}/ranking`;
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Header />
+      <Header rankingPath={rankingPath} />
       
       <main className="container mx-auto px-4 py-8">
         <div className="max-w-6xl mx-auto">

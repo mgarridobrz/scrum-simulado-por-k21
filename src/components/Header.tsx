@@ -15,8 +15,18 @@ import LanguageSelector from '@/components/LanguageSelector';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { getTranslation } from '@/utils/translations';
 
-const Header = () => {
+interface HeaderProps {
+  rankingPath?: string;
+}
+
+const Header = ({ rankingPath }: HeaderProps = {}) => {
   const { language } = useLanguage();
+  
+  // Determine ranking URL: use provided path or default based on language
+  const getRankingUrl = () => {
+    if (rankingPath) return rankingPath;
+    return language === 'en' ? '/us/ranking' : '/ranking';
+  };
   
   const handleShare = (platform: string) => {
     const url = window.location.href;
@@ -151,7 +161,7 @@ const Header = () => {
           </DropdownMenu>
           
           <Link 
-            to={language === 'en' ? '/us/ranking' : '/ranking'}
+            to={getRankingUrl()}
             className="flex items-center gap-1 text-sm font-medium text-gray-600 hover:text-k21-teal transition-colors"
           >
             <Trophy size={16} className="text-k21-gold" />

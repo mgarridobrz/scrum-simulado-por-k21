@@ -209,9 +209,14 @@ const ThemedQuiz: React.FC<ThemedQuizProps> = ({
     );
   }
 
+  // Determine ranking path for this theme
+  const rankingPath = themeSlug === 'csm' 
+    ? (language === 'en' ? '/us/ranking' : '/ranking')
+    : `/${themeSlug}/ranking`;
+
   return (
     <div className="min-h-screen bg-gray-50">
-      <Header />
+      <Header rankingPath={rankingPath} />
       
       <main className="container mx-auto px-4 py-8">
         {currentScreen === 'start' && (
