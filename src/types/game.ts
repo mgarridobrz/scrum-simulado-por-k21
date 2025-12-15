@@ -50,7 +50,7 @@ export interface GameState {
 
 export interface GameConfig {
   category: string;
-  questionCount: 5 | 10;
+  questionCount: number;
   name: string;
   email?: string;
 }

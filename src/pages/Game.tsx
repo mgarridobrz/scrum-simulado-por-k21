@@ -43,7 +43,7 @@ const Game: React.FC<GameProps> = ({ themeSlug, themeId, basePath = '' }) => {
     setGameConfig(null);
   };
 
-  const handleCategorySelection = async (category: string, questionCount: 5 | 10) => {
+  const handleCategorySelection = async (category: string, questionCount: number) => {
     // Converter 'all' para undefined para buscar todas as categorias
     const categoryFilter = category === 'all' ? undefined : category;
     setGameConfig({ category: category, questionCount, name: '', email: '' });

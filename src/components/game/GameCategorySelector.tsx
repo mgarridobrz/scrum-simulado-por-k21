@@ -9,7 +9,7 @@ import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 
 interface GameCategorySelectorProps {
-  onSelectCategory: (category: string, questionCount: 5 | 10) => void;
+  onSelectCategory: (category: string, questionCount: number) => void;
   themeId?: string;
   basePath?: string;
 }
@@ -33,6 +33,7 @@ export const GameCategorySelector: React.FC<GameCategorySelectorProps> = ({
   const { language } = useLanguage();
   const navigate = useNavigate();
   const [hasCategories, setHasCategories] = useState(true);
+  const [totalQuestions, setTotalQuestions] = useState(0);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -49,14 +50,16 @@ export const GameCategorySelector: React.FC<GameCategorySelectorProps> = ({
           .from('quiz_questions')
           .select('category_id')
           .eq('theme_id', themeId)
-          .limit(100);
+          .limit(1000);
 
         if (data && data.length > 0) {
+          setTotalQuestions(data.length);
           const uniqueCategories = [...new Set(data.map(q => q.category_id))];
           // If only one category or no meaningful categories, show simplified view
           setHasCategories(uniqueCategories.length > 1);
         } else {
           setHasCategories(false);
+          setTotalQuestions(0);
         }
       } catch (error) {
         console.error('Error checking categories:', error);
@@ -72,10 +75,8 @@ export const GameCategorySelector: React.FC<GameCategorySelectorProps> = ({
   const homePath = basePath || '/';
   const rankingPath = basePath ? `${basePath}/game/ranking` : '/game/ranking';
 
-  // If theme has no categories, show simplified selector
-  const categories = hasCategories ? defaultCategories : [
-    { id: 'all', name: 'Todas as Questões', nameEn: 'All Questions' }
-  ];
+  // For themes without categories, use total questions count
+  const allQuestionsCount = totalQuestions > 0 ? totalQuestions : 10;
 
   if (loading) {
     return (
@@ -132,50 +133,77 @@ export const GameCategorySelector: React.FC<GameCategorySelectorProps> = ({
         </div>
       </div>
 
-      {/* Grid compacto de categorias */}
-      <div className={`grid gap-4 ${categories.length === 1 ? 'grid-cols-1 max-w-md mx-auto' : 'grid-cols-1 lg:grid-cols-2'}`}>
-        {categories.map((category) => (
-          <Card key={category.id} className="p-4 hover:shadow-md transition-shadow">
-            <div className="space-y-3">
-              <div className="text-center">
-                <h3 className="font-semibold text-lg">
-                  {language === 'pt' ? category.name : category.nameEn}
-                </h3>
-                {hasCategories && (
+      {/* Grid de categorias ou botão único */}
+      {hasCategories ? (
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          {defaultCategories.map((category) => (
+            <Card key={category.id} className="p-4 hover:shadow-md transition-shadow">
+              <div className="space-y-3">
+                <div className="text-center">
+                  <h3 className="font-semibold text-lg">
+                    {language === 'pt' ? category.name : category.nameEn}
+                  </h3>
                   <Badge variant="outline" className="text-xs">
                     {category.id}
                   </Badge>
-                )}
-              </div>
+                </div>
 
-              <div className="grid grid-cols-2 gap-2">
-                {questionCounts.map((option) => (
-                  <Button
-                    key={option.count}
-                    onClick={() => {
-                      console.log('🔍 CATEGORY SELECTOR - Selected:', { category: category.id, count: option.count });
-                      onSelectCategory(category.id, option.count);
-                    }}
-                    variant="default"
-                    size="sm"
-                    className="flex flex-col p-3 h-auto space-y-1"
-                  >
-                    <span className="text-xl font-bold">
-                      {option.count}
-                    </span>
-                    <span className="text-xs">
-                      {getTranslation(language, 'questions')}
-                    </span>
-                    <span className="text-xs opacity-75">
-                      ~{option.time} min
-                    </span>
-                  </Button>
-                ))}
+                <div className="grid grid-cols-2 gap-2">
+                  {questionCounts.map((option) => (
+                    <Button
+                      key={option.count}
+                      onClick={() => {
+                        console.log('🔍 CATEGORY SELECTOR - Selected:', { category: category.id, count: option.count });
+                        onSelectCategory(category.id, option.count);
+                      }}
+                      variant="default"
+                      size="sm"
+                      className="flex flex-col p-3 h-auto space-y-1"
+                    >
+                      <span className="text-xl font-bold">
+                        {option.count}
+                      </span>
+                      <span className="text-xs">
+                        {getTranslation(language, 'questions')}
+                      </span>
+                      <span className="text-xs opacity-75">
+                        ~{option.time} min
+                      </span>
+                    </Button>
+                  ))}
+                </div>
               </div>
+            </Card>
+          ))}
+        </div>
+      ) : (
+        <div className="max-w-md mx-auto">
+          <Card className="p-6 hover:shadow-md transition-shadow">
+            <div className="space-y-4 text-center">
+              <h3 className="font-semibold text-lg">
+                {language === 'pt' ? 'Todas as Questões' : 'All Questions'}
+              </h3>
+              <p className="text-muted-foreground text-sm">
+                {language === 'pt' 
+                  ? `${totalQuestions} questões disponíveis`
+                  : `${totalQuestions} questions available`
+                }
+              </p>
+              <Button
+                onClick={() => {
+                  console.log('🔍 CATEGORY SELECTOR - Selected all questions:', totalQuestions);
+                  onSelectCategory('all', allQuestionsCount);
+                }}
+                variant="default"
+                size="lg"
+                className="w-full py-6 text-lg"
+              >
+                🎮 {language === 'pt' ? 'Iniciar Jogo' : 'Start Game'}
+              </Button>
             </div>
           </Card>
-        ))}
-      </div>
+        </div>
+      )}
 
       {/* Instruções compactas */}
       <Card className="p-4 bg-blue-50 border-blue-200">
