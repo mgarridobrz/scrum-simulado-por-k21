@@ -25,7 +25,11 @@ function getWeekStart(date: Date) {
   return new Date(d.setDate(diff));
 }
 
-const AssessmentTrendsChart = () => {
+interface AssessmentTrendsChartProps {
+  themeId?: string;
+}
+
+const AssessmentTrendsChart: React.FC<AssessmentTrendsChartProps> = ({ themeId }) => {
   const { toast } = useToast();
   const [dailyData, setDailyData] = useState<{ date: string, count: number }[]>([]);
   const [weeklyData, setWeeklyData] = useState<{ week: string, count: number }[]>([]);
@@ -38,10 +42,17 @@ const AssessmentTrendsChart = () => {
         const now = new Date();
         // For daily trends (last 30 days)
         const startDay = subDays(now, 29);
-        const { data, error } = await supabase
+        
+        let dailyQuery = supabase
           .from('quiz_attempts')
           .select('created_at')
           .gte('created_at', startDay.toISOString());
+        
+        if (themeId) {
+          dailyQuery = dailyQuery.eq('theme_id', themeId);
+        }
+        
+        const { data, error } = await dailyQuery;
         if (error) throw error;
 
         // Aggregate counts per day for last 30 days
@@ -63,10 +74,17 @@ const AssessmentTrendsChart = () => {
 
         // For weekly trends (last 30 weeks)
         const startWeek = subWeeks(now, 29);
-        const { data: dataWeekly, error: errorWeekly } = await supabase
+        
+        let weeklyQuery = supabase
           .from('quiz_attempts')
           .select('created_at')
           .gte('created_at', startWeek.toISOString());
+        
+        if (themeId) {
+          weeklyQuery = weeklyQuery.eq('theme_id', themeId);
+        }
+        
+        const { data: dataWeekly, error: errorWeekly } = await weeklyQuery;
         if (errorWeekly) throw errorWeekly;
 
         // Aggregate counts per week
@@ -106,7 +124,7 @@ const AssessmentTrendsChart = () => {
     };
     fetchAssessmentTrends();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [themeId]);
 
   return (
     <Card className="mt-8 p-6 shadow-md bg-gradient-to-tr from-gray-50 to-white">

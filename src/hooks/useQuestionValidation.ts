@@ -12,16 +12,27 @@ export function useQuestionValidation() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [filter, setFilter] = useState<string>('all');
   const [isLoading, setIsLoading] = useState(true);
+  const [themeId, setThemeId] = useState<string | null>(null);
 
-  // Load questions from the database with language support
+  // Load questions from the database with language and theme support
   useEffect(() => {
     const loadQuestions = async () => {
+      if (!themeId) {
+        setQuestions([]);
+        setIsLoading(false);
+        return;
+      }
+      
       try {
         setIsLoading(true);
-        const fetchedQuestions = await fetchQuestionsByCategory(filter === 'all' ? undefined : filter, language);
+        const fetchedQuestions = await fetchQuestionsByCategory(
+          filter === 'all' ? undefined : filter, 
+          language,
+          themeId
+        );
         setQuestions(fetchedQuestions);
         setCurrentIndex(0);
-        console.log(`Loaded ${fetchedQuestions.length} questions from database with filter: ${filter} and language: ${language}`);
+        console.log(`Loaded ${fetchedQuestions.length} questions from database with filter: ${filter}, language: ${language}, theme: ${themeId}`);
         
         setIsLoading(false);
       } catch (error) {
@@ -36,13 +47,13 @@ export function useQuestionValidation() {
     };
     
     loadQuestions();
-  }, [filter, language, toast]);
+  }, [filter, language, themeId, toast]);
 
   // Handle filter changes - only reset index when filter actually changes
   useEffect(() => {
     if (questions.length === 0) return;
     setCurrentIndex(0);
-  }, [filter]); // Removed 'questions' dependency to prevent reset on question updates
+  }, [filter]);
 
   // Derived state
   const filteredQuestions = questions;
@@ -99,6 +110,7 @@ export function useQuestionValidation() {
     goToNextQuestion,
     goToPreviousQuestion,
     setQuestions,
-    updateQuestion: saveQuestion
+    updateQuestion: saveQuestion,
+    setThemeId
   };
 }

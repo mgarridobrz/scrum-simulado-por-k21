@@ -8,7 +8,11 @@ import { useToast } from '@/hooks/use-toast';
 import { Separator } from '@/components/ui/separator';
 import type { QuizStats } from '@/data/types';
 
-const GlobalStatsCounter = () => {
+interface GlobalStatsCounterProps {
+  themeId?: string;
+}
+
+const GlobalStatsCounter: React.FC<GlobalStatsCounterProps> = ({ themeId }) => {
   const [stats, setStats] = useState<QuizStats | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const { toast } = useToast();
@@ -17,7 +21,7 @@ const GlobalStatsCounter = () => {
     setIsLoading(true);
     try {
       // Get stats for quiz attempts
-      const statsData = await getQuizAttemptStats();
+      const statsData = await getQuizAttemptStats(themeId);
       setStats(statsData);
       console.log(`Loaded stats: ${JSON.stringify(statsData)}`);
     } catch (error) {
@@ -33,9 +37,9 @@ const GlobalStatsCounter = () => {
   };
   
   useEffect(() => {
-    // Load data initially
+    // Load data initially and when themeId changes
     loadStats();
-  }, []);
+  }, [themeId]);
   
   return (
     <Card className="bg-white shadow-md">
