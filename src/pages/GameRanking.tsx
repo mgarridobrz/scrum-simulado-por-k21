@@ -40,11 +40,16 @@ const GameRanking: React.FC<GameRankingProps> = ({ themeSlug, basePath = '' }) =
     { id: 'events-artifacts', name: 'Eventos + Artefatos + Disfunções', nameEn: 'Events + Artifacts + Dysfunctions' }
   ];
 
-  const questionCounts = [
-    { id: 'all', label: 'Todas', labelEn: 'All' },
-    { id: '5', label: '5 questões', labelEn: '5 questions' },
-    { id: '10', label: '10 questões', labelEn: '10 questions' }
-  ];
+  // Question counts depend on whether the theme has categories
+  const questionCounts = showCategoryFilter 
+    ? [
+        { id: 'all', label: 'Todas', labelEn: 'All' },
+        { id: '5', label: '5 questões', labelEn: '5 questions' },
+        { id: '10', label: '10 questões', labelEn: '10 questions' }
+      ]
+    : [
+        { id: 'all', label: 'Todas', labelEn: 'All' }
+      ];
 
   // Load theme if themeSlug is provided
   useEffect(() => {
@@ -56,13 +61,22 @@ const GameRanking: React.FC<GameRankingProps> = ({ themeSlug, basePath = '' }) =
           // For non-CSM themes, hide category filter
           setShowCategoryFilter(themeSlug === 'csm');
         }
+      } else {
+        // Default theme (CSM)
+        const theme = await fetchThemeBySlug('csm');
+        if (theme) {
+          setThemeId(theme.id);
+        }
       }
     };
     loadTheme();
   }, [themeSlug]);
 
+  // Only load data after themeId is set
   useEffect(() => {
-    loadData();
+    if (themeId) {
+      loadData();
+    }
   }, [selectedCategory, selectedQuestionCount, language, themeId]);
 
   const loadData = async () => {
