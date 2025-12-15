@@ -94,13 +94,19 @@ export async function getGameRanking(
   category?: string,
   questionCount?: number,
   language?: 'pt' | 'en',
-  limit: number = 100
+  limit: number = 100,
+  themeId?: string
 ): Promise<GameRanking[]> {
   try {
     let query = supabase
       .from('game_attempts')
       .select('name, final_score_ms, correct_answers, question_count, penalty_time_ms, total_time_ms, language, created_at, category')
       .order('final_score_ms', { ascending: true });
+
+    // Filter by theme
+    if (themeId) {
+      query = query.eq('theme_id', themeId);
+    }
 
     if (category && category !== 'all') {
       // Handle combined categories
@@ -137,11 +143,16 @@ export async function getGameRanking(
   }
 }
 
-export async function getGameStats(category?: string, questionCount?: number) {
+export async function getGameStats(category?: string, questionCount?: number, themeId?: string) {
   try {
     let query = supabase
       .from('game_attempts')
       .select('final_score_ms, correct_answers, question_count, total_time_ms, penalty_time_ms, category');
+
+    // Filter by theme
+    if (themeId) {
+      query = query.eq('theme_id', themeId);
+    }
 
     if (category && category !== 'all') {
       // Handle combined categories

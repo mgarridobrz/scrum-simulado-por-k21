@@ -22,13 +22,13 @@ export async function getQuizQuestions(language: 'pt' | 'en' = 'pt'): Promise<Qu
 }
 
 // Function to get a specified number of random questions with language support and category filter
-export async function getRandomQuestions(count: number, language: 'pt' | 'en' = 'pt', category?: string): Promise<QuestionWithCategory[]> {
+export async function getRandomQuestions(count: number, language: 'pt' | 'en' = 'pt', category?: string, themeId?: string): Promise<QuestionWithCategory[]> {
   try {
     // Get questions from database with category filter
-    const randomQuestions = await fetchRandomQuestions(count, language, category);
+    const randomQuestions = await fetchRandomQuestions(count, language, category, themeId);
     
     if (randomQuestions && randomQuestions.length > 0) {
-      console.log(`Fetched ${randomQuestions.length} random questions from database for language: ${language}, category: ${category || 'all'}`);
+      console.log(`Fetched ${randomQuestions.length} random questions from database for language: ${language}, category: ${category || 'all'}, themeId: ${themeId || 'default'}`);
       return randomQuestions;
     }
     

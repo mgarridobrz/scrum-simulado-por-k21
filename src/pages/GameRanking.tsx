@@ -10,8 +10,14 @@ import { getTranslation } from '@/utils/translations';
 import { getGameRanking, getGameStats } from '@/utils/gameTracking';
 import { GameRanking as GameRankingType } from '@/types/game';
 import Header from '@/components/Header';
+import { fetchThemeBySlug } from '@/utils/themeService';
 
-const GameRanking: React.FC = () => {
+interface GameRankingProps {
+  themeSlug?: string;
+  basePath?: string;
+}
+
+const GameRanking: React.FC<GameRankingProps> = ({ themeSlug, basePath = '' }) => {
   const navigate = useNavigate();
   const { language } = useLanguage();
   
@@ -19,6 +25,8 @@ const GameRanking: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [selectedQuestionCount, setSelectedQuestionCount] = useState<string>('all');
+  const [themeId, setThemeId] = useState<string | undefined>(undefined);
+  const [showCategoryFilter, setShowCategoryFilter] = useState(true);
   const [stats, setStats] = useState({
     totalAttempts: 0,
     averageTime: 0,
@@ -38,9 +46,24 @@ const GameRanking: React.FC = () => {
     { id: '10', label: '10 questões', labelEn: '10 questions' }
   ];
 
+  // Load theme if themeSlug is provided
+  useEffect(() => {
+    const loadTheme = async () => {
+      if (themeSlug) {
+        const theme = await fetchThemeBySlug(themeSlug);
+        if (theme) {
+          setThemeId(theme.id);
+          // For non-CSM themes, hide category filter
+          setShowCategoryFilter(themeSlug === 'csm');
+        }
+      }
+    };
+    loadTheme();
+  }, [themeSlug]);
+
   useEffect(() => {
     loadData();
-  }, [selectedCategory, selectedQuestionCount, language]);
+  }, [selectedCategory, selectedQuestionCount, language, themeId]);
 
   const loadData = async () => {
     setLoading(true);
@@ -48,11 +71,11 @@ const GameRanking: React.FC = () => {
       const category = selectedCategory === 'all' ? undefined : selectedCategory;
       const questionCount = selectedQuestionCount === 'all' ? undefined : parseInt(selectedQuestionCount);
       
-      console.log('🔍 RANKING - Loading data with filters:', { category, questionCount, language });
+      console.log('🔍 RANKING - Loading data with filters:', { category, questionCount, language, themeId });
       
       const [rankingData, statsData] = await Promise.all([
-        getGameRanking(category, questionCount, language),
-        getGameStats(category, questionCount)
+        getGameRanking(category, questionCount, language, 100, themeId),
+        getGameStats(category, questionCount, themeId)
       ]);
       
       console.log('🔍 RANKING - Received data:', { 
@@ -82,13 +105,16 @@ const GameRanking: React.FC = () => {
     return `${Math.round((correct / total) * 100)}%`;
   };
 
+  const gamePath = basePath ? `${basePath}/game` : '/game';
+  const rankingPath = basePath ? `${basePath}/game/ranking` : '/game/ranking';
+
   const handleBackClick = () => {
-    navigate('/game');
+    navigate(gamePath);
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background to-muted">
-      <Header />
+      <Header rankingPath={rankingPath} />
       
       <main className="container mx-auto px-4 py-8">
         <div className="max-w-6xl mx-auto">
@@ -148,23 +174,25 @@ const GameRanking: React.FC = () => {
 
           {/* Filters */}
           <div className="flex flex-col sm:flex-row gap-4 mb-8 bg-card p-4 rounded-lg border">
-            <div className="space-y-2 flex-1">
-              <label className="text-sm font-medium">
-                {getTranslation(language, 'categoryFilter')}
-              </label>
-              <ToggleGroup 
-                type="single" 
-                value={selectedCategory} 
-                onValueChange={(value) => value && setSelectedCategory(value)}
-                className="justify-start flex-wrap"
-              >
-                {categories.map((category) => (
-                  <ToggleGroupItem key={category.id} value={category.id} className="text-xs">
-                    {language === 'pt' ? category.name : category.nameEn}
-                  </ToggleGroupItem>
-                ))}
-              </ToggleGroup>
-            </div>
+            {showCategoryFilter && (
+              <div className="space-y-2 flex-1">
+                <label className="text-sm font-medium">
+                  {getTranslation(language, 'categoryFilter')}
+                </label>
+                <ToggleGroup 
+                  type="single" 
+                  value={selectedCategory} 
+                  onValueChange={(value) => value && setSelectedCategory(value)}
+                  className="justify-start flex-wrap"
+                >
+                  {categories.map((category) => (
+                    <ToggleGroupItem key={category.id} value={category.id} className="text-xs">
+                      {language === 'pt' ? category.name : category.nameEn}
+                    </ToggleGroupItem>
+                  ))}
+                </ToggleGroup>
+              </div>
+            )}
 
             <div className="space-y-2">
               <label className="text-sm font-medium">

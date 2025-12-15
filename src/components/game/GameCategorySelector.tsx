@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -6,12 +6,15 @@ import { Trophy, Clock, Target, ArrowLeft } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { getTranslation } from '@/utils/translations';
 import { useNavigate } from 'react-router-dom';
+import { supabase } from '@/integrations/supabase/client';
 
 interface GameCategorySelectorProps {
   onSelectCategory: (category: string, questionCount: 5 | 10) => void;
+  themeId?: string;
+  basePath?: string;
 }
 
-const categories = [
+const defaultCategories = [
   { id: 'fundamentals-roles', name: 'Fundamentos + Papéis', nameEn: 'Fundamentals + Roles' },
   { id: 'events-artifacts', name: 'Eventos + Artefatos + Disfunções', nameEn: 'Events + Artifacts + Dysfunctions' },
   { id: 'all', name: 'Todas as Categorias', nameEn: 'All Categories' }
@@ -22,9 +25,65 @@ const questionCounts = [
   { count: 10 as const, time: '10', description: 'Completo', descriptionEn: 'Complete' }
 ];
 
-export const GameCategorySelector: React.FC<GameCategorySelectorProps> = ({ onSelectCategory }) => {
+export const GameCategorySelector: React.FC<GameCategorySelectorProps> = ({ 
+  onSelectCategory, 
+  themeId,
+  basePath = ''
+}) => {
   const { language } = useLanguage();
   const navigate = useNavigate();
+  const [hasCategories, setHasCategories] = useState(true);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const checkCategories = async () => {
+      if (!themeId) {
+        setHasCategories(true);
+        setLoading(false);
+        return;
+      }
+
+      try {
+        // Check if theme has questions with distinct categories
+        const { data } = await supabase
+          .from('quiz_questions')
+          .select('category_id')
+          .eq('theme_id', themeId)
+          .limit(100);
+
+        if (data && data.length > 0) {
+          const uniqueCategories = [...new Set(data.map(q => q.category_id))];
+          // If only one category or no meaningful categories, show simplified view
+          setHasCategories(uniqueCategories.length > 1);
+        } else {
+          setHasCategories(false);
+        }
+      } catch (error) {
+        console.error('Error checking categories:', error);
+        setHasCategories(false);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    checkCategories();
+  }, [themeId]);
+
+  const homePath = basePath || '/';
+  const rankingPath = basePath ? `${basePath}/game/ranking` : '/game/ranking';
+
+  // If theme has no categories, show simplified selector
+  const categories = hasCategories ? defaultCategories : [
+    { id: 'all', name: 'Todas as Questões', nameEn: 'All Questions' }
+  ];
+
+  if (loading) {
+    return (
+      <div className="max-w-4xl mx-auto text-center py-8">
+        <div className="text-muted-foreground">Carregando...</div>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-4xl mx-auto space-y-6">
@@ -32,7 +91,7 @@ export const GameCategorySelector: React.FC<GameCategorySelectorProps> = ({ onSe
       <div className="text-center space-y-4">
         <div className="flex items-center justify-between">
           <Button 
-            onClick={() => navigate('/')}
+            onClick={() => navigate(homePath)}
             variant="outline"
             size="sm"
             className="flex items-center gap-2"
@@ -54,15 +113,15 @@ export const GameCategorySelector: React.FC<GameCategorySelectorProps> = ({ onSe
         
         <p className="text-muted-foreground">
           {language === 'pt' 
-            ? 'Responda rapidamente digitando A, B, C ou D. Erros adicionam 10 segundos!'
-            : 'Answer quickly by typing A, B, C or D. Mistakes add 10 seconds!'
+            ? 'Responda rapidamente digitando A, B, C ou D. Erros adicionam 15 segundos!'
+            : 'Answer quickly by typing A, B, C or D. Mistakes add 15 seconds!'
           }
         </p>
 
         {/* Botão de Ranking em destaque */}
         <div className="flex justify-center">
           <Button 
-            onClick={() => navigate('/game/ranking')}
+            onClick={() => navigate(rankingPath)}
             variant="outline"
             size="lg"
             className="bg-yellow-50 border-yellow-200 hover:bg-yellow-100 text-yellow-700 hover:text-yellow-800"
@@ -74,7 +133,7 @@ export const GameCategorySelector: React.FC<GameCategorySelectorProps> = ({ onSe
       </div>
 
       {/* Grid compacto de categorias */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+      <div className={`grid gap-4 ${categories.length === 1 ? 'grid-cols-1 max-w-md mx-auto' : 'grid-cols-1 lg:grid-cols-2'}`}>
         {categories.map((category) => (
           <Card key={category.id} className="p-4 hover:shadow-md transition-shadow">
             <div className="space-y-3">
@@ -82,9 +141,11 @@ export const GameCategorySelector: React.FC<GameCategorySelectorProps> = ({ onSe
                 <h3 className="font-semibold text-lg">
                   {language === 'pt' ? category.name : category.nameEn}
                 </h3>
-                <Badge variant="outline" className="text-xs">
-                  {category.id}
-                </Badge>
+                {hasCategories && (
+                  <Badge variant="outline" className="text-xs">
+                    {category.id}
+                  </Badge>
+                )}
               </div>
 
               <div className="grid grid-cols-2 gap-2">
@@ -125,7 +186,7 @@ export const GameCategorySelector: React.FC<GameCategorySelectorProps> = ({ onSe
           <div className="text-sm text-blue-700 space-y-1">
             <p>• {language === 'pt' ? 'Countdown de 3 segundos antes de cada questão' : '3-second countdown before each question'}</p>
             <p>• {language === 'pt' ? 'Digite A, B, C ou D para responder' : 'Type A, B, C or D to answer'}</p>
-            <p>• {language === 'pt' ? 'Resposta errada = +10 segundos de penalidade' : 'Wrong answer = +10 seconds penalty'}</p>
+            <p>• {language === 'pt' ? 'Resposta errada = +15 segundos de penalidade' : 'Wrong answer = +15 seconds penalty'}</p>
             <p>• {language === 'pt' ? 'Menor tempo total vence!' : 'Lowest total time wins!'}</p>
           </div>
         </div>
