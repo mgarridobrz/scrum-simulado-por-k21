@@ -16,7 +16,13 @@ import { GameResults } from '@/components/game/GameResults';
 
 import { GameState, GameQuestion, GameConfig } from '@/types/game';
 
-const Game: React.FC = () => {
+interface GameProps {
+  themeSlug?: string;
+  themeId?: string;
+  basePath?: string;
+}
+
+const Game: React.FC<GameProps> = ({ themeSlug, themeId, basePath = '' }) => {
   const navigate = useNavigate();
   const { language } = useLanguage();
   
@@ -53,7 +59,7 @@ const Game: React.FC = () => {
       
       // Converter 'all' para undefined para buscar todas as categorias
       const categoryFilter = gameConfig.category === 'all' ? undefined : gameConfig.category;
-      const questions = await getRandomQuestions(gameConfig.questionCount, language, categoryFilter);
+      const questions = await getRandomQuestions(gameConfig.questionCount, language, categoryFilter, themeId);
       if (questions.length === 0) {
         toast({
           title: "Erro",
@@ -217,7 +223,8 @@ const Game: React.FC = () => {
         gameState.questions,
         finalAnswers,
         language,
-        finalScoreToSave  // Score final exato da tela
+        finalScoreToSave,  // Score final exato da tela
+        themeId
       );
 
       setGameState(prev => prev ? {
@@ -244,12 +251,20 @@ const Game: React.FC = () => {
   // Timer só deve ser ativo durante as questões, não nos countdowns
   const isTimerActive = gameState?.phase === 'question';
 
+  const rankingPath = basePath ? `${basePath}/game/ranking` : '/game/ranking';
+  const gamePath = basePath ? `${basePath}/game` : '/game';
+  const homePath = basePath || '/';
+
   if (!gameConfig) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-background to-muted">
-        <Header />
+        <Header rankingPath={rankingPath} />
         <main className="container mx-auto px-4 py-8">
-          <GameCategorySelector onSelectCategory={handleCategorySelection} />
+          <GameCategorySelector 
+            onSelectCategory={handleCategorySelection} 
+            themeId={themeId}
+            basePath={basePath}
+          />
         </main>
       </div>
     );
@@ -258,7 +273,7 @@ const Game: React.FC = () => {
   if (showUserForm && gameConfig) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-background to-muted">
-        <Header />
+        <Header rankingPath={rankingPath} />
         <main className="container mx-auto px-4 py-8">
           <div className="max-w-md mx-auto">
             <UserInfoForm 
@@ -278,7 +293,7 @@ const Game: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background to-muted">
-      <Header />
+      <Header rankingPath={rankingPath} />
       
       <main className="container mx-auto px-4 py-8">
         <div className="max-w-4xl mx-auto">
@@ -345,8 +360,8 @@ const Game: React.FC = () => {
                 finalScoreMs={gameState.totalTime + gameState.penaltyTime}
                 category={gameConfig.category}
                 onPlayAgain={resetGame}
-                onViewRanking={() => navigate('/game/ranking')}
-                onBackToHome={() => navigate('/')}
+                onViewRanking={() => navigate(rankingPath)}
+                onBackToHome={() => navigate(homePath)}
               />
             )}
           </div>

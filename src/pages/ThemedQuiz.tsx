@@ -216,11 +216,15 @@ const ThemedQuiz: React.FC<ThemedQuizProps> = ({
     return slug;
   };
 
-  // Determine ranking path for this theme
+  // Determine paths for this theme
   const themeUrlPath = getThemeUrlPath(themeSlug);
+  const basePath = themeSlug === 'csm' ? '' : `/${themeUrlPath}`;
   const rankingPath = themeSlug === 'csm' 
     ? (language === 'en' ? '/us/ranking' : '/ranking')
     : `/${themeUrlPath}/ranking`;
+  const gamePath = themeSlug === 'csm'
+    ? (language === 'en' ? '/us/game' : '/game')
+    : `/${themeUrlPath}/game`;
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -233,6 +237,7 @@ const ThemedQuiz: React.FC<ThemedQuizProps> = ({
               onStart={handleStartQuiz} 
               customSubtitle={theme.subtitle || undefined}
               themeName={theme.name}
+              gamePath={gamePath}
             />
             
             {/* Public Statistics - only for CSM theme */}

@@ -11,9 +11,10 @@ interface StartScreenProps {
   onStart: (size: number, userData?: { name: string; email: string }) => void;
   customSubtitle?: string;
   themeName?: string;
+  gamePath?: string;
 }
 
-const StartScreen = ({ onStart, customSubtitle, themeName }: StartScreenProps) => {
+const StartScreen = ({ onStart, customSubtitle, themeName, gamePath = '/game' }: StartScreenProps) => {
   const { language } = useLanguage();
   const [showSizeSelector, setShowSizeSelector] = useState(false);
   const [selectedSize, setSelectedSize] = useState<number | null>(null);
@@ -102,7 +103,7 @@ const StartScreen = ({ onStart, customSubtitle, themeName }: StartScreenProps) =
             </Button>
             
             <Button
-              onClick={() => window.location.href = '/game'}
+              onClick={() => window.location.href = gamePath}
               variant="outline"
               className="border-k21-teal text-k21-teal hover:bg-k21-teal hover:text-white px-8 py-6 text-lg flex-1"
             >

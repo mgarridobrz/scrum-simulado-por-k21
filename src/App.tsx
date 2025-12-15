@@ -7,6 +7,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import Index from "./pages/Index";
 import ThemedQuiz from "./pages/ThemedQuiz";
+import ThemedGame from "./pages/ThemedGame";
 import QuestionValidation from "./pages/QuestionValidation";
 import Ranking from "./pages/Ranking";
 import Game from "./pages/Game";
@@ -36,6 +37,8 @@ const App = () => (
             {/* K21 2025 Theme (fim de ano) */}
             <Route path="/fimdeano" element={<ThemedQuiz themeSlug="k212025" showStats={false} showAdminButton={false} />} />
             <Route path="/fimdeano/ranking" element={<Ranking themeSlug="k212025" />} />
+            <Route path="/fimdeano/game" element={<ThemedGame themeSlug="k212025" basePath="/fimdeano" />} />
+            <Route path="/fimdeano/game/ranking" element={<GameRanking themeSlug="k212025" basePath="/fimdeano" />} />
             
             {/* Admin */}
             <Route path="/validate-questions" element={<QuestionValidation />} />
