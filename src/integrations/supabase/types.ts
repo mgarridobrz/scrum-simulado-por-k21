@@ -3569,6 +3569,13 @@ export type Database = {
           organization_id: string
         }[]
       }
+      get_org_users_with_last_login: {
+        Args: { p_organization_id: string }
+        Returns: {
+          last_sign_in_at: string
+          user_id: string
+        }[]
+      }
       get_organization_last_activity: {
         Args: { org_id: string }
         Returns: {
