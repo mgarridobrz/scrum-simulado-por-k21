@@ -2,8 +2,12 @@ import React from 'react';
 import { Card } from '@/components/ui/card';
 import { useGameStats } from '@/hooks/useGameStats';
 
-const GameStatsCounter = () => {
-  const { stats, loading, error } = useGameStats();
+interface GameStatsCounterProps {
+  themeId?: string | null;
+}
+
+const GameStatsCounter = ({ themeId }: GameStatsCounterProps) => {
+  const { stats, loading, error } = useGameStats(themeId);
 
   if (loading) {
     return (

@@ -317,9 +317,10 @@ const QuestionValidation = () => {
       </div>
 
       <Tabs defaultValue="questions" className="w-full">
-        <TabsList className="grid w-full grid-cols-2">
+        <TabsList className="grid w-full grid-cols-3">
           <TabsTrigger value="questions">Edição de Questões</TabsTrigger>
-          <TabsTrigger value="statistics">Estatísticas</TabsTrigger>
+          <TabsTrigger value="quiz-statistics">Estatísticas Simulado</TabsTrigger>
+          <TabsTrigger value="game-statistics">Estatísticas Modo Jogo</TabsTrigger>
         </TabsList>
 
         <TabsContent value="questions" className="space-y-6">
@@ -406,23 +407,25 @@ const QuestionValidation = () => {
           )}
         </TabsContent>
 
-        <TabsContent value="statistics" className="space-y-6">
+        <TabsContent value="quiz-statistics" className="space-y-6">
           <div className="grid gap-6">
             <div>
               <h2 className="text-2xl font-bold mb-4">Estatísticas do Simulado - {selectedTheme?.name}</h2>
               <GlobalStatsCounter themeId={selectedThemeId} />
             </div>
             
-            {selectedTheme?.slug === 'csm' && (
-              <div>
-                <h2 className="text-2xl font-bold mb-4">Estatísticas do Game</h2>
-                <GameStatsCounter />
-              </div>
-            )}
-            
             <div>
               <h2 className="text-2xl font-bold mb-4">Tendências de Avaliação</h2>
               <AssessmentTrendsChart themeId={selectedThemeId} />
+            </div>
+          </div>
+        </TabsContent>
+
+        <TabsContent value="game-statistics" className="space-y-6">
+          <div className="grid gap-6">
+            <div>
+              <h2 className="text-2xl font-bold mb-4">Estatísticas do Modo Jogo - {selectedTheme?.name}</h2>
+              <GameStatsCounter themeId={selectedThemeId} />
             </div>
           </div>
         </TabsContent>

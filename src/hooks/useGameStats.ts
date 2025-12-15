@@ -30,7 +30,7 @@ interface DetailedGameStats {
   }>;
 }
 
-export const useGameStats = () => {
+export const useGameStats = (themeId?: string | null) => {
   const [stats, setStats] = useState<DetailedGameStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -40,11 +40,17 @@ export const useGameStats = () => {
       setLoading(true);
       setError(null);
 
-      // Get all game attempts
-      const { data: attempts, error: attemptsError } = await supabase
+      // Get all game attempts with optional theme filter
+      let query = supabase
         .from('game_attempts')
         .select('*')
         .order('created_at', { ascending: false });
+
+      if (themeId) {
+        query = query.eq('theme_id', themeId);
+      }
+
+      const { data: attempts, error: attemptsError } = await query;
 
       if (attemptsError) throw attemptsError;
 
@@ -144,7 +150,7 @@ export const useGameStats = () => {
 
   useEffect(() => {
     fetchGameStats();
-  }, []);
+  }, [themeId]);
 
   return {
     stats,
