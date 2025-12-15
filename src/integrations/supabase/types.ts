@@ -2870,7 +2870,7 @@ export type Database = {
       }
       quiz_questions: {
         Row: {
-          category_id: string
+          category_id: string | null
           correct_answer: string
           created_at: string | null
           explanation: string | null
@@ -2884,7 +2884,7 @@ export type Database = {
           updated_at: string | null
         }
         Insert: {
-          category_id: string
+          category_id?: string | null
           correct_answer: string
           created_at?: string | null
           explanation?: string | null
@@ -2898,7 +2898,7 @@ export type Database = {
           updated_at?: string | null
         }
         Update: {
-          category_id?: string
+          category_id?: string | null
           correct_answer?: string
           created_at?: string | null
           explanation?: string | null
