@@ -483,7 +483,7 @@ export async function getGlobalQuizStats(themeId?: string): Promise<{
  * Gets ranking data for specific quiz size with language and time period support
  */
 export async function getRankingData(
-  quizSize: number,
+  quizSize?: number,
   language?: 'pt' | 'en',
   timePeriod?: '30days' | '90days' | 'alltime',
   themeId?: string
@@ -498,8 +498,12 @@ export async function getRankingData(
     let query = supabase
       .from('quiz_attempts')
       .select('name, score, completion_time_seconds, language, created_at')
-      .eq('quiz_size', quizSize)
       .not('score', 'is', null);
+
+    // Add quiz size filter if specified
+    if (quizSize !== undefined) {
+      query = query.eq('quiz_size', quizSize);
+    }
 
     // Add theme filter if specified
     if (themeId) {
