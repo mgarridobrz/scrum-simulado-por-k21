@@ -9,9 +9,11 @@ import { getTranslation } from '@/utils/translations';
 
 interface StartScreenProps {
   onStart: (size: number, userData?: { name: string; email: string }) => void;
+  customSubtitle?: string;
+  themeName?: string;
 }
 
-const StartScreen = ({ onStart }: StartScreenProps) => {
+const StartScreen = ({ onStart, customSubtitle, themeName }: StartScreenProps) => {
   const { language } = useLanguage();
   const [showSizeSelector, setShowSizeSelector] = useState(false);
   const [selectedSize, setSelectedSize] = useState<number | null>(null);
@@ -36,13 +38,13 @@ const StartScreen = ({ onStart }: StartScreenProps) => {
     <div className="max-w-2xl mx-auto text-center space-y-6 animate-fade-in">
       <h1 className="text-3xl font-bold text-k21-black">
         {getTranslation(language, 'certificationQuiz')}
-        <span className="text-k21-gold block">{getTranslation(language, 'certifiedScrumMaster')}</span>
+        <span className="text-k21-gold block">{themeName || getTranslation(language, 'certifiedScrumMaster')}</span>
       </h1>
       
       <div className="bg-gradient-to-r from-k21-gold to-k21-teal h-1 w-32 mx-auto rounded-full" />
       
       <p className="text-muted-foreground">
-        {getTranslation(language, 'quizDescription')}
+        {customSubtitle || getTranslation(language, 'quizDescription')}
       </p>
       
       {!showSizeSelector ? (

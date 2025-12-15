@@ -7,7 +7,8 @@ import type { QuestionWithCategory, QuizAttempt, UserAnswers, QuizStats, QuizCat
  */
 export async function fetchQuestionsByCategory(
   categoryId?: string, 
-  language: 'pt' | 'en' = 'pt'
+  language: 'pt' | 'en' = 'pt',
+  themeId?: string
 ): Promise<QuestionWithCategory[]> {
   try {
     let query = supabase
@@ -16,6 +17,11 @@ export async function fetchQuestionsByCategory(
     
     if (categoryId) {
       query = query.eq('category_id', categoryId);
+    }
+    
+    // Filter by theme if provided
+    if (themeId) {
+      query = query.eq('theme_id', themeId);
     }
     
     const { data, error } = await query;
@@ -54,7 +60,7 @@ export async function fetchQuestionsByCategory(
       };
     });
     
-    console.log(`Fetched ${questions.length} questions from database for language: ${language}`);
+    console.log(`Fetched ${questions.length} questions from database for language: ${language}, theme: ${themeId || 'all'}`);
     return questions;
   } catch (error) {
     console.error("Error in fetchQuestionsByCategory:", error);
@@ -63,12 +69,13 @@ export async function fetchQuestionsByCategory(
 }
 
 /**
- * Fetches random questions for quiz with language support and category filter
+ * Fetches random questions for quiz with language support, category filter, and theme filter
  */
 export async function fetchRandomQuestions(
   count: number, 
   language: 'pt' | 'en' = 'pt',
-  category?: string
+  category?: string,
+  themeId?: string
 ): Promise<QuestionWithCategory[]> {
   try {
     let allQuestions: QuestionWithCategory[] = [];
@@ -76,20 +83,20 @@ export async function fetchRandomQuestions(
     // Handle combined categories
     if (category === 'fundamentals-roles') {
       const [fundamentalsQuestions, rolesQuestions] = await Promise.all([
-        fetchQuestionsByCategory('fundamentals', language),
-        fetchQuestionsByCategory('roles', language)
+        fetchQuestionsByCategory('fundamentals', language, themeId),
+        fetchQuestionsByCategory('roles', language, themeId)
       ]);
       allQuestions = [...fundamentalsQuestions, ...rolesQuestions];
     } else if (category === 'events-artifacts') {
       const [eventsQuestions, artifactsQuestions, dysfunctionsQuestions] = await Promise.all([
-        fetchQuestionsByCategory('events', language),
-        fetchQuestionsByCategory('artifacts', language),
-        fetchQuestionsByCategory('dysfunctions', language)
+        fetchQuestionsByCategory('events', language, themeId),
+        fetchQuestionsByCategory('artifacts', language, themeId),
+        fetchQuestionsByCategory('dysfunctions', language, themeId)
       ]);
       allQuestions = [...eventsQuestions, ...artifactsQuestions, ...dysfunctionsQuestions];
     } else {
       // Single category or all categories
-      allQuestions = await fetchQuestionsByCategory(category, language);
+      allQuestions = await fetchQuestionsByCategory(category, language, themeId);
     }
     
     if (allQuestions.length === 0) {
@@ -101,7 +108,7 @@ export async function fetchRandomQuestions(
       array.findIndex(q => q.id === question.id) === index
     );
     
-    console.log(`Found ${allQuestions.length} questions, ${uniqueQuestions.length} unique questions`);
+    console.log(`Found ${allQuestions.length} questions, ${uniqueQuestions.length} unique questions for theme: ${themeId || 'all'}`);
     
     // Shuffle using Fisher-Yates algorithm
     const shuffled = [...uniqueQuestions];
@@ -112,7 +119,7 @@ export async function fetchRandomQuestions(
     
     // Return the requested count, ensuring we don't exceed available unique questions
     const result = shuffled.slice(0, Math.min(count, shuffled.length));
-    console.log(`Selected ${result.length} random questions for language: ${language}, category: ${category || 'all'}`);
+    console.log(`Selected ${result.length} random questions for language: ${language}, category: ${category || 'all'}, theme: ${themeId || 'all'}`);
     
     // Double-check for duplicates in the final result
     const finalIds = result.map(q => q.id);
@@ -177,7 +184,7 @@ export async function updateQuestion(question: QuestionWithCategory): Promise<bo
 }
 
 /**
- * Tracks a quiz attempt with language support and improved duplicate detection
+ * Tracks a quiz attempt with language support, theme support, and improved duplicate detection
  * NOW SAVES SCORE AS PERCENTAGE
  */
 export async function trackQuizAttempt(
@@ -188,13 +195,30 @@ export async function trackQuizAttempt(
   userAnswers: UserAnswers,
   questions: QuestionWithCategory[],
   completionTimeSeconds: number | null,
-  language: 'pt' | 'en' = 'pt'
+  language: 'pt' | 'en' = 'pt',
+  themeId?: string
 ): Promise<string | null> {
   try {
     // Convert raw score to percentage
     const scorePercentage = Math.round((score / totalQuestions) * 100);
     
-    console.log(`[TRACKING] Attempting to track quiz for user: ${name}, raw score: ${score}/${totalQuestions}, percentage: ${scorePercentage}%, completion time: ${completionTimeSeconds}s`);
+    console.log(`[TRACKING] Attempting to track quiz for user: ${name}, raw score: ${score}/${totalQuestions}, percentage: ${scorePercentage}%, completion time: ${completionTimeSeconds}s, theme: ${themeId || 'default'}`);
+    
+    // If no themeId provided, get the CSM theme as default
+    let finalThemeId = themeId;
+    if (!finalThemeId) {
+      const { data: csmTheme } = await supabase
+        .from('quiz_themes')
+        .select('id')
+        .eq('slug', 'csm')
+        .single();
+      finalThemeId = csmTheme?.id;
+    }
+    
+    if (!finalThemeId) {
+      console.error("[TRACKING] No theme ID available");
+      return null;
+    }
     
     // Enhanced duplicate detection with stricter criteria
     const currentTime = new Date();
@@ -206,6 +230,7 @@ export async function trackQuizAttempt(
       .eq('name', name)
       .eq('quiz_size', totalQuestions)
       .eq('language', language)
+      .eq('theme_id', finalThemeId)
       .gte('created_at', twoSecondsAgo.toISOString())
       .order('created_at', { ascending: false })
       .limit(5);
@@ -251,7 +276,8 @@ export async function trackQuizAttempt(
         quiz_size: totalQuestions,
         questions_data: questionsData,
         completion_time_seconds: completionTimeSeconds,
-        language: language
+        language: language,
+        theme_id: finalThemeId
       })
       .select('id')
       .single();
@@ -261,7 +287,7 @@ export async function trackQuizAttempt(
       return null;
     }
 
-    console.log(`[TRACKING] Quiz attempt tracked successfully with ID: ${data.id} for language: ${language}, score saved as: ${scorePercentage}%`);
+    console.log(`[TRACKING] Quiz attempt tracked successfully with ID: ${data.id} for language: ${language}, theme: ${finalThemeId}, score saved as: ${scorePercentage}%`);
     return data.id;
   } catch (error) {
     console.error("[TRACKING] Error in trackQuizAttempt:", error);
@@ -334,19 +360,36 @@ export async function getTrackedQuizAttempts(options?: {
 }
 
 /**
- * Gets global quiz statistics with language breakdown
+ * Gets global quiz statistics with language breakdown and theme support
  */
-export async function getGlobalQuizStats(): Promise<{
+export async function getGlobalQuizStats(themeId?: string): Promise<{
   totalAttempts: number;
   averageScore: number;
   totalQuestions: number;
   languageBreakdown: { pt: number; en: number };
 }> {
   try {
+    // If no themeId provided, get CSM theme as default
+    let finalThemeId = themeId;
+    if (!finalThemeId) {
+      const { data: csmTheme } = await supabase
+        .from('quiz_themes')
+        .select('id')
+        .eq('slug', 'csm')
+        .single();
+      finalThemeId = csmTheme?.id;
+    }
+
     // 1. Get total attempts count efficiently
-    const { count: totalAttempts, error: countError } = await supabase
+    let attemptsQuery = supabase
       .from('quiz_attempts')
       .select('*', { count: 'exact', head: true });
+    
+    if (finalThemeId) {
+      attemptsQuery = attemptsQuery.eq('theme_id', finalThemeId);
+    }
+    
+    const { count: totalAttempts, error: countError } = await attemptsQuery;
 
     if (countError) {
       console.error("Error counting attempts:", countError);
@@ -354,9 +397,15 @@ export async function getGlobalQuizStats(): Promise<{
     }
 
     // 2. Get average score efficiently (only scores field)
-    const { data: scoresData, error: scoresError } = await supabase
+    let scoresQuery = supabase
       .from('quiz_attempts')
       .select('score');
+    
+    if (finalThemeId) {
+      scoresQuery = scoresQuery.eq('theme_id', finalThemeId);
+    }
+    
+    const { data: scoresData, error: scoresError } = await scoresQuery;
 
     if (scoresError) {
       console.error("Error fetching scores:", scoresError);
@@ -369,9 +418,15 @@ export async function getGlobalQuizStats(): Promise<{
       : 0;
 
     // 3. Get total questions count
-    const { count: totalQuestions, error: questionsError } = await supabase
+    let questionsQuery = supabase
       .from('quiz_questions')
       .select('*', { count: 'exact', head: true });
+    
+    if (finalThemeId) {
+      questionsQuery = questionsQuery.eq('theme_id', finalThemeId);
+    }
+    
+    const { count: totalQuestions, error: questionsError } = await questionsQuery;
 
     if (questionsError) {
       console.error("Error fetching questions count:", questionsError);
@@ -379,16 +434,22 @@ export async function getGlobalQuizStats(): Promise<{
     }
 
     // 4. Get language breakdown using efficient COUNT queries
-    const [ptResult, enResult] = await Promise.all([
-      supabase
-        .from('quiz_attempts')
-        .select('*', { count: 'exact', head: true })
-        .eq('language', 'pt'),
-      supabase
-        .from('quiz_attempts')
-        .select('*', { count: 'exact', head: true })
-        .eq('language', 'en')
-    ]);
+    let ptQuery = supabase
+      .from('quiz_attempts')
+      .select('*', { count: 'exact', head: true })
+      .eq('language', 'pt');
+    
+    let enQuery = supabase
+      .from('quiz_attempts')
+      .select('*', { count: 'exact', head: true })
+      .eq('language', 'en');
+    
+    if (finalThemeId) {
+      ptQuery = ptQuery.eq('theme_id', finalThemeId);
+      enQuery = enQuery.eq('theme_id', finalThemeId);
+    }
+    
+    const [ptResult, enResult] = await Promise.all([ptQuery, enQuery]);
 
     const languageBreakdown = {
       pt: ptResult.count || 0,
@@ -418,7 +479,8 @@ export async function getGlobalQuizStats(): Promise<{
 export async function getRankingData(
   quizSize: number,
   language?: 'pt' | 'en',
-  timePeriod?: '30days' | '90days' | 'alltime'
+  timePeriod?: '30days' | '90days' | 'alltime',
+  themeId?: string
 ): Promise<Array<{
   name: string;
   score: number;
@@ -432,6 +494,11 @@ export async function getRankingData(
       .select('name, score, completion_time_seconds, language, created_at')
       .eq('quiz_size', quizSize)
       .not('score', 'is', null);
+
+    // Add theme filter if specified
+    if (themeId) {
+      query = query.eq('theme_id', themeId);
+    }
 
     // Add time period filter
     if (timePeriod === '30days') {

@@ -10,7 +10,22 @@ import { QuestionWithCategory } from "@/data/types";
  * Utility function to migrate existing questions from local files to the database.
  * This is a one-time operation that can be called from the browser console if needed.
  */
-export const migrateQuestionsToDatabase = async (): Promise<void> => {
+export const migrateQuestionsToDatabase = async (themeSlug: string = 'csm'): Promise<void> => {
+  // First, get the theme ID
+  const { data: theme, error: themeError } = await supabase
+    .from('quiz_themes')
+    .select('id')
+    .eq('slug', themeSlug)
+    .single();
+    
+  if (themeError || !theme) {
+    console.error(`Theme '${themeSlug}' not found. Please create the theme first.`);
+    return;
+  }
+  
+  const themeId = theme.id;
+  console.log(`Using theme ID: ${themeId} for slug: ${themeSlug}`);
+  
   // Combine all questions
   const allQuestions = [
     ...fundamentalsQuestions,
@@ -36,7 +51,7 @@ export const migrateQuestionsToDatabase = async (): Promise<void> => {
   
   for (let i = 0; i < batches.length; i++) {
     const batch = batches[i];
-    const result = await insertQuestionBatch(batch);
+    const result = await insertQuestionBatch(batch, themeId);
     migrated += result;
     console.log(`Batch ${i + 1}/${batches.length}: Migrated ${result} questions`);
   }
@@ -47,14 +62,15 @@ export const migrateQuestionsToDatabase = async (): Promise<void> => {
 /**
  * Helper function to insert a batch of questions
  */
-const insertQuestionBatch = async (questions: QuestionWithCategory[]): Promise<number> => {
+const insertQuestionBatch = async (questions: QuestionWithCategory[], themeId: string): Promise<number> => {
   // Prepare the data for insertion
   const data = questions.map(q => ({
     question: q.question,
     category_id: q.category,
     options: q.options,
     correct_answer: q.correctAnswer,
-    explanation: q.explanation || null
+    explanation: q.explanation || null,
+    theme_id: themeId
   }));
   
   // Insert into database

@@ -5,6 +5,8 @@ import { Trophy, Clock, Users, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { getRankingData, getGlobalQuizStats } from '@/utils/quizTracking';
+import { fetchThemeBySlug } from '@/utils/themeService';
+import { QuizTheme } from '@/types/theme';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useMetaTags } from '@/hooks/useMetaTags';
 import { useNavigate } from 'react-router-dom';
@@ -26,10 +28,16 @@ interface GlobalStats {
   languageBreakdown: { pt: number; en: number };
 }
 
-const Ranking = () => {
+interface RankingProps {
+  themeSlug?: string;
+}
+
+const Ranking: React.FC<RankingProps> = ({ themeSlug = 'csm' }) => {
   const { language, isEnglish } = useLanguage();
   const navigate = useNavigate();
   useMetaTags(); // Add meta tags management
+  
+  const [theme, setTheme] = useState<QuizTheme | null>(null);
   
   // Default quiz size is now 10
   const [selectedQuizSize, setSelectedQuizSize] = useState<number>(10);
@@ -48,19 +56,33 @@ const Ranking = () => {
   // Quiz sizes are now 10, 25, and 50
   const quizSizes = [10, 25, 50];
 
+  // Load theme on mount
   useEffect(() => {
-    loadData();
-  }, [selectedQuizSize, selectedTimePeriod]);
+    const loadTheme = async () => {
+      const loadedTheme = await fetchThemeBySlug(themeSlug);
+      setTheme(loadedTheme);
+    };
+    loadTheme();
+  }, [themeSlug]);
 
   useEffect(() => {
-    loadGlobalStats();
-  }, []);
+    if (theme) {
+      loadData();
+    }
+  }, [selectedQuizSize, selectedTimePeriod, theme]);
+
+  useEffect(() => {
+    if (theme) {
+      loadGlobalStats();
+    }
+  }, [theme]);
 
   const loadData = async () => {
+    if (!theme) return;
     setLoading(true);
     try {
-      // Fetch by quiz size and time period
-      const data = await getRankingData(selectedQuizSize, undefined, selectedTimePeriod);
+      // Fetch by quiz size, time period, and theme
+      const data = await getRankingData(selectedQuizSize, undefined, selectedTimePeriod, theme.id);
       setRankingData(data);
     } catch (error) {
       console.error('Error loading ranking data:', error);
@@ -70,6 +92,7 @@ const Ranking = () => {
   };
 
   const loadGlobalStats = async () => {
+    if (!theme) return;
     try {
       // Force cache busting by clearing the state first
       setGlobalStats({
@@ -79,7 +102,7 @@ const Ranking = () => {
         languageBreakdown: { pt: 0, en: 0 }
       });
       
-      const stats = await getGlobalQuizStats();
+      const stats = await getGlobalQuizStats(theme.id);
       setGlobalStats(stats);
     } catch (error) {
       console.error('Error loading global stats:', error);
@@ -110,8 +133,11 @@ const Ranking = () => {
   };
 
   const handleBackClick = () => {
-    navigate('/');
+    // Navigate back to the appropriate theme's home page
+    navigate(themeSlug === 'csm' ? '/' : `/${themeSlug === 'k212025' ? 'fimdeano' : themeSlug}`);
   };
+
+  const themeName = theme?.name || 'CSM';
 
   return (
     <div className="min-h-screen bg-gray-50">

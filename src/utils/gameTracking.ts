@@ -17,7 +17,8 @@ export async function saveGameAttempt(
     timeSpent: number;
   }>,
   language: 'pt' | 'en' = 'pt',
-  finalScoreMs?: number  // Parâmetro opcional para score exato
+  finalScoreMs?: number,  // Parâmetro opcional para score exato
+  themeId?: string
 ): Promise<string | null> {
   try {
     // Usar o finalScoreMs se fornecido, senão calcular como antes
@@ -28,6 +29,22 @@ export async function saveGameAttempt(
     console.log('🔍 SAVE GAME ATTEMPT - penaltyTimeMs:', penaltyTimeMs);
     console.log('🔍 SAVE GAME ATTEMPT - finalScoreMs (parâmetro):', finalScoreMs);
     console.log('🔍 SAVE GAME ATTEMPT - finalScore (será salvo no banco):', finalScore);
+    
+    // If no themeId provided, get the CSM theme as default
+    let finalThemeId = themeId;
+    if (!finalThemeId) {
+      const { data: csmTheme } = await supabase
+        .from('quiz_themes')
+        .select('id')
+        .eq('slug', 'csm')
+        .single();
+      finalThemeId = csmTheme?.id;
+    }
+    
+    if (!finalThemeId) {
+      console.error("No theme ID available for game attempt");
+      return null;
+    }
     
     const questionsData = questions.map((question, index) => {
       const userAnswer = userAnswers[index];
@@ -55,7 +72,8 @@ export async function saveGameAttempt(
         penalty_time_ms: penaltyTimeMs,
         final_score_ms: finalScore,
         questions_data: questionsData,
-        language
+        language,
+        theme_id: finalThemeId
       })
       .select('id')
       .single();
