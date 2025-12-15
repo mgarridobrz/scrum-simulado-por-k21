@@ -9,7 +9,11 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { getTranslation } from '@/utils/translations';
 import type { QuizStats } from '@/data/types';
 
-const PublicStatsCounter = () => {
+interface PublicStatsCounterProps {
+  themeId?: string;
+}
+
+const PublicStatsCounter: React.FC<PublicStatsCounterProps> = ({ themeId }) => {
   const [stats, setStats] = useState<QuizStats | null>(null);
   const [gameStats, setGameStats] = useState<{ totalAttempts: number; totalQuestions: number } | null>(null);
   const { toast } = useToast();
@@ -18,10 +22,10 @@ const PublicStatsCounter = () => {
   useEffect(() => {
     const loadStats = async () => {
       try {
-        console.log('🔄 PublicStatsCounter - Carregando estatísticas...', new Date().toISOString());
+        console.log('🔄 PublicStatsCounter - Carregando estatísticas...', new Date().toISOString(), 'themeId:', themeId);
         const [statsData, gameStatsData] = await Promise.all([
-          getQuizAttemptStats(),
-          getGameStats()
+          getQuizAttemptStats(themeId),
+          getGameStats(undefined, undefined, themeId)
         ]);
         console.log('✅ PublicStatsCounter - Estatísticas carregadas:', statsData);
         console.log('✅ PublicStatsCounter - Estatísticas de jogos carregadas:', gameStatsData);
@@ -42,7 +46,7 @@ const PublicStatsCounter = () => {
     // Add interval to refresh every 30 seconds
     const interval = setInterval(loadStats, 30000);
     return () => clearInterval(interval);
-  }, [toast]);
+  }, [toast, themeId]);
   
   return (
     <Card className="bg-gradient-to-r from-white to-gray-50 shadow-md p-6 mt-8">

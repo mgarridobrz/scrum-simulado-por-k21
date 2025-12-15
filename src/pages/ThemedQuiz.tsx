@@ -240,8 +240,8 @@ const ThemedQuiz: React.FC<ThemedQuizProps> = ({
               gamePath={gamePath}
             />
             
-            {/* Public Statistics - only for CSM theme */}
-            {showStats && themeSlug === 'csm' && <PublicStatsCounter />}
+            {/* Public Statistics - show for all themes */}
+            {showStats && theme && <PublicStatsCounter themeId={theme.id} />}
             
             {/* Restricted Area Button - only for CSM theme */}
             {showAdminButton && themeSlug === 'csm' && <RestrictedAreaButton />}
