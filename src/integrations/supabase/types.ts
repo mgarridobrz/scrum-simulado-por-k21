@@ -928,6 +928,7 @@ export type Database = {
           penalty_time_ms: number
           question_count: number
           questions_data: Json
+          theme_id: string
           total_time_ms: number
           updated_at: string
         }
@@ -943,6 +944,7 @@ export type Database = {
           penalty_time_ms?: number
           question_count: number
           questions_data: Json
+          theme_id: string
           total_time_ms: number
           updated_at?: string
         }
@@ -958,10 +960,19 @@ export type Database = {
           penalty_time_ms?: number
           question_count?: number
           questions_data?: Json
+          theme_id?: string
           total_time_ms?: number
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "game_attempts_theme_id_fkey"
+            columns: ["theme_id"]
+            isOneToOne: false
+            referencedRelation: "quiz_themes"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       game_attempts_backup: {
         Row: {
@@ -2806,6 +2817,7 @@ export type Database = {
           questions_data: Json | null
           quiz_size: number
           score: number | null
+          theme_id: string
         }
         Insert: {
           completion_time_seconds?: number | null
@@ -2817,6 +2829,7 @@ export type Database = {
           questions_data?: Json | null
           quiz_size: number
           score?: number | null
+          theme_id: string
         }
         Update: {
           completion_time_seconds?: number | null
@@ -2828,8 +2841,17 @@ export type Database = {
           questions_data?: Json | null
           quiz_size?: number
           score?: number | null
+          theme_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "quiz_attempts_theme_id_fkey"
+            columns: ["theme_id"]
+            isOneToOne: false
+            referencedRelation: "quiz_themes"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       quiz_categories: {
         Row: {
@@ -2858,6 +2880,7 @@ export type Database = {
           options_en: Json | null
           question: string
           question_en: string | null
+          theme_id: string
           updated_at: string | null
         }
         Insert: {
@@ -2871,6 +2894,7 @@ export type Database = {
           options_en?: Json | null
           question: string
           question_en?: string | null
+          theme_id: string
           updated_at?: string | null
         }
         Update: {
@@ -2884,6 +2908,7 @@ export type Database = {
           options_en?: Json | null
           question?: string
           question_en?: string | null
+          theme_id?: string
           updated_at?: string | null
         }
         Relationships: [
@@ -2892,6 +2917,13 @@ export type Database = {
             columns: ["category_id"]
             isOneToOne: false
             referencedRelation: "quiz_categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "quiz_questions_theme_id_fkey"
+            columns: ["theme_id"]
+            isOneToOne: false
+            referencedRelation: "quiz_themes"
             referencedColumns: ["id"]
           },
         ]
@@ -2934,6 +2966,39 @@ export type Database = {
           options_en?: Json | null
           question?: string | null
           question_en?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      quiz_themes: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          id: string
+          is_active: boolean | null
+          name: string
+          slug: string
+          subtitle: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          name: string
+          slug: string
+          subtitle?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          slug?: string
+          subtitle?: string | null
           updated_at?: string | null
         }
         Relationships: []
