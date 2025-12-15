@@ -209,10 +209,18 @@ const ThemedQuiz: React.FC<ThemedQuizProps> = ({
     );
   }
 
+  // Map theme slug to URL path (k212025 -> fimdeano)
+  const getThemeUrlPath = (slug: string) => {
+    if (slug === 'csm') return '';
+    if (slug === 'k212025') return 'fimdeano';
+    return slug;
+  };
+
   // Determine ranking path for this theme
+  const themeUrlPath = getThemeUrlPath(themeSlug);
   const rankingPath = themeSlug === 'csm' 
     ? (language === 'en' ? '/us/ranking' : '/ranking')
-    : `/${themeSlug}/ranking`;
+    : `/${themeUrlPath}/ranking`;
 
   return (
     <div className="min-h-screen bg-gray-50">

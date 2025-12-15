@@ -302,8 +302,9 @@ export async function getTrackedQuizAttempts(options?: {
   page?: number;
   pageSize?: number;
   language?: 'pt' | 'en';
+  themeId?: string;
 }): Promise<{ attempts: QuizAttempt[], totalCount: number }> {
-  const { page = 1, pageSize = 10, language } = options || {};
+  const { page = 1, pageSize = 10, language, themeId } = options || {};
   
   try {
     let query = supabase
@@ -314,6 +315,11 @@ export async function getTrackedQuizAttempts(options?: {
     // Add language filter if specified
     if (language) {
       query = query.eq('language', language);
+    }
+
+    // Add theme filter if specified
+    if (themeId) {
+      query = query.eq('theme_id', themeId);
     }
 
     // Add pagination
@@ -545,14 +551,19 @@ export async function getRankingData(
 /**
  * Gets quiz attempt statistics - OPTIMIZED: uses efficient queries with minimal data transfer
  */
-export async function getQuizAttemptStats(): Promise<QuizStats> {
+export async function getQuizAttemptStats(themeId?: string): Promise<QuizStats> {
   try {
     console.log('📊 Iniciando busca otimizada de estatísticas...');
     
+    // Helper to create base query with theme filter
+    const createQuery = () => {
+      let q = supabase.from('quiz_attempts').select('*', { count: 'exact', head: true });
+      if (themeId) q = q.eq('theme_id', themeId);
+      return q;
+    };
+    
     // 1. Get total count efficiently (only metadata, no data transfer)
-    const { count: totalAttempts, error: countError } = await supabase
-      .from('quiz_attempts')
-      .select('*', { count: 'exact', head: true });
+    const { count: totalAttempts, error: countError } = await createQuery();
 
     if (countError) {
       console.error('Error getting total count:', countError);
@@ -561,9 +572,15 @@ export async function getQuizAttemptStats(): Promise<QuizStats> {
 
     // 2. Get counts by quiz size efficiently in parallel
     const [count10, count25, count50] = await Promise.all([
-      supabase.from('quiz_attempts').select('*', { count: 'exact', head: true }).eq('quiz_size', 10),
-      supabase.from('quiz_attempts').select('*', { count: 'exact', head: true }).eq('quiz_size', 25),
-      supabase.from('quiz_attempts').select('*', { count: 'exact', head: true }).eq('quiz_size', 50)
+      themeId 
+        ? supabase.from('quiz_attempts').select('*', { count: 'exact', head: true }).eq('quiz_size', 10).eq('theme_id', themeId)
+        : supabase.from('quiz_attempts').select('*', { count: 'exact', head: true }).eq('quiz_size', 10),
+      themeId
+        ? supabase.from('quiz_attempts').select('*', { count: 'exact', head: true }).eq('quiz_size', 25).eq('theme_id', themeId)
+        : supabase.from('quiz_attempts').select('*', { count: 'exact', head: true }).eq('quiz_size', 25),
+      themeId
+        ? supabase.from('quiz_attempts').select('*', { count: 'exact', head: true }).eq('quiz_size', 50).eq('theme_id', themeId)
+        : supabase.from('quiz_attempts').select('*', { count: 'exact', head: true }).eq('quiz_size', 50)
     ]);
 
     const size10Count = count10.count || 0;
@@ -571,11 +588,17 @@ export async function getQuizAttemptStats(): Promise<QuizStats> {
     const size50Count = count50.count || 0;
 
     // 3. Get average of last 50 attempts efficiently (only 50 records, only score field)
-    const { data: lastFifty, error: lastFiftyError } = await supabase
+    let lastFiftyQuery = supabase
       .from('quiz_attempts')
       .select('score')
       .order('created_at', { ascending: false })
       .limit(50);
+    
+    if (themeId) {
+      lastFiftyQuery = lastFiftyQuery.eq('theme_id', themeId);
+    }
+    
+    const { data: lastFifty, error: lastFiftyError } = await lastFiftyQuery;
 
     if (lastFiftyError) {
       console.error('Error getting last 50:', lastFiftyError);
@@ -588,9 +611,15 @@ export async function getQuizAttemptStats(): Promise<QuizStats> {
 
     // 4. Get averages by quiz size efficiently (only necessary fields)
     const [data10, data25, data50] = await Promise.all([
-      supabase.from('quiz_attempts').select('score, completion_time_seconds').eq('quiz_size', 10),
-      supabase.from('quiz_attempts').select('score, completion_time_seconds').eq('quiz_size', 25),
-      supabase.from('quiz_attempts').select('score, completion_time_seconds').eq('quiz_size', 50)
+      themeId
+        ? supabase.from('quiz_attempts').select('score, completion_time_seconds').eq('quiz_size', 10).eq('theme_id', themeId)
+        : supabase.from('quiz_attempts').select('score, completion_time_seconds').eq('quiz_size', 10),
+      themeId
+        ? supabase.from('quiz_attempts').select('score, completion_time_seconds').eq('quiz_size', 25).eq('theme_id', themeId)
+        : supabase.from('quiz_attempts').select('score, completion_time_seconds').eq('quiz_size', 25),
+      themeId
+        ? supabase.from('quiz_attempts').select('score, completion_time_seconds').eq('quiz_size', 50).eq('theme_id', themeId)
+        : supabase.from('quiz_attempts').select('score, completion_time_seconds').eq('quiz_size', 50)
     ]);
 
     // Calculate averages
