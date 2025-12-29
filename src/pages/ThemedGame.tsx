@@ -10,9 +10,10 @@ import Game from './Game';
 interface ThemedGameProps {
   themeSlug: string;
   basePath: string;
+  forceAllQuestions?: boolean;
 }
 
-const ThemedGame: React.FC<ThemedGameProps> = ({ themeSlug, basePath }) => {
+const ThemedGame: React.FC<ThemedGameProps> = ({ themeSlug, basePath, forceAllQuestions = false }) => {
   const navigate = useNavigate();
   
   const [theme, setTheme] = useState<QuizTheme | null>(null);
@@ -80,7 +81,7 @@ const ThemedGame: React.FC<ThemedGameProps> = ({ themeSlug, basePath }) => {
     );
   }
 
-  return <Game themeSlug={themeSlug} themeId={theme.id} basePath={basePath} />;
+  return <Game themeSlug={themeSlug} themeId={theme.id} basePath={basePath} forceAllQuestions={forceAllQuestions} />;
 };
 
 export default ThemedGame;

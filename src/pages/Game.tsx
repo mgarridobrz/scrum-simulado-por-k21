@@ -20,9 +20,10 @@ interface GameProps {
   themeSlug?: string;
   themeId?: string;
   basePath?: string;
+  forceAllQuestions?: boolean;
 }
 
-const Game: React.FC<GameProps> = ({ themeSlug, themeId, basePath = '' }) => {
+const Game: React.FC<GameProps> = ({ themeSlug, themeId, basePath = '', forceAllQuestions = false }) => {
   const navigate = useNavigate();
   const { language } = useLanguage();
   
@@ -264,6 +265,7 @@ const Game: React.FC<GameProps> = ({ themeSlug, themeId, basePath = '' }) => {
             onSelectCategory={handleCategorySelection} 
             themeId={themeId}
             basePath={basePath}
+            forceAllQuestions={forceAllQuestions}
           />
         </main>
       </div>

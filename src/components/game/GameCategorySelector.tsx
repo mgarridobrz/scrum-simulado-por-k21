@@ -12,6 +12,7 @@ interface GameCategorySelectorProps {
   onSelectCategory: (category: string, questionCount: number) => void;
   themeId?: string;
   basePath?: string;
+  forceAllQuestions?: boolean;
 }
 
 const defaultCategories = [
@@ -28,7 +29,8 @@ const questionCounts = [
 export const GameCategorySelector: React.FC<GameCategorySelectorProps> = ({ 
   onSelectCategory, 
   themeId,
-  basePath = ''
+  basePath = '',
+  forceAllQuestions = false
 }) => {
   const { language } = useLanguage();
   const navigate = useNavigate();
@@ -134,7 +136,7 @@ export const GameCategorySelector: React.FC<GameCategorySelectorProps> = ({
       </div>
 
       {/* Grid de categorias ou botão único */}
-      {hasCategories ? (
+      {hasCategories && !forceAllQuestions ? (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           {defaultCategories.map((category) => (
             <Card key={category.id} className="p-4 hover:shadow-md transition-shadow">

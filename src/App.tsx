@@ -43,7 +43,7 @@ const App = () => (
             {/* Oscar's Challenge Theme */}
             <Route path="/oscrias" element={<ThemedQuiz themeSlug="oscrias" showStats={false} showAdminButton={false} />} />
             <Route path="/oscrias/ranking" element={<Ranking themeSlug="oscrias" />} />
-            <Route path="/oscrias/game" element={<ThemedGame themeSlug="oscrias" basePath="/oscrias" />} />
+            <Route path="/oscrias/game" element={<ThemedGame themeSlug="oscrias" basePath="/oscrias" forceAllQuestions={true} />} />
             <Route path="/oscrias/game/ranking" element={<GameRanking themeSlug="oscrias" basePath="/oscrias" />} />
             
             {/* Admin */}
