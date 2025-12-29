@@ -74,6 +74,14 @@ export const GameQuestionInput: React.FC<GameQuestionInputProps> = ({
     return 'opacity-50';
   };
 
+  const handleOptionClick = (optionId: string) => {
+    if (!isAnswered) {
+      const normalizedAnswer = optionId.toUpperCase();
+      setAnswer(normalizedAnswer);
+      onAnswer(normalizedAnswer);
+    }
+  };
+
   return (
     <div className="space-y-6">
       <div className="text-center">
@@ -93,7 +101,8 @@ export const GameQuestionInput: React.FC<GameQuestionInputProps> = ({
           return (
             <Card 
               key={option.id} 
-              className={`p-4 transition-all ${getOptionStyle(option.id)}`}
+              className={`p-4 transition-all ${getOptionStyle(option.id)} ${!isAnswered ? 'cursor-pointer hover:border-primary hover:shadow-md' : ''}`}
+              onClick={() => handleOptionClick(option.id)}
             >
               <div className="flex items-center space-x-3">
                 <span className="font-bold text-lg">
