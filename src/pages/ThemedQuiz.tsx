@@ -238,6 +238,7 @@ const ThemedQuiz: React.FC<ThemedQuizProps> = ({
               customSubtitle={theme.subtitle || undefined}
               themeName={theme.name}
               gamePath={gamePath}
+              themeSlug={themeSlug}
             />
             
             {/* Public Statistics - show for all themes */}
