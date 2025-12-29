@@ -12,9 +12,10 @@ interface StartScreenProps {
   customSubtitle?: string;
   themeName?: string;
   gamePath?: string;
+  themeSlug?: string;
 }
 
-const StartScreen = ({ onStart, customSubtitle, themeName, gamePath = '/game' }: StartScreenProps) => {
+const StartScreen = ({ onStart, customSubtitle, themeName, gamePath = '/game', themeSlug }: StartScreenProps) => {
   const { language } = useLanguage();
   const [showSizeSelector, setShowSizeSelector] = useState(false);
   const [selectedSize, setSelectedSize] = useState<number | null>(null);
@@ -35,62 +36,109 @@ const StartScreen = ({ onStart, customSubtitle, themeName, gamePath = '/game' }:
     }
   };
 
+  // Soccer-themed features for oscrias
+  const isSoccerTheme = themeSlug === 'oscrias';
+  
+  const soccerFeatures = [
+    {
+      number: '1',
+      bgColor: 'bg-green-600/10',
+      textColor: 'text-green-600',
+      title: language === 'pt' ? 'Questões Avançadas' : 'Advanced Questions',
+      description: language === 'pt' ? 'Desafios sobre Copas do Mundo, jogadores lendários e estatísticas' : 'Challenges about World Cups, legendary players and statistics'
+    },
+    {
+      number: '2',
+      bgColor: 'bg-yellow-500/10',
+      textColor: 'text-yellow-500',
+      title: language === 'pt' ? 'História do Futebol' : 'Football History',
+      description: language === 'pt' ? 'Teste seus conhecimentos sobre os maiores momentos do esporte' : 'Test your knowledge about the greatest moments in the sport'
+    },
+    {
+      number: '3',
+      bgColor: 'bg-blue-600/10',
+      textColor: 'text-blue-600',
+      title: language === 'pt' ? 'Regras e Táticas' : 'Rules and Tactics',
+      description: language === 'pt' ? 'Perguntas sobre regras oficiais e estratégias de jogo' : 'Questions about official rules and game strategies'
+    },
+    {
+      number: '4',
+      bgColor: 'bg-red-500/10',
+      textColor: 'text-red-500',
+      title: language === 'pt' ? 'Recordes e Estatísticas' : 'Records and Statistics',
+      description: language === 'pt' ? 'Números, recordes e curiosidades do mundo do futebol' : 'Numbers, records and curiosities from the football world'
+    }
+  ];
+
+  const defaultFeatures = [
+    {
+      number: '1',
+      bgColor: 'bg-k21-teal/10',
+      textColor: 'text-k21-teal',
+      title: getTranslation(language, 'realisticQuiz'),
+      description: getTranslation(language, 'realisticQuizDesc')
+    },
+    {
+      number: '2',
+      bgColor: 'bg-k21-gold/10',
+      textColor: 'text-k21-gold',
+      title: getTranslation(language, 'detailedResults'),
+      description: getTranslation(language, 'detailedResultsDesc')
+    },
+    {
+      number: '3',
+      bgColor: 'bg-black/10',
+      textColor: 'text-black',
+      title: getTranslation(language, 'updatedContent'),
+      description: getTranslation(language, 'updatedContentDesc')
+    },
+    {
+      number: '4',
+      bgColor: 'bg-green-500/10',
+      textColor: 'text-green-500',
+      title: getTranslation(language, 'detailedExplanations'),
+      description: getTranslation(language, 'detailedExplanationsDesc')
+    }
+  ];
+
+  const features = isSoccerTheme ? soccerFeatures : defaultFeatures;
+
   return (
     <div className="max-w-2xl mx-auto text-center space-y-6 animate-fade-in">
       <h1 className="text-3xl font-bold text-k21-black">
-        {getTranslation(language, 'certificationQuiz')}
-        <span className="text-k21-gold block">{themeName || getTranslation(language, 'certifiedScrumMaster')}</span>
+        {isSoccerTheme 
+          ? (language === 'pt' ? 'Quiz de Futebol' : 'Football Quiz')
+          : getTranslation(language, 'certificationQuiz')
+        }
+        <span className={`block ${isSoccerTheme ? 'text-green-600' : 'text-k21-gold'}`}>
+          {themeName || getTranslation(language, 'certifiedScrumMaster')}
+        </span>
       </h1>
       
-      <div className="bg-gradient-to-r from-k21-gold to-k21-teal h-1 w-32 mx-auto rounded-full" />
+      <div className={`h-1 w-32 mx-auto rounded-full ${isSoccerTheme ? 'bg-gradient-to-r from-green-600 to-yellow-500' : 'bg-gradient-to-r from-k21-gold to-k21-teal'}`} />
       
       <p className="text-muted-foreground">
-        {customSubtitle || getTranslation(language, 'quizDescription')}
+        {customSubtitle || (isSoccerTheme 
+          ? (language === 'pt' ? 'Teste seus conhecimentos sobre o esporte mais popular do mundo!' : 'Test your knowledge about the most popular sport in the world!')
+          : getTranslation(language, 'quizDescription')
+        )}
       </p>
       
       {!showSizeSelector ? (
         <>
           <Card className="p-6 bg-gradient-to-br from-white to-gray-50">
             <div className="space-y-4">
-              <div className="flex items-center justify-center gap-3">
-                <div className="w-12 h-12 rounded-full bg-k21-teal/10 flex items-center justify-center">
-                  <span className="text-k21-teal font-medium">1</span>
+              {features.map((feature, index) => (
+                <div key={index} className="flex items-center justify-center gap-3">
+                  <div className={`w-12 h-12 rounded-full ${feature.bgColor} flex items-center justify-center`}>
+                    <span className={`${feature.textColor} font-medium`}>{feature.number}</span>
+                  </div>
+                  <div className="text-left">
+                    <h3 className="font-medium text-k21-black">{feature.title}</h3>
+                    <p className="text-sm text-muted-foreground">{feature.description}</p>
+                  </div>
                 </div>
-                <div className="text-left">
-                  <h3 className="font-medium text-k21-black">{getTranslation(language, 'realisticQuiz')}</h3>
-                  <p className="text-sm text-muted-foreground">{getTranslation(language, 'realisticQuizDesc')}</p>
-                </div>
-              </div>
-              
-              <div className="flex items-center justify-center gap-3">
-                <div className="w-12 h-12 rounded-full bg-k21-gold/10 flex items-center justify-center">
-                  <span className="text-k21-gold font-medium">2</span>
-                </div>
-                <div className="text-left">
-                  <h3 className="font-medium text-k21-black">{getTranslation(language, 'detailedResults')}</h3>
-                  <p className="text-sm text-muted-foreground">{getTranslation(language, 'detailedResultsDesc')}</p>
-                </div>
-              </div>
-              
-              <div className="flex items-center justify-center gap-3">
-                <div className="w-12 h-12 rounded-full bg-black/10 flex items-center justify-center">
-                  <span className="text-black font-medium">3</span>
-                </div>
-                <div className="text-left">
-                  <h3 className="font-medium text-k21-black">{getTranslation(language, 'updatedContent')}</h3>
-                  <p className="text-sm text-muted-foreground">{getTranslation(language, 'updatedContentDesc')}</p>
-                </div>
-              </div>
-              
-              <div className="flex items-center justify-center gap-3">
-                <div className="w-12 h-12 rounded-full bg-green-500/10 flex items-center justify-center">
-                  <span className="text-green-500 font-medium">4</span>
-                </div>
-                <div className="text-left">
-                  <h3 className="font-medium text-k21-black">{getTranslation(language, 'detailedExplanations')}</h3>
-                  <p className="text-sm text-muted-foreground">{getTranslation(language, 'detailedExplanationsDesc')}</p>
-                </div>
-              </div>
+              ))}
             </div>
           </Card>
           
