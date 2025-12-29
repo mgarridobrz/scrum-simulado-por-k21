@@ -40,6 +40,12 @@ const App = () => (
             <Route path="/fimdeano/game" element={<ThemedGame themeSlug="k212025" basePath="/fimdeano" />} />
             <Route path="/fimdeano/game/ranking" element={<GameRanking themeSlug="k212025" basePath="/fimdeano" />} />
             
+            {/* Oscar's Challenge Theme */}
+            <Route path="/oscrias" element={<ThemedQuiz themeSlug="oscrias" showStats={false} showAdminButton={false} />} />
+            <Route path="/oscrias/ranking" element={<Ranking themeSlug="oscrias" />} />
+            <Route path="/oscrias/game" element={<ThemedGame themeSlug="oscrias" basePath="/oscrias" />} />
+            <Route path="/oscrias/game/ranking" element={<GameRanking themeSlug="oscrias" basePath="/oscrias" />} />
+            
             {/* Admin */}
             <Route path="/validate-questions" element={<QuestionValidation />} />
             <Route path="/us/validate-questions" element={<QuestionValidation />} />
