@@ -2622,6 +2622,7 @@ export type Database = {
           organization_id: string
           question_text: string
           question_type: Database["public"]["Enums"]["pulse_question_type"]
+          scale_type: string | null
           updated_at: string
         }
         Insert: {
@@ -2634,6 +2635,7 @@ export type Database = {
           organization_id: string
           question_text: string
           question_type?: Database["public"]["Enums"]["pulse_question_type"]
+          scale_type?: string | null
           updated_at?: string
         }
         Update: {
@@ -2646,6 +2648,7 @@ export type Database = {
           organization_id?: string
           question_text?: string
           question_type?: Database["public"]["Enums"]["pulse_question_type"]
+          scale_type?: string | null
           updated_at?: string
         }
         Relationships: [
@@ -3749,6 +3752,10 @@ export type Database = {
         }[]
       }
       get_trial_days_remaining: { Args: { org_id: string }; Returns: number }
+      get_unread_action_messages_count: {
+        Args: { p_user_id: string; p_workspace_id: string }
+        Returns: number
+      }
       get_unread_mentions_count: {
         Args: { p_user_id?: string; p_workspace_id: string }
         Returns: number
