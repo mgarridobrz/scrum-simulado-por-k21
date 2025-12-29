@@ -81,7 +81,7 @@ const ThemedGame: React.FC<ThemedGameProps> = ({ themeSlug, basePath, forceAllQu
     );
   }
 
-  return <Game themeSlug={themeSlug} themeId={theme.id} basePath={basePath} forceAllQuestions={forceAllQuestions} />;
+  return <Game themeSlug={themeSlug} themeId={theme.id} themeName={theme.name} basePath={basePath} forceAllQuestions={forceAllQuestions} />;
 };
 
 export default ThemedGame;

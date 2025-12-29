@@ -19,11 +19,12 @@ import { GameState, GameQuestion, GameConfig } from '@/types/game';
 interface GameProps {
   themeSlug?: string;
   themeId?: string;
+  themeName?: string;
   basePath?: string;
   forceAllQuestions?: boolean;
 }
 
-const Game: React.FC<GameProps> = ({ themeSlug, themeId, basePath = '', forceAllQuestions = false }) => {
+const Game: React.FC<GameProps> = ({ themeSlug, themeId, themeName, basePath = '', forceAllQuestions = false }) => {
   const navigate = useNavigate();
   const { language } = useLanguage();
   
@@ -303,7 +304,7 @@ const Game: React.FC<GameProps> = ({ themeSlug, themeId, basePath = '', forceAll
           <div className="flex justify-between items-center mb-8">
             <div className="space-y-2">
               <h1 className="text-2xl font-bold">
-                {getTranslation(language, 'gameMode')}
+                {themeName || getTranslation(language, 'gameMode')}
               </h1>
               <div className="flex items-center space-x-4 text-lg text-muted-foreground">
                 <span>
