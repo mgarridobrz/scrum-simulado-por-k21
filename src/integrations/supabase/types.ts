@@ -1828,12 +1828,194 @@ export type Database = {
           },
         ]
       }
+      kudos_email_logs: {
+        Row: {
+          active_mission_deadline: string | null
+          active_mission_points: number | null
+          active_mission_title: string | null
+          email_type: string
+          html_content: string
+          id: string
+          org_kudos_month: number | null
+          org_kudos_previous_month: number | null
+          org_kudos_week: number | null
+          organization_id: string
+          sent_at: string
+          subject: string
+          user_days_since_last_kudos: number | null
+          user_email: string
+          user_id: string
+          user_kudos_given_week: number | null
+          user_name: string
+          user_people_recognized_week: number | null
+          user_rank_month: number | null
+          user_rank_week: number | null
+          user_rank_year: number | null
+        }
+        Insert: {
+          active_mission_deadline?: string | null
+          active_mission_points?: number | null
+          active_mission_title?: string | null
+          email_type?: string
+          html_content: string
+          id?: string
+          org_kudos_month?: number | null
+          org_kudos_previous_month?: number | null
+          org_kudos_week?: number | null
+          organization_id: string
+          sent_at?: string
+          subject: string
+          user_days_since_last_kudos?: number | null
+          user_email: string
+          user_id: string
+          user_kudos_given_week?: number | null
+          user_name: string
+          user_people_recognized_week?: number | null
+          user_rank_month?: number | null
+          user_rank_week?: number | null
+          user_rank_year?: number | null
+        }
+        Update: {
+          active_mission_deadline?: string | null
+          active_mission_points?: number | null
+          active_mission_title?: string | null
+          email_type?: string
+          html_content?: string
+          id?: string
+          org_kudos_month?: number | null
+          org_kudos_previous_month?: number | null
+          org_kudos_week?: number | null
+          organization_id?: string
+          sent_at?: string
+          subject?: string
+          user_days_since_last_kudos?: number | null
+          user_email?: string
+          user_id?: string
+          user_kudos_given_week?: number | null
+          user_name?: string
+          user_people_recognized_week?: number | null
+          user_rank_month?: number | null
+          user_rank_week?: number | null
+          user_rank_year?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "kudos_email_logs_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      kudos_mission_submissions: {
+        Row: {
+          created_at: string
+          id: string
+          image_path: string
+          mission_id: string
+          organization_id: string
+          reviewed_at: string | null
+          reviewed_by: string | null
+          status: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          image_path: string
+          mission_id: string
+          organization_id: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          image_path?: string
+          mission_id?: string
+          organization_id?: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "kudos_mission_submissions_mission_id_fkey"
+            columns: ["mission_id"]
+            isOneToOne: false
+            referencedRelation: "kudos_missions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "kudos_mission_submissions_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      kudos_missions: {
+        Row: {
+          created_at: string
+          created_by: string
+          description: string
+          ends_at: string
+          id: string
+          is_active: boolean
+          organization_id: string
+          points_reward: number
+          starts_at: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          description: string
+          ends_at: string
+          id?: string
+          is_active?: boolean
+          organization_id: string
+          points_reward?: number
+          starts_at: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          description?: string
+          ends_at?: string
+          id?: string
+          is_active?: boolean
+          organization_id?: string
+          points_reward?: number
+          starts_at?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "kudos_missions_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       kudos_organization_settings: {
         Row: {
           auto_reset_enabled: boolean | null
           created_at: string
           engagement_enabled: boolean
           id: string
+          kudos_notification_email_enabled: boolean | null
           last_auto_reset_date: string | null
           min_days_for_max_bonus: number
           min_recognitions_for_bonus: number
@@ -1845,12 +2027,14 @@ export type Database = {
           telegram_bot_token: string | null
           telegram_channel_id: string | null
           updated_at: string
+          weekly_email_enabled: boolean | null
         }
         Insert: {
           auto_reset_enabled?: boolean | null
           created_at?: string
           engagement_enabled?: boolean
           id?: string
+          kudos_notification_email_enabled?: boolean | null
           last_auto_reset_date?: string | null
           min_days_for_max_bonus?: number
           min_recognitions_for_bonus?: number
@@ -1862,12 +2046,14 @@ export type Database = {
           telegram_bot_token?: string | null
           telegram_channel_id?: string | null
           updated_at?: string
+          weekly_email_enabled?: boolean | null
         }
         Update: {
           auto_reset_enabled?: boolean | null
           created_at?: string
           engagement_enabled?: boolean
           id?: string
+          kudos_notification_email_enabled?: boolean | null
           last_auto_reset_date?: string | null
           min_days_for_max_bonus?: number
           min_recognitions_for_bonus?: number
@@ -1879,6 +2065,7 @@ export type Database = {
           telegram_bot_token?: string | null
           telegram_channel_id?: string | null
           updated_at?: string
+          weekly_email_enabled?: boolean | null
         }
         Relationships: [
           {
@@ -2554,6 +2741,52 @@ export type Database = {
           },
         ]
       }
+      pulse_questionnaire_tags: {
+        Row: {
+          created_at: string
+          id: string
+          organization_id: string
+          questionnaire_id: string
+          tag_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          organization_id: string
+          questionnaire_id: string
+          tag_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          organization_id?: string
+          questionnaire_id?: string
+          tag_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pulse_questionnaire_tags_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pulse_questionnaire_tags_questionnaire_id_fkey"
+            columns: ["questionnaire_id"]
+            isOneToOne: false
+            referencedRelation: "pulse_questionnaires"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pulse_questionnaire_tags_tag_id_fkey"
+            columns: ["tag_id"]
+            isOneToOne: false
+            referencedRelation: "pulse_tags"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       pulse_questionnaires: {
         Row: {
           activated_at: string | null
@@ -2562,6 +2795,7 @@ export type Database = {
           deactivated_at: string | null
           description: string | null
           id: string
+          low_engagement_threshold: number | null
           organization_id: string
           status: Database["public"]["Enums"]["pulse_questionnaire_status"]
           title: string
@@ -2575,6 +2809,7 @@ export type Database = {
           deactivated_at?: string | null
           description?: string | null
           id?: string
+          low_engagement_threshold?: number | null
           organization_id: string
           status?: Database["public"]["Enums"]["pulse_questionnaire_status"]
           title: string
@@ -2588,6 +2823,7 @@ export type Database = {
           deactivated_at?: string | null
           description?: string | null
           id?: string
+          low_engagement_threshold?: number | null
           organization_id?: string
           status?: Database["public"]["Enums"]["pulse_questionnaire_status"]
           title?: string
@@ -2707,6 +2943,41 @@ export type Database = {
         }
         Relationships: []
       }
+      pulse_settings: {
+        Row: {
+          created_at: string | null
+          id: string
+          organization_id: string
+          setting_key: string
+          setting_value: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          organization_id: string
+          setting_key: string
+          setting_value: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          organization_id?: string
+          setting_key?: string
+          setting_value?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pulse_settings_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       pulse_survey_assignments: {
         Row: {
           access_token: string
@@ -2771,6 +3042,33 @@ export type Database = {
           },
         ]
       }
+      pulse_tags: {
+        Row: {
+          color: string
+          created_at: string
+          id: string
+          name: string
+          organization_id: string
+          updated_at: string
+        }
+        Insert: {
+          color?: string
+          created_at?: string
+          id?: string
+          name: string
+          organization_id: string
+          updated_at?: string
+        }
+        Update: {
+          color?: string
+          created_at?: string
+          id?: string
+          name?: string
+          organization_id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       pulse_user_status: {
         Row: {
           created_at: string
@@ -2805,6 +3103,38 @@ export type Database = {
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      pulse_user_tags: {
+        Row: {
+          created_at: string
+          id: string
+          organization_id: string
+          tag_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          organization_id: string
+          tag_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          organization_id?: string
+          tag_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pulse_user_tags_tag_id_fkey"
+            columns: ["tag_id"]
+            isOneToOne: false
+            referencedRelation: "pulse_tags"
             referencedColumns: ["id"]
           },
         ]
@@ -3105,6 +3435,53 @@ export type Database = {
           },
         ]
       }
+      telegram_scheduled_reminders: {
+        Row: {
+          created_at: string
+          day_of_month: number
+          id: string
+          is_enabled: boolean
+          last_sent_at: string | null
+          message_template: string
+          name: string
+          organization_id: string
+          time_slot: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          day_of_month: number
+          id?: string
+          is_enabled?: boolean
+          last_sent_at?: string | null
+          message_template: string
+          name: string
+          organization_id: string
+          time_slot?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          day_of_month?: number
+          id?: string
+          is_enabled?: boolean
+          last_sent_at?: string | null
+          message_template?: string
+          name?: string
+          organization_id?: string
+          time_slot?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "telegram_scheduled_reminders_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       test_card_users: {
         Row: {
           created_at: string | null
@@ -3329,6 +3706,7 @@ export type Database = {
           organization_id: string | null
           test_cards_enabled: boolean
           updated_at: string
+          weekly_summary_enabled: boolean | null
         }
         Insert: {
           created_at?: string
@@ -3343,6 +3721,7 @@ export type Database = {
           organization_id?: string | null
           test_cards_enabled?: boolean
           updated_at?: string
+          weekly_summary_enabled?: boolean | null
         }
         Update: {
           created_at?: string
@@ -3357,6 +3736,7 @@ export type Database = {
           organization_id?: string | null
           test_cards_enabled?: boolean
           updated_at?: string
+          weekly_summary_enabled?: boolean | null
         }
         Relationships: [
           {
@@ -3532,6 +3912,27 @@ export type Database = {
         }
         Returns: Json
       }
+      create_user_with_apps: {
+        Args: {
+          p_apps?: Json
+          p_email: string
+          p_name: string
+          p_organization_id: string
+          p_user_id: string
+        }
+        Returns: Json
+      }
+      detect_orphaned_users: {
+        Args: never
+        Returns: {
+          email: string
+          has_organization: boolean
+          has_profile: boolean
+          missing_app_access: string[]
+          name: string
+          user_id: string
+        }[]
+      }
       distribute_monthly_points: {
         Args: { p_organization_id: string }
         Returns: number
@@ -3612,6 +4013,12 @@ export type Database = {
           most_common_feature: string
           total_errors: number
           unresolved_errors: number
+        }[]
+      }
+      get_kudos_available_years: {
+        Args: { p_organization_id: string }
+        Returns: {
+          year: number
         }[]
       }
       get_last_reset_info: {
@@ -3726,7 +4133,7 @@ export type Database = {
         Returns: string
       }
       get_top_kudos_givers: {
-        Args: { p_limit?: number; p_organization_id: string }
+        Args: { p_limit?: number; p_organization_id: string; p_year?: number }
         Returns: {
           total_kudos: number
           user_email: string
@@ -3735,7 +4142,7 @@ export type Database = {
         }[]
       }
       get_top_kudos_receivers: {
-        Args: { p_limit?: number; p_organization_id: string }
+        Args: { p_limit?: number; p_organization_id: string; p_year?: number }
         Returns: {
           total_kudos: number
           user_email: string
@@ -3840,6 +4247,10 @@ export type Database = {
       is_admin: { Args: { user_id: string }; Returns: boolean }
       is_beacon_admin_simple: {
         Args: { org_id: string; user_id?: string }
+        Returns: boolean
+      }
+      is_broadcast_creator: {
+        Args: { p_broadcast_id: string; p_user_id?: string }
         Returns: boolean
       }
       is_gecko_admin_simple: {
@@ -3952,6 +4363,7 @@ export type Database = {
           user_id: string
         }[]
       }
+      repair_user_app_access: { Args: { p_user_id: string }; Returns: Json }
       restore_all_game_attempts: {
         Args: never
         Returns: {
