@@ -4,6 +4,7 @@ import { trackQuizAttempt, fetchRandomQuestions } from '@/utils/quizTracking';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useMetaTags } from '@/hooks/useMetaTags';
 import { getTranslation } from '@/utils/translations';
+import { supabase } from '@/integrations/supabase/client';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import StartScreen from '@/components/StartScreen';
@@ -28,19 +29,33 @@ const Index = () => {
   const [startTime, setStartTime] = useState<Date | null>(null);
   const [endTime, setEndTime] = useState<Date | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [csmThemeId, setCsmThemeId] = useState<string | null>(null);
 
-  // Load questions when quiz starts or language changes
+  // Load CSM theme on mount
   useEffect(() => {
-    if (currentScreen === 'quiz') {
+    const loadCsmTheme = async () => {
+      const { data } = await supabase
+        .from('quiz_themes')
+        .select('id')
+        .eq('slug', 'csm')
+        .single();
+      if (data) setCsmThemeId(data.id);
+    };
+    loadCsmTheme();
+  }, []);
+
+  // Load questions when quiz starts, language changes, or theme is loaded
+  useEffect(() => {
+    if (currentScreen === 'quiz' && csmThemeId) {
       loadQuestions();
     }
-  }, [currentScreen, quizSize, language]);
+  }, [currentScreen, quizSize, language, csmThemeId]);
 
   const loadQuestions = async () => {
     try {
       setIsLoading(true);
-      console.log(`Loading ${quizSize} questions for language: ${language}`);
-      const fetchedQuestions = await fetchRandomQuestions(quizSize, language);
+      console.log(`Loading ${quizSize} questions for language: ${language}, themeId: ${csmThemeId}`);
+      const fetchedQuestions = await fetchRandomQuestions(quizSize, language, undefined, csmThemeId || undefined);
       setQuestions(fetchedQuestions);
       console.log(`Loaded ${fetchedQuestions.length} questions`);
     } catch (error) {
@@ -100,7 +115,7 @@ const Index = () => {
       ? Math.round((endDateTime.getTime() - startTime.getTime()) / 1000)
       : 0;
 
-    // Track the quiz attempt with language information
+    // Track the quiz attempt with language and theme information
     try {
       await trackQuizAttempt(
         userInfo.name,
@@ -110,9 +125,10 @@ const Index = () => {
         userAnswers,
         questions,
         completionTimeSeconds,
-        language
+        language,
+        csmThemeId || undefined
       );
-      console.log(`Quiz attempt tracked for language: ${language}`);
+      console.log(`Quiz attempt tracked for language: ${language}, themeId: ${csmThemeId}`);
     } catch (error) {
       console.error("Error tracking quiz attempt:", error);
     }

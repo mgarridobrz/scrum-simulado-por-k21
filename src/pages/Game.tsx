@@ -5,6 +5,7 @@ import { getTranslation } from '@/utils/translations';
 import { getRandomQuestions } from '@/data/quizData';
 import { saveGameAttempt } from '@/utils/gameTracking';
 import { toast } from '@/hooks/use-toast';
+import { supabase } from '@/integrations/supabase/client';
 
 import Header from '@/components/Header';
 import UserInfoForm from '@/components/UserInfoForm';
@@ -32,6 +33,25 @@ const Game: React.FC<GameProps> = ({ themeSlug, themeId, themeName, basePath = '
   const [gameState, setGameState] = useState<GameState | null>(null);
   const [showUserForm, setShowUserForm] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
+  const [defaultThemeId, setDefaultThemeId] = useState<string | null>(null);
+
+  // Load CSM theme as default if no themeId is provided
+  useEffect(() => {
+    if (!themeId) {
+      const loadCsmTheme = async () => {
+        const { data } = await supabase
+          .from('quiz_themes')
+          .select('id')
+          .eq('slug', 'csm')
+          .single();
+        if (data) setDefaultThemeId(data.id);
+      };
+      loadCsmTheme();
+    }
+  }, [themeId]);
+
+  // Effective themeId to use
+  const effectiveThemeId = themeId || defaultThemeId || undefined;
 
   const resetGame = () => {
     setGameConfig(null);
@@ -61,7 +81,7 @@ const Game: React.FC<GameProps> = ({ themeSlug, themeId, themeName, basePath = '
       
       // Converter 'all' para undefined para buscar todas as categorias
       const categoryFilter = gameConfig.category === 'all' ? undefined : gameConfig.category;
-      const questions = await getRandomQuestions(gameConfig.questionCount, language, categoryFilter, themeId);
+      const questions = await getRandomQuestions(gameConfig.questionCount, language, categoryFilter, effectiveThemeId);
       if (questions.length === 0) {
         toast({
           title: "Erro",
@@ -226,7 +246,7 @@ const Game: React.FC<GameProps> = ({ themeSlug, themeId, themeName, basePath = '
         finalAnswers,
         language,
         finalScoreToSave,  // Score final exato da tela
-        themeId
+        effectiveThemeId
       );
 
       setGameState(prev => prev ? {
@@ -264,7 +284,7 @@ const Game: React.FC<GameProps> = ({ themeSlug, themeId, themeName, basePath = '
         <main className="container mx-auto px-4 py-8">
           <GameCategorySelector 
             onSelectCategory={handleCategorySelection} 
-            themeId={themeId}
+            themeId={effectiveThemeId}
             basePath={basePath}
             forceAllQuestions={forceAllQuestions}
           />
