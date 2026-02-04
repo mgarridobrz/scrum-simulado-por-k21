@@ -2383,6 +2383,7 @@ export type Database = {
           id: string
           initiative_id: string | null
           message_type: string | null
+          okr_id: string | null
           test_card_id: string | null
           updated_at: string
           user_id: string
@@ -2394,6 +2395,7 @@ export type Database = {
           id?: string
           initiative_id?: string | null
           message_type?: string | null
+          okr_id?: string | null
           test_card_id?: string | null
           updated_at?: string
           user_id: string
@@ -2405,12 +2407,21 @@ export type Database = {
           id?: string
           initiative_id?: string | null
           message_type?: string | null
+          okr_id?: string | null
           test_card_id?: string | null
           updated_at?: string
           user_id?: string
           workspace_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "messages_okr_id_fkey"
+            columns: ["okr_id"]
+            isOneToOne: false
+            referencedRelation: "okrs"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       okr_initiatives: {
         Row: {
