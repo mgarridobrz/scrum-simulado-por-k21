@@ -1,0 +1,106 @@
+# Simulado CSM - K21 Brasil (Documentação Completa)
+
+## Visão Geral
+O Simulado CSM da K21 é uma plataforma web gratuita para preparação da certificação Certified ScrumMaster (CSM) da Scrum Alliance. Desenvolvido pela K21 Brasil, uma das maiores consultorias de Agilidade da América Latina, o simulado oferece uma experiência realista de preparação para o exame oficial.
+
+## Sobre a K21 Brasil
+A K21 é uma consultoria especializada em Agilidade e Transformação Digital, com atuação no Brasil e internacionalmente. Oferece cursos oficiais, treinamentos corporativos e consultoria em métodos ágeis como Scrum, Kanban, Management 3.0 e OKRs.
+
+- Site: https://br.k21.global
+- Cursos: https://br.k21.global/cursos
+- Conteúdos: https://br.k21.global/conteudos
+- WhatsApp: +55 21 3825-8624
+- LinkedIn: https://www.linkedin.com/company/k21-global
+
+## Páginas e Módulos
+
+### Página Principal (Home)
+- URL PT: https://simulado-csm.k21.global/
+- URL EN: https://csmpracticeexam.com/
+- Funcionalidade: Tela inicial com seleção de número de questões, preenchimento de nome/email, e início do simulado
+- Modos: Simulado tradicional e Modo Jogo
+
+### Simulado Tradicional
+- Questões de múltipla escolha no formato da prova oficial CSM
+- Categorias: Papéis do Scrum (Scrum Master, Product Owner, Developers), Eventos (Sprint, Daily Scrum, Sprint Review, Sprint Retrospective, Sprint Planning), Artefatos (Product Backlog, Sprint Backlog, Increment), Fundamentos do Ágil
+- Feedback imediato após cada questão com explicação detalhada
+- Barra de progresso e contador de acertos
+- Resultado final com percentual por categoria e gráfico de desempenho
+- Geração de relatório em PDF
+
+### Modo Jogo (Speed Game)
+- URL PT: https://simulado-csm.k21.global/game
+- URL EN: https://csmpracticeexam.com/game
+- Desafio contra o relógio com timer
+- Penalidade de tempo por resposta incorreta
+- Ranking global por tempo final
+
+### Ranking Global
+- URL PT: https://simulado-csm.k21.global/ranking
+- URL EN: https://csmpracticeexam.com/ranking
+- Classificação dos melhores resultados do simulado
+- Filtro por idioma e período
+
+### Ranking do Jogo
+- URL PT: https://simulado-csm.k21.global/game/ranking
+- URL EN: https://csmpracticeexam.com/game/ranking
+- Classificação dos melhores tempos no modo jogo
+
+## Categorias de Questões
+1. **Papéis do Scrum** - Responsabilidades do Scrum Master, Product Owner e Developers
+2. **Eventos do Scrum** - Sprint, Daily Scrum, Sprint Review, Sprint Retrospective, Sprint Planning
+3. **Artefatos do Scrum** - Product Backlog, Sprint Backlog, Increment, Definition of Done
+4. **Fundamentos do Ágil** - Manifesto Ágil, princípios, valores, empirismo
+
+## Diferenciais
+- 100% gratuito, sem necessidade de cadastro ou login
+- Questões elaboradas por especialistas da K21
+- Disponível em Português e Inglês
+- Interface responsiva para mobile e desktop
+- Explicações detalhadas para aprendizado contínuo
+- Ranking global para motivação
+- Relatório PDF para acompanhamento
+
+## Tecnologia
+- React com TypeScript
+- Hospedado em infraestrutura escalável
+- Banco de dados Supabase para rankings e estatísticas
+- Disponível 24/7
+
+## FAQ Completo
+
+Q: O que é a certificação CSM?
+A: A CSM (Certified ScrumMaster) é uma certificação oferecida pela Scrum Alliance que valida o conhecimento do profissional sobre o framework Scrum e o papel do Scrum Master em equipes ágeis.
+
+Q: Quantas questões tem a prova oficial CSM?
+A: A prova oficial tem 50 questões de múltipla escolha, com 60 minutos de duração. É necessário acertar 74% (37 questões) para ser aprovado.
+
+Q: O simulado da K21 é gratuito?
+A: Sim, 100% gratuito. Não é necessário criar conta ou fazer login. Basta acessar e começar.
+
+Q: Quantas questões tem o simulado?
+A: O banco possui 80 questões. Você pode escolher simulados de 10, 20, 30, 40 ou 50 questões, selecionadas aleatoriamente com balanço entre categorias.
+
+Q: O simulado substitui a prova oficial?
+A: Não. É uma ferramenta de preparação. Para obter a certificação CSM é necessário participar de um curso oficial credenciado pela Scrum Alliance e depois fazer a prova.
+
+Q: Qual a diferença entre CSM e PSM?
+A: O CSM é oferecido pela Scrum Alliance e requer um curso oficial antes da prova. O PSM (Professional Scrum Master) é oferecido pela Scrum.org e pode ser feito sem curso prévio. Ambas são certificações reconhecidas pelo mercado.
+
+Q: Quanto custa a certificação CSM?
+A: O custo inclui o curso oficial (que varia por provedor, geralmente entre R$3.000 e R$5.000) e a primeira tentativa da prova está incluída. Tentativas adicionais custam US$25.
+
+Q: Como é o formato da prova CSM?
+A: A prova é online, individual, com 50 questões de múltipla escolha. Você tem 60 minutos para completar e precisa acertar pelo menos 74%.
+
+Q: Posso fazer o simulado em inglês?
+A: Sim. O simulado está disponível em Português e Inglês. Acesse csmpracticeexam.com para a versão em inglês.
+
+Q: As questões do simulado são iguais às da prova oficial?
+A: Não. As questões são elaboradas pela K21 no estilo da prova oficial, cobrindo os mesmos temas. A prova oficial possui questões próprias que não são divulgadas.
+
+Q: Preciso de um curso para fazer a prova CSM?
+A: Sim. A Scrum Alliance exige a participação em um curso oficial de 2 dias ministrado por um Certified Scrum Trainer (CST) antes de poder fazer a prova.
+
+Q: Quanto tempo a certificação CSM é válida?
+A: A certificação CSM é válida por 2 anos. Para renovar, é necessário acumular Scrum Education Units (SEUs) e pagar uma taxa de renovação.

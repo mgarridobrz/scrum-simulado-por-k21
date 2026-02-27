@@ -4,11 +4,15 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="google-site-verification" content="3xRY5SVneAkDmoTPV4-wqkmBCLy3EDcfN_dficsuhA0" />
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1" />
+
+    <!-- Preconnect -->
+    <link rel="preconnect" href="https://www.googletagmanager.com" />
+    <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
 
     <!-- Meta tags will be managed dynamically by React -->
-    <title>Loading...</title>
-    <meta name="description" content="Loading..." />
-    <meta name="robots" content="index, follow" />
+    <title>Simulado CSM Gratuito | K21 Brasil</title>
+    <meta name="description" content="Simulado gratuito para certificação CSM da Scrum Alliance. 80 questões com explicações detalhadas. Prepare-se com a K21." />
 
     <!-- Favicon and Icons -->
     <link rel="icon" href="/lovable-uploads/2342063e-9561-46ff-ae6a-e4a0316e24a1.png" type="image/png" />
@@ -19,15 +23,21 @@
     <link rel="alternate" hreflang="en" href="https://csmpracticeexam.com/" />
     <link rel="alternate" hreflang="x-default" href="https://csmpracticeexam.com/" />
 
-    <!-- Google Tag Manager -->
+    <!-- Google Tag Manager (deferred via requestIdleCallback) -->
     <script>
-      (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-      new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-      j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-      'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-      })(window,document,'script','dataLayer','GTM-WZ7T423B');
+      function loadGTM() {
+        (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+        new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+        j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+        'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+        })(window,document,'script','dataLayer','GTM-WZ7T423B');
+      }
+      if ('requestIdleCallback' in window) {
+        requestIdleCallback(loadGTM);
+      } else {
+        setTimeout(loadGTM, 1000);
+      }
     </script>
-    <!-- End Google Tag Manager -->
   </head>
   <body>
     <div id="root"></div>

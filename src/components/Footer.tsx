@@ -1,6 +1,8 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { getFaqData } from '@/hooks/useMetaTags';
+import { ChevronDown, ChevronUp } from 'lucide-react';
 
 const footerTexts = {
   pt: `Simulado Gratuito para CSM – Certified ScrumMaster® (Scrum Alliance)
@@ -11,15 +13,45 @@ Take our free online practice test to prepare for the CSM (Certified ScrumMaster
 
 const Footer = () => {
   const { language } = useLanguage();
+  const faqItems = getFaqData(language);
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
+
+  const toggleFaq = (index: number) => {
+    setOpenIndex(openIndex === index ? null : index);
+  };
 
   return (
     <footer className="bg-gray-50 border-t mt-auto py-8">
       <div className="container mx-auto px-4">
-        {/* Main SEO text for Google indexing */}
+        {/* FAQ Section - matches FAQPage schema */}
+        <div className="mb-8">
+          <h2 className="text-lg font-semibold text-foreground mb-4">
+            {language === 'pt' ? 'Perguntas Frequentes sobre a Certificação CSM' : 'Frequently Asked Questions about CSM Certification'}
+          </h2>
+          <div className="space-y-2">
+            {faqItems.map((item: { question: string; answer: string }, index: number) => (
+              <div key={index} className="border rounded-lg bg-white">
+                <button
+                  onClick={() => toggleFaq(index)}
+                  className="w-full flex items-center justify-between px-4 py-3 text-left text-sm font-medium text-foreground hover:bg-gray-50 transition-colors"
+                  aria-expanded={openIndex === index}
+                >
+                  <span>{item.question}</span>
+                  {openIndex === index ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+                </button>
+                {openIndex === index && (
+                  <div className="px-4 pb-3 text-sm text-muted-foreground">
+                    {item.answer}
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Main SEO text */}
         <div className="text-muted-foreground text-sm leading-relaxed">
-          <p>
-            {footerTexts[language]}
-          </p>
+          <p>{footerTexts[language]}</p>
         </div>
         
         <div className="mt-6 flex justify-between items-center text-xs text-gray-500">
@@ -34,4 +66,3 @@ const Footer = () => {
 };
 
 export default Footer;
-
