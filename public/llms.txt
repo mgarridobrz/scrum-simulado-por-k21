@@ -1,0 +1,39 @@
+# Simulado CSM - K21 Brasil
+
+## O que é
+Simulado gratuito online para preparação da certificação CSM (Certified ScrumMaster) da Scrum Alliance. Disponível em Português e Inglês.
+
+## Para quem
+Profissionais que desejam se certificar como Scrum Master pela Scrum Alliance. Ideal para quem busca praticar antes da prova oficial.
+
+## Oferecido por
+K21 Brasil - Consultoria e treinamentos em Agilidade e Transformação Digital
+Site: https://br.k21.global
+WhatsApp: +55 21 3825-8624
+LinkedIn: https://www.linkedin.com/company/k21-global
+
+## Funcionalidades
+- Simulado com banco de 80 questões no formato da prova oficial CSM
+- Seleção aleatória com balanço entre categorias (Papéis, Eventos, Artefatos, Fundamentos)
+- Opções de 10, 20, 30, 40 ou 50 questões por tentativa
+- Explicações detalhadas para cada resposta
+- Modo jogo com timer e penalidade por erro
+- Ranking global de participantes
+- Relatório de desempenho em PDF
+- Disponível em Português (BR) e Inglês
+
+## URLs
+- Português: https://simulado-csm.k21.global/
+- English: https://csmpracticeexam.com/
+- Ranking: https://simulado-csm.k21.global/ranking
+- Jogo: https://simulado-csm.k21.global/game
+
+## FAQ
+Q: O simulado é gratuito?
+A: Sim, 100% gratuito, sem necessidade de cadastro ou login.
+
+Q: Quantas questões tem o simulado?
+A: Banco de 80 questões. Você escolhe entre 10, 20, 30, 40 ou 50 por tentativa.
+
+Q: O simulado substitui a prova oficial?
+A: Não. É uma ferramenta de preparação. A certificação CSM requer um curso oficial credenciado pela Scrum Alliance.

@@ -78,13 +78,13 @@ const Header = ({ rankingPath }: HeaderProps = {}) => {
             className="flex items-center gap-1 text-sm font-medium text-gray-600 hover:text-green-600 transition-colors"
             title={getTranslation(language, 'talkToK21')}
           >
-            <MessageCircle size={16} className="text-green-600" />
+            <MessageCircle size={16} className="text-green-600" aria-hidden="true" />
             <span>{getTranslation(language, 'talkToK21')}</span>
           </a>
           
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="sm" className="flex items-center gap-1">
+              <Button variant="outline" size="sm" className="flex items-center gap-1" aria-label={getTranslation(language, 'shareText')}>
                 <Share2 size={16} />
                 <span className="hidden sm:inline">{getTranslation(language, 'shareText')}</span>
                 <span className="sm:hidden">{getTranslation(language, 'shareShort')}</span>
@@ -163,8 +163,9 @@ const Header = ({ rankingPath }: HeaderProps = {}) => {
           <Link 
             to={getRankingUrl()}
             className="flex items-center gap-1 text-sm font-medium text-gray-600 hover:text-k21-teal transition-colors"
+            aria-label={getTranslation(language, 'ranking')}
           >
-            <Trophy size={16} className="text-k21-gold" />
+            <Trophy size={16} className="text-k21-gold" aria-hidden="true" />
             <span>{getTranslation(language, 'ranking')}</span>
           </Link>
 

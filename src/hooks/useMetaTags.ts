@@ -17,96 +17,281 @@ interface MetaTagsConfig {
   lang?: string;
 }
 
-const defaultMetaTags = {
-  pt: {
-    title: 'Simulado CSM por K21 Brasil - Teste seus conhecimentos em Scrum',
-    description: 'Simulado gratuito para certificação Certified ScrumMaster® (CSM) oferecido pela K21 Brasil. Teste seus conhecimentos em Scrum com questões atualizadas.',
-    keywords: 'CSM, Certified ScrumMaster, Scrum, Agile, K21, simulado, certificação, teste',
-    ogImage: '/lovable-uploads/2342063e-9561-46ff-ae6a-e4a0316e24a1.png'
-  },
-  en: {
-    title: 'CSM Practice Test by K21 Brazil - Test your Scrum knowledge',
-    description: 'Free practice test for Certified ScrumMaster® (CSM) certification offered by K21 Brazil. Test your Scrum knowledge with updated questions.',
-    keywords: 'CSM, Certified ScrumMaster, Scrum, Agile, K21, practice test, certification, quiz',
-    ogImage: '/lovable-uploads/2342063e-9561-46ff-ae6a-e4a0316e24a1.png'
-  }
+const getBaseUrl = () => {
+  const isCustomDomain = window.location.hostname === 'csmpracticeexam.com';
+  return isCustomDomain ? 'https://csmpracticeexam.com' : 'https://simulado-csm.k21.global';
 };
+
+const getOgImageUrl = () => {
+  return `${getBaseUrl()}/lovable-uploads/2342063e-9561-46ff-ae6a-e4a0316e24a1.png`;
+};
+
+const getFaqSchema = (language: 'pt' | 'en') => {
+  if (language === 'pt') {
+    return {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "O que é a certificação CSM?",
+          "acceptedAnswer": { "@type": "Answer", "text": "A certificação CSM (Certified ScrumMaster) é oferecida pela Scrum Alliance e valida o conhecimento do profissional sobre o framework Scrum e o papel do Scrum Master." }
+        },
+        {
+          "@type": "Question",
+          "name": "Quantas questões tem a prova CSM?",
+          "acceptedAnswer": { "@type": "Answer", "text": "A prova oficial da Scrum Alliance possui 50 questões de múltipla escolha, com 60 minutos para completar. É necessário acertar 74% (37 questões) para ser aprovado." }
+        },
+        {
+          "@type": "Question",
+          "name": "O simulado CSM da K21 é gratuito?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Sim, o simulado é 100% gratuito. Você pode fazer quantas tentativas quiser, com banco de 80 questões selecionadas aleatoriamente." }
+        },
+        {
+          "@type": "Question",
+          "name": "Qual a diferença entre CSM e PSM?",
+          "acceptedAnswer": { "@type": "Answer", "text": "O CSM é oferecido pela Scrum Alliance e requer um curso oficial presencial ou online antes da prova. O PSM (Professional Scrum Master) é oferecido pela Scrum.org e pode ser feito sem curso prévio. Ambas são certificações reconhecidas no mercado." }
+        },
+        {
+          "@type": "Question",
+          "name": "Quanto custa a certificação CSM?",
+          "acceptedAnswer": { "@type": "Answer", "text": "O custo inclui o curso oficial (que varia por provedor) e a primeira tentativa da prova está incluída no valor do curso. Tentativas adicionais custam US$25." }
+        },
+        {
+          "@type": "Question",
+          "name": "Como é o formato da prova CSM?",
+          "acceptedAnswer": { "@type": "Answer", "text": "A prova CSM é online, com 50 questões de múltipla escolha, duração de 60 minutos e nota mínima de 74% para aprovação." }
+        },
+        {
+          "@type": "Question",
+          "name": "Este simulado substitui a prova oficial?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Não. Este simulado é uma ferramenta de preparação. Para obter a certificação CSM é necessário participar de um curso oficial credenciado pela Scrum Alliance." }
+        },
+        {
+          "@type": "Question",
+          "name": "Quantas questões tem o simulado da K21?",
+          "acceptedAnswer": { "@type": "Answer", "text": "O banco de dados possui 80 questões. Você pode escolher simulados de 10, 20, 30, 40 ou 50 questões, selecionadas aleatoriamente com balanço entre categorias." }
+        }
+      ]
+    };
+  }
+  return {
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "What is the CSM certification?",
+        "acceptedAnswer": { "@type": "Answer", "text": "The CSM (Certified ScrumMaster) certification is offered by Scrum Alliance and validates a professional's knowledge of the Scrum framework and the Scrum Master role." }
+      },
+      {
+        "@type": "Question",
+        "name": "How many questions does the CSM exam have?",
+        "acceptedAnswer": { "@type": "Answer", "text": "The official Scrum Alliance exam has 50 multiple-choice questions with 60 minutes to complete. You need to score 74% (37 questions) to pass." }
+      },
+      {
+        "@type": "Question",
+        "name": "Is the K21 CSM practice exam free?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Yes, the practice exam is 100% free. You can take as many attempts as you want, with a bank of 80 randomly selected questions." }
+      },
+      {
+        "@type": "Question",
+        "name": "What is the difference between CSM and PSM?",
+        "acceptedAnswer": { "@type": "Answer", "text": "CSM is offered by Scrum Alliance and requires an official course before the exam. PSM (Professional Scrum Master) is offered by Scrum.org and can be taken without a course. Both are recognized certifications." }
+      },
+      {
+        "@type": "Question",
+        "name": "How much does the CSM certification cost?",
+        "acceptedAnswer": { "@type": "Answer", "text": "The cost includes the official course (varies by provider) and the first exam attempt is included. Additional attempts cost US$25." }
+      },
+      {
+        "@type": "Question",
+        "name": "What is the CSM exam format?",
+        "acceptedAnswer": { "@type": "Answer", "text": "The CSM exam is online, with 50 multiple-choice questions, 60 minutes duration and a minimum score of 74% to pass." }
+      },
+      {
+        "@type": "Question",
+        "name": "Does this practice exam replace the official exam?",
+        "acceptedAnswer": { "@type": "Answer", "text": "No. This is a preparation tool. To obtain CSM certification you need to attend an official Scrum Alliance accredited course." }
+      },
+      {
+        "@type": "Question",
+        "name": "How many questions does the K21 practice exam have?",
+        "acceptedAnswer": { "@type": "Answer", "text": "The question bank has 80 questions. You can choose quizzes of 10, 20, 30, 40 or 50 questions, randomly selected with balance across categories." }
+      }
+    ]
+  };
+};
+
+const getOrganizationSchema = (baseUrl: string, language: 'pt' | 'en') => ({
+  "@type": "Organization",
+  "name": "K21 Brasil",
+  "url": "https://br.k21.global",
+  "logo": `${baseUrl}/lovable-uploads/2342063e-9561-46ff-ae6a-e4a0316e24a1.png`,
+  "description": language === 'en'
+    ? "Leading Agile and Scrum training organization in Brazil"
+    : "Organização líder em treinamentos Agile e Scrum no Brasil",
+  "sameAs": [
+    "https://br.k21.global",
+    "https://www.linkedin.com/company/k21-global",
+    "https://www.instagram.com/k21global",
+    "https://www.youtube.com/@K21Global"
+  ],
+  "contactPoint": {
+    "@type": "ContactPoint",
+    "telephone": "+55-21-3825-8624",
+    "contactType": "customer service",
+    "availableLanguage": ["Portuguese", "English"]
+  }
+});
+
+const getWebSiteSchema = (baseUrl: string, language: 'pt' | 'en') => ({
+  "@type": "WebSite",
+  "name": language === 'en' ? "CSM Practice Exam by K21" : "Simulado CSM por K21",
+  "url": baseUrl,
+  "inLanguage": language === 'en' ? 'en' : 'pt-BR',
+  "publisher": { "@type": "Organization", "name": "K21 Brasil" }
+});
 
 const getPageMetaTags = (pathname: string, language: 'pt' | 'en'): MetaTagsConfig => {
   const isEnglish = language === 'en';
   const isCustomDomain = window.location.hostname === 'csmpracticeexam.com';
-  const baseUrl = isCustomDomain ? 'https://csmpracticeexam.com' : 'https://simulado-csm.k21.global';
-  
-  // Remove /us prefix for canonical URL generation
+  const baseUrl = getBaseUrl();
+  const ogImage = getOgImageUrl();
   const cleanPath = pathname.replace('/us', '');
-  
+
+  const orgSchema = getOrganizationSchema(baseUrl, language);
+  const webSchema = getWebSiteSchema(baseUrl, language);
+  const faqSchema = getFaqSchema(language);
+
   switch (cleanPath) {
     case '/':
+    case '':
       return {
-        title: defaultMetaTags[language].title,
-        description: defaultMetaTags[language].description,
-        keywords: defaultMetaTags[language].keywords,
-        ogTitle: defaultMetaTags[language].title,
-        ogDescription: defaultMetaTags[language].description,
-        ogImage: defaultMetaTags[language].ogImage,
-        twitterTitle: defaultMetaTags[language].title,
-        twitterDescription: defaultMetaTags[language].description,
+        title: isEnglish ? 'Free CSM Practice Exam | K21 Brazil' : 'Simulado CSM Gratuito | K21 Brasil',
+        description: isEnglish
+          ? 'Free CSM certification practice test by K21. 80 Scrum questions with detailed explanations. Prepare for Scrum Alliance exam.'
+          : 'Simulado gratuito para certificação CSM da Scrum Alliance. 80 questões com explicações detalhadas. Prepare-se com a K21.',
+        keywords: isEnglish
+          ? 'CSM, Certified ScrumMaster, Scrum, Agile, K21, practice test, certification, quiz, free'
+          : 'CSM, Certified ScrumMaster, Scrum, Agile, K21, simulado, certificação, teste, gratuito',
+        ogTitle: isEnglish ? 'Free CSM Practice Exam | K21 Brazil' : 'Simulado CSM Gratuito | K21 Brasil',
+        ogDescription: isEnglish
+          ? 'Free CSM certification practice test by K21. 80 Scrum questions with detailed explanations.'
+          : 'Simulado gratuito para certificação CSM da Scrum Alliance. 80 questões com explicações detalhadas.',
+        ogImage,
+        twitterTitle: isEnglish ? 'Free CSM Practice Exam | K21 Brazil' : 'Simulado CSM Gratuito | K21 Brasil',
+        twitterDescription: isEnglish
+          ? 'Free CSM certification practice test by K21. 80 Scrum questions with detailed explanations.'
+          : 'Simulado gratuito para certificação CSM da Scrum Alliance. 80 questões com explicações detalhadas.',
         canonical: isCustomDomain ? baseUrl : (isEnglish ? `${baseUrl}/us` : baseUrl),
         lang: isEnglish ? 'en' : 'pt-BR',
         structuredData: {
           "@context": "https://schema.org",
-          "@type": "EducationalOrganization",
-          "name": "K21 Brasil",
-          "description": isEnglish 
-            ? "Leading Agile and Scrum training organization in Brazil"
-            : "Organização líder em treinamentos Agile e Scrum no Brasil",
-          "url": baseUrl,
-          "logo": `${baseUrl}/lovable-uploads/2342063e-9561-46ff-ae6a-e4a0316e24a1.png`,
-          "sameAs": [
-            "https://br.k21.global",
-            "https://www.linkedin.com/company/k21-global"
-          ]
+          "@graph": [orgSchema, webSchema, faqSchema]
         }
       };
-      
+
     case '/ranking':
       return {
-        title: isEnglish 
-          ? 'Global CSM Quiz Ranking - K21 Brasil'
-          : 'Ranking Global do Simulado CSM - K21 Brasil',
+        title: isEnglish ? 'CSM Quiz Ranking | K21 Brazil' : 'Ranking Simulado CSM | K21 Brasil',
         description: isEnglish
-          ? 'See how you rank among CSM quiz participants worldwide. Compare your Scrum knowledge with other professionals.'
-          : 'Veja como você se posiciona entre participantes do simulado CSM no mundo. Compare seu conhecimento em Scrum com outros profissionais.',
+          ? 'Global ranking of CSM practice exam participants. Compare your Scrum knowledge with professionals worldwide.'
+          : 'Ranking global dos participantes do simulado CSM. Compare seu conhecimento em Scrum com profissionais do mundo todo.',
         keywords: isEnglish
           ? 'CSM ranking, Scrum leaderboard, certification ranking, K21'
           : 'ranking CSM, classificação Scrum, ranking certificação, K21',
-        ogTitle: isEnglish 
-          ? 'Global CSM Quiz Ranking - K21 Brasil'
-          : 'Ranking Global do Simulado CSM - K21 Brasil',
+        ogTitle: isEnglish ? 'CSM Quiz Ranking | K21 Brazil' : 'Ranking Simulado CSM | K21 Brasil',
         ogDescription: isEnglish
-          ? 'See how you rank among CSM quiz participants worldwide. Compare your Scrum knowledge with other professionals.'
-          : 'Veja como você se posiciona entre participantes do simulado CSM no mundo. Compare seu conhecimento em Scrum com outros profissionais.',
-        ogImage: defaultMetaTags[language].ogImage,
-        twitterTitle: isEnglish 
-          ? 'Global CSM Quiz Ranking - K21 Brasil'
-          : 'Ranking Global do Simulado CSM - K21 Brasil',
+          ? 'Global ranking of CSM practice exam participants. Compare your Scrum knowledge.'
+          : 'Ranking global dos participantes do simulado CSM. Compare seu conhecimento em Scrum.',
+        ogImage,
+        twitterTitle: isEnglish ? 'CSM Quiz Ranking | K21 Brazil' : 'Ranking Simulado CSM | K21 Brasil',
         twitterDescription: isEnglish
-          ? 'See how you rank among CSM quiz participants worldwide. Compare your Scrum knowledge with other professionals.'
-          : 'Veja como você se posiciona entre participantes do simulado CSM no mundo. Compare seu conhecimento em Scrum com outros profissionais.',
+          ? 'Global ranking of CSM practice exam participants.'
+          : 'Ranking global dos participantes do simulado CSM.',
         canonical: isCustomDomain ? `${baseUrl}/ranking` : (isEnglish ? `${baseUrl}/us/ranking` : `${baseUrl}/ranking`),
-        lang: isEnglish ? 'en' : 'pt-BR'
+        lang: isEnglish ? 'en' : 'pt-BR',
+        structuredData: {
+          "@context": "https://schema.org",
+          "@graph": [
+            orgSchema,
+            {
+              "@type": "BreadcrumbList",
+              "itemListElement": [
+                { "@type": "ListItem", "position": 1, "name": "Home", "item": isCustomDomain ? baseUrl : (isEnglish ? `${baseUrl}/us` : baseUrl) },
+                { "@type": "ListItem", "position": 2, "name": "Ranking", "item": isCustomDomain ? `${baseUrl}/ranking` : (isEnglish ? `${baseUrl}/us/ranking` : `${baseUrl}/ranking`) }
+              ]
+            }
+          ]
+        }
       };
-      
+
+    case '/game':
+      return {
+        title: isEnglish ? 'CSM Speed Game | K21 Brazil' : 'Jogo Rápido CSM | K21 Brasil',
+        description: isEnglish
+          ? 'Test your Scrum knowledge against the clock! CSM speed game mode with timer and global ranking.'
+          : 'Teste seu conhecimento em Scrum contra o relógio! Modo jogo rápido CSM com timer e ranking global.',
+        keywords: isEnglish
+          ? 'CSM game, Scrum quiz game, speed test, K21'
+          : 'jogo CSM, quiz Scrum, teste rápido, K21',
+        ogTitle: isEnglish ? 'CSM Speed Game | K21 Brazil' : 'Jogo Rápido CSM | K21 Brasil',
+        ogDescription: isEnglish
+          ? 'Test your Scrum knowledge against the clock!'
+          : 'Teste seu conhecimento em Scrum contra o relógio!',
+        ogImage,
+        canonical: isCustomDomain ? `${baseUrl}/game` : (isEnglish ? `${baseUrl}/us/game` : `${baseUrl}/game`),
+        lang: isEnglish ? 'en' : 'pt-BR',
+        structuredData: {
+          "@context": "https://schema.org",
+          "@graph": [
+            orgSchema,
+            {
+              "@type": "BreadcrumbList",
+              "itemListElement": [
+                { "@type": "ListItem", "position": 1, "name": "Home", "item": isCustomDomain ? baseUrl : (isEnglish ? `${baseUrl}/us` : baseUrl) },
+                { "@type": "ListItem", "position": 2, "name": isEnglish ? "Speed Game" : "Jogo Rápido", "item": isCustomDomain ? `${baseUrl}/game` : (isEnglish ? `${baseUrl}/us/game` : `${baseUrl}/game`) }
+              ]
+            }
+          ]
+        }
+      };
+
+    case '/game/ranking':
+      return {
+        title: isEnglish ? 'Game Ranking | K21 Brazil' : 'Ranking do Jogo | K21 Brasil',
+        description: isEnglish
+          ? 'Speed game ranking. See the fastest Scrum experts in the CSM challenge.'
+          : 'Ranking do jogo rápido. Veja os experts em Scrum mais rápidos no desafio CSM.',
+        ogTitle: isEnglish ? 'Game Ranking | K21 Brazil' : 'Ranking do Jogo | K21 Brasil',
+        ogDescription: isEnglish
+          ? 'Speed game ranking. See the fastest Scrum experts.'
+          : 'Ranking do jogo rápido. Veja os experts mais rápidos.',
+        ogImage,
+        canonical: isCustomDomain ? `${baseUrl}/game/ranking` : (isEnglish ? `${baseUrl}/us/game/ranking` : `${baseUrl}/game/ranking`),
+        lang: isEnglish ? 'en' : 'pt-BR',
+        structuredData: {
+          "@context": "https://schema.org",
+          "@graph": [
+            orgSchema,
+            {
+              "@type": "BreadcrumbList",
+              "itemListElement": [
+                { "@type": "ListItem", "position": 1, "name": "Home", "item": isCustomDomain ? baseUrl : (isEnglish ? `${baseUrl}/us` : baseUrl) },
+                { "@type": "ListItem", "position": 2, "name": isEnglish ? "Speed Game" : "Jogo Rápido", "item": isCustomDomain ? `${baseUrl}/game` : (isEnglish ? `${baseUrl}/us/game` : `${baseUrl}/game`) },
+                { "@type": "ListItem", "position": 3, "name": "Ranking", "item": isCustomDomain ? `${baseUrl}/game/ranking` : (isEnglish ? `${baseUrl}/us/game/ranking` : `${baseUrl}/game/ranking`) }
+              ]
+            }
+          ]
+        }
+      };
+
     default:
       return {
-        title: defaultMetaTags[language].title,
-        description: defaultMetaTags[language].description,
-        keywords: defaultMetaTags[language].keywords,
-        ogTitle: defaultMetaTags[language].title,
-        ogDescription: defaultMetaTags[language].description,
-        ogImage: defaultMetaTags[language].ogImage,
-        twitterTitle: defaultMetaTags[language].title,
-        twitterDescription: defaultMetaTags[language].description,
+        title: isEnglish ? 'Free CSM Practice Exam | K21 Brazil' : 'Simulado CSM Gratuito | K21 Brasil',
+        description: isEnglish
+          ? 'Free CSM certification practice test by K21. 80 Scrum questions with detailed explanations.'
+          : 'Simulado gratuito para certificação CSM da Scrum Alliance. 80 questões com explicações detalhadas.',
+        ogImage,
         canonical: isCustomDomain ? `${baseUrl}${cleanPath}` : (isEnglish ? `${baseUrl}/us${cleanPath}` : `${baseUrl}${cleanPath}`),
         lang: isEnglish ? 'en' : 'pt-BR'
       };
@@ -120,15 +305,12 @@ export const useMetaTags = () => {
   useEffect(() => {
     const metaTags = getPageMetaTags(location.pathname, language);
     
-    // Update document language
     if (metaTags.lang) {
       document.documentElement.lang = metaTags.lang;
     }
     
-    // Update title
     document.title = metaTags.title;
     
-    // Update or create meta tags
     const updateMetaTag = (name: string, content: string, property?: boolean) => {
       const selector = property ? `meta[property="${name}"]` : `meta[name="${name}"]`;
       let meta = document.querySelector(selector) as HTMLMetaElement;
@@ -146,37 +328,40 @@ export const useMetaTags = () => {
       meta.setAttribute('content', content);
     };
     
-    // Update basic meta tags
+    // Basic meta tags
     updateMetaTag('title', metaTags.title);
     updateMetaTag('description', metaTags.description);
     if (metaTags.keywords) {
       updateMetaTag('keywords', metaTags.keywords);
     }
     updateMetaTag('author', 'K21 Brasil');
-    updateMetaTag('robots', 'index, follow');
+    updateMetaTag('robots', 'index, follow, max-image-preview:large, max-snippet:-1');
     updateMetaTag('language', language === 'en' ? 'English' : 'Portuguese');
     
-    // Update Open Graph tags
+    // Open Graph tags
     updateMetaTag('og:type', 'website', true);
-    updateMetaTag('og:url', window.location.href, true);
+    updateMetaTag('og:url', metaTags.canonical || window.location.href, true);
     updateMetaTag('og:title', metaTags.ogTitle || metaTags.title, true);
     updateMetaTag('og:description', metaTags.ogDescription || metaTags.description, true);
     updateMetaTag('og:site_name', 'K21 Brasil', true);
     updateMetaTag('og:locale', language === 'en' ? 'en_US' : 'pt_BR', true);
     if (metaTags.ogImage) {
-      updateMetaTag('og:image', `${window.location.origin}${metaTags.ogImage}`, true);
+      updateMetaTag('og:image', metaTags.ogImage, true);
+      updateMetaTag('og:image:width', '1200', true);
+      updateMetaTag('og:image:height', '630', true);
+      updateMetaTag('og:image:type', 'image/png', true);
     }
     
-    // Update Twitter tags
+    // Twitter tags
     updateMetaTag('twitter:card', 'summary_large_image');
-    updateMetaTag('twitter:url', window.location.href);
+    updateMetaTag('twitter:url', metaTags.canonical || window.location.href);
     updateMetaTag('twitter:title', metaTags.twitterTitle || metaTags.title);
     updateMetaTag('twitter:description', metaTags.twitterDescription || metaTags.description);
     if (metaTags.ogImage) {
-      updateMetaTag('twitter:image', `${window.location.origin}${metaTags.ogImage}`);
+      updateMetaTag('twitter:image', metaTags.ogImage);
     }
     
-    // Update canonical URL
+    // Canonical URL
     let canonical = document.querySelector('link[rel="canonical"]') as HTMLLinkElement;
     if (!canonical) {
       canonical = document.createElement('link');
@@ -185,7 +370,7 @@ export const useMetaTags = () => {
     }
     canonical.setAttribute('href', metaTags.canonical || window.location.href);
     
-    // Update structured data
+    // Structured data
     if (metaTags.structuredData) {
       let structuredDataScript = document.querySelector('script[type="application/ld+json"]');
       if (!structuredDataScript) {
@@ -197,4 +382,13 @@ export const useMetaTags = () => {
     }
     
   }, [location.pathname, language]);
+};
+
+// Export FAQ data for use in visible FAQ component
+export const getFaqData = (language: 'pt' | 'en') => {
+  const schema = getFaqSchema(language);
+  return schema.mainEntity.map((q: any) => ({
+    question: q.name,
+    answer: q.acceptedAnswer.text
+  }));
 };

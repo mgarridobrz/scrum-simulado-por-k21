@@ -847,6 +847,405 @@ export type Database = {
           },
         ]
       }
+      Ellie_courses: {
+        Row: {
+          created_at: string
+          duration: string | null
+          id: string
+          is_active: boolean
+          name: string
+          organization_id: string
+          price: number
+        }
+        Insert: {
+          created_at?: string
+          duration?: string | null
+          id?: string
+          is_active?: boolean
+          name: string
+          organization_id: string
+          price?: number
+        }
+        Update: {
+          created_at?: string
+          duration?: string | null
+          id?: string
+          is_active?: boolean
+          name?: string
+          organization_id?: string
+          price?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "Ellie_courses_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      Ellie_lead_interests: {
+        Row: {
+          course_id: string | null
+          created_at: string
+          discount: number
+          id: string
+          interest: string
+          lead_id: string
+          quantity: number
+        }
+        Insert: {
+          course_id?: string | null
+          created_at?: string
+          discount?: number
+          id?: string
+          interest: string
+          lead_id: string
+          quantity?: number
+        }
+        Update: {
+          course_id?: string | null
+          created_at?: string
+          discount?: number
+          id?: string
+          interest?: string
+          lead_id?: string
+          quantity?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "Ellie_lead_interests_course_id_fkey"
+            columns: ["course_id"]
+            isOneToOne: false
+            referencedRelation: "Ellie_courses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "Ellie_lead_interests_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "Ellie_leads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      Ellie_lead_notes: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          lead_id: string
+          user_id: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          id?: string
+          lead_id: string
+          user_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          lead_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "Ellie_lead_notes_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "Ellie_leads"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "Ellie_lead_notes_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      Ellie_lead_stage_history: {
+        Row: {
+          from_stage: Database["public"]["Enums"]["ellie_lead_stage"] | null
+          id: string
+          lead_id: string
+          moved_at: string
+          moved_by: string
+          notes: string | null
+          to_stage: Database["public"]["Enums"]["ellie_lead_stage"]
+        }
+        Insert: {
+          from_stage?: Database["public"]["Enums"]["ellie_lead_stage"] | null
+          id?: string
+          lead_id: string
+          moved_at?: string
+          moved_by: string
+          notes?: string | null
+          to_stage: Database["public"]["Enums"]["ellie_lead_stage"]
+        }
+        Update: {
+          from_stage?: Database["public"]["Enums"]["ellie_lead_stage"] | null
+          id?: string
+          lead_id?: string
+          moved_at?: string
+          moved_by?: string
+          notes?: string | null
+          to_stage?: Database["public"]["Enums"]["ellie_lead_stage"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "Ellie_lead_stage_history_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "Ellie_leads"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "Ellie_lead_stage_history_moved_by_fkey"
+            columns: ["moved_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      Ellie_leads: {
+        Row: {
+          closed_value: number | null
+          cnpj: string | null
+          company: string | null
+          cpf: string | null
+          created_at: string
+          created_by: string
+          email: string
+          estimated_value: number | null
+          id: string
+          interest: Database["public"]["Enums"]["ellie_lead_interest"] | null
+          is_archived: boolean
+          loss_reason: string | null
+          name: string
+          notes: string | null
+          origin: Database["public"]["Enums"]["ellie_lead_origin"] | null
+          phone: string
+          responsible_user_id: string | null
+          stage: Database["public"]["Enums"]["ellie_lead_stage"]
+          type: Database["public"]["Enums"]["ellie_lead_type"]
+          updated_at: string
+          workspace_id: string
+        }
+        Insert: {
+          closed_value?: number | null
+          cnpj?: string | null
+          company?: string | null
+          cpf?: string | null
+          created_at?: string
+          created_by: string
+          email: string
+          estimated_value?: number | null
+          id?: string
+          interest?: Database["public"]["Enums"]["ellie_lead_interest"] | null
+          is_archived?: boolean
+          loss_reason?: string | null
+          name: string
+          notes?: string | null
+          origin?: Database["public"]["Enums"]["ellie_lead_origin"] | null
+          phone: string
+          responsible_user_id?: string | null
+          stage?: Database["public"]["Enums"]["ellie_lead_stage"]
+          type?: Database["public"]["Enums"]["ellie_lead_type"]
+          updated_at?: string
+          workspace_id: string
+        }
+        Update: {
+          closed_value?: number | null
+          cnpj?: string | null
+          company?: string | null
+          cpf?: string | null
+          created_at?: string
+          created_by?: string
+          email?: string
+          estimated_value?: number | null
+          id?: string
+          interest?: Database["public"]["Enums"]["ellie_lead_interest"] | null
+          is_archived?: boolean
+          loss_reason?: string | null
+          name?: string
+          notes?: string | null
+          origin?: Database["public"]["Enums"]["ellie_lead_origin"] | null
+          phone?: string
+          responsible_user_id?: string | null
+          stage?: Database["public"]["Enums"]["ellie_lead_stage"]
+          type?: Database["public"]["Enums"]["ellie_lead_type"]
+          updated_at?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "Ellie_leads_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "Ellie_leads_responsible_user_id_fkey"
+            columns: ["responsible_user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "Ellie_leads_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "Ellie_workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      Ellie_user_status: {
+        Row: {
+          created_at: string
+          id: string
+          is_admin: boolean
+          last_accessed_at: string | null
+          organization_id: string
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_admin?: boolean
+          last_accessed_at?: string | null
+          organization_id: string
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_admin?: boolean
+          last_accessed_at?: string | null
+          organization_id?: string
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "Ellie_user_status_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "Ellie_user_status_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      Ellie_workspace_users: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["ellie_workspace_role"]
+          user_id: string
+          workspace_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["ellie_workspace_role"]
+          user_id: string
+          workspace_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["ellie_workspace_role"]
+          user_id?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "Ellie_workspace_users_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "Ellie_workspace_users_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "Ellie_workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      Ellie_workspaces: {
+        Row: {
+          created_at: string
+          created_by: string
+          description: string | null
+          id: string
+          is_active: boolean
+          join_key: string | null
+          name: string
+          organization_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          join_key?: string | null
+          name: string
+          organization_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          join_key?: string | null
+          name?: string
+          organization_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "Ellie_workspaces_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "Ellie_workspaces_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       error_logs: {
         Row: {
           additional_data: Json | null
@@ -911,6 +1310,51 @@ export type Database = {
             columns: ["workspace_id"]
             isOneToOne: false
             referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      forge_user_status: {
+        Row: {
+          created_at: string
+          id: string
+          is_admin: boolean
+          organization_id: string
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_admin?: boolean
+          organization_id: string
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_admin?: boolean
+          organization_id?: string
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "forge_user_status_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "forge_user_status_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
         ]
@@ -4014,6 +4458,7 @@ export type Database = {
           date: string
         }[]
       }
+      get_ellie_lead_workspace: { Args: { _lead_id: string }; Returns: string }
       get_error_statistics: {
         Args: { p_hours_back?: number; p_workspace_id?: string }
         Returns: {
@@ -4264,6 +4709,26 @@ export type Database = {
         Args: { p_broadcast_id: string; p_user_id?: string }
         Returns: boolean
       }
+      is_ellie_admin: {
+        Args: { _organization_id: string; _user_id: string }
+        Returns: boolean
+      }
+      is_ellie_org_member: {
+        Args: { _organization_id: string; _user_id: string }
+        Returns: boolean
+      }
+      is_ellie_workspace_admin: {
+        Args: { _user_id: string; _workspace_id: string }
+        Returns: boolean
+      }
+      is_ellie_workspace_member: {
+        Args: { _user_id: string; _workspace_id: string }
+        Returns: boolean
+      }
+      is_forge_admin_simple: {
+        Args: { org_id: string; user_id?: string }
+        Returns: boolean
+      }
       is_gecko_admin_simple: {
         Args: { org_id: string; user_id?: string }
         Returns: boolean
@@ -4293,6 +4758,7 @@ export type Database = {
         Args: { org_id: string; user_id?: string }
         Returns: boolean
       }
+      is_system_admin: { Args: { _user_id: string }; Returns: boolean }
       is_system_admin_simple: { Args: { user_id?: string }; Returns: boolean }
       is_test_card_member: {
         Args: { p_test_card_id: string; p_user_id?: string }
@@ -4473,6 +4939,31 @@ export type Database = {
     Enums: {
       account_type: "free" | "pro"
       action_status: "todo" | "doing" | "done"
+      ellie_lead_interest:
+        | "CSPO"
+        | "CSM"
+        | "CAL-E"
+        | "CAL-T"
+        | "OKR"
+        | "Agile Coach"
+        | "Outro"
+      ellie_lead_origin:
+        | "landing_page"
+        | "evento"
+        | "linkedin"
+        | "indicacao"
+        | "inbound"
+        | "outbound"
+      ellie_lead_stage:
+        | "novo_lead"
+        | "primeiro_contato"
+        | "qualificacao"
+        | "proposta"
+        | "negociacao"
+        | "ganho"
+        | "perdido"
+      ellie_lead_type: "PF" | "PJ"
+      ellie_workspace_role: "admin" | "member"
       error_category:
         | "api"
         | "ui"
@@ -4631,6 +5122,34 @@ export const Constants = {
     Enums: {
       account_type: ["free", "pro"],
       action_status: ["todo", "doing", "done"],
+      ellie_lead_interest: [
+        "CSPO",
+        "CSM",
+        "CAL-E",
+        "CAL-T",
+        "OKR",
+        "Agile Coach",
+        "Outro",
+      ],
+      ellie_lead_origin: [
+        "landing_page",
+        "evento",
+        "linkedin",
+        "indicacao",
+        "inbound",
+        "outbound",
+      ],
+      ellie_lead_stage: [
+        "novo_lead",
+        "primeiro_contato",
+        "qualificacao",
+        "proposta",
+        "negociacao",
+        "ganho",
+        "perdido",
+      ],
+      ellie_lead_type: ["PF", "PJ"],
+      ellie_workspace_role: ["admin", "member"],
       error_category: [
         "api",
         "ui",
