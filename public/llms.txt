@@ -33,7 +33,7 @@ Q: O simulado é gratuito?
 A: Sim, 100% gratuito, sem necessidade de cadastro ou login.
 
 Q: Quantas questões tem o simulado?
-A: Banco de 80 questões. Você escolhe entre 10, 20, 30, 40 ou 50 por tentativa.
+A: Banco de 80 questões. Você escolhe entre 10, 25 ou 50 por tentativa.
 
 Q: O simulado substitui a prova oficial?
 A: Não. É uma ferramenta de preparação. A certificação CSM requer um curso oficial credenciado pela Scrum Alliance.

@@ -79,16 +79,10 @@ Q: O simulado da K21 é gratuito?
 A: Sim, 100% gratuito. Não é necessário criar conta ou fazer login. Basta acessar e começar.
 
 Q: Quantas questões tem o simulado?
-A: O banco possui 80 questões. Você pode escolher simulados de 10, 20, 30, 40 ou 50 questões, selecionadas aleatoriamente com balanço entre categorias.
+A: O banco possui 80 questões. Você pode escolher simulados de 10, 25 ou 50 questões, selecionadas aleatoriamente com balanço entre categorias.
 
 Q: O simulado substitui a prova oficial?
 A: Não. É uma ferramenta de preparação. Para obter a certificação CSM é necessário participar de um curso oficial credenciado pela Scrum Alliance e depois fazer a prova.
-
-Q: Qual a diferença entre CSM e PSM?
-A: O CSM é oferecido pela Scrum Alliance e requer um curso oficial antes da prova. O PSM (Professional Scrum Master) é oferecido pela Scrum.org e pode ser feito sem curso prévio. Ambas são certificações reconhecidas pelo mercado.
-
-Q: Quanto custa a certificação CSM?
-A: O custo inclui o curso oficial (que varia por provedor, geralmente entre R$3.000 e R$5.000) e a primeira tentativa da prova está incluída. Tentativas adicionais custam US$25.
 
 Q: Como é o formato da prova CSM?
 A: A prova é online, individual, com 50 questões de múltipla escolha. Você tem 60 minutos para completar e precisa acertar pelo menos 74%.
