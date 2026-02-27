@@ -48,16 +48,6 @@ const getFaqSchema = (language: 'pt' | 'en') => {
         },
         {
           "@type": "Question",
-          "name": "Qual a diferença entre CSM e PSM?",
-          "acceptedAnswer": { "@type": "Answer", "text": "O CSM é oferecido pela Scrum Alliance e requer um curso oficial presencial ou online antes da prova. O PSM (Professional Scrum Master) é oferecido pela Scrum.org e pode ser feito sem curso prévio. Ambas são certificações reconhecidas no mercado." }
-        },
-        {
-          "@type": "Question",
-          "name": "Quanto custa a certificação CSM?",
-          "acceptedAnswer": { "@type": "Answer", "text": "O custo inclui o curso oficial (que varia por provedor) e a primeira tentativa da prova está incluída no valor do curso. Tentativas adicionais custam US$25." }
-        },
-        {
-          "@type": "Question",
           "name": "Como é o formato da prova CSM?",
           "acceptedAnswer": { "@type": "Answer", "text": "A prova CSM é online, com 50 questões de múltipla escolha, duração de 60 minutos e nota mínima de 74% para aprovação." }
         },
@@ -69,7 +59,7 @@ const getFaqSchema = (language: 'pt' | 'en') => {
         {
           "@type": "Question",
           "name": "Quantas questões tem o simulado da K21?",
-          "acceptedAnswer": { "@type": "Answer", "text": "O banco de dados possui 80 questões. Você pode escolher simulados de 10, 20, 30, 40 ou 50 questões, selecionadas aleatoriamente com balanço entre categorias." }
+          "acceptedAnswer": { "@type": "Answer", "text": "O banco de dados possui 80 questões. Você pode escolher simulados de 10, 25 ou 50 questões, selecionadas aleatoriamente com balanço entre categorias." }
         }
       ]
     };
@@ -94,16 +84,6 @@ const getFaqSchema = (language: 'pt' | 'en') => {
       },
       {
         "@type": "Question",
-        "name": "What is the difference between CSM and PSM?",
-        "acceptedAnswer": { "@type": "Answer", "text": "CSM is offered by Scrum Alliance and requires an official course before the exam. PSM (Professional Scrum Master) is offered by Scrum.org and can be taken without a course. Both are recognized certifications." }
-      },
-      {
-        "@type": "Question",
-        "name": "How much does the CSM certification cost?",
-        "acceptedAnswer": { "@type": "Answer", "text": "The cost includes the official course (varies by provider) and the first exam attempt is included. Additional attempts cost US$25." }
-      },
-      {
-        "@type": "Question",
         "name": "What is the CSM exam format?",
         "acceptedAnswer": { "@type": "Answer", "text": "The CSM exam is online, with 50 multiple-choice questions, 60 minutes duration and a minimum score of 74% to pass." }
       },
@@ -115,7 +95,7 @@ const getFaqSchema = (language: 'pt' | 'en') => {
       {
         "@type": "Question",
         "name": "How many questions does the K21 practice exam have?",
-        "acceptedAnswer": { "@type": "Answer", "text": "The question bank has 80 questions. You can choose quizzes of 10, 20, 30, 40 or 50 questions, randomly selected with balance across categories." }
+        "acceptedAnswer": { "@type": "Answer", "text": "The question bank has 80 questions. You can choose quizzes of 10, 25 or 50 questions, randomly selected with balance across categories." }
       }
     ]
   };
