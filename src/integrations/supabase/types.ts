@@ -1314,6 +1314,501 @@ export type Database = {
           },
         ]
       }
+      forge_evaluation_answers: {
+        Row: {
+          answer_bool: boolean | null
+          answer_text: string | null
+          answer_value: string | null
+          created_at: string
+          id: string
+          question_id: string
+          response_id: string
+          updated_at: string
+        }
+        Insert: {
+          answer_bool?: boolean | null
+          answer_text?: string | null
+          answer_value?: string | null
+          created_at?: string
+          id?: string
+          question_id: string
+          response_id: string
+          updated_at?: string
+        }
+        Update: {
+          answer_bool?: boolean | null
+          answer_text?: string | null
+          answer_value?: string | null
+          created_at?: string
+          id?: string
+          question_id?: string
+          response_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "forge_evaluation_answers_question_id_fkey"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "forge_evaluation_questions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "forge_evaluation_answers_response_id_fkey"
+            columns: ["response_id"]
+            isOneToOne: false
+            referencedRelation: "forge_evaluation_responses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      forge_evaluation_enrollments: {
+        Row: {
+          created_at: string
+          created_by: string
+          current_level_id: string | null
+          id: string
+          leader_evaluation: boolean
+          leader_id: string | null
+          organization_id: string
+          period_id: string
+          self_evaluation: boolean
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          current_level_id?: string | null
+          id?: string
+          leader_evaluation?: boolean
+          leader_id?: string | null
+          organization_id: string
+          period_id: string
+          self_evaluation?: boolean
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          current_level_id?: string | null
+          id?: string
+          leader_evaluation?: boolean
+          leader_id?: string | null
+          organization_id?: string
+          period_id?: string
+          self_evaluation?: boolean
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "forge_evaluation_enrollments_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "forge_evaluation_enrollments_current_level_id_fkey"
+            columns: ["current_level_id"]
+            isOneToOne: false
+            referencedRelation: "forge_matrix_levels"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "forge_evaluation_enrollments_leader_id_fkey"
+            columns: ["leader_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "forge_evaluation_enrollments_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "forge_evaluation_enrollments_period_id_fkey"
+            columns: ["period_id"]
+            isOneToOne: false
+            referencedRelation: "forge_evaluation_periods"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "forge_evaluation_enrollments_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      forge_evaluation_peers: {
+        Row: {
+          created_at: string
+          enrollment_id: string
+          id: string
+          organization_id: string
+          peer_user_id: string
+        }
+        Insert: {
+          created_at?: string
+          enrollment_id: string
+          id?: string
+          organization_id: string
+          peer_user_id: string
+        }
+        Update: {
+          created_at?: string
+          enrollment_id?: string
+          id?: string
+          organization_id?: string
+          peer_user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "forge_evaluation_peers_enrollment_id_fkey"
+            columns: ["enrollment_id"]
+            isOneToOne: false
+            referencedRelation: "forge_evaluation_enrollments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "forge_evaluation_peers_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "forge_evaluation_peers_peer_user_id_fkey"
+            columns: ["peer_user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      forge_evaluation_periods: {
+        Row: {
+          created_at: string
+          created_by: string
+          end_date: string | null
+          id: string
+          is_active: boolean
+          name: string
+          organization_id: string
+          start_date: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          end_date?: string | null
+          id?: string
+          is_active?: boolean
+          name: string
+          organization_id: string
+          start_date?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          end_date?: string | null
+          id?: string
+          is_active?: boolean
+          name?: string
+          organization_id?: string
+          start_date?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "forge_evaluation_periods_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "forge_evaluation_periods_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      forge_evaluation_questions: {
+        Row: {
+          axis: string
+          created_at: string
+          id: string
+          options: Json | null
+          organization_id: string
+          period_id: string
+          question_text: string
+          question_type: Database["public"]["Enums"]["forge_question_type"]
+          sort_order: number
+          tag_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          axis: string
+          created_at?: string
+          id?: string
+          options?: Json | null
+          organization_id: string
+          period_id: string
+          question_text: string
+          question_type?: Database["public"]["Enums"]["forge_question_type"]
+          sort_order?: number
+          tag_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          axis?: string
+          created_at?: string
+          id?: string
+          options?: Json | null
+          organization_id?: string
+          period_id?: string
+          question_text?: string
+          question_type?: Database["public"]["Enums"]["forge_question_type"]
+          sort_order?: number
+          tag_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "forge_evaluation_questions_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "forge_evaluation_questions_period_id_fkey"
+            columns: ["period_id"]
+            isOneToOne: false
+            referencedRelation: "forge_evaluation_periods"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "forge_evaluation_questions_tag_id_fkey"
+            columns: ["tag_id"]
+            isOneToOne: false
+            referencedRelation: "pulse_tags"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      forge_evaluation_responses: {
+        Row: {
+          axis_x_q1: string | null
+          axis_x_q2: string | null
+          axis_x_q3: boolean | null
+          axis_y_q1: string | null
+          axis_y_q2: string | null
+          axis_y_q3: boolean | null
+          created_at: string
+          enrollment_id: string
+          evaluator_id: string
+          evaluator_role: string
+          id: string
+          organization_id: string
+          submitted_at: string | null
+          updated_at: string
+        }
+        Insert: {
+          axis_x_q1?: string | null
+          axis_x_q2?: string | null
+          axis_x_q3?: boolean | null
+          axis_y_q1?: string | null
+          axis_y_q2?: string | null
+          axis_y_q3?: boolean | null
+          created_at?: string
+          enrollment_id: string
+          evaluator_id: string
+          evaluator_role: string
+          id?: string
+          organization_id: string
+          submitted_at?: string | null
+          updated_at?: string
+        }
+        Update: {
+          axis_x_q1?: string | null
+          axis_x_q2?: string | null
+          axis_x_q3?: boolean | null
+          axis_y_q1?: string | null
+          axis_y_q2?: string | null
+          axis_y_q3?: boolean | null
+          created_at?: string
+          enrollment_id?: string
+          evaluator_id?: string
+          evaluator_role?: string
+          id?: string
+          organization_id?: string
+          submitted_at?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "forge_evaluation_responses_enrollment_id_fkey"
+            columns: ["enrollment_id"]
+            isOneToOne: false
+            referencedRelation: "forge_evaluation_enrollments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "forge_evaluation_responses_evaluator_id_fkey"
+            columns: ["evaluator_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "forge_evaluation_responses_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      forge_matrix_axis_descriptions: {
+        Row: {
+          axis: string
+          description: string
+          id: string
+          matrix_profile_id: string
+          value: number
+        }
+        Insert: {
+          axis: string
+          description: string
+          id?: string
+          matrix_profile_id: string
+          value: number
+        }
+        Update: {
+          axis?: string
+          description?: string
+          id?: string
+          matrix_profile_id?: string
+          value?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "forge_matrix_axis_descriptions_matrix_profile_id_fkey"
+            columns: ["matrix_profile_id"]
+            isOneToOne: false
+            referencedRelation: "forge_matrix_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      forge_matrix_levels: {
+        Row: {
+          axis_x_value: number
+          axis_y_value: number
+          created_at: string
+          description: string | null
+          id: string
+          matrix_profile_id: string
+          name: string
+        }
+        Insert: {
+          axis_x_value: number
+          axis_y_value: number
+          created_at?: string
+          description?: string | null
+          id?: string
+          matrix_profile_id: string
+          name: string
+        }
+        Update: {
+          axis_x_value?: number
+          axis_y_value?: number
+          created_at?: string
+          description?: string | null
+          id?: string
+          matrix_profile_id?: string
+          name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "forge_matrix_levels_matrix_profile_id_fkey"
+            columns: ["matrix_profile_id"]
+            isOneToOne: false
+            referencedRelation: "forge_matrix_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      forge_matrix_profiles: {
+        Row: {
+          axis_x_label: string
+          axis_y_label: string
+          created_at: string
+          created_by: string
+          id: string
+          name: string
+          organization_id: string
+          tag_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          axis_x_label?: string
+          axis_y_label?: string
+          created_at?: string
+          created_by: string
+          id?: string
+          name: string
+          organization_id: string
+          tag_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          axis_x_label?: string
+          axis_y_label?: string
+          created_at?: string
+          created_by?: string
+          id?: string
+          name?: string
+          organization_id?: string
+          tag_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "forge_matrix_profiles_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "forge_matrix_profiles_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "forge_matrix_profiles_tag_id_fkey"
+            columns: ["tag_id"]
+            isOneToOne: false
+            referencedRelation: "pulse_tags"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       forge_user_status: {
         Row: {
           created_at: string
@@ -2867,6 +3362,128 @@ export type Database = {
           },
         ]
       }
+      octopus_ai_prompts: {
+        Row: {
+          analysis_key: string
+          created_at: string
+          id: string
+          organization_id: string
+          system_prompt: string
+          title: string
+          updated_at: string
+          user_prompt_template: string
+        }
+        Insert: {
+          analysis_key: string
+          created_at?: string
+          id?: string
+          organization_id?: string
+          system_prompt: string
+          title: string
+          updated_at?: string
+          user_prompt_template: string
+        }
+        Update: {
+          analysis_key?: string
+          created_at?: string
+          id?: string
+          organization_id?: string
+          system_prompt?: string
+          title?: string
+          updated_at?: string
+          user_prompt_template?: string
+        }
+        Relationships: []
+      }
+      octopus_pedidos: {
+        Row: {
+          created_at: string | null
+          data_hora_compra: string
+          data_inicio_treinamento: string | null
+          nome_pagante: string
+          organization_id: string | null
+          pedido_id: number
+          qtd_alunos: number
+          treinamento: string
+          valor: number | null
+        }
+        Insert: {
+          created_at?: string | null
+          data_hora_compra: string
+          data_inicio_treinamento?: string | null
+          nome_pagante: string
+          organization_id?: string | null
+          pedido_id: number
+          qtd_alunos?: number
+          treinamento: string
+          valor?: number | null
+        }
+        Update: {
+          created_at?: string | null
+          data_hora_compra?: string
+          data_inicio_treinamento?: string | null
+          nome_pagante?: string
+          organization_id?: string | null
+          pedido_id?: number
+          qtd_alunos?: number
+          treinamento?: string
+          valor?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "octopus_pedidos_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      octopus_user_status: {
+        Row: {
+          created_at: string
+          id: string
+          is_admin: boolean
+          organization_id: string
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_admin?: boolean
+          organization_id: string
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_admin?: boolean
+          organization_id?: string
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "octopus_user_status_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "octopus_user_status_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       okr_initiatives: {
         Row: {
           created_at: string
@@ -3192,6 +3809,116 @@ export type Database = {
             columns: ["questionnaire_id"]
             isOneToOne: false
             referencedRelation: "pulse_questionnaires"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      pulse_matrices: {
+        Row: {
+          created_at: string
+          id: string
+          is_active: boolean
+          name: string
+          organization_id: string
+          role_type: string
+          updated_at: string
+          x_axis_label: string
+          x_axis_max: number
+          x_axis_min: number
+          y_axis_label: string
+          y_axis_max: number
+          y_axis_min: number
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          name: string
+          organization_id: string
+          role_type?: string
+          updated_at?: string
+          x_axis_label?: string
+          x_axis_max?: number
+          x_axis_min?: number
+          y_axis_label?: string
+          y_axis_max?: number
+          y_axis_min?: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          name?: string
+          organization_id?: string
+          role_type?: string
+          updated_at?: string
+          x_axis_label?: string
+          x_axis_max?: number
+          x_axis_min?: number
+          y_axis_label?: string
+          y_axis_max?: number
+          y_axis_min?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pulse_matrices_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      pulse_matrix_levels: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          matrix_id: string
+          name: string
+          organization_id: string
+          sort_order: number
+          updated_at: string
+          x_value: number
+          y_value: number
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          matrix_id: string
+          name: string
+          organization_id: string
+          sort_order?: number
+          updated_at?: string
+          x_value: number
+          y_value: number
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          matrix_id?: string
+          name?: string
+          organization_id?: string
+          sort_order?: number
+          updated_at?: string
+          x_value?: number
+          y_value?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pulse_matrix_levels_matrix_id_fkey"
+            columns: ["matrix_id"]
+            isOneToOne: false
+            referencedRelation: "pulse_matrices"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pulse_matrix_levels_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
         ]
@@ -3523,6 +4250,51 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      pulse_user_matrix_levels: {
+        Row: {
+          created_at: string | null
+          id: string
+          level_id: string
+          matrix_id: string
+          organization_id: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          level_id: string
+          matrix_id: string
+          organization_id: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          level_id?: string
+          matrix_id?: string
+          organization_id?: string
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pulse_user_matrix_levels_level_id_fkey"
+            columns: ["level_id"]
+            isOneToOne: false
+            referencedRelation: "pulse_matrix_levels"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pulse_user_matrix_levels_matrix_id_fkey"
+            columns: ["matrix_id"]
+            isOneToOne: false
+            referencedRelation: "pulse_matrices"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       pulse_user_status: {
         Row: {
@@ -4021,6 +4793,63 @@ export type Database = {
           },
         ]
       }
+      user_engagement_cache: {
+        Row: {
+          completed_actions: number
+          engagement_level: string
+          rank_position: number
+          total_actions: number
+          total_impediments: number
+          total_learnings: number
+          total_score: number
+          total_test_cards: number
+          updated_at: string
+          user_id: string
+          workspace_id: string
+        }
+        Insert: {
+          completed_actions?: number
+          engagement_level?: string
+          rank_position?: number
+          total_actions?: number
+          total_impediments?: number
+          total_learnings?: number
+          total_score?: number
+          total_test_cards?: number
+          updated_at?: string
+          user_id: string
+          workspace_id: string
+        }
+        Update: {
+          completed_actions?: number
+          engagement_level?: string
+          rank_position?: number
+          total_actions?: number
+          total_impediments?: number
+          total_learnings?: number
+          total_score?: number
+          total_test_cards?: number
+          updated_at?: string
+          user_id?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_engagement_cache_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_engagement_cache_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_last_activity: {
         Row: {
           activity_context: string | null
@@ -4458,7 +5287,20 @@ export type Database = {
           date: string
         }[]
       }
+      get_distinct_used_tags: {
+        Args: { p_date_filter?: string; p_organization_id: string }
+        Returns: {
+          tag: string
+        }[]
+      }
       get_ellie_lead_workspace: { Args: { _lead_id: string }; Returns: string }
+      get_engagement_multiplier_counts: {
+        Args: { p_organization_id: string }
+        Returns: {
+          users_10_pct: number
+          users_20_pct: number
+        }[]
+      }
       get_error_statistics: {
         Args: { p_hours_back?: number; p_workspace_id?: string }
         Returns: {
@@ -4491,6 +5333,18 @@ export type Database = {
           count: number
           month: string
           points: number
+        }[]
+      }
+      get_monthly_kudos_stats: {
+        Args: {
+          p_month_end: string
+          p_month_start: string
+          p_organization_id: string
+        }
+        Returns: {
+          total_messages: number
+          unique_givers: number
+          unique_receivers: number
         }[]
       }
       get_org_last_activity: {
@@ -4614,6 +5468,24 @@ export type Database = {
           score: number
         }[]
       }
+      get_top_recognized_by_user: {
+        Args: { p_limit?: number; p_organization_id: string; p_user_id: string }
+        Returns: {
+          recipient_email: string
+          recipient_id: string
+          recipient_name: string
+          recognition_count: number
+        }[]
+      }
+      get_top_recognizers_of_user: {
+        Args: { p_limit?: number; p_organization_id: string; p_user_id: string }
+        Returns: {
+          recognition_count: number
+          recognizer_email: string
+          recognizer_id: string
+          recognizer_name: string
+        }[]
+      }
       get_trial_days_remaining: { Args: { org_id: string }; Returns: number }
       get_unread_action_messages_count: {
         Args: { p_user_id: string; p_workspace_id: string }
@@ -4675,6 +5547,32 @@ export type Database = {
           week_start: string
         }[]
       }
+      get_workspace_actions: {
+        Args: {
+          p_show_my_data_only?: boolean
+          p_user_id?: string
+          p_workspace_id: string
+        }
+        Returns: {
+          assigned_to: string | null
+          created_at: string | null
+          created_by: string
+          description: string | null
+          due_date: string | null
+          id: string
+          status: Database["public"]["Enums"]["action_status"] | null
+          title: string
+          updated_at: string | null
+          workspace_id: string
+        }[]
+        SetofOptions: {
+          from: "*"
+          to: "actions"
+          isOneToOne: false
+          isSetofReturn: true
+        }
+      }
+      has_octopus_access: { Args: { _user_id: string }; Returns: boolean }
       improved_rebalance_quiz_answers: {
         Args: never
         Returns: {
@@ -4746,6 +5644,7 @@ export type Database = {
         Args: { org_id: string; user_id?: string }
         Returns: boolean
       }
+      is_octopus_admin: { Args: { _user_id: string }; Returns: boolean }
       is_org_owner: {
         Args: { org_id: string; user_id?: string }
         Returns: boolean
@@ -4839,6 +5738,14 @@ export type Database = {
           delta_available: number
           user_id: string
         }[]
+      }
+      refresh_user_engagement_score: {
+        Args: { p_user_id: string; p_workspace_id: string }
+        Returns: undefined
+      }
+      refresh_workspace_rankings: {
+        Args: { p_workspace_id: string }
+        Returns: undefined
       }
       repair_user_app_access: { Args: { p_user_id: string }; Returns: Json }
       restore_all_game_attempts: {
@@ -4974,6 +5881,7 @@ export type Database = {
         | "system"
         | "unknown"
       error_severity: "low" | "medium" | "high" | "critical"
+      forge_question_type: "multiple_choice" | "text" | "yes_no"
       gecko_pricing_type: "per_individual" | "per_month" | "total_value"
       gecko_slide_type: "global" | "contextual"
       hierarchy_type: "above" | "equal" | "below"
@@ -5161,6 +6069,7 @@ export const Constants = {
         "unknown",
       ],
       error_severity: ["low", "medium", "high", "critical"],
+      forge_question_type: ["multiple_choice", "text", "yes_no"],
       gecko_pricing_type: ["per_individual", "per_month", "total_value"],
       gecko_slide_type: ["global", "contextual"],
       hierarchy_type: ["above", "equal", "below"],
