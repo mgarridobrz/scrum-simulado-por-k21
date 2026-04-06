@@ -1,43 +1,51 @@
 
 
-## Plano: Restringir escrita em `books` e `book_audio_mappings` a admins
+## Plano: Proteger emails na tabela quiz_attempts
 
 ### Problema
-As tabelas `books` e `book_audio_mappings` permitem que qualquer usuário autenticado faça INSERT, UPDATE e DELETE. O ideal é restringir escrita apenas a administradores do sistema.
+A política `Public can view quiz attempts` (USING: true) expõe emails dos participantes publicamente.
 
-### Contexto
-- A tabela `books` **não tem** coluna `organization_id`, então não é possível usar verificação por organização.
-- Existe a função `is_system_admin_simple(uuid)` que verifica se o usuário é admin global via `profiles.is_admin`.
-- A leitura pública (SELECT) deve continuar funcionando.
+### Solução
+Mesma abordagem usada para `game_attempts`: criar uma view pública sem a coluna `email` e redirecionar as consultas de leitura.
 
 ### Migration SQL
 
 ```sql
--- Remover políticas permissivas atuais
-DROP POLICY IF EXISTS "Authenticated can manage books" ON public.books;
-DROP POLICY IF EXISTS "Authenticated can manage book audio mappings" ON public.book_audio_mappings;
+-- 1. Criar view pública sem email
+CREATE OR REPLACE VIEW public.quiz_attempts_public
+WITH (security_barrier = true)
+AS SELECT
+  id, name, score, quiz_size, questions_data,
+  completion_time_seconds, language, theme_id, created_at
+FROM public.quiz_attempts;
 
--- Manter SELECT público
--- (política "Public can read books" já existe)
--- (política "Public can read book audio mappings" já existe)
+-- 2. Remover política SELECT pública da tabela base
+DROP POLICY IF EXISTS "Public can view quiz attempts" ON public.quiz_attempts;
 
--- Criar políticas de escrita restritas a system admins
-CREATE POLICY "System admins can manage books" 
-  ON public.books FOR ALL TO authenticated
-  USING (is_system_admin_simple(auth.uid()))
-  WITH CHECK (is_system_admin_simple(auth.uid()));
+-- 3. Criar política SELECT restrita a authenticated na tabela base
+CREATE POLICY "Authenticated can view quiz attempts"
+  ON public.quiz_attempts FOR SELECT TO authenticated
+  USING (true);
 
-CREATE POLICY "System admins can manage book audio mappings" 
-  ON public.book_audio_mappings FOR ALL TO authenticated
-  USING (is_system_admin_simple(auth.uid()))
-  WITH CHECK (is_system_admin_simple(auth.uid()));
+-- 4. Conceder SELECT público na view
+GRANT SELECT ON public.quiz_attempts_public TO anon, authenticated;
 ```
 
-### Impacto
-- Leitura pública continua funcionando normalmente
-- Apenas usuários com `profiles.is_admin = true` poderão criar, editar ou deletar livros
-- Este projeto (scrum-simulado) não usa essas tabelas, então zero impacto aqui
-- O projeto de livros continuará funcionando desde que os editores sejam system admins
+### Alterações de Código
 
-### Nenhuma alteração de código necessária
+**4 arquivos** precisam trocar `.from('quiz_attempts')` por `.from('quiz_attempts_public')` nas consultas de **leitura**:
+
+1. **`src/utils/quizTracking.ts`** — todas as funções de SELECT (ranking, stats, getQuizStats, etc.) usam `quiz_attempts_public`. INSERT continua em `quiz_attempts`.
+2. **`src/components/ScoreEvolutionChart.tsx`** — SELECT usa `quiz_attempts_public`.
+3. **`src/components/question-validation/AssessmentTrendsChart.tsx`** — SELECT usa `quiz_attempts_public`.
+4. **`src/components/question-validation/GlobalStatsCounter.tsx`** — verificar se usa quiz_attempts e ajustar.
+
+A função de **INSERT** (`saveQuizAttempt`) continua usando `quiz_attempts` diretamente — isso é intencional, pois o email precisa ser salvo na tabela base.
+
+A função de duplicate check (`saveQuizAttempt` linhas 227-236) também usa SELECT em `quiz_attempts` — esta deve ser mantida na tabela base pois precisa verificar por `name` e é chamada imediatamente antes do INSERT (o usuário acabou de informar seus dados).
+
+### Resultado
+- Emails nunca expostos via SELECT público
+- Ranking e métricas continuam funcionando normalmente
+- INSERT continua salvando email na tabela base
 
