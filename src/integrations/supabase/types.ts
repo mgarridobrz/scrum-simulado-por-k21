@@ -149,6 +149,7 @@ export type Database = {
       actions: {
         Row: {
           assigned_to: string | null
+          comment: string | null
           created_at: string | null
           created_by: string
           description: string | null
@@ -161,6 +162,7 @@ export type Database = {
         }
         Insert: {
           assigned_to?: string | null
+          comment?: string | null
           created_at?: string | null
           created_by: string
           description?: string | null
@@ -173,6 +175,7 @@ export type Database = {
         }
         Update: {
           assigned_to?: string | null
+          comment?: string | null
           created_at?: string | null
           created_by?: string
           description?: string | null
@@ -1016,6 +1019,7 @@ export type Database = {
       }
       Ellie_leads: {
         Row: {
+          closed_outcome: string | null
           closed_value: number | null
           cnpj: string | null
           company: string | null
@@ -1039,6 +1043,7 @@ export type Database = {
           workspace_id: string
         }
         Insert: {
+          closed_outcome?: string | null
           closed_value?: number | null
           cnpj?: string | null
           company?: string | null
@@ -1062,6 +1067,7 @@ export type Database = {
           workspace_id: string
         }
         Update: {
+          closed_outcome?: string | null
           closed_value?: number | null
           cnpj?: string | null
           company?: string | null
@@ -1152,6 +1158,47 @@ export type Database = {
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      Ellie_workspace_stages: {
+        Row: {
+          created_at: string
+          id: string
+          is_custom: boolean
+          is_visible: boolean
+          label: string | null
+          position: number
+          stage: string
+          workspace_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_custom?: boolean
+          is_visible?: boolean
+          label?: string | null
+          position?: number
+          stage: string
+          workspace_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_custom?: boolean
+          is_visible?: boolean
+          label?: string | null
+          position?: number
+          stage?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "Ellie_workspace_stages_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "Ellie_workspaces"
             referencedColumns: ["id"]
           },
         ]
@@ -1314,6 +1361,78 @@ export type Database = {
           },
         ]
       }
+      forge_evaluation_ai_analyses: {
+        Row: {
+          analysis_text: string
+          enrollment_id: string
+          generated_at: string
+          generated_by: string
+          id: string
+          model_used: string
+          organization_id: string
+          period_id: string
+          user_id: string
+        }
+        Insert: {
+          analysis_text: string
+          enrollment_id: string
+          generated_at?: string
+          generated_by: string
+          id?: string
+          model_used?: string
+          organization_id: string
+          period_id: string
+          user_id: string
+        }
+        Update: {
+          analysis_text?: string
+          enrollment_id?: string
+          generated_at?: string
+          generated_by?: string
+          id?: string
+          model_used?: string
+          organization_id?: string
+          period_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "forge_evaluation_ai_analyses_enrollment_id_fkey"
+            columns: ["enrollment_id"]
+            isOneToOne: true
+            referencedRelation: "forge_evaluation_enrollments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "forge_evaluation_ai_analyses_generated_by_fkey"
+            columns: ["generated_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "forge_evaluation_ai_analyses_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "forge_evaluation_ai_analyses_period_id_fkey"
+            columns: ["period_id"]
+            isOneToOne: false
+            referencedRelation: "forge_evaluation_periods"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "forge_evaluation_ai_analyses_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       forge_evaluation_answers: {
         Row: {
           answer_bool: boolean | null
@@ -1358,6 +1477,68 @@ export type Database = {
             columns: ["response_id"]
             isOneToOne: false
             referencedRelation: "forge_evaluation_responses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      forge_evaluation_development_notes: {
+        Row: {
+          created_at: string
+          created_by: string
+          id: string
+          notes: string
+          organization_id: string
+          period_id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          id?: string
+          notes?: string
+          organization_id: string
+          period_id: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          id?: string
+          notes?: string
+          organization_id?: string
+          period_id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "forge_evaluation_development_notes_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "forge_evaluation_development_notes_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "forge_evaluation_development_notes_period_id_fkey"
+            columns: ["period_id"]
+            isOneToOne: false
+            referencedRelation: "forge_evaluation_periods"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "forge_evaluation_development_notes_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
         ]
@@ -1757,6 +1938,7 @@ export type Database = {
           axis_y_label: string
           created_at: string
           created_by: string
+          grid_size: number
           id: string
           name: string
           organization_id: string
@@ -1768,6 +1950,7 @@ export type Database = {
           axis_y_label?: string
           created_at?: string
           created_by: string
+          grid_size?: number
           id?: string
           name: string
           organization_id: string
@@ -1779,6 +1962,7 @@ export type Database = {
           axis_y_label?: string
           created_at?: string
           created_by?: string
+          grid_size?: number
           id?: string
           name?: string
           organization_id?: string
@@ -1969,6 +2153,440 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      gateway_application_analyses: {
+        Row: {
+          ai_score: number | null
+          analysis_text: string
+          application_id: string
+          created_at: string | null
+          id: string
+          organization_id: string
+          updated_at: string | null
+          web_ai_score: number | null
+          web_analysis_text: string | null
+        }
+        Insert: {
+          ai_score?: number | null
+          analysis_text: string
+          application_id: string
+          created_at?: string | null
+          id?: string
+          organization_id: string
+          updated_at?: string | null
+          web_ai_score?: number | null
+          web_analysis_text?: string | null
+        }
+        Update: {
+          ai_score?: number | null
+          analysis_text?: string
+          application_id?: string
+          created_at?: string | null
+          id?: string
+          organization_id?: string
+          updated_at?: string | null
+          web_ai_score?: number | null
+          web_analysis_text?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "gateway_application_analyses_application_id_fkey"
+            columns: ["application_id"]
+            isOneToOne: true
+            referencedRelation: "gateway_applications"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "gateway_application_analyses_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      gateway_application_step_entries: {
+        Row: {
+          application_id: string
+          completed_at: string | null
+          created_at: string
+          id: string
+          notes: string | null
+          step_id: string
+          updated_at: string
+        }
+        Insert: {
+          application_id: string
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          notes?: string | null
+          step_id: string
+          updated_at?: string
+        }
+        Update: {
+          application_id?: string
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          notes?: string | null
+          step_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "gateway_application_step_entries_application_id_fkey"
+            columns: ["application_id"]
+            isOneToOne: false
+            referencedRelation: "gateway_applications"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "gateway_application_step_entries_step_id_fkey"
+            columns: ["step_id"]
+            isOneToOne: false
+            referencedRelation: "gateway_pipeline_steps"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      gateway_applications: {
+        Row: {
+          availability_start: string | null
+          candidate_email: string
+          candidate_linkedin: string | null
+          candidate_name: string
+          candidate_phone: string
+          created_at: string
+          custom_answers: Json | null
+          cv_url: string | null
+          id: string
+          interested_part_time: boolean
+          job_id: string | null
+          motivation: string | null
+          organization_id: string
+          recaptcha_score: number | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          availability_start?: string | null
+          candidate_email: string
+          candidate_linkedin?: string | null
+          candidate_name: string
+          candidate_phone: string
+          created_at?: string
+          custom_answers?: Json | null
+          cv_url?: string | null
+          id?: string
+          interested_part_time?: boolean
+          job_id?: string | null
+          motivation?: string | null
+          organization_id: string
+          recaptcha_score?: number | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          availability_start?: string | null
+          candidate_email?: string
+          candidate_linkedin?: string | null
+          candidate_name?: string
+          candidate_phone?: string
+          created_at?: string
+          custom_answers?: Json | null
+          cv_url?: string | null
+          id?: string
+          interested_part_time?: boolean
+          job_id?: string | null
+          motivation?: string | null
+          organization_id?: string
+          recaptcha_score?: number | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "gateway_applications_job_id_fkey"
+            columns: ["job_id"]
+            isOneToOne: false
+            referencedRelation: "gateway_jobs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "gateway_applications_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      gateway_custom_questions: {
+        Row: {
+          created_at: string
+          id: string
+          is_active: boolean
+          is_required: boolean
+          options: Json | null
+          organization_id: string
+          question_text: string
+          question_type: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          is_required?: boolean
+          options?: Json | null
+          organization_id: string
+          question_text: string
+          question_type?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          is_required?: boolean
+          options?: Json | null
+          organization_id?: string
+          question_text?: string
+          question_type?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "gateway_custom_questions_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      gateway_jobs: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          department: string | null
+          description: string | null
+          employment_type: string
+          id: string
+          is_active: boolean
+          location: string | null
+          organization_id: string
+          title: string
+          updated_at: string
+          work_model: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          department?: string | null
+          description?: string | null
+          employment_type?: string
+          id?: string
+          is_active?: boolean
+          location?: string | null
+          organization_id: string
+          title: string
+          updated_at?: string
+          work_model?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          department?: string | null
+          description?: string | null
+          employment_type?: string
+          id?: string
+          is_active?: boolean
+          location?: string | null
+          organization_id?: string
+          title?: string
+          updated_at?: string
+          work_model?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "gateway_jobs_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "gateway_jobs_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      gateway_organization_settings: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          is_published: boolean
+          logo_url: string | null
+          organization_id: string
+          slug: string
+          updated_at: string
+          website_url: string | null
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_published?: boolean
+          logo_url?: string | null
+          organization_id: string
+          slug: string
+          updated_at?: string
+          website_url?: string | null
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_published?: boolean
+          logo_url?: string | null
+          organization_id?: string
+          slug?: string
+          updated_at?: string
+          website_url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "gateway_organization_settings_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: true
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      gateway_pipeline_steps: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          organization_id: string
+          sort_order: number
+          title: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          organization_id: string
+          sort_order?: number
+          title: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          organization_id?: string
+          sort_order?: number
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "gateway_pipeline_steps_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      gateway_step_attachments: {
+        Row: {
+          created_at: string
+          file_name: string | null
+          file_type: string | null
+          file_url: string
+          id: string
+          step_entry_id: string
+        }
+        Insert: {
+          created_at?: string
+          file_name?: string | null
+          file_type?: string | null
+          file_url: string
+          id?: string
+          step_entry_id: string
+        }
+        Update: {
+          created_at?: string
+          file_name?: string | null
+          file_type?: string | null
+          file_url?: string
+          id?: string
+          step_entry_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "gateway_step_attachments_step_entry_id_fkey"
+            columns: ["step_entry_id"]
+            isOneToOne: false
+            referencedRelation: "gateway_application_step_entries"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      gateway_user_status: {
+        Row: {
+          created_at: string
+          id: string
+          is_admin: boolean
+          organization_id: string
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_admin?: boolean
+          organization_id: string
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_admin?: boolean
+          organization_id?: string
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "gateway_user_status_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "gateway_user_status_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       gecko_proposal_categories: {
         Row: {
@@ -2354,6 +2972,7 @@ export type Database = {
       }
       impediments: {
         Row: {
+          action_id: string | null
           created_at: string
           description: string
           id: string
@@ -2367,6 +2986,7 @@ export type Database = {
           workspace_id: string
         }
         Insert: {
+          action_id?: string | null
           created_at?: string
           description: string
           id?: string
@@ -2380,6 +3000,7 @@ export type Database = {
           workspace_id: string
         }
         Update: {
+          action_id?: string | null
           created_at?: string
           description?: string
           id?: string
@@ -2393,6 +3014,13 @@ export type Database = {
           workspace_id?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "impediments_action_id_fkey"
+            columns: ["action_id"]
+            isOneToOne: false
+            referencedRelation: "actions"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "impediments_initiative_id_fkey"
             columns: ["initiative_id"]
@@ -2766,6 +3394,33 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      kudos_ai_what_they_say_logs: {
+        Row: {
+          created_at: string
+          generated_text: string
+          id: string
+          kudos_count: number
+          organization_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          generated_text: string
+          id?: string
+          kudos_count?: number
+          organization_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          generated_text?: string
+          id?: string
+          kudos_count?: number
+          organization_id?: string
+          user_id?: string
+        }
+        Relationships: []
       }
       kudos_email_logs: {
         Row: {
@@ -3648,6 +4303,41 @@ export type Database = {
           },
         ]
       }
+      organization_tags: {
+        Row: {
+          color: string
+          created_at: string | null
+          id: string
+          name: string
+          organization_id: string
+          updated_at: string | null
+        }
+        Insert: {
+          color?: string
+          created_at?: string | null
+          id?: string
+          name: string
+          organization_id: string
+          updated_at?: string | null
+        }
+        Update: {
+          color?: string
+          created_at?: string | null
+          id?: string
+          name?: string
+          organization_id?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "organization_tags_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       organizations: {
         Row: {
           account_type: Database["public"]["Enums"]["account_type"]
@@ -3964,7 +4654,7 @@ export type Database = {
             foreignKeyName: "pulse_questionnaire_tags_tag_id_fkey"
             columns: ["tag_id"]
             isOneToOne: false
-            referencedRelation: "pulse_tags"
+            referencedRelation: "organization_tags"
             referencedColumns: ["id"]
           },
         ]
@@ -4883,6 +5573,52 @@ export type Database = {
         }
         Relationships: []
       }
+      user_tags: {
+        Row: {
+          created_at: string | null
+          id: string
+          organization_id: string
+          tag_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          organization_id: string
+          tag_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          organization_id?: string
+          tag_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_tags_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_tags_tag_id_fkey"
+            columns: ["tag_id"]
+            isOneToOne: false
+            referencedRelation: "organization_tags"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_tags_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       workspace_events: {
         Row: {
           created_at: string
@@ -5527,6 +6263,22 @@ export type Database = {
           user_name: string
         }[]
       }
+      get_user_monthly_dashboard_stats: {
+        Args: {
+          p_month_end: string
+          p_month_start: string
+          p_organization_id: string
+          p_user_id: string
+        }
+        Returns: {
+          people_i_recognized: number
+          people_who_recognized_me: number
+          points_given: number
+          points_received: number
+          recognition_days: number
+          recognitions_sent: number
+        }[]
+      }
       get_user_organization: { Args: { user_id?: string }; Returns: string }
       get_user_organization_id: { Args: { user_id: string }; Returns: string }
       get_user_workspace_role: {
@@ -5555,6 +6307,7 @@ export type Database = {
         }
         Returns: {
           assigned_to: string | null
+          comment: string | null
           created_at: string | null
           created_by: string
           description: string | null
@@ -5624,6 +6377,10 @@ export type Database = {
         Returns: boolean
       }
       is_forge_admin_simple: {
+        Args: { org_id: string; user_id?: string }
+        Returns: boolean
+      }
+      is_gateway_admin_simple: {
         Args: { org_id: string; user_id?: string }
         Returns: boolean
       }
@@ -5869,6 +6626,7 @@ export type Database = {
         | "negociacao"
         | "ganho"
         | "perdido"
+        | "negociacao_encerrada"
       ellie_lead_type: "PF" | "PJ"
       ellie_workspace_role: "admin" | "member"
       error_category:
@@ -5881,7 +6639,7 @@ export type Database = {
         | "system"
         | "unknown"
       error_severity: "low" | "medium" | "high" | "critical"
-      forge_question_type: "multiple_choice" | "text" | "yes_no"
+      forge_question_type: "multiple_choice" | "text" | "yes_no" | "scale_5"
       gecko_pricing_type: "per_individual" | "per_month" | "total_value"
       gecko_slide_type: "global" | "contextual"
       hierarchy_type: "above" | "equal" | "below"
@@ -6055,6 +6813,7 @@ export const Constants = {
         "negociacao",
         "ganho",
         "perdido",
+        "negociacao_encerrada",
       ],
       ellie_lead_type: ["PF", "PJ"],
       ellie_workspace_role: ["admin", "member"],
@@ -6069,7 +6828,7 @@ export const Constants = {
         "unknown",
       ],
       error_severity: ["low", "medium", "high", "critical"],
-      forge_question_type: ["multiple_choice", "text", "yes_no"],
+      forge_question_type: ["multiple_choice", "text", "yes_no", "scale_5"],
       gecko_pricing_type: ["per_individual", "per_month", "total_value"],
       gecko_slide_type: ["global", "contextual"],
       hierarchy_type: ["above", "equal", "below"],
