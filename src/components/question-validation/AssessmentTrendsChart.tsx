@@ -44,7 +44,7 @@ const AssessmentTrendsChart: React.FC<AssessmentTrendsChartProps> = ({ themeId }
         const startDay = subDays(now, 29);
         
         let dailyQuery = supabase
-          .from('quiz_attempts')
+          .from('quiz_attempts_public')
           .select('created_at')
           .gte('created_at', startDay.toISOString());
         
@@ -76,7 +76,7 @@ const AssessmentTrendsChart: React.FC<AssessmentTrendsChartProps> = ({ themeId }
         const startWeek = subWeeks(now, 29);
         
         let weeklyQuery = supabase
-          .from('quiz_attempts')
+          .from('quiz_attempts_public')
           .select('created_at')
           .gte('created_at', startWeek.toISOString());
         
