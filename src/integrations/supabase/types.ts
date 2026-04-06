@@ -5827,6 +5827,62 @@ export type Database = {
           },
         ]
       }
+      game_attempts_public: {
+        Row: {
+          category: string | null
+          correct_answers: number | null
+          created_at: string | null
+          final_score_ms: number | null
+          id: string | null
+          language: string | null
+          name: string | null
+          penalty_time_ms: number | null
+          question_count: number | null
+          questions_data: Json | null
+          theme_id: string | null
+          total_time_ms: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          category?: string | null
+          correct_answers?: number | null
+          created_at?: string | null
+          final_score_ms?: number | null
+          id?: string | null
+          language?: string | null
+          name?: string | null
+          penalty_time_ms?: number | null
+          question_count?: number | null
+          questions_data?: Json | null
+          theme_id?: string | null
+          total_time_ms?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          category?: string | null
+          correct_answers?: number | null
+          created_at?: string | null
+          final_score_ms?: number | null
+          id?: string | null
+          language?: string | null
+          name?: string | null
+          penalty_time_ms?: number | null
+          question_count?: number | null
+          questions_data?: Json | null
+          theme_id?: string | null
+          total_time_ms?: number | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "game_attempts_theme_id_fkey"
+            columns: ["theme_id"]
+            isOneToOne: false
+            referencedRelation: "quiz_themes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Functions: {
       analyze_quiz_distribution: {
