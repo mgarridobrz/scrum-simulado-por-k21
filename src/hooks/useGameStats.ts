@@ -42,7 +42,7 @@ export const useGameStats = (themeId?: string | null) => {
 
       // Get all game attempts with optional theme filter
       let query = supabase
-        .from('game_attempts')
+        .from('game_attempts_public')
         .select('*')
         .order('created_at', { ascending: false });
 
@@ -71,7 +71,7 @@ export const useGameStats = (themeId?: string | null) => {
 
       // Calculate basic stats
       const totalAttempts = attempts.length;
-      const uniquePlayers = new Set(attempts.filter(a => a.email).map(a => a.email)).size;
+      const uniquePlayers = new Set(attempts.filter(a => a.name).map(a => a.name)).size;
       const averageScore = attempts.reduce((sum, a) => sum + a.correct_answers, 0) / totalAttempts;
       const averageTime = attempts.reduce((sum, a) => sum + a.total_time_ms, 0) / totalAttempts / 1000;
       const bestScore = Math.max(...attempts.map(a => a.correct_answers));

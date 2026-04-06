@@ -99,7 +99,7 @@ export async function getGameRanking(
 ): Promise<GameRanking[]> {
   try {
     let query = supabase
-      .from('game_attempts')
+      .from('game_attempts_public')
       .select('name, final_score_ms, correct_answers, question_count, penalty_time_ms, total_time_ms, language, created_at, category')
       .order('final_score_ms', { ascending: true });
 
@@ -146,7 +146,7 @@ export async function getGameRanking(
 export async function getGameStats(category?: string, questionCount?: number, themeId?: string) {
   try {
     let query = supabase
-      .from('game_attempts')
+      .from('game_attempts_public')
       .select('final_score_ms, correct_answers, question_count, total_time_ms, penalty_time_ms, category');
 
     // Filter by theme
