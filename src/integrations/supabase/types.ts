@@ -5883,6 +5883,50 @@ export type Database = {
           },
         ]
       }
+      quiz_attempts_public: {
+        Row: {
+          completion_time_seconds: number | null
+          created_at: string | null
+          id: string | null
+          language: string | null
+          name: string | null
+          questions_data: Json | null
+          quiz_size: number | null
+          score: number | null
+          theme_id: string | null
+        }
+        Insert: {
+          completion_time_seconds?: number | null
+          created_at?: string | null
+          id?: string | null
+          language?: string | null
+          name?: string | null
+          questions_data?: Json | null
+          quiz_size?: number | null
+          score?: number | null
+          theme_id?: string | null
+        }
+        Update: {
+          completion_time_seconds?: number | null
+          created_at?: string | null
+          id?: string | null
+          language?: string | null
+          name?: string | null
+          questions_data?: Json | null
+          quiz_size?: number | null
+          score?: number | null
+          theme_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quiz_attempts_theme_id_fkey"
+            columns: ["theme_id"]
+            isOneToOne: false
+            referencedRelation: "quiz_themes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Functions: {
       analyze_quiz_distribution: {
