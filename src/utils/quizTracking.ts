@@ -388,7 +388,7 @@ export async function getGlobalQuizStats(themeId?: string): Promise<{
 
     // 1. Get total attempts count efficiently
     let attemptsQuery = supabase
-      .from('quiz_attempts')
+      .from('quiz_attempts_public')
       .select('*', { count: 'exact', head: true });
     
     if (finalThemeId) {
@@ -404,7 +404,7 @@ export async function getGlobalQuizStats(themeId?: string): Promise<{
 
     // 2. Get average score efficiently (only scores field)
     let scoresQuery = supabase
-      .from('quiz_attempts')
+      .from('quiz_attempts_public')
       .select('score');
     
     if (finalThemeId) {
@@ -441,12 +441,12 @@ export async function getGlobalQuizStats(themeId?: string): Promise<{
 
     // 4. Get language breakdown using efficient COUNT queries
     let ptQuery = supabase
-      .from('quiz_attempts')
+      .from('quiz_attempts_public')
       .select('*', { count: 'exact', head: true })
       .eq('language', 'pt');
     
     let enQuery = supabase
-      .from('quiz_attempts')
+      .from('quiz_attempts_public')
       .select('*', { count: 'exact', head: true })
       .eq('language', 'en');
     
@@ -496,7 +496,7 @@ export async function getRankingData(
 }>> {
   try {
     let query = supabase
-      .from('quiz_attempts')
+      .from('quiz_attempts_public')
       .select('name, score, completion_time_seconds, language, created_at')
       .not('score', 'is', null);
 
@@ -561,7 +561,7 @@ export async function getQuizAttemptStats(themeId?: string): Promise<QuizStats> 
     
     // Helper to create base query with theme filter
     const createQuery = () => {
-      let q = supabase.from('quiz_attempts').select('*', { count: 'exact', head: true });
+      let q = supabase.from('quiz_attempts_public').select('*', { count: 'exact', head: true });
       if (themeId) q = q.eq('theme_id', themeId);
       return q;
     };
@@ -577,14 +577,14 @@ export async function getQuizAttemptStats(themeId?: string): Promise<QuizStats> 
     // 2. Get counts by quiz size efficiently in parallel
     const [count10, count25, count50] = await Promise.all([
       themeId 
-        ? supabase.from('quiz_attempts').select('*', { count: 'exact', head: true }).eq('quiz_size', 10).eq('theme_id', themeId)
-        : supabase.from('quiz_attempts').select('*', { count: 'exact', head: true }).eq('quiz_size', 10),
+        ? supabase.from('quiz_attempts_public').select('*', { count: 'exact', head: true }).eq('quiz_size', 10).eq('theme_id', themeId)
+        : supabase.from('quiz_attempts_public').select('*', { count: 'exact', head: true }).eq('quiz_size', 10),
       themeId
-        ? supabase.from('quiz_attempts').select('*', { count: 'exact', head: true }).eq('quiz_size', 25).eq('theme_id', themeId)
-        : supabase.from('quiz_attempts').select('*', { count: 'exact', head: true }).eq('quiz_size', 25),
+        ? supabase.from('quiz_attempts_public').select('*', { count: 'exact', head: true }).eq('quiz_size', 25).eq('theme_id', themeId)
+        : supabase.from('quiz_attempts_public').select('*', { count: 'exact', head: true }).eq('quiz_size', 25),
       themeId
-        ? supabase.from('quiz_attempts').select('*', { count: 'exact', head: true }).eq('quiz_size', 50).eq('theme_id', themeId)
-        : supabase.from('quiz_attempts').select('*', { count: 'exact', head: true }).eq('quiz_size', 50)
+        ? supabase.from('quiz_attempts_public').select('*', { count: 'exact', head: true }).eq('quiz_size', 50).eq('theme_id', themeId)
+        : supabase.from('quiz_attempts_public').select('*', { count: 'exact', head: true }).eq('quiz_size', 50)
     ]);
 
     const size10Count = count10.count || 0;
@@ -593,7 +593,7 @@ export async function getQuizAttemptStats(themeId?: string): Promise<QuizStats> 
 
     // 3. Get average of last 50 attempts efficiently (only 50 records, only score field)
     let lastFiftyQuery = supabase
-      .from('quiz_attempts')
+      .from('quiz_attempts_public')
       .select('score')
       .order('created_at', { ascending: false })
       .limit(50);
@@ -616,14 +616,14 @@ export async function getQuizAttemptStats(themeId?: string): Promise<QuizStats> 
     // 4. Get averages by quiz size efficiently (only necessary fields)
     const [data10, data25, data50] = await Promise.all([
       themeId
-        ? supabase.from('quiz_attempts').select('score, completion_time_seconds').eq('quiz_size', 10).eq('theme_id', themeId)
-        : supabase.from('quiz_attempts').select('score, completion_time_seconds').eq('quiz_size', 10),
+        ? supabase.from('quiz_attempts_public').select('score, completion_time_seconds').eq('quiz_size', 10).eq('theme_id', themeId)
+        : supabase.from('quiz_attempts_public').select('score, completion_time_seconds').eq('quiz_size', 10),
       themeId
-        ? supabase.from('quiz_attempts').select('score, completion_time_seconds').eq('quiz_size', 25).eq('theme_id', themeId)
-        : supabase.from('quiz_attempts').select('score, completion_time_seconds').eq('quiz_size', 25),
+        ? supabase.from('quiz_attempts_public').select('score, completion_time_seconds').eq('quiz_size', 25).eq('theme_id', themeId)
+        : supabase.from('quiz_attempts_public').select('score, completion_time_seconds').eq('quiz_size', 25),
       themeId
-        ? supabase.from('quiz_attempts').select('score, completion_time_seconds').eq('quiz_size', 50).eq('theme_id', themeId)
-        : supabase.from('quiz_attempts').select('score, completion_time_seconds').eq('quiz_size', 50)
+        ? supabase.from('quiz_attempts_public').select('score, completion_time_seconds').eq('quiz_size', 50).eq('theme_id', themeId)
+        : supabase.from('quiz_attempts_public').select('score, completion_time_seconds').eq('quiz_size', 50)
     ]);
 
     // Calculate averages

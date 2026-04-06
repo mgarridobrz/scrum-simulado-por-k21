@@ -40,7 +40,7 @@ const ScoreEvolutionChart = () => {
 
         // Get all quiz attempts for the last 30 days
         const { data, error } = await supabase
-          .from('quiz_attempts')
+          .from('quiz_attempts_public')
           .select('created_at, score')
           .gte('created_at', startDate.toISOString())
           .not('score', 'is', null)
