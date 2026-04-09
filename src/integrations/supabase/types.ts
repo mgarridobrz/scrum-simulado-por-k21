@@ -396,7 +396,7 @@ export type Database = {
           {
             foreignKeyName: "beacon_user_status_user_id_fkey"
             columns: ["user_id"]
-            isOneToOne: false
+            isOneToOne: true
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
@@ -1156,7 +1156,7 @@ export type Database = {
           {
             foreignKeyName: "Ellie_user_status_user_id_fkey"
             columns: ["user_id"]
-            isOneToOne: false
+            isOneToOne: true
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
@@ -2032,7 +2032,7 @@ export type Database = {
           {
             foreignKeyName: "forge_user_status_user_id_fkey"
             columns: ["user_id"]
-            isOneToOne: false
+            isOneToOne: true
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
@@ -2161,6 +2161,8 @@ export type Database = {
           application_id: string
           created_at: string | null
           id: string
+          legal_ai_score: number | null
+          legal_analysis_text: string | null
           organization_id: string
           updated_at: string | null
           web_ai_score: number | null
@@ -2172,6 +2174,8 @@ export type Database = {
           application_id: string
           created_at?: string | null
           id?: string
+          legal_ai_score?: number | null
+          legal_analysis_text?: string | null
           organization_id: string
           updated_at?: string | null
           web_ai_score?: number | null
@@ -2183,6 +2187,8 @@ export type Database = {
           application_id?: string
           created_at?: string | null
           id?: string
+          legal_ai_score?: number | null
+          legal_analysis_text?: string | null
           organization_id?: string
           updated_at?: string | null
           web_ai_score?: number | null
@@ -2253,10 +2259,12 @@ export type Database = {
       gateway_applications: {
         Row: {
           availability_start: string | null
+          candidate_city: string | null
           candidate_email: string
           candidate_linkedin: string | null
           candidate_name: string
           candidate_phone: string
+          candidate_state: string | null
           created_at: string
           custom_answers: Json | null
           cv_url: string | null
@@ -2271,10 +2279,12 @@ export type Database = {
         }
         Insert: {
           availability_start?: string | null
+          candidate_city?: string | null
           candidate_email: string
           candidate_linkedin?: string | null
           candidate_name: string
           candidate_phone: string
+          candidate_state?: string | null
           created_at?: string
           custom_answers?: Json | null
           cv_url?: string | null
@@ -2289,10 +2299,12 @@ export type Database = {
         }
         Update: {
           availability_start?: string | null
+          candidate_city?: string | null
           candidate_email?: string
           candidate_linkedin?: string | null
           candidate_name?: string
           candidate_phone?: string
+          candidate_state?: string | null
           created_at?: string
           custom_answers?: Json | null
           cv_url?: string | null
@@ -2547,8 +2559,8 @@ export type Database = {
         Row: {
           created_at: string
           id: string
-          is_admin: boolean
           organization_id: string
+          role: Database["public"]["Enums"]["gateway_user_role"]
           status: string
           updated_at: string
           user_id: string
@@ -2556,8 +2568,8 @@ export type Database = {
         Insert: {
           created_at?: string
           id?: string
-          is_admin?: boolean
           organization_id: string
+          role?: Database["public"]["Enums"]["gateway_user_role"]
           status?: string
           updated_at?: string
           user_id: string
@@ -2565,8 +2577,8 @@ export type Database = {
         Update: {
           created_at?: string
           id?: string
-          is_admin?: boolean
           organization_id?: string
+          role?: Database["public"]["Enums"]["gateway_user_role"]
           status?: string
           updated_at?: string
           user_id?: string
@@ -2582,7 +2594,7 @@ export type Database = {
           {
             foreignKeyName: "gateway_user_status_user_id_fkey"
             columns: ["user_id"]
-            isOneToOne: false
+            isOneToOne: true
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
@@ -2889,7 +2901,7 @@ export type Database = {
           {
             foreignKeyName: "gecko_user_status_user_id_fkey"
             columns: ["user_id"]
-            isOneToOne: false
+            isOneToOne: true
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
@@ -2964,7 +2976,7 @@ export type Database = {
           {
             foreignKeyName: "hawk_user_status_user_id_fkey"
             columns: ["user_id"]
-            isOneToOne: false
+            isOneToOne: true
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
@@ -3822,7 +3834,7 @@ export type Database = {
           {
             foreignKeyName: "kudos_user_status_user_id_fkey"
             columns: ["user_id"]
-            isOneToOne: false
+            isOneToOne: true
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
@@ -5018,7 +5030,7 @@ export type Database = {
           {
             foreignKeyName: "pulse_user_status_user_id_fkey"
             columns: ["user_id"]
-            isOneToOne: false
+            isOneToOne: true
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
@@ -6190,6 +6202,22 @@ export type Database = {
           organization_id: string
         }[]
       }
+      get_org_settings_safe: {
+        Args: { p_org_id: string }
+        Returns: {
+          auto_reset_enabled: boolean
+          engagement_enabled: boolean
+          id: string
+          kudos_notification_email_enabled: boolean
+          last_auto_reset_date: string
+          min_days_for_max_bonus: number
+          min_recognitions_for_bonus: number
+          monthly_points_per_user: number
+          organization_id: string
+          recognized_values: string[]
+          weekly_email_enabled: boolean
+        }[]
+      }
       get_org_users_with_last_login: {
         Args: { p_organization_id: string }
         Returns: {
@@ -6543,6 +6571,15 @@ export type Database = {
         }
         Returns: undefined
       }
+      lookup_workspace_by_join_key: {
+        Args: { p_join_key: string }
+        Returns: {
+          description: string
+          id: string
+          name: string
+          organization_id: string
+        }[]
+      }
       mark_all_messages_read: {
         Args: { p_user_id?: string; p_workspace_id: string }
         Returns: undefined
@@ -6740,6 +6777,7 @@ export type Database = {
         | "unknown"
       error_severity: "low" | "medium" | "high" | "critical"
       forge_question_type: "multiple_choice" | "text" | "yes_no" | "scale_5"
+      gateway_user_role: "admin" | "recruiter"
       gecko_pricing_type: "per_individual" | "per_month" | "total_value"
       gecko_slide_type: "global" | "contextual"
       hierarchy_type: "above" | "equal" | "below"
@@ -6929,6 +6967,7 @@ export const Constants = {
       ],
       error_severity: ["low", "medium", "high", "critical"],
       forge_question_type: ["multiple_choice", "text", "yes_no", "scale_5"],
+      gateway_user_role: ["admin", "recruiter"],
       gecko_pricing_type: ["per_individual", "per_month", "total_value"],
       gecko_slide_type: ["global", "contextual"],
       hierarchy_type: ["above", "equal", "below"],

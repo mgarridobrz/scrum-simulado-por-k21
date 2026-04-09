@@ -308,7 +308,7 @@ export async function getTrackedQuizAttempts(options?: {
   
   try {
     let query = supabase
-      .from('quiz_attempts')
+      .from('quiz_attempts_public')
       .select('*', { count: 'exact' })
       .order('created_at', { ascending: false });
 
@@ -337,7 +337,7 @@ export async function getTrackedQuizAttempts(options?: {
     const attempts: QuizAttempt[] = (data || []).map(row => ({
       id: row.id,
       name: row.name,
-      email: row.email,
+      email: null,
       score: row.score,
       quizSize: row.quiz_size,
       questionsData: Array.isArray(row.questions_data) ? row.questions_data as Array<{
