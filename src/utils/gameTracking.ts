@@ -60,7 +60,7 @@ export async function saveGameAttempt(
       };
     });
 
-    const { data, error } = await supabase
+    const { error } = await supabase
       .from('game_attempts')
       .insert({
         name,
@@ -74,16 +74,14 @@ export async function saveGameAttempt(
         questions_data: questionsData,
         language,
         theme_id: finalThemeId
-      })
-      .select('id')
-      .single();
+      });
 
     if (error) {
       console.error('Error saving game attempt:', error);
       return null;
     }
 
-    return data.id;
+    return 'saved';
   } catch (error) {
     console.error('Error saving game attempt:', error);
     return null;
