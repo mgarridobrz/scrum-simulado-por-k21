@@ -1,26 +1,33 @@
 
 
-## Plano: Corrigir listagem de tentativas no admin
+## Plano: Corrigir INSERTs de quiz e game que estão falhando
 
 ### Problema
-Após restringir o SELECT da tabela `quiz_attempts` para `authenticated`, a página admin (que usa `anon` — autenticação por senha, não Supabase auth) não consegue mais ler as tentativas. Resultado: lista vazia e stats zerados no admin.
-
-**A homepage está funcionando corretamente** — os console logs mostram 3339 tentativas e 571 jogos. O problema é apenas no admin.
+Desde a migration de segurança do dia 6 de abril, **nenhuma tentativa de quiz ou game está sendo salva**. As tentativas estão sendo perdidas.
 
 ### Causa raiz
-A função `getTrackedQuizAttempts` (usada pela lista de tentativas no admin) ainda lê da tabela base `quiz_attempts`, não da view `quiz_attempts_public`. Como o admin não tem Supabase auth (usa password via RPC), a role é `anon`, que não tem mais SELECT na tabela base.
+Os INSERTs em `quiz_attempts` e `game_attempts` usam `.insert({...}).select('id').single()`. O `.select('id')` requer permissão de SELECT na tabela. Como removemos o SELECT público (para proteger emails), o Supabase faz **rollback do INSERT inteiro** quando o SELECT falha.
+
+O mesmo problema afeta a duplicate check do quiz, que faz SELECT em `quiz_attempts` antes do insert.
 
 ### Solução
 
-**Alteração de código** em `src/utils/quizTracking.ts`:
-- Trocar `getTrackedQuizAttempts` para ler de `quiz_attempts_public` em vez de `quiz_attempts`
-- Remover a referência a `row.email` no mapeamento (a view não expõe email)
+**Duas alterações de código** (sem mudança no banco):
 
-**Impacto**:
-- A lista de tentativas no admin voltará a funcionar
-- O email não aparecerá mais na lista de tentativas do admin (tradeoff de segurança — email está protegido)
-- Se o email for necessário no admin, precisaremos implementar Supabase auth real na página de validação (escopo maior)
+1. **`src/utils/quizTracking.ts`**:
+   - Duplicate check (linha 227): trocar `.from('quiz_attempts')` para `.from('quiz_attempts_public')` — a view pública tem os campos necessários (id, created_at, score, completion_time_seconds)
+   - INSERT (linha 270-283): remover `.select('id').single()` — fazer apenas `.insert({...})` sem tentar ler o ID de volta
 
-### Alternativa (se email for necessário no admin)
-Implementar login real com Supabase auth na página admin, para que as queries rodem como `authenticated` e possam acessar a tabela base com email. Isso seria um escopo maior.
+2. **`src/utils/gameTracking.ts`**:
+   - INSERT (linha 63-79): remover `.select('id').single()` — fazer apenas `.insert({...})` sem tentar ler o ID de volta
+   - Ajustar o retorno para não depender de `data.id`
+
+### Impacto
+- INSERTs voltam a funcionar imediatamente
+- O ID retornado será `null` em vez do UUID real (nenhum código depende criticamente desse ID)
+- Emails continuam protegidos
+- Nenhuma mudança de banco necessária
+
+### Tentativas perdidas
+Infelizmente, as tentativas feitas entre 6 e 9 de abril **foram perdidas** — elas nunca chegaram ao banco. Não há como recuperá-las.
 
