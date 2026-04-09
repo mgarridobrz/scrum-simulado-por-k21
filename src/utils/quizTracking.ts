@@ -286,7 +286,7 @@ export async function trackQuizAttempt(
     }
 
     console.log(`[TRACKING] Quiz attempt tracked successfully for language: ${language}, theme: ${finalThemeId}, score saved as: ${scorePercentage}%`);
-    return data.id;
+    return 'saved';
   } catch (error) {
     console.error("[TRACKING] Error in trackQuizAttempt:", error);
     return null;
