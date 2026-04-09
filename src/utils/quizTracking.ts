@@ -225,7 +225,7 @@ export async function trackQuizAttempt(
     const twoSecondsAgo = new Date(currentTime.getTime() - 2000); // 2 seconds window
     
     const { data: existingAttempts, error: checkError } = await supabase
-      .from('quiz_attempts')
+      .from('quiz_attempts_public')
       .select('id, created_at, score, completion_time_seconds')
       .eq('name', name)
       .eq('quiz_size', totalQuestions)
@@ -267,7 +267,7 @@ export async function trackQuizAttempt(
 
     console.log(`[TRACKING] Inserting new attempt for ${name}: ${scorePercentage}% (${score}/${totalQuestions}) in ${completionTimeSeconds || 'N/A'}s`);
 
-    const { data, error } = await supabase
+    const { error } = await supabase
       .from('quiz_attempts')
       .insert({
         name,
@@ -278,17 +278,15 @@ export async function trackQuizAttempt(
         completion_time_seconds: completionTimeSeconds,
         language: language,
         theme_id: finalThemeId
-      })
-      .select('id')
-      .single();
+      });
 
     if (error) {
       console.error("[TRACKING] Error tracking quiz attempt:", error);
       return null;
     }
 
-    console.log(`[TRACKING] Quiz attempt tracked successfully with ID: ${data.id} for language: ${language}, theme: ${finalThemeId}, score saved as: ${scorePercentage}%`);
-    return data.id;
+    console.log(`[TRACKING] Quiz attempt tracked successfully for language: ${language}, theme: ${finalThemeId}, score saved as: ${scorePercentage}%`);
+    return 'saved';
   } catch (error) {
     console.error("[TRACKING] Error in trackQuizAttempt:", error);
     return null;
