@@ -1,33 +1,61 @@
 
 
-## Plano: Corrigir INSERTs de quiz e game que estão falhando
+## Análise e Plano: Otimizar JSON-LD para SEO, AEO e GEO
 
-### Problema
-Desde a migration de segurança do dia 6 de abril, **nenhuma tentativa de quiz ou game está sendo salva**. As tentativas estão sendo perdidas.
+### Diagnóstico
 
-### Causa raiz
-Os INSERTs em `quiz_attempts` e `game_attempts` usam `.insert({...}).select('id').single()`. O `.select('id')` requer permissão de SELECT na tabela. Como removemos o SELECT público (para proteger emails), o Supabase faz **rollback do INSERT inteiro** quando o SELECT falha.
+A estrutura atual cobre o básico (Organization, WebSite, FAQPage, BreadcrumbList), mas tem uma **vulnerabilidade crítica** e várias oportunidades:
 
-O mesmo problema afeta a duplicate check do quiz, que faz SELECT em `quiz_attempts` antes do insert.
+#### Problema Critico: JSON-LD invisivel para a maioria dos crawlers
 
-### Solução
+O structured data é injetado via `useEffect` no client-side. Isso significa:
+- **Googlebot**: vê (renderiza JS) ✓
+- **Bingbot, PerplexityBot, GPTBot, ClaudeBot**: provavelmente **NÃO veem** ✗
+- Todo o investimento em JSON-LD é parcialmente desperdiçado para AEO/GEO
 
-**Duas alterações de código** (sem mudança no banco):
+#### Schemas faltantes para o contexto educacional
 
-1. **`src/utils/quizTracking.ts`**:
-   - Duplicate check (linha 227): trocar `.from('quiz_attempts')` para `.from('quiz_attempts_public')` — a view pública tem os campos necessários (id, created_at, score, completion_time_seconds)
-   - INSERT (linha 270-283): remover `.select('id').single()` — fazer apenas `.insert({...})` sem tentar ler o ID de volta
+O produto é um quiz de preparação para certificação, mas não usa `Quiz`, `LearningResource` ou `Course` -- schemas que AI engines e Google usam para recomendar recursos educacionais.
 
-2. **`src/utils/gameTracking.ts`**:
-   - INSERT (linha 63-79): remover `.select('id').single()` — fazer apenas `.insert({...})` sem tentar ler o ID de volta
-   - Ajustar o retorno para não depender de `data.id`
+### Plano de Implementação
 
-### Impacto
-- INSERTs voltam a funcionar imediatamente
-- O ID retornado será `null` em vez do UUID real (nenhum código depende criticamente desse ID)
-- Emails continuam protegidos
-- Nenhuma mudança de banco necessária
+#### 1. Mover JSON-LD base para `index.html` (estático)
 
-### Tentativas perdidas
-Infelizmente, as tentativas feitas entre 6 e 9 de abril **foram perdidas** — elas nunca chegaram ao banco. Não há como recuperá-las.
+Inserir no `<head>` do `index.html` um `<script type="application/ld+json">` estático com o @graph da homepage (Organization, WebSite, FAQPage). Isso garante que **todos** os crawlers vejam o structured data, independente de JS.
+
+O `useMetaTags.ts` continuará atualizando dinamicamente para as subpáginas (para o Googlebot que renderiza JS).
+
+#### 2. Adicionar schemas educacionais
+
+Adicionar ao @graph:
+- **`LearningResource`** -- descreve o simulado como recurso educacional gratuito
+- **`Course`** (do tipo practice exam) -- com `provider: K21`, `educationalLevel`, `about: Scrum/CSM`
+- **`Quiz`** -- com `educationalUse: "assessment"`, `numberOfQuestions`, `isAccessibleForFree: true`
+
+#### 3. Adicionar `EducationalOrganization`
+
+Mudar o `@type` de `Organization` para `["Organization", "EducationalOrganization"]` para maior precisão semântica.
+
+#### 4. Atualizar `lastmod` no sitemap
+
+Atualizar as datas do sitemap.xml para a data atual.
+
+#### 5. Adicionar schema `SoftwareApplication` para GEO
+
+Incluir `SoftwareApplication` com `applicationCategory: "EducationalApplication"` para que AI engines categorizem corretamente a ferramenta.
+
+### Arquivos alterados
+
+| Arquivo | Alteração |
+|---------|-----------|
+| `index.html` | Adicionar bloco `<script type="application/ld+json">` estático no `<head>` com schemas base (PT + EN) |
+| `src/hooks/useMetaTags.ts` | Adicionar `LearningResource`, `Quiz`, `EducationalOrganization`; atualizar lógica para não duplicar o schema estático |
+| `public/sitemap.xml` | Atualizar `lastmod` para `2026-04-15` |
+
+### Impacto esperado
+
+- Crawlers sem JS (Bing, AI engines) passam a ver structured data
+- Google Rich Results para FAQ, Quiz e Learning Resource
+- AI engines (ChatGPT, Perplexity, Claude) recebem contexto semântico rico para recomendar o simulado
+- Voice assistants podem usar SpeakableSpecification para respostas faladas
 
