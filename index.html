@@ -23,6 +23,170 @@
     <link rel="alternate" hreflang="en" href="https://csmpracticeexam.com/" />
     <link rel="alternate" hreflang="x-default" href="https://csmpracticeexam.com/" />
 
+    <!-- Static JSON-LD: visible to ALL crawlers including non-JS bots (Bing, GPTBot, ClaudeBot, PerplexityBot) -->
+    <script type="application/ld+json" id="static-jsonld">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": ["Organization", "EducationalOrganization"],
+          "@id": "https://br.k21.global/#organization",
+          "name": "K21 Brasil",
+          "url": "https://br.k21.global",
+          "logo": "https://simulado-csm.k21.global/lovable-uploads/2342063e-9561-46ff-ae6a-e4a0316e24a1.png",
+          "description": "Organização líder em treinamentos Agile e Scrum no Brasil. Leading Agile and Scrum training organization in Brazil.",
+          "sameAs": [
+            "https://br.k21.global",
+            "https://www.linkedin.com/company/k21-global",
+            "https://www.instagram.com/k21global",
+            "https://www.youtube.com/@K21Global"
+          ],
+          "contactPoint": {
+            "@type": "ContactPoint",
+            "telephone": "+55-21-3825-8624",
+            "contactType": "customer service",
+            "availableLanguage": ["Portuguese", "English"]
+          }
+        },
+        {
+          "@type": "WebSite",
+          "@id": "https://simulado-csm.k21.global/#website",
+          "name": "Simulado CSM por K21 | CSM Practice Exam by K21",
+          "url": "https://simulado-csm.k21.global",
+          "inLanguage": ["pt-BR", "en"],
+          "publisher": { "@id": "https://br.k21.global/#organization" }
+        },
+        {
+          "@type": "WebApplication",
+          "@id": "https://simulado-csm.k21.global/#app",
+          "name": "Simulado CSM K21 | CSM Practice Exam K21",
+          "url": "https://simulado-csm.k21.global",
+          "applicationCategory": "EducationalApplication",
+          "operatingSystem": "Web",
+          "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "BRL"
+          },
+          "provider": { "@id": "https://br.k21.global/#organization" },
+          "inLanguage": ["pt-BR", "en"],
+          "description": "Simulado gratuito para certificação CSM (Certified ScrumMaster) da Scrum Alliance. Free CSM certification practice exam by Scrum Alliance."
+        },
+        {
+          "@type": "LearningResource",
+          "@id": "https://simulado-csm.k21.global/#learning-resource",
+          "name": "Simulado CSM Gratuito K21",
+          "alternateName": "Free CSM Practice Exam K21",
+          "description": "Simulado gratuito com 80 questões para preparação da certificação CSM (Certified ScrumMaster) da Scrum Alliance. Inclui explicações detalhadas para cada resposta.",
+          "url": "https://simulado-csm.k21.global",
+          "provider": { "@id": "https://br.k21.global/#organization" },
+          "educationalLevel": "Intermediate",
+          "educationalUse": "Assessment",
+          "learningResourceType": "Practice exam",
+          "teaches": ["Scrum Framework", "Scrum Master Role", "Agile Principles", "Scrum Events", "Scrum Artifacts"],
+          "about": [
+            { "@type": "Thing", "name": "Scrum", "sameAs": "https://en.wikipedia.org/wiki/Scrum_(software_development)" },
+            { "@type": "Thing", "name": "Certified ScrumMaster", "sameAs": "https://www.scrumalliance.org/get-certified/scrum-master-track/certified-scrummaster" }
+          ],
+          "isAccessibleForFree": true,
+          "inLanguage": ["pt-BR", "en"],
+          "interactivityType": "active",
+          "audience": {
+            "@type": "EducationalAudience",
+            "educationalRole": "student",
+            "audienceType": "Professionals preparing for CSM certification"
+          }
+        },
+        {
+          "@type": "Quiz",
+          "@id": "https://simulado-csm.k21.global/#quiz",
+          "name": "Simulado CSM - Certified ScrumMaster Practice Exam",
+          "description": "Teste seus conhecimentos sobre Scrum com 80 questões de múltipla escolha. Simule a prova oficial CSM da Scrum Alliance.",
+          "educationalUse": "Assessment",
+          "numberOfQuestions": 80,
+          "isAccessibleForFree": true,
+          "provider": { "@id": "https://br.k21.global/#organization" },
+          "about": { "@type": "Thing", "name": "Certified ScrumMaster (CSM)" },
+          "inLanguage": ["pt-BR", "en"]
+        },
+        {
+          "@type": "FAQPage",
+          "@id": "https://simulado-csm.k21.global/#faq-pt",
+          "inLanguage": "pt-BR",
+          "mainEntity": [
+            {
+              "@type": "Question",
+              "name": "O que é a certificação CSM?",
+              "acceptedAnswer": { "@type": "Answer", "text": "A certificação CSM (Certified ScrumMaster) é oferecida pela Scrum Alliance e valida o conhecimento do profissional sobre o framework Scrum e o papel do Scrum Master." }
+            },
+            {
+              "@type": "Question",
+              "name": "Quantas questões tem a prova CSM?",
+              "acceptedAnswer": { "@type": "Answer", "text": "A prova oficial da Scrum Alliance possui 50 questões de múltipla escolha, com 60 minutos para completar. É necessário acertar 74% (37 questões) para ser aprovado." }
+            },
+            {
+              "@type": "Question",
+              "name": "O simulado CSM da K21 é gratuito?",
+              "acceptedAnswer": { "@type": "Answer", "text": "Sim, o simulado é 100% gratuito. Você pode fazer quantas tentativas quiser, com banco de 80 questões selecionadas aleatoriamente." }
+            },
+            {
+              "@type": "Question",
+              "name": "Como é o formato da prova CSM?",
+              "acceptedAnswer": { "@type": "Answer", "text": "A prova CSM é online, com 50 questões de múltipla escolha, duração de 60 minutos e nota mínima de 74% para aprovação." }
+            },
+            {
+              "@type": "Question",
+              "name": "Este simulado substitui a prova oficial?",
+              "acceptedAnswer": { "@type": "Answer", "text": "Não. Este simulado é uma ferramenta de preparação. Para obter a certificação CSM é necessário participar de um curso oficial credenciado pela Scrum Alliance." }
+            },
+            {
+              "@type": "Question",
+              "name": "Quantas questões tem o simulado da K21?",
+              "acceptedAnswer": { "@type": "Answer", "text": "O banco de dados possui 80 questões. Você pode escolher simulados de 10, 25 ou 50 questões, selecionadas aleatoriamente com balanço entre categorias." }
+            }
+          ]
+        },
+        {
+          "@type": "FAQPage",
+          "@id": "https://csmpracticeexam.com/#faq-en",
+          "inLanguage": "en",
+          "mainEntity": [
+            {
+              "@type": "Question",
+              "name": "What is the CSM certification?",
+              "acceptedAnswer": { "@type": "Answer", "text": "The CSM (Certified ScrumMaster) certification is offered by Scrum Alliance and validates a professional's knowledge of the Scrum framework and the Scrum Master role." }
+            },
+            {
+              "@type": "Question",
+              "name": "How many questions does the CSM exam have?",
+              "acceptedAnswer": { "@type": "Answer", "text": "The official Scrum Alliance exam has 50 multiple-choice questions with 60 minutes to complete. You need to score 74% (37 questions) to pass." }
+            },
+            {
+              "@type": "Question",
+              "name": "Is the K21 CSM practice exam free?",
+              "acceptedAnswer": { "@type": "Answer", "text": "Yes, the practice exam is 100% free. You can take as many attempts as you want, with a bank of 80 randomly selected questions." }
+            },
+            {
+              "@type": "Question",
+              "name": "What is the CSM exam format?",
+              "acceptedAnswer": { "@type": "Answer", "text": "The CSM exam is online, with 50 multiple-choice questions, 60 minutes duration and a minimum score of 74% to pass." }
+            },
+            {
+              "@type": "Question",
+              "name": "Does this practice exam replace the official exam?",
+              "acceptedAnswer": { "@type": "Answer", "text": "No. This is a preparation tool. To obtain CSM certification you need to attend an official Scrum Alliance accredited course." }
+            },
+            {
+              "@type": "Question",
+              "name": "How many questions does the K21 practice exam have?",
+              "acceptedAnswer": { "@type": "Answer", "text": "The question bank has 80 questions. You can choose quizzes of 10, 25 or 50 questions, randomly selected with balance across categories." }
+            }
+          ]
+        }
+      ]
+    }
+    </script>
+
     <!-- Google Tag Manager (deferred via requestIdleCallback) -->
     <script>
       function loadGTM() {
