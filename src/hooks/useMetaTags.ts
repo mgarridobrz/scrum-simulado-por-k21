@@ -102,7 +102,8 @@ const getFaqSchema = (language: 'pt' | 'en') => {
 };
 
 const getOrganizationSchema = (baseUrl: string, language: 'pt' | 'en') => ({
-  "@type": "Organization",
+  "@type": ["Organization", "EducationalOrganization"],
+  "@id": "https://br.k21.global/#organization",
   "name": "K21 Brasil",
   "url": "https://br.k21.global",
   "logo": `${baseUrl}/lovable-uploads/2342063e-9561-46ff-ae6a-e4a0316e24a1.png`,
