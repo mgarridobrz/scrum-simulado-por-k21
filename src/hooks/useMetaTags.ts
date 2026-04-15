@@ -351,15 +351,20 @@ export const useMetaTags = () => {
     }
     canonical.setAttribute('href', metaTags.canonical || window.location.href);
     
-    // Structured data
+    // Structured data (dynamic — updates the dynamic script, leaves the static one intact)
     if (metaTags.structuredData) {
-      let structuredDataScript = document.querySelector('script[type="application/ld+json"]');
+      let structuredDataScript = document.querySelector('script[type="application/ld+json"]:not(#static-jsonld)') as HTMLScriptElement;
       if (!structuredDataScript) {
         structuredDataScript = document.createElement('script');
         structuredDataScript.setAttribute('type', 'application/ld+json');
+        structuredDataScript.setAttribute('id', 'dynamic-jsonld');
         document.head.appendChild(structuredDataScript);
       }
       structuredDataScript.textContent = JSON.stringify(metaTags.structuredData);
+    } else {
+      // Remove dynamic script when no page-specific structured data is needed
+      const dynamicScript = document.querySelector('#dynamic-jsonld');
+      if (dynamicScript) dynamicScript.remove();
     }
     
   }, [location.pathname, language]);
