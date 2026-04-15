@@ -850,6 +850,36 @@ export type Database = {
           },
         ]
       }
+      Ellie_conversations: {
+        Row: {
+          contact_name: string | null
+          contact_phone: string
+          created_at: string
+          id: string
+          last_message_at: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          contact_name?: string | null
+          contact_phone: string
+          created_at?: string
+          id?: string
+          last_message_at?: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          contact_name?: string | null
+          contact_phone?: string
+          created_at?: string
+          id?: string
+          last_message_at?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       Ellie_courses: {
         Row: {
           created_at: string
@@ -1110,6 +1140,125 @@ export type Database = {
             columns: ["workspace_id"]
             isOneToOne: false
             referencedRelation: "Ellie_workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      Ellie_message_templates: {
+        Row: {
+          category: string | null
+          components: Json | null
+          created_at: string
+          id: string
+          language: string
+          meta_template_id: string | null
+          name: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          category?: string | null
+          components?: Json | null
+          created_at?: string
+          id?: string
+          language?: string
+          meta_template_id?: string | null
+          name: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          category?: string | null
+          components?: Json | null
+          created_at?: string
+          id?: string
+          language?: string
+          meta_template_id?: string | null
+          name?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      Ellie_messages: {
+        Row: {
+          content: string
+          conversation_id: string
+          created_at: string
+          direction: string
+          id: string
+          wamid: string | null
+        }
+        Insert: {
+          content: string
+          conversation_id: string
+          created_at?: string
+          direction: string
+          id?: string
+          wamid?: string | null
+        }
+        Update: {
+          content?: string
+          conversation_id?: string
+          created_at?: string
+          direction?: string
+          id?: string
+          wamid?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "Ellie_messages_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "Ellie_conversations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      Ellie_template_sends: {
+        Row: {
+          conversation_id: string | null
+          created_at: string
+          delivery_status: string | null
+          error_details: Json | null
+          id: string
+          sent_by: string | null
+          template_id: string | null
+          wamid: string | null
+        }
+        Insert: {
+          conversation_id?: string | null
+          created_at?: string
+          delivery_status?: string | null
+          error_details?: Json | null
+          id?: string
+          sent_by?: string | null
+          template_id?: string | null
+          wamid?: string | null
+        }
+        Update: {
+          conversation_id?: string | null
+          created_at?: string
+          delivery_status?: string | null
+          error_details?: Json | null
+          id?: string
+          sent_by?: string | null
+          template_id?: string | null
+          wamid?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "Ellie_template_sends_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "Ellie_conversations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "Ellie_template_sends_template_id_fkey"
+            columns: ["template_id"]
+            isOneToOne: false
+            referencedRelation: "Ellie_message_templates"
             referencedColumns: ["id"]
           },
         ]
@@ -1898,6 +2047,7 @@ export type Database = {
         Row: {
           axis_x_value: number
           axis_y_value: number
+          color: string | null
           created_at: string
           description: string | null
           id: string
@@ -1907,6 +2057,7 @@ export type Database = {
         Insert: {
           axis_x_value: number
           axis_y_value: number
+          color?: string | null
           created_at?: string
           description?: string | null
           id?: string
@@ -1916,6 +2067,7 @@ export type Database = {
         Update: {
           axis_x_value?: number
           axis_y_value?: number
+          color?: string | null
           created_at?: string
           description?: string | null
           id?: string
@@ -2265,6 +2417,7 @@ export type Database = {
           candidate_name: string
           candidate_phone: string
           candidate_state: string | null
+          contact_date: string | null
           created_at: string
           custom_answers: Json | null
           cv_url: string | null
@@ -2274,8 +2427,11 @@ export type Database = {
           motivation: string | null
           organization_id: string
           recaptcha_score: number | null
+          recruiter_knowledge: string | null
+          recruiter_notes: string | null
           status: string
           updated_at: string
+          willing_to_travel: string
         }
         Insert: {
           availability_start?: string | null
@@ -2285,6 +2441,7 @@ export type Database = {
           candidate_name: string
           candidate_phone: string
           candidate_state?: string | null
+          contact_date?: string | null
           created_at?: string
           custom_answers?: Json | null
           cv_url?: string | null
@@ -2294,8 +2451,11 @@ export type Database = {
           motivation?: string | null
           organization_id: string
           recaptcha_score?: number | null
+          recruiter_knowledge?: string | null
+          recruiter_notes?: string | null
           status?: string
           updated_at?: string
+          willing_to_travel?: string
         }
         Update: {
           availability_start?: string | null
@@ -2305,6 +2465,7 @@ export type Database = {
           candidate_name?: string
           candidate_phone?: string
           candidate_state?: string | null
+          contact_date?: string | null
           created_at?: string
           custom_answers?: Json | null
           cv_url?: string | null
@@ -2314,8 +2475,11 @@ export type Database = {
           motivation?: string | null
           organization_id?: string
           recaptcha_score?: number | null
+          recruiter_knowledge?: string | null
+          recruiter_notes?: string | null
           status?: string
           updated_at?: string
+          willing_to_travel?: string
         }
         Relationships: [
           {
@@ -5319,6 +5483,526 @@ export type Database = {
         }
         Relationships: []
       }
+      siteK21_career_goal_courses: {
+        Row: {
+          course_name: string
+          created_at: string
+          goal_id: string
+          id: string
+          sort_order: number
+        }
+        Insert: {
+          course_name: string
+          created_at?: string
+          goal_id: string
+          id?: string
+          sort_order?: number
+        }
+        Update: {
+          course_name?: string
+          created_at?: string
+          goal_id?: string
+          id?: string
+          sort_order?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "siteK21_career_goal_courses_goal_id_fkey"
+            columns: ["goal_id"]
+            isOneToOne: false
+            referencedRelation: "siteK21_career_goals"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      siteK21_career_goals: {
+        Row: {
+          created_at: string
+          id: string
+          is_active: boolean
+          label: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          label: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          label?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      siteK21_career_level_goal_courses: {
+        Row: {
+          course_name: string
+          created_at: string
+          goal_id: string
+          id: string
+          level_id: string
+          sort_order: number
+        }
+        Insert: {
+          course_name: string
+          created_at?: string
+          goal_id: string
+          id?: string
+          level_id: string
+          sort_order?: number
+        }
+        Update: {
+          course_name?: string
+          created_at?: string
+          goal_id?: string
+          id?: string
+          level_id?: string
+          sort_order?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "siteK21_career_level_goal_courses_goal_id_fkey"
+            columns: ["goal_id"]
+            isOneToOne: false
+            referencedRelation: "siteK21_career_goals"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "siteK21_career_level_goal_courses_level_id_fkey"
+            columns: ["level_id"]
+            isOneToOne: false
+            referencedRelation: "siteK21_career_levels"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      siteK21_career_levels: {
+        Row: {
+          created_at: string
+          description: string
+          id: string
+          is_active: boolean
+          label: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string
+          id?: string
+          is_active?: boolean
+          label: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          id?: string
+          is_active?: boolean
+          label?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      siteK21_categories: {
+        Row: {
+          created_at: string
+          id: string
+          is_active: boolean | null
+          name: string
+          sort_order: number | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_active?: boolean | null
+          name: string
+          sort_order?: number | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          sort_order?: number | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      siteK21_courses: {
+        Row: {
+          benefits: Json | null
+          category: string | null
+          certifier: string | null
+          competencies: Json | null
+          coruja_id: string | null
+          coruja_type: string
+          created_at: string
+          description: string | null
+          duration: string | null
+          faq: Json | null
+          highlights: Json | null
+          id: string
+          image: string | null
+          is_active: boolean
+          is_combo: boolean
+          is_on_demand: boolean
+          modality: string | null
+          original_price: string | null
+          price: string | null
+          short_description: string | null
+          short_title: string | null
+          slug: string
+          sort_order: number
+          students: string | null
+          syllabus: Json | null
+          syllabus_intro: string | null
+          title: string
+          updated_at: string
+          video_url: string | null
+        }
+        Insert: {
+          benefits?: Json | null
+          category?: string | null
+          certifier?: string | null
+          competencies?: Json | null
+          coruja_id?: string | null
+          coruja_type?: string
+          created_at?: string
+          description?: string | null
+          duration?: string | null
+          faq?: Json | null
+          highlights?: Json | null
+          id?: string
+          image?: string | null
+          is_active?: boolean
+          is_combo?: boolean
+          is_on_demand?: boolean
+          modality?: string | null
+          original_price?: string | null
+          price?: string | null
+          short_description?: string | null
+          short_title?: string | null
+          slug: string
+          sort_order?: number
+          students?: string | null
+          syllabus?: Json | null
+          syllabus_intro?: string | null
+          title: string
+          updated_at?: string
+          video_url?: string | null
+        }
+        Update: {
+          benefits?: Json | null
+          category?: string | null
+          certifier?: string | null
+          competencies?: Json | null
+          coruja_id?: string | null
+          coruja_type?: string
+          created_at?: string
+          description?: string | null
+          duration?: string | null
+          faq?: Json | null
+          highlights?: Json | null
+          id?: string
+          image?: string | null
+          is_active?: boolean
+          is_combo?: boolean
+          is_on_demand?: boolean
+          modality?: string | null
+          original_price?: string | null
+          price?: string | null
+          short_description?: string | null
+          short_title?: string | null
+          slug?: string
+          sort_order?: number
+          students?: string | null
+          syllabus?: Json | null
+          syllabus_intro?: string | null
+          title?: string
+          updated_at?: string
+          video_url?: string | null
+        }
+        Relationships: []
+      }
+      siteK21_featured_courses: {
+        Row: {
+          course_slug: string
+          created_at: string
+          id: string
+          sort_order: number
+        }
+        Insert: {
+          course_slug: string
+          created_at?: string
+          id?: string
+          sort_order?: number
+        }
+        Update: {
+          course_slug?: string
+          created_at?: string
+          id?: string
+          sort_order?: number
+        }
+        Relationships: []
+      }
+      siteK21_logs: {
+        Row: {
+          action: string
+          created_at: string
+          details: Json | null
+          id: string
+          ip_address: string | null
+          user_email: string | null
+          user_id: string | null
+        }
+        Insert: {
+          action: string
+          created_at?: string
+          details?: Json | null
+          id?: string
+          ip_address?: string | null
+          user_email?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          action?: string
+          created_at?: string
+          details?: Json | null
+          id?: string
+          ip_address?: string | null
+          user_email?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      siteK21_persona_courses: {
+        Row: {
+          course_slug: string
+          id: string
+          persona_id: string
+        }
+        Insert: {
+          course_slug: string
+          id?: string
+          persona_id: string
+        }
+        Update: {
+          course_slug?: string
+          id?: string
+          persona_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "siteK21_persona_courses_persona_id_fkey"
+            columns: ["persona_id"]
+            isOneToOne: false
+            referencedRelation: "siteK21_personas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      siteK21_personas: {
+        Row: {
+          created_at: string
+          description: string | null
+          icon: string | null
+          id: string
+          is_active: boolean | null
+          key: string
+          label: string
+          sort_order: number | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          icon?: string | null
+          id?: string
+          is_active?: boolean | null
+          key: string
+          label: string
+          sort_order?: number | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          icon?: string | null
+          id?: string
+          is_active?: boolean | null
+          key?: string
+          label?: string
+          sort_order?: number | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      siteK21_promo_courses: {
+        Row: {
+          course_title: string
+          created_at: string
+          custom_url: string | null
+          id: string
+          is_active: boolean
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          course_title: string
+          created_at?: string
+          custom_url?: string | null
+          id?: string
+          is_active?: boolean
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          course_title?: string
+          created_at?: string
+          custom_url?: string | null
+          id?: string
+          is_active?: boolean
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      siteK21_testimonials: {
+        Row: {
+          course_slug: string | null
+          created_at: string
+          id: string
+          is_active: boolean
+          name: string
+          rating: number
+          role: string | null
+          sort_order: number
+          text: string
+        }
+        Insert: {
+          course_slug?: string | null
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          name: string
+          rating?: number
+          role?: string | null
+          sort_order?: number
+          text: string
+        }
+        Update: {
+          course_slug?: string | null
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          name?: string
+          rating?: number
+          role?: string | null
+          sort_order?: number
+          text?: string
+        }
+        Relationships: []
+      }
+      siteK21_trainers: {
+        Row: {
+          badges: string[]
+          bio: string
+          courses: string[]
+          created_at: string
+          id: string
+          image: string
+          is_active: boolean
+          name: string
+          slug: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          badges?: string[]
+          bio?: string
+          courses?: string[]
+          created_at?: string
+          id?: string
+          image?: string
+          is_active?: boolean
+          name: string
+          slug: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          badges?: string[]
+          bio?: string
+          courses?: string[]
+          created_at?: string
+          id?: string
+          image?: string
+          is_active?: boolean
+          name?: string
+          slug?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      siteK21_user_status: {
+        Row: {
+          created_at: string
+          id: string
+          is_admin: boolean
+          organization_id: string
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_admin?: boolean
+          organization_id: string
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_admin?: boolean
+          organization_id?: string
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "siteK21_user_status_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "siteK21_user_status_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       subscriptions: {
         Row: {
           created_at: string | null
@@ -6542,6 +7226,7 @@ export type Database = {
         Args: { org_id: string; user_id?: string }
         Returns: boolean
       }
+      is_sitek21_admin: { Args: { _user_id: string }; Returns: boolean }
       is_system_admin: { Args: { _user_id: string }; Returns: boolean }
       is_system_admin_simple: { Args: { user_id?: string }; Returns: boolean }
       is_test_card_member: {
