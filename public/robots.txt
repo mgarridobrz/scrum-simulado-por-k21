@@ -46,6 +46,8 @@ User-agent: *
 Allow: /
 
 Sitemap: https://simulado-csm.k21.global/sitemap.xml
+Sitemap: https://simuladocsm.com/sitemap-simuladocsm.xml
+Sitemap: https://csmpracticeexam.com/sitemap-csmpracticeexam.xml
 
 # LLM Context Files
 # llms.txt: https://simulado-csm.k21.global/llms.txt
