@@ -850,8 +850,183 @@ export type Database = {
           },
         ]
       }
+      Ellie_chatbot_flows: {
+        Row: {
+          created_at: string
+          created_by: string
+          description: string | null
+          entry_node_id: string | null
+          id: string
+          is_active: boolean
+          is_initial: boolean
+          name: string
+          updated_at: string
+          workspace_id: string
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          description?: string | null
+          entry_node_id?: string | null
+          id?: string
+          is_active?: boolean
+          is_initial?: boolean
+          name: string
+          updated_at?: string
+          workspace_id: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          description?: string | null
+          entry_node_id?: string | null
+          id?: string
+          is_active?: boolean
+          is_initial?: boolean
+          name?: string
+          updated_at?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ellie_chatbot_flows_entry_node_fk"
+            columns: ["entry_node_id"]
+            isOneToOne: false
+            referencedRelation: "Ellie_chatbot_nodes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "Ellie_chatbot_flows_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "Ellie_workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      Ellie_chatbot_nodes: {
+        Row: {
+          content: Json
+          created_at: string
+          flow_id: string
+          id: string
+          position: number
+          type: string
+          updated_at: string
+        }
+        Insert: {
+          content?: Json
+          created_at?: string
+          flow_id: string
+          id?: string
+          position?: number
+          type: string
+          updated_at?: string
+        }
+        Update: {
+          content?: Json
+          created_at?: string
+          flow_id?: string
+          id?: string
+          position?: number
+          type?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "Ellie_chatbot_nodes_flow_id_fkey"
+            columns: ["flow_id"]
+            isOneToOne: false
+            referencedRelation: "Ellie_chatbot_flows"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      Ellie_chatbot_sessions: {
+        Row: {
+          completed_at: string | null
+          context: Json
+          conversation_id: string
+          current_node_id: string | null
+          flow_id: string
+          id: string
+          started_at: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          completed_at?: string | null
+          context?: Json
+          conversation_id: string
+          current_node_id?: string | null
+          flow_id: string
+          id?: string
+          started_at?: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          completed_at?: string | null
+          context?: Json
+          conversation_id?: string
+          current_node_id?: string | null
+          flow_id?: string
+          id?: string
+          started_at?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "Ellie_chatbot_sessions_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: true
+            referencedRelation: "Ellie_conversations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "Ellie_chatbot_sessions_current_node_id_fkey"
+            columns: ["current_node_id"]
+            isOneToOne: false
+            referencedRelation: "Ellie_chatbot_nodes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "Ellie_chatbot_sessions_flow_id_fkey"
+            columns: ["flow_id"]
+            isOneToOne: false
+            referencedRelation: "Ellie_chatbot_flows"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      Ellie_conversa_operators: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["ellie_conversa_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["ellie_conversa_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["ellie_conversa_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
       Ellie_conversations: {
         Row: {
+          active_flow_id: string | null
+          assigned_at: string | null
+          assigned_to: string | null
+          bot_status: string
           contact_name: string | null
           contact_phone: string
           created_at: string
@@ -861,6 +1036,10 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          active_flow_id?: string | null
+          assigned_at?: string | null
+          assigned_to?: string | null
+          bot_status?: string
           contact_name?: string | null
           contact_phone: string
           created_at?: string
@@ -870,6 +1049,10 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          active_flow_id?: string | null
+          assigned_at?: string | null
+          assigned_to?: string | null
+          bot_status?: string
           contact_name?: string | null
           contact_phone?: string
           created_at?: string
@@ -878,7 +1061,15 @@ export type Database = {
           status?: string
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "Ellie_conversations_active_flow_id_fkey"
+            columns: ["active_flow_id"]
+            isOneToOne: false
+            referencedRelation: "Ellie_chatbot_flows"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       Ellie_courses: {
         Row: {
@@ -1182,30 +1373,58 @@ export type Database = {
       }
       Ellie_messages: {
         Row: {
+          bot_flow_id: string | null
           content: string
           conversation_id: string
           created_at: string
+          delivery_status: string
           direction: string
+          error_details: Json | null
+          event_type: string | null
           id: string
+          sent_by: string | null
+          sent_by_bot: boolean
+          status_updated_at: string | null
           wamid: string | null
         }
         Insert: {
+          bot_flow_id?: string | null
           content: string
           conversation_id: string
           created_at?: string
+          delivery_status?: string
           direction: string
+          error_details?: Json | null
+          event_type?: string | null
           id?: string
+          sent_by?: string | null
+          sent_by_bot?: boolean
+          status_updated_at?: string | null
           wamid?: string | null
         }
         Update: {
+          bot_flow_id?: string | null
           content?: string
           conversation_id?: string
           created_at?: string
+          delivery_status?: string
           direction?: string
+          error_details?: Json | null
+          event_type?: string | null
           id?: string
+          sent_by?: string | null
+          sent_by_bot?: boolean
+          status_updated_at?: string | null
           wamid?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "Ellie_messages_bot_flow_id_fkey"
+            columns: ["bot_flow_id"]
+            isOneToOne: false
+            referencedRelation: "Ellie_chatbot_flows"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "Ellie_messages_conversation_id_fkey"
             columns: ["conversation_id"]
@@ -1307,6 +1526,59 @@ export type Database = {
             columns: ["user_id"]
             isOneToOne: true
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      Ellie_whatsapp_api_logs: {
+        Row: {
+          created_at: string
+          direction: string
+          endpoint: string
+          error_message: string | null
+          http_method: string | null
+          http_status: number | null
+          id: string
+          related_conversation_id: string | null
+          related_wamid: string | null
+          request_payload: Json | null
+          response_payload: Json | null
+          triggered_by: string | null
+        }
+        Insert: {
+          created_at?: string
+          direction: string
+          endpoint: string
+          error_message?: string | null
+          http_method?: string | null
+          http_status?: number | null
+          id?: string
+          related_conversation_id?: string | null
+          related_wamid?: string | null
+          request_payload?: Json | null
+          response_payload?: Json | null
+          triggered_by?: string | null
+        }
+        Update: {
+          created_at?: string
+          direction?: string
+          endpoint?: string
+          error_message?: string | null
+          http_method?: string | null
+          http_status?: number | null
+          id?: string
+          related_conversation_id?: string | null
+          related_wamid?: string | null
+          request_payload?: Json | null
+          response_payload?: Json | null
+          triggered_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "Ellie_whatsapp_api_logs_related_conversation_id_fkey"
+            columns: ["related_conversation_id"]
+            isOneToOne: false
+            referencedRelation: "Ellie_conversations"
             referencedColumns: ["id"]
           },
         ]
@@ -2368,8 +2640,11 @@ export type Database = {
           application_id: string
           completed_at: string | null
           created_at: string
+          folder_url: string | null
           id: string
+          nda_doc_url: string | null
           notes: string | null
+          proposal_doc_url: string | null
           step_id: string
           updated_at: string
         }
@@ -2377,8 +2652,11 @@ export type Database = {
           application_id: string
           completed_at?: string | null
           created_at?: string
+          folder_url?: string | null
           id?: string
+          nda_doc_url?: string | null
           notes?: string | null
+          proposal_doc_url?: string | null
           step_id: string
           updated_at?: string
         }
@@ -2386,8 +2664,11 @@ export type Database = {
           application_id?: string
           completed_at?: string | null
           created_at?: string
+          folder_url?: string | null
           id?: string
+          nda_doc_url?: string | null
           notes?: string | null
+          proposal_doc_url?: string | null
           step_id?: string
           updated_at?: string
         }
@@ -2421,14 +2702,21 @@ export type Database = {
           created_at: string
           custom_answers: Json | null
           cv_url: string | null
+          excluded_at: string | null
+          excluded_by: string | null
+          held_at: string | null
+          held_by: string | null
+          hold_reason: string | null
           id: string
           interested_part_time: boolean
           job_id: string | null
           motivation: string | null
+          on_hold: boolean
           organization_id: string
           recaptcha_score: number | null
           recruiter_knowledge: string | null
           recruiter_notes: string | null
+          rejection_reason: string | null
           status: string
           updated_at: string
           willing_to_travel: string
@@ -2445,14 +2733,21 @@ export type Database = {
           created_at?: string
           custom_answers?: Json | null
           cv_url?: string | null
+          excluded_at?: string | null
+          excluded_by?: string | null
+          held_at?: string | null
+          held_by?: string | null
+          hold_reason?: string | null
           id?: string
           interested_part_time?: boolean
           job_id?: string | null
           motivation?: string | null
+          on_hold?: boolean
           organization_id: string
           recaptcha_score?: number | null
           recruiter_knowledge?: string | null
           recruiter_notes?: string | null
+          rejection_reason?: string | null
           status?: string
           updated_at?: string
           willing_to_travel?: string
@@ -2469,14 +2764,21 @@ export type Database = {
           created_at?: string
           custom_answers?: Json | null
           cv_url?: string | null
+          excluded_at?: string | null
+          excluded_by?: string | null
+          held_at?: string | null
+          held_by?: string | null
+          hold_reason?: string | null
           id?: string
           interested_part_time?: boolean
           job_id?: string | null
           motivation?: string | null
+          on_hold?: boolean
           organization_id?: string
           recaptcha_score?: number | null
           recruiter_knowledge?: string | null
           recruiter_notes?: string | null
+          rejection_reason?: string | null
           status?: string
           updated_at?: string
           willing_to_travel?: string
@@ -5641,6 +5943,64 @@ export type Database = {
         }
         Relationships: []
       }
+      siteK21_course_faqs: {
+        Row: {
+          course_slug: string
+          faq_id: string
+          id: string
+          sort_order: number | null
+        }
+        Insert: {
+          course_slug: string
+          faq_id: string
+          id?: string
+          sort_order?: number | null
+        }
+        Update: {
+          course_slug?: string
+          faq_id?: string
+          id?: string
+          sort_order?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "siteK21_course_faqs_faq_id_fkey"
+            columns: ["faq_id"]
+            isOneToOne: false
+            referencedRelation: "siteK21_faqs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      siteK21_course_testimonials: {
+        Row: {
+          course_slug: string
+          id: string
+          sort_order: number | null
+          testimonial_id: string
+        }
+        Insert: {
+          course_slug: string
+          id?: string
+          sort_order?: number | null
+          testimonial_id: string
+        }
+        Update: {
+          course_slug?: string
+          id?: string
+          sort_order?: number | null
+          testimonial_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "siteK21_course_testimonials_testimonial_id_fkey"
+            columns: ["testimonial_id"]
+            isOneToOne: false
+            referencedRelation: "siteK21_testimonials"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       siteK21_courses: {
         Row: {
           benefits: Json | null
@@ -5734,6 +6094,33 @@ export type Database = {
           title?: string
           updated_at?: string
           video_url?: string | null
+        }
+        Relationships: []
+      }
+      siteK21_faqs: {
+        Row: {
+          answer: string
+          created_at: string | null
+          id: string
+          is_active: boolean | null
+          question: string
+          sort_order: number | null
+        }
+        Insert: {
+          answer: string
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          question: string
+          sort_order?: number | null
+        }
+        Update: {
+          answer?: string
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          question?: string
+          sort_order?: number | null
         }
         Relationships: []
       }
@@ -5886,6 +6273,7 @@ export type Database = {
           created_at: string
           id: string
           is_active: boolean
+          is_global: boolean | null
           name: string
           rating: number
           role: string | null
@@ -5897,6 +6285,7 @@ export type Database = {
           created_at?: string
           id?: string
           is_active?: boolean
+          is_global?: boolean | null
           name: string
           rating?: number
           role?: string | null
@@ -5908,6 +6297,7 @@ export type Database = {
           created_at?: string
           id?: string
           is_active?: boolean
+          is_global?: boolean | null
           name?: string
           rating?: number
           role?: string | null
@@ -7155,6 +7545,7 @@ export type Database = {
         Args: { org_id: string; user_id?: string }
         Returns: boolean
       }
+      is_active_ellie_operator: { Args: { _user_id: string }; Returns: boolean }
       is_active_gecko_user: {
         Args: { org_id: string; user_id?: string }
         Returns: boolean
@@ -7176,6 +7567,8 @@ export type Database = {
         Args: { _organization_id: string; _user_id: string }
         Returns: boolean
       }
+      is_ellie_conversa_admin: { Args: { _user_id: string }; Returns: boolean }
+      is_ellie_operator: { Args: { _user_id: string }; Returns: boolean }
       is_ellie_org_member: {
         Args: { _organization_id: string; _user_id: string }
         Returns: boolean
@@ -7194,6 +7587,10 @@ export type Database = {
       }
       is_gateway_admin_simple: {
         Args: { org_id: string; user_id?: string }
+        Returns: boolean
+      }
+      is_gateway_member: {
+        Args: { check_user_id?: string; org_id: string }
         Returns: boolean
       }
       is_gecko_admin_simple: {
@@ -7425,6 +7822,7 @@ export type Database = {
     Enums: {
       account_type: "free" | "pro"
       action_status: "todo" | "doing" | "done"
+      ellie_conversa_role: "operator" | "supervisor"
       ellie_lead_interest:
         | "CSPO"
         | "CSM"
@@ -7611,6 +8009,7 @@ export const Constants = {
     Enums: {
       account_type: ["free", "pro"],
       action_status: ["todo", "doing", "done"],
+      ellie_conversa_role: ["operator", "supervisor"],
       ellie_lead_interest: [
         "CSPO",
         "CSM",
