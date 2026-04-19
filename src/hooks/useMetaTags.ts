@@ -167,7 +167,7 @@ const getPageMetaTags = (pathname: string, language: 'pt' | 'en'): MetaTagsConfi
         lang: isEnglish ? 'en' : 'pt-BR',
         structuredData: {
           "@context": "https://schema.org",
-          "@graph": [orgSchema, webSchema, faqSchema]
+          "@graph": [orgSchema, webSchema]
         }
       };
 
