@@ -1,61 +1,54 @@
 
 
-## Análise e Plano: Otimizar JSON-LD para SEO, AEO e GEO
+## Plano: Corrigir duplicação de FAQPage + sitemap dos domínios customizados
 
-### Diagnóstico
+### Problema 1 — FAQPage duplicado (erro reportado pelo GSC)
 
-A estrutura atual cobre o básico (Organization, WebSite, FAQPage, BreadcrumbList), mas tem uma **vulnerabilidade crítica** e várias oportunidades:
+O Google Search Console acusou: **"O campo FAQPage está duplicado"** em `https://simuladocsm.com/`.
 
-#### Problema Critico: JSON-LD invisivel para a maioria dos crawlers
+**Causa:** O FAQPage existe em dois lugares:
+1. Estático em `index.html` (`#static-jsonld`) — adicionado na otimização anterior
+2. Dinâmico em `src/hooks/useMetaTags.ts` — `getPageMetaTags('/')` injeta novamente o FAQPage no `@graph` da homepage
 
-O structured data é injetado via `useEffect` no client-side. Isso significa:
-- **Googlebot**: vê (renderiza JS) ✓
-- **Bingbot, PerplexityBot, GPTBot, ClaudeBot**: provavelmente **NÃO veem** ✗
-- Todo o investimento em JSON-LD é parcialmente desperdiçado para AEO/GEO
+Resultado: ao carregar a home, o crawler vê **dois blocos JSON-LD com FAQPage** — um inválido para Google.
 
-#### Schemas faltantes para o contexto educacional
+### Problema 2 — Sitemap não cobre os domínios customizados
 
-O produto é um quiz de preparação para certificação, mas não usa `Quiz`, `LearningResource` ou `Course` -- schemas que AI engines e Google usam para recomendar recursos educacionais.
+O `public/sitemap.xml` só lista URLs de `simulado-csm.k21.global`. Mas o site é servido também em `simuladocsm.com` e `csmpracticeexam.com` (custom domains do GSC). Cada propriedade do GSC precisa do seu próprio sitemap apontando para o seu próprio domínio, senão o Google ignora as URLs por não serem do mesmo host.
 
-### Plano de Implementação
+### Solução
 
-#### 1. Mover JSON-LD base para `index.html` (estático)
+**1. Remover FAQPage do JSON-LD dinâmico da homepage** (`src/hooks/useMetaTags.ts`)
+- No case `'/'`, remover `faqSchema` do `@graph` (deixar só `orgSchema` e `webSchema`).
+- O FAQPage estático em `index.html` continua sendo a fonte única para o Google.
+- Manter `getFaqSchema` exportável (ainda é usado por `getFaqData` no componente visível).
 
-Inserir no `<head>` do `index.html` um `<script type="application/ld+json">` estático com o @graph da homepage (Organization, WebSite, FAQPage). Isso garante que **todos** os crawlers vejam o structured data, independente de JS.
+**2. Criar sitemaps por domínio**
+- `public/sitemap.xml` (atual) — manter com URLs de `simulado-csm.k21.global` (Lovable preview/staging).
+- `public/sitemap-simuladocsm.xml` — URLs com host `https://simuladocsm.com` (PT-BR canonical).
+- `public/sitemap-csmpracticeexam.xml` — URLs com host `https://csmpracticeexam.com` (EN canonical).
+- Atualizar `public/robots.txt` para listar os três sitemaps.
 
-O `useMetaTags.ts` continuará atualizando dinamicamente para as subpáginas (para o Googlebot que renderiza JS).
-
-#### 2. Adicionar schemas educacionais
-
-Adicionar ao @graph:
-- **`LearningResource`** -- descreve o simulado como recurso educacional gratuito
-- **`Course`** (do tipo practice exam) -- com `provider: K21`, `educationalLevel`, `about: Scrum/CSM`
-- **`Quiz`** -- com `educationalUse: "assessment"`, `numberOfQuestions`, `isAccessibleForFree: true`
-
-#### 3. Adicionar `EducationalOrganization`
-
-Mudar o `@type` de `Organization` para `["Organization", "EducationalOrganization"]` para maior precisão semântica.
-
-#### 4. Atualizar `lastmod` no sitemap
-
-Atualizar as datas do sitemap.xml para a data atual.
-
-#### 5. Adicionar schema `SoftwareApplication` para GEO
-
-Incluir `SoftwareApplication` com `applicationCategory: "EducationalApplication"` para que AI engines categorizem corretamente a ferramenta.
+**3. Atualizar `lastmod` para 2026-04-19** em todos os sitemaps.
 
 ### Arquivos alterados
 
-| Arquivo | Alteração |
-|---------|-----------|
-| `index.html` | Adicionar bloco `<script type="application/ld+json">` estático no `<head>` com schemas base (PT + EN) |
-| `src/hooks/useMetaTags.ts` | Adicionar `LearningResource`, `Quiz`, `EducationalOrganization`; atualizar lógica para não duplicar o schema estático |
-| `public/sitemap.xml` | Atualizar `lastmod` para `2026-04-15` |
+| Arquivo | Mudança |
+|---|---|
+| `src/hooks/useMetaTags.ts` | Remover `faqSchema` do `@graph` da home (linha 170) |
+| `public/sitemap.xml` | Atualizar `lastmod` |
+| `public/sitemap-simuladocsm.xml` | Novo — URLs do domínio `simuladocsm.com` |
+| `public/sitemap-csmpracticeexam.xml` | Novo — URLs do domínio `csmpracticeexam.com` |
+| `public/robots.txt` | Listar os três sitemaps |
 
-### Impacto esperado
+### Próximo passo manual (após deploy)
+No Google Search Console, submeter os sitemaps específicos em cada propriedade:
+- Em `simuladocsm.com` → submeter `/sitemap-simuladocsm.xml`
+- Em `csmpracticeexam.com` → submeter `/sitemap-csmpracticeexam.xml`
+- Pedir revalidação do erro de FAQPage duplicado
 
-- Crawlers sem JS (Bing, AI engines) passam a ver structured data
-- Google Rich Results para FAQ, Quiz e Learning Resource
-- AI engines (ChatGPT, Perplexity, Claude) recebem contexto semântico rico para recomendar o simulado
-- Voice assistants podem usar SpeakableSpecification para respostas faladas
+### Impacto
+- Erro crítico do GSC (FAQPage duplicado) resolvido — Rich Results de FAQ voltam a funcionar.
+- Indexação correta nos domínios customizados (cada propriedade GSC com seu próprio sitemap válido).
+- Nenhuma quebra funcional — FAQ visível na página continua igual.
 
