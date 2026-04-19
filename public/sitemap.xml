@@ -3,7 +3,7 @@
   <!-- Portuguese main page -->
   <url>
     <loc>https://simulado-csm.k21.global/</loc>
-    <lastmod>2026-04-15</lastmod>
+    <lastmod>2026-04-19</lastmod>
     <changefreq>monthly</changefreq>
     <priority>1.0</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://simulado-csm.k21.global/us" />
@@ -14,7 +14,7 @@
   <!-- English main page -->
   <url>
     <loc>https://simulado-csm.k21.global/us</loc>
-    <lastmod>2026-04-15</lastmod>
+    <lastmod>2026-04-19</lastmod>
     <changefreq>monthly</changefreq>
     <priority>1.0</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://simulado-csm.k21.global/us" />
@@ -25,7 +25,7 @@
   <!-- Portuguese ranking page -->
   <url>
     <loc>https://simulado-csm.k21.global/ranking</loc>
-    <lastmod>2026-04-15</lastmod>
+    <lastmod>2026-04-19</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://simulado-csm.k21.global/us/ranking" />
@@ -36,7 +36,7 @@
   <!-- English ranking page -->
   <url>
     <loc>https://simulado-csm.k21.global/us/ranking</loc>
-    <lastmod>2026-04-15</lastmod>
+    <lastmod>2026-04-19</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://simulado-csm.k21.global/us/ranking" />
@@ -47,7 +47,7 @@
   <!-- Portuguese game page -->
   <url>
     <loc>https://simulado-csm.k21.global/game</loc>
-    <lastmod>2026-04-15</lastmod>
+    <lastmod>2026-04-19</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://simulado-csm.k21.global/us/game" />
@@ -57,7 +57,7 @@
   <!-- English game page -->
   <url>
     <loc>https://simulado-csm.k21.global/us/game</loc>
-    <lastmod>2026-04-15</lastmod>
+    <lastmod>2026-04-19</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://simulado-csm.k21.global/us/game" />
@@ -67,7 +67,7 @@
   <!-- Portuguese game ranking page -->
   <url>
     <loc>https://simulado-csm.k21.global/game/ranking</loc>
-    <lastmod>2026-04-15</lastmod>
+    <lastmod>2026-04-19</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://simulado-csm.k21.global/us/game/ranking" />
@@ -77,7 +77,7 @@
   <!-- English game ranking page -->
   <url>
     <loc>https://simulado-csm.k21.global/us/game/ranking</loc>
-    <lastmod>2026-04-15</lastmod>
+    <lastmod>2026-04-19</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://simulado-csm.k21.global/us/game/ranking" />
