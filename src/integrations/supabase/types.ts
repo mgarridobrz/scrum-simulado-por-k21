@@ -1032,8 +1032,11 @@ export type Database = {
           created_at: string
           id: string
           last_message_at: string
+          lead_id: string | null
+          queue_key: string | null
           status: string
           updated_at: string
+          workspace_id: string | null
         }
         Insert: {
           active_flow_id?: string | null
@@ -1045,8 +1048,11 @@ export type Database = {
           created_at?: string
           id?: string
           last_message_at?: string
+          lead_id?: string | null
+          queue_key?: string | null
           status?: string
           updated_at?: string
+          workspace_id?: string | null
         }
         Update: {
           active_flow_id?: string | null
@@ -1058,8 +1064,11 @@ export type Database = {
           created_at?: string
           id?: string
           last_message_at?: string
+          lead_id?: string | null
+          queue_key?: string | null
           status?: string
           updated_at?: string
+          workspace_id?: string | null
         }
         Relationships: [
           {
@@ -1067,6 +1076,20 @@ export type Database = {
             columns: ["active_flow_id"]
             isOneToOne: false
             referencedRelation: "Ellie_chatbot_flows"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "Ellie_conversations_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "Ellie_leads"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "Ellie_conversations_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "Ellie_workspaces"
             referencedColumns: ["id"]
           },
         ]
@@ -1238,6 +1261,58 @@ export type Database = {
           },
         ]
       }
+      Ellie_lead_tags: {
+        Row: {
+          created_at: string
+          id: string
+          lead_id: string
+          source: string
+          tag: string
+          tag_id: string | null
+          workspace_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          lead_id: string
+          source?: string
+          tag: string
+          tag_id?: string | null
+          workspace_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          lead_id?: string
+          source?: string
+          tag?: string
+          tag_id?: string | null
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "Ellie_lead_tags_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "Ellie_leads"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "Ellie_lead_tags_tag_id_fkey"
+            columns: ["tag_id"]
+            isOneToOne: false
+            referencedRelation: "Ellie_workspace_tags"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "Ellie_lead_tags_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "Ellie_workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       Ellie_leads: {
         Row: {
           closed_outcome: string | null
@@ -1261,6 +1336,9 @@ export type Database = {
           stage: Database["public"]["Enums"]["ellie_lead_stage"]
           type: Database["public"]["Enums"]["ellie_lead_type"]
           updated_at: string
+          whatsapp_opt_in: boolean
+          whatsapp_opt_in_at: string | null
+          whatsapp_opt_in_source: string | null
           workspace_id: string
         }
         Insert: {
@@ -1285,6 +1363,9 @@ export type Database = {
           stage?: Database["public"]["Enums"]["ellie_lead_stage"]
           type?: Database["public"]["Enums"]["ellie_lead_type"]
           updated_at?: string
+          whatsapp_opt_in?: boolean
+          whatsapp_opt_in_at?: string | null
+          whatsapp_opt_in_source?: string | null
           workspace_id: string
         }
         Update: {
@@ -1309,6 +1390,9 @@ export type Database = {
           stage?: Database["public"]["Enums"]["ellie_lead_stage"]
           type?: Database["public"]["Enums"]["ellie_lead_type"]
           updated_at?: string
+          whatsapp_opt_in?: boolean
+          whatsapp_opt_in_at?: string | null
+          whatsapp_opt_in_source?: string | null
           workspace_id?: string
         }
         Relationships: [
@@ -1346,6 +1430,7 @@ export type Database = {
           name: string
           status: string
           updated_at: string
+          variable_mappings: Json
         }
         Insert: {
           category?: string | null
@@ -1357,6 +1442,7 @@ export type Database = {
           name: string
           status?: string
           updated_at?: string
+          variable_mappings?: Json
         }
         Update: {
           category?: string | null
@@ -1368,6 +1454,7 @@ export type Database = {
           name?: string
           status?: string
           updated_at?: string
+          variable_mappings?: Json
         }
         Relationships: []
       }
@@ -1583,6 +1670,38 @@ export type Database = {
           },
         ]
       }
+      Ellie_workspace_settings: {
+        Row: {
+          created_at: string
+          default_lead_origin: string
+          default_lead_owner_id: string | null
+          updated_at: string
+          workspace_id: string
+        }
+        Insert: {
+          created_at?: string
+          default_lead_origin?: string
+          default_lead_owner_id?: string | null
+          updated_at?: string
+          workspace_id: string
+        }
+        Update: {
+          created_at?: string
+          default_lead_origin?: string
+          default_lead_owner_id?: string | null
+          updated_at?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "Ellie_workspace_settings_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: true
+            referencedRelation: "Ellie_workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       Ellie_workspace_stages: {
         Row: {
           created_at: string
@@ -1617,6 +1736,50 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "Ellie_workspace_stages_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "Ellie_workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      Ellie_workspace_tags: {
+        Row: {
+          color: string
+          created_at: string
+          created_by: string | null
+          description: string | null
+          id: string
+          label: string
+          name: string
+          updated_at: string
+          workspace_id: string
+        }
+        Insert: {
+          color?: string
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          label: string
+          name: string
+          updated_at?: string
+          workspace_id: string
+        }
+        Update: {
+          color?: string
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          label?: string
+          name?: string
+          updated_at?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "Ellie_workspace_tags_workspace_id_fkey"
             columns: ["workspace_id"]
             isOneToOne: false
             referencedRelation: "Ellie_workspaces"
@@ -2142,6 +2305,81 @@ export type Database = {
             columns: ["organization_id"]
             isOneToOne: false
             referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      forge_evaluation_prior_context: {
+        Row: {
+          content_html: string
+          created_at: string
+          created_by: string | null
+          id: string
+          organization_id: string
+          period_id: string
+          source: string
+          source_period_id: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          content_html?: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          organization_id: string
+          period_id: string
+          source?: string
+          source_period_id?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          content_html?: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          organization_id?: string
+          period_id?: string
+          source?: string
+          source_period_id?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "forge_evaluation_prior_context_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "forge_evaluation_prior_context_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "forge_evaluation_prior_context_period_id_fkey"
+            columns: ["period_id"]
+            isOneToOne: false
+            referencedRelation: "forge_evaluation_periods"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "forge_evaluation_prior_context_source_period_id_fkey"
+            columns: ["source_period_id"]
+            isOneToOne: false
+            referencedRelation: "forge_evaluation_periods"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "forge_evaluation_prior_context_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
         ]
@@ -6003,7 +6241,6 @@ export type Database = {
       }
       siteK21_courses: {
         Row: {
-          benefits: Json | null
           category: string | null
           certifier: string | null
           competencies: Json | null
@@ -6034,7 +6271,6 @@ export type Database = {
           video_url: string | null
         }
         Insert: {
-          benefits?: Json | null
           category?: string | null
           certifier?: string | null
           competencies?: Json | null
@@ -6065,7 +6301,6 @@ export type Database = {
           video_url?: string | null
         }
         Update: {
-          benefits?: Json | null
           category?: string | null
           certifier?: string | null
           competencies?: Json | null
@@ -7147,6 +7382,10 @@ export type Database = {
         Args: { p_organization_id: string; p_user_id: string }
         Returns: undefined
       }
+      find_lead_by_phone: {
+        Args: { _phone: string; _workspace_id: string }
+        Returns: string
+      }
       fix_existing_organization_owners: {
         Args: never
         Returns: {
@@ -7352,6 +7591,7 @@ export type Database = {
           tags: string[]
         }[]
       }
+      get_single_active_ellie_workspace_id: { Args: never; Returns: string }
       get_survey_by_token: {
         Args: { p_token: string }
         Returns: {
@@ -7568,6 +7808,10 @@ export type Database = {
         Returns: boolean
       }
       is_ellie_conversa_admin: { Args: { _user_id: string }; Returns: boolean }
+      is_ellie_conversa_operator: {
+        Args: { _user_id: string }
+        Returns: boolean
+      }
       is_ellie_operator: { Args: { _user_id: string }; Returns: boolean }
       is_ellie_org_member: {
         Args: { _organization_id: string; _user_id: string }
@@ -7639,6 +7883,10 @@ export type Database = {
       is_workspace_member_simple: {
         Args: { user_id?: string; workspace_id: string }
         Returns: boolean
+      }
+      link_conversation_to_lead: {
+        Args: { _conversation_id: string; _lead_id: string }
+        Returns: undefined
       }
       log_workspace_event: {
         Args: {
