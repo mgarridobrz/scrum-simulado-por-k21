@@ -850,1033 +850,6 @@ export type Database = {
           },
         ]
       }
-      Ellie_chatbot_flows: {
-        Row: {
-          created_at: string
-          created_by: string
-          description: string | null
-          entry_node_id: string | null
-          id: string
-          is_active: boolean
-          is_initial: boolean
-          name: string
-          updated_at: string
-          workspace_id: string
-        }
-        Insert: {
-          created_at?: string
-          created_by: string
-          description?: string | null
-          entry_node_id?: string | null
-          id?: string
-          is_active?: boolean
-          is_initial?: boolean
-          name: string
-          updated_at?: string
-          workspace_id: string
-        }
-        Update: {
-          created_at?: string
-          created_by?: string
-          description?: string | null
-          entry_node_id?: string | null
-          id?: string
-          is_active?: boolean
-          is_initial?: boolean
-          name?: string
-          updated_at?: string
-          workspace_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "ellie_chatbot_flows_entry_node_fk"
-            columns: ["entry_node_id"]
-            isOneToOne: false
-            referencedRelation: "Ellie_chatbot_nodes"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "Ellie_chatbot_flows_workspace_id_fkey"
-            columns: ["workspace_id"]
-            isOneToOne: false
-            referencedRelation: "Ellie_workspaces"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      Ellie_chatbot_nodes: {
-        Row: {
-          content: Json
-          created_at: string
-          flow_id: string
-          id: string
-          position: number
-          type: string
-          updated_at: string
-        }
-        Insert: {
-          content?: Json
-          created_at?: string
-          flow_id: string
-          id?: string
-          position?: number
-          type: string
-          updated_at?: string
-        }
-        Update: {
-          content?: Json
-          created_at?: string
-          flow_id?: string
-          id?: string
-          position?: number
-          type?: string
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "Ellie_chatbot_nodes_flow_id_fkey"
-            columns: ["flow_id"]
-            isOneToOne: false
-            referencedRelation: "Ellie_chatbot_flows"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      Ellie_chatbot_sessions: {
-        Row: {
-          completed_at: string | null
-          context: Json
-          conversation_id: string
-          current_node_id: string | null
-          flow_id: string
-          id: string
-          started_at: string
-          status: string
-          updated_at: string
-        }
-        Insert: {
-          completed_at?: string | null
-          context?: Json
-          conversation_id: string
-          current_node_id?: string | null
-          flow_id: string
-          id?: string
-          started_at?: string
-          status?: string
-          updated_at?: string
-        }
-        Update: {
-          completed_at?: string | null
-          context?: Json
-          conversation_id?: string
-          current_node_id?: string | null
-          flow_id?: string
-          id?: string
-          started_at?: string
-          status?: string
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "Ellie_chatbot_sessions_conversation_id_fkey"
-            columns: ["conversation_id"]
-            isOneToOne: true
-            referencedRelation: "Ellie_conversations"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "Ellie_chatbot_sessions_current_node_id_fkey"
-            columns: ["current_node_id"]
-            isOneToOne: false
-            referencedRelation: "Ellie_chatbot_nodes"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "Ellie_chatbot_sessions_flow_id_fkey"
-            columns: ["flow_id"]
-            isOneToOne: false
-            referencedRelation: "Ellie_chatbot_flows"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      Ellie_conversa_operators: {
-        Row: {
-          created_at: string
-          id: string
-          role: Database["public"]["Enums"]["ellie_conversa_role"]
-          user_id: string
-        }
-        Insert: {
-          created_at?: string
-          id?: string
-          role?: Database["public"]["Enums"]["ellie_conversa_role"]
-          user_id: string
-        }
-        Update: {
-          created_at?: string
-          id?: string
-          role?: Database["public"]["Enums"]["ellie_conversa_role"]
-          user_id?: string
-        }
-        Relationships: []
-      }
-      Ellie_conversations: {
-        Row: {
-          active_flow_id: string | null
-          assigned_at: string | null
-          assigned_to: string | null
-          bot_status: string
-          contact_name: string | null
-          contact_phone: string
-          created_at: string
-          id: string
-          last_message_at: string
-          lead_id: string | null
-          queue_key: string | null
-          status: string
-          updated_at: string
-          workspace_id: string | null
-        }
-        Insert: {
-          active_flow_id?: string | null
-          assigned_at?: string | null
-          assigned_to?: string | null
-          bot_status?: string
-          contact_name?: string | null
-          contact_phone: string
-          created_at?: string
-          id?: string
-          last_message_at?: string
-          lead_id?: string | null
-          queue_key?: string | null
-          status?: string
-          updated_at?: string
-          workspace_id?: string | null
-        }
-        Update: {
-          active_flow_id?: string | null
-          assigned_at?: string | null
-          assigned_to?: string | null
-          bot_status?: string
-          contact_name?: string | null
-          contact_phone?: string
-          created_at?: string
-          id?: string
-          last_message_at?: string
-          lead_id?: string | null
-          queue_key?: string | null
-          status?: string
-          updated_at?: string
-          workspace_id?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "Ellie_conversations_active_flow_id_fkey"
-            columns: ["active_flow_id"]
-            isOneToOne: false
-            referencedRelation: "Ellie_chatbot_flows"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "Ellie_conversations_lead_id_fkey"
-            columns: ["lead_id"]
-            isOneToOne: false
-            referencedRelation: "Ellie_leads"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "Ellie_conversations_workspace_id_fkey"
-            columns: ["workspace_id"]
-            isOneToOne: false
-            referencedRelation: "Ellie_workspaces"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      Ellie_courses: {
-        Row: {
-          created_at: string
-          duration: string | null
-          id: string
-          is_active: boolean
-          name: string
-          organization_id: string
-          price: number
-        }
-        Insert: {
-          created_at?: string
-          duration?: string | null
-          id?: string
-          is_active?: boolean
-          name: string
-          organization_id: string
-          price?: number
-        }
-        Update: {
-          created_at?: string
-          duration?: string | null
-          id?: string
-          is_active?: boolean
-          name?: string
-          organization_id?: string
-          price?: number
-        }
-        Relationships: [
-          {
-            foreignKeyName: "Ellie_courses_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "organizations"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      Ellie_lead_interests: {
-        Row: {
-          course_id: string | null
-          created_at: string
-          discount: number
-          id: string
-          interest: string
-          lead_id: string
-          quantity: number
-        }
-        Insert: {
-          course_id?: string | null
-          created_at?: string
-          discount?: number
-          id?: string
-          interest: string
-          lead_id: string
-          quantity?: number
-        }
-        Update: {
-          course_id?: string | null
-          created_at?: string
-          discount?: number
-          id?: string
-          interest?: string
-          lead_id?: string
-          quantity?: number
-        }
-        Relationships: [
-          {
-            foreignKeyName: "Ellie_lead_interests_course_id_fkey"
-            columns: ["course_id"]
-            isOneToOne: false
-            referencedRelation: "Ellie_courses"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "Ellie_lead_interests_lead_id_fkey"
-            columns: ["lead_id"]
-            isOneToOne: false
-            referencedRelation: "Ellie_leads"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      Ellie_lead_notes: {
-        Row: {
-          content: string
-          created_at: string
-          id: string
-          lead_id: string
-          user_id: string
-        }
-        Insert: {
-          content: string
-          created_at?: string
-          id?: string
-          lead_id: string
-          user_id: string
-        }
-        Update: {
-          content?: string
-          created_at?: string
-          id?: string
-          lead_id?: string
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "Ellie_lead_notes_lead_id_fkey"
-            columns: ["lead_id"]
-            isOneToOne: false
-            referencedRelation: "Ellie_leads"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "Ellie_lead_notes_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      Ellie_lead_stage_history: {
-        Row: {
-          from_stage: Database["public"]["Enums"]["ellie_lead_stage"] | null
-          id: string
-          lead_id: string
-          moved_at: string
-          moved_by: string
-          notes: string | null
-          to_stage: Database["public"]["Enums"]["ellie_lead_stage"]
-        }
-        Insert: {
-          from_stage?: Database["public"]["Enums"]["ellie_lead_stage"] | null
-          id?: string
-          lead_id: string
-          moved_at?: string
-          moved_by: string
-          notes?: string | null
-          to_stage: Database["public"]["Enums"]["ellie_lead_stage"]
-        }
-        Update: {
-          from_stage?: Database["public"]["Enums"]["ellie_lead_stage"] | null
-          id?: string
-          lead_id?: string
-          moved_at?: string
-          moved_by?: string
-          notes?: string | null
-          to_stage?: Database["public"]["Enums"]["ellie_lead_stage"]
-        }
-        Relationships: [
-          {
-            foreignKeyName: "Ellie_lead_stage_history_lead_id_fkey"
-            columns: ["lead_id"]
-            isOneToOne: false
-            referencedRelation: "Ellie_leads"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "Ellie_lead_stage_history_moved_by_fkey"
-            columns: ["moved_by"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      Ellie_lead_tags: {
-        Row: {
-          created_at: string
-          id: string
-          lead_id: string
-          source: string
-          tag: string
-          tag_id: string | null
-          workspace_id: string
-        }
-        Insert: {
-          created_at?: string
-          id?: string
-          lead_id: string
-          source?: string
-          tag: string
-          tag_id?: string | null
-          workspace_id: string
-        }
-        Update: {
-          created_at?: string
-          id?: string
-          lead_id?: string
-          source?: string
-          tag?: string
-          tag_id?: string | null
-          workspace_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "Ellie_lead_tags_lead_id_fkey"
-            columns: ["lead_id"]
-            isOneToOne: false
-            referencedRelation: "Ellie_leads"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "Ellie_lead_tags_tag_id_fkey"
-            columns: ["tag_id"]
-            isOneToOne: false
-            referencedRelation: "Ellie_workspace_tags"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "Ellie_lead_tags_workspace_id_fkey"
-            columns: ["workspace_id"]
-            isOneToOne: false
-            referencedRelation: "Ellie_workspaces"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      Ellie_leads: {
-        Row: {
-          closed_outcome: string | null
-          closed_value: number | null
-          cnpj: string | null
-          company: string | null
-          cpf: string | null
-          created_at: string
-          created_by: string
-          email: string
-          estimated_value: number | null
-          id: string
-          interest: Database["public"]["Enums"]["ellie_lead_interest"] | null
-          is_archived: boolean
-          loss_reason: string | null
-          name: string
-          notes: string | null
-          origin: Database["public"]["Enums"]["ellie_lead_origin"] | null
-          phone: string
-          responsible_user_id: string | null
-          stage: Database["public"]["Enums"]["ellie_lead_stage"]
-          type: Database["public"]["Enums"]["ellie_lead_type"]
-          updated_at: string
-          whatsapp_opt_in: boolean
-          whatsapp_opt_in_at: string | null
-          whatsapp_opt_in_source: string | null
-          workspace_id: string
-        }
-        Insert: {
-          closed_outcome?: string | null
-          closed_value?: number | null
-          cnpj?: string | null
-          company?: string | null
-          cpf?: string | null
-          created_at?: string
-          created_by: string
-          email: string
-          estimated_value?: number | null
-          id?: string
-          interest?: Database["public"]["Enums"]["ellie_lead_interest"] | null
-          is_archived?: boolean
-          loss_reason?: string | null
-          name: string
-          notes?: string | null
-          origin?: Database["public"]["Enums"]["ellie_lead_origin"] | null
-          phone: string
-          responsible_user_id?: string | null
-          stage?: Database["public"]["Enums"]["ellie_lead_stage"]
-          type?: Database["public"]["Enums"]["ellie_lead_type"]
-          updated_at?: string
-          whatsapp_opt_in?: boolean
-          whatsapp_opt_in_at?: string | null
-          whatsapp_opt_in_source?: string | null
-          workspace_id: string
-        }
-        Update: {
-          closed_outcome?: string | null
-          closed_value?: number | null
-          cnpj?: string | null
-          company?: string | null
-          cpf?: string | null
-          created_at?: string
-          created_by?: string
-          email?: string
-          estimated_value?: number | null
-          id?: string
-          interest?: Database["public"]["Enums"]["ellie_lead_interest"] | null
-          is_archived?: boolean
-          loss_reason?: string | null
-          name?: string
-          notes?: string | null
-          origin?: Database["public"]["Enums"]["ellie_lead_origin"] | null
-          phone?: string
-          responsible_user_id?: string | null
-          stage?: Database["public"]["Enums"]["ellie_lead_stage"]
-          type?: Database["public"]["Enums"]["ellie_lead_type"]
-          updated_at?: string
-          whatsapp_opt_in?: boolean
-          whatsapp_opt_in_at?: string | null
-          whatsapp_opt_in_source?: string | null
-          workspace_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "Ellie_leads_created_by_fkey"
-            columns: ["created_by"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "Ellie_leads_responsible_user_id_fkey"
-            columns: ["responsible_user_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "Ellie_leads_workspace_id_fkey"
-            columns: ["workspace_id"]
-            isOneToOne: false
-            referencedRelation: "Ellie_workspaces"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      Ellie_message_templates: {
-        Row: {
-          category: string | null
-          components: Json | null
-          created_at: string
-          id: string
-          language: string
-          meta_template_id: string | null
-          name: string
-          status: string
-          updated_at: string
-          variable_mappings: Json
-        }
-        Insert: {
-          category?: string | null
-          components?: Json | null
-          created_at?: string
-          id?: string
-          language?: string
-          meta_template_id?: string | null
-          name: string
-          status?: string
-          updated_at?: string
-          variable_mappings?: Json
-        }
-        Update: {
-          category?: string | null
-          components?: Json | null
-          created_at?: string
-          id?: string
-          language?: string
-          meta_template_id?: string | null
-          name?: string
-          status?: string
-          updated_at?: string
-          variable_mappings?: Json
-        }
-        Relationships: []
-      }
-      Ellie_messages: {
-        Row: {
-          bot_flow_id: string | null
-          content: string
-          conversation_id: string
-          created_at: string
-          delivery_status: string
-          direction: string
-          error_details: Json | null
-          event_type: string | null
-          id: string
-          sent_by: string | null
-          sent_by_bot: boolean
-          status_updated_at: string | null
-          wamid: string | null
-        }
-        Insert: {
-          bot_flow_id?: string | null
-          content: string
-          conversation_id: string
-          created_at?: string
-          delivery_status?: string
-          direction: string
-          error_details?: Json | null
-          event_type?: string | null
-          id?: string
-          sent_by?: string | null
-          sent_by_bot?: boolean
-          status_updated_at?: string | null
-          wamid?: string | null
-        }
-        Update: {
-          bot_flow_id?: string | null
-          content?: string
-          conversation_id?: string
-          created_at?: string
-          delivery_status?: string
-          direction?: string
-          error_details?: Json | null
-          event_type?: string | null
-          id?: string
-          sent_by?: string | null
-          sent_by_bot?: boolean
-          status_updated_at?: string | null
-          wamid?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "Ellie_messages_bot_flow_id_fkey"
-            columns: ["bot_flow_id"]
-            isOneToOne: false
-            referencedRelation: "Ellie_chatbot_flows"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "Ellie_messages_conversation_id_fkey"
-            columns: ["conversation_id"]
-            isOneToOne: false
-            referencedRelation: "Ellie_conversations"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      Ellie_template_sends: {
-        Row: {
-          conversation_id: string | null
-          created_at: string
-          delivery_status: string | null
-          error_details: Json | null
-          id: string
-          sent_by: string | null
-          template_id: string | null
-          wamid: string | null
-        }
-        Insert: {
-          conversation_id?: string | null
-          created_at?: string
-          delivery_status?: string | null
-          error_details?: Json | null
-          id?: string
-          sent_by?: string | null
-          template_id?: string | null
-          wamid?: string | null
-        }
-        Update: {
-          conversation_id?: string | null
-          created_at?: string
-          delivery_status?: string | null
-          error_details?: Json | null
-          id?: string
-          sent_by?: string | null
-          template_id?: string | null
-          wamid?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "Ellie_template_sends_conversation_id_fkey"
-            columns: ["conversation_id"]
-            isOneToOne: false
-            referencedRelation: "Ellie_conversations"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "Ellie_template_sends_template_id_fkey"
-            columns: ["template_id"]
-            isOneToOne: false
-            referencedRelation: "Ellie_message_templates"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      Ellie_user_status: {
-        Row: {
-          created_at: string
-          id: string
-          is_admin: boolean
-          last_accessed_at: string | null
-          organization_id: string
-          status: string
-          updated_at: string
-          user_id: string
-        }
-        Insert: {
-          created_at?: string
-          id?: string
-          is_admin?: boolean
-          last_accessed_at?: string | null
-          organization_id: string
-          status?: string
-          updated_at?: string
-          user_id: string
-        }
-        Update: {
-          created_at?: string
-          id?: string
-          is_admin?: boolean
-          last_accessed_at?: string | null
-          organization_id?: string
-          status?: string
-          updated_at?: string
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "Ellie_user_status_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "organizations"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "Ellie_user_status_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: true
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      Ellie_whatsapp_api_logs: {
-        Row: {
-          created_at: string
-          direction: string
-          endpoint: string
-          error_message: string | null
-          http_method: string | null
-          http_status: number | null
-          id: string
-          related_conversation_id: string | null
-          related_wamid: string | null
-          request_payload: Json | null
-          response_payload: Json | null
-          triggered_by: string | null
-        }
-        Insert: {
-          created_at?: string
-          direction: string
-          endpoint: string
-          error_message?: string | null
-          http_method?: string | null
-          http_status?: number | null
-          id?: string
-          related_conversation_id?: string | null
-          related_wamid?: string | null
-          request_payload?: Json | null
-          response_payload?: Json | null
-          triggered_by?: string | null
-        }
-        Update: {
-          created_at?: string
-          direction?: string
-          endpoint?: string
-          error_message?: string | null
-          http_method?: string | null
-          http_status?: number | null
-          id?: string
-          related_conversation_id?: string | null
-          related_wamid?: string | null
-          request_payload?: Json | null
-          response_payload?: Json | null
-          triggered_by?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "Ellie_whatsapp_api_logs_related_conversation_id_fkey"
-            columns: ["related_conversation_id"]
-            isOneToOne: false
-            referencedRelation: "Ellie_conversations"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      Ellie_workspace_settings: {
-        Row: {
-          created_at: string
-          default_lead_origin: string
-          default_lead_owner_id: string | null
-          updated_at: string
-          workspace_id: string
-        }
-        Insert: {
-          created_at?: string
-          default_lead_origin?: string
-          default_lead_owner_id?: string | null
-          updated_at?: string
-          workspace_id: string
-        }
-        Update: {
-          created_at?: string
-          default_lead_origin?: string
-          default_lead_owner_id?: string | null
-          updated_at?: string
-          workspace_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "Ellie_workspace_settings_workspace_id_fkey"
-            columns: ["workspace_id"]
-            isOneToOne: true
-            referencedRelation: "Ellie_workspaces"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      Ellie_workspace_stages: {
-        Row: {
-          created_at: string
-          id: string
-          is_custom: boolean
-          is_visible: boolean
-          label: string | null
-          position: number
-          stage: string
-          workspace_id: string
-        }
-        Insert: {
-          created_at?: string
-          id?: string
-          is_custom?: boolean
-          is_visible?: boolean
-          label?: string | null
-          position?: number
-          stage: string
-          workspace_id: string
-        }
-        Update: {
-          created_at?: string
-          id?: string
-          is_custom?: boolean
-          is_visible?: boolean
-          label?: string | null
-          position?: number
-          stage?: string
-          workspace_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "Ellie_workspace_stages_workspace_id_fkey"
-            columns: ["workspace_id"]
-            isOneToOne: false
-            referencedRelation: "Ellie_workspaces"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      Ellie_workspace_tags: {
-        Row: {
-          color: string
-          created_at: string
-          created_by: string | null
-          description: string | null
-          id: string
-          label: string
-          name: string
-          updated_at: string
-          workspace_id: string
-        }
-        Insert: {
-          color?: string
-          created_at?: string
-          created_by?: string | null
-          description?: string | null
-          id?: string
-          label: string
-          name: string
-          updated_at?: string
-          workspace_id: string
-        }
-        Update: {
-          color?: string
-          created_at?: string
-          created_by?: string | null
-          description?: string | null
-          id?: string
-          label?: string
-          name?: string
-          updated_at?: string
-          workspace_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "Ellie_workspace_tags_workspace_id_fkey"
-            columns: ["workspace_id"]
-            isOneToOne: false
-            referencedRelation: "Ellie_workspaces"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      Ellie_workspace_users: {
-        Row: {
-          created_at: string
-          id: string
-          role: Database["public"]["Enums"]["ellie_workspace_role"]
-          user_id: string
-          workspace_id: string
-        }
-        Insert: {
-          created_at?: string
-          id?: string
-          role?: Database["public"]["Enums"]["ellie_workspace_role"]
-          user_id: string
-          workspace_id: string
-        }
-        Update: {
-          created_at?: string
-          id?: string
-          role?: Database["public"]["Enums"]["ellie_workspace_role"]
-          user_id?: string
-          workspace_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "Ellie_workspace_users_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "Ellie_workspace_users_workspace_id_fkey"
-            columns: ["workspace_id"]
-            isOneToOne: false
-            referencedRelation: "Ellie_workspaces"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      Ellie_workspaces: {
-        Row: {
-          created_at: string
-          created_by: string
-          description: string | null
-          id: string
-          is_active: boolean
-          join_key: string | null
-          name: string
-          organization_id: string
-          updated_at: string
-        }
-        Insert: {
-          created_at?: string
-          created_by: string
-          description?: string | null
-          id?: string
-          is_active?: boolean
-          join_key?: string | null
-          name: string
-          organization_id: string
-          updated_at?: string
-        }
-        Update: {
-          created_at?: string
-          created_by?: string
-          description?: string | null
-          id?: string
-          is_active?: boolean
-          join_key?: string | null
-          name?: string
-          organization_id?: string
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "Ellie_workspaces_created_by_fkey"
-            columns: ["created_by"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "Ellie_workspaces_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "organizations"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       error_logs: {
         Row: {
           additional_data: Json | null
@@ -2935,6 +1908,7 @@ export type Database = {
           candidate_linkedin: string | null
           candidate_name: string
           candidate_phone: string
+          candidate_source: string | null
           candidate_state: string | null
           contact_date: string | null
           created_at: string
@@ -2955,6 +1929,7 @@ export type Database = {
           recruiter_knowledge: string | null
           recruiter_notes: string | null
           rejection_reason: string | null
+          salary_expectation: number | null
           status: string
           updated_at: string
           willing_to_travel: string
@@ -2966,6 +1941,7 @@ export type Database = {
           candidate_linkedin?: string | null
           candidate_name: string
           candidate_phone: string
+          candidate_source?: string | null
           candidate_state?: string | null
           contact_date?: string | null
           created_at?: string
@@ -2986,6 +1962,7 @@ export type Database = {
           recruiter_knowledge?: string | null
           recruiter_notes?: string | null
           rejection_reason?: string | null
+          salary_expectation?: number | null
           status?: string
           updated_at?: string
           willing_to_travel?: string
@@ -2997,6 +1974,7 @@ export type Database = {
           candidate_linkedin?: string | null
           candidate_name?: string
           candidate_phone?: string
+          candidate_source?: string | null
           candidate_state?: string | null
           contact_date?: string | null
           created_at?: string
@@ -3017,6 +1995,7 @@ export type Database = {
           recruiter_knowledge?: string | null
           recruiter_notes?: string | null
           rejection_reason?: string | null
+          salary_expectation?: number | null
           status?: string
           updated_at?: string
           willing_to_travel?: string
@@ -3027,6 +2006,13 @@ export type Database = {
             columns: ["job_id"]
             isOneToOne: false
             referencedRelation: "gateway_jobs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "gateway_applications_job_id_fkey"
+            columns: ["job_id"]
+            isOneToOne: false
+            referencedRelation: "gateway_public_jobs"
             referencedColumns: ["id"]
           },
           {
@@ -3087,12 +2073,19 @@ export type Database = {
       }
       gateway_jobs: {
         Row: {
+          code: string | null
           created_at: string
           created_by: string | null
           department: string | null
           description: string | null
           employment_type: string
           id: string
+          internal_budget_max: number | null
+          internal_budget_min: number | null
+          internal_contract_duration_months: number | null
+          internal_expected_start_date: string | null
+          internal_hiring_lead: string | null
+          internal_opening_date: string | null
           is_active: boolean
           location: string | null
           organization_id: string
@@ -3101,12 +2094,19 @@ export type Database = {
           work_model: string
         }
         Insert: {
+          code?: string | null
           created_at?: string
           created_by?: string | null
           department?: string | null
           description?: string | null
           employment_type?: string
           id?: string
+          internal_budget_max?: number | null
+          internal_budget_min?: number | null
+          internal_contract_duration_months?: number | null
+          internal_expected_start_date?: string | null
+          internal_hiring_lead?: string | null
+          internal_opening_date?: string | null
           is_active?: boolean
           location?: string | null
           organization_id: string
@@ -3115,12 +2115,19 @@ export type Database = {
           work_model?: string
         }
         Update: {
+          code?: string | null
           created_at?: string
           created_by?: string | null
           department?: string | null
           description?: string | null
           employment_type?: string
           id?: string
+          internal_budget_max?: number | null
+          internal_budget_min?: number | null
+          internal_contract_duration_months?: number | null
+          internal_expected_start_date?: string | null
+          internal_hiring_lead?: string | null
+          internal_opening_date?: string | null
           is_active?: boolean
           location?: string | null
           organization_id?: string
@@ -5021,6 +4028,7 @@ export type Database = {
       }
       organization_tags: {
         Row: {
+          admin_only: boolean
           color: string
           created_at: string | null
           id: string
@@ -5029,6 +4037,7 @@ export type Database = {
           updated_at: string | null
         }
         Insert: {
+          admin_only?: boolean
           color?: string
           created_at?: string | null
           id?: string
@@ -5037,6 +4046,7 @@ export type Database = {
           updated_at?: string | null
         }
         Update: {
+          admin_only?: boolean
           color?: string
           created_at?: string | null
           id?: string
@@ -5100,6 +4110,503 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      orgflow_audit_log: {
+        Row: {
+          action: string
+          actor_id: string | null
+          created_at: string
+          details: Json | null
+          entity_id: string | null
+          entity_type: string
+          id: string
+        }
+        Insert: {
+          action: string
+          actor_id?: string | null
+          created_at?: string
+          details?: Json | null
+          entity_id?: string | null
+          entity_type: string
+          id?: string
+        }
+        Update: {
+          action?: string
+          actor_id?: string | null
+          created_at?: string
+          details?: Json | null
+          entity_id?: string | null
+          entity_type?: string
+          id?: string
+        }
+        Relationships: []
+      }
+      orgflow_notifications: {
+        Row: {
+          body: string | null
+          created_at: string
+          entity_id: string | null
+          id: string
+          link: string | null
+          read_at: string | null
+          title: string
+          type: string
+          user_id: string
+        }
+        Insert: {
+          body?: string | null
+          created_at?: string
+          entity_id?: string | null
+          id?: string
+          link?: string | null
+          read_at?: string | null
+          title: string
+          type: string
+          user_id: string
+        }
+        Update: {
+          body?: string | null
+          created_at?: string
+          entity_id?: string | null
+          id?: string
+          link?: string | null
+          read_at?: string | null
+          title?: string
+          type?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      orgflow_person_private_details: {
+        Row: {
+          address: string | null
+          birth_date: string | null
+          certifications: Json
+          city: string | null
+          contract_url: string | null
+          cpf: string | null
+          created_at: string
+          emergency_contact_name: string | null
+          emergency_contact_phone: string | null
+          languages: Json
+          notes: string | null
+          personal_email: string | null
+          phone: string | null
+          postal_code: string | null
+          profile_id: string
+          rg: string | null
+          shirt_size: string | null
+          start_date: string | null
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          address?: string | null
+          birth_date?: string | null
+          certifications?: Json
+          city?: string | null
+          contract_url?: string | null
+          cpf?: string | null
+          created_at?: string
+          emergency_contact_name?: string | null
+          emergency_contact_phone?: string | null
+          languages?: Json
+          notes?: string | null
+          personal_email?: string | null
+          phone?: string | null
+          postal_code?: string | null
+          profile_id: string
+          rg?: string | null
+          shirt_size?: string | null
+          start_date?: string | null
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          address?: string | null
+          birth_date?: string | null
+          certifications?: Json
+          city?: string | null
+          contract_url?: string | null
+          cpf?: string | null
+          created_at?: string
+          emergency_contact_name?: string | null
+          emergency_contact_phone?: string | null
+          languages?: Json
+          notes?: string | null
+          personal_email?: string | null
+          phone?: string | null
+          postal_code?: string | null
+          profile_id?: string
+          rg?: string | null
+          shirt_size?: string | null
+          start_date?: string | null
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: []
+      }
+      orgflow_policies: {
+        Row: {
+          category: Database["public"]["Enums"]["orgflow_policy_category"]
+          content_md: string | null
+          created_at: string
+          created_by: string | null
+          drive_url: string | null
+          id: string
+          is_archived: boolean
+          organization_id: string
+          summary: string | null
+          tags: string[]
+          title: string
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          category: Database["public"]["Enums"]["orgflow_policy_category"]
+          content_md?: string | null
+          created_at?: string
+          created_by?: string | null
+          drive_url?: string | null
+          id?: string
+          is_archived?: boolean
+          organization_id: string
+          summary?: string | null
+          tags?: string[]
+          title: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          category?: Database["public"]["Enums"]["orgflow_policy_category"]
+          content_md?: string | null
+          created_at?: string
+          created_by?: string | null
+          drive_url?: string | null
+          id?: string
+          is_archived?: boolean
+          organization_id?: string
+          summary?: string | null
+          tags?: string[]
+          title?: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: []
+      }
+      orgflow_policy_attachments: {
+        Row: {
+          file_name: string
+          file_path: string
+          id: string
+          mime: string | null
+          policy_id: string
+          size_bytes: number | null
+          uploaded_at: string
+          uploaded_by: string | null
+        }
+        Insert: {
+          file_name: string
+          file_path: string
+          id?: string
+          mime?: string | null
+          policy_id: string
+          size_bytes?: number | null
+          uploaded_at?: string
+          uploaded_by?: string | null
+        }
+        Update: {
+          file_name?: string
+          file_path?: string
+          id?: string
+          mime?: string | null
+          policy_id?: string
+          size_bytes?: number | null
+          uploaded_at?: string
+          uploaded_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "orgflow_policy_attachments_policy_id_fkey"
+            columns: ["policy_id"]
+            isOneToOne: false
+            referencedRelation: "orgflow_policies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      orgflow_policy_exclusion_tags: {
+        Row: {
+          created_at: string
+          policy_id: string
+          tag_id: string
+        }
+        Insert: {
+          created_at?: string
+          policy_id: string
+          tag_id: string
+        }
+        Update: {
+          created_at?: string
+          policy_id?: string
+          tag_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "orgflow_policy_exclusion_tags_policy_id_fkey"
+            columns: ["policy_id"]
+            isOneToOne: false
+            referencedRelation: "orgflow_policies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "orgflow_policy_exclusion_tags_tag_id_fkey"
+            columns: ["tag_id"]
+            isOneToOne: false
+            referencedRelation: "organization_tags"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      orgflow_policy_visibility_tags: {
+        Row: {
+          created_at: string
+          id: string
+          policy_id: string
+          tag_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          policy_id: string
+          tag_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          policy_id?: string
+          tag_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "orgflow_policy_visibility_tags_policy_id_fkey"
+            columns: ["policy_id"]
+            isOneToOne: false
+            referencedRelation: "orgflow_policies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "orgflow_policy_visibility_tags_tag_id_fkey"
+            columns: ["tag_id"]
+            isOneToOne: false
+            referencedRelation: "organization_tags"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      orgflow_post_comments: {
+        Row: {
+          author_id: string
+          body: string
+          created_at: string
+          id: string
+          post_id: string
+          updated_at: string
+        }
+        Insert: {
+          author_id: string
+          body: string
+          created_at?: string
+          id?: string
+          post_id: string
+          updated_at?: string
+        }
+        Update: {
+          author_id?: string
+          body?: string
+          created_at?: string
+          id?: string
+          post_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "orgflow_post_comments_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "orgflow_posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      orgflow_post_exclusion_tags: {
+        Row: {
+          created_at: string
+          post_id: string
+          tag_id: string
+        }
+        Insert: {
+          created_at?: string
+          post_id: string
+          tag_id: string
+        }
+        Update: {
+          created_at?: string
+          post_id?: string
+          tag_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "orgflow_post_exclusion_tags_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "orgflow_posts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "orgflow_post_exclusion_tags_tag_id_fkey"
+            columns: ["tag_id"]
+            isOneToOne: false
+            referencedRelation: "organization_tags"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      orgflow_post_reactions: {
+        Row: {
+          created_at: string
+          post_id: string
+          reaction: Database["public"]["Enums"]["orgflow_reaction_type"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          post_id: string
+          reaction: Database["public"]["Enums"]["orgflow_reaction_type"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          post_id?: string
+          reaction?: Database["public"]["Enums"]["orgflow_reaction_type"]
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "orgflow_post_reactions_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "orgflow_posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      orgflow_post_visibility: {
+        Row: {
+          post_id: string
+          tag_id: string
+        }
+        Insert: {
+          post_id: string
+          tag_id: string
+        }
+        Update: {
+          post_id?: string
+          tag_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "orgflow_post_visibility_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "orgflow_posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      orgflow_posts: {
+        Row: {
+          approved_at: string | null
+          approved_by: string | null
+          author_id: string
+          created_at: string
+          id: string
+          image_path: string | null
+          image_url: string | null
+          link_url: string | null
+          message: string
+          organization_id: string
+          published_at: string | null
+          rejection_reason: string | null
+          status: Database["public"]["Enums"]["orgflow_post_status"]
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          approved_at?: string | null
+          approved_by?: string | null
+          author_id: string
+          created_at?: string
+          id?: string
+          image_path?: string | null
+          image_url?: string | null
+          link_url?: string | null
+          message: string
+          organization_id: string
+          published_at?: string | null
+          rejection_reason?: string | null
+          status?: Database["public"]["Enums"]["orgflow_post_status"]
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          approved_at?: string | null
+          approved_by?: string | null
+          author_id?: string
+          created_at?: string
+          id?: string
+          image_path?: string | null
+          image_url?: string | null
+          link_url?: string | null
+          message?: string
+          organization_id?: string
+          published_at?: string | null
+          rejection_reason?: string | null
+          status?: Database["public"]["Enums"]["orgflow_post_status"]
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      orgflow_user_status: {
+        Row: {
+          created_at: string
+          id: string
+          is_admin: boolean
+          organization_id: string
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_admin?: boolean
+          organization_id: string
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_admin?: boolean
+          organization_id?: string
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
       }
       profiles: {
         Row: {
@@ -6025,27 +5532,34 @@ export type Database = {
       }
       siteK21_career_goal_courses: {
         Row: {
-          course_name: string
+          course_id: string
           created_at: string
           goal_id: string
           id: string
           sort_order: number
         }
         Insert: {
-          course_name: string
+          course_id: string
           created_at?: string
           goal_id: string
           id?: string
           sort_order?: number
         }
         Update: {
-          course_name?: string
+          course_id?: string
           created_at?: string
           goal_id?: string
           id?: string
           sort_order?: number
         }
         Relationships: [
+          {
+            foreignKeyName: "sitek21_career_goal_courses_course_id_fkey"
+            columns: ["course_id"]
+            isOneToOne: false
+            referencedRelation: "siteK21_courses"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "siteK21_career_goal_courses_goal_id_fkey"
             columns: ["goal_id"]
@@ -6084,7 +5598,7 @@ export type Database = {
       }
       siteK21_career_level_goal_courses: {
         Row: {
-          course_name: string
+          course_id: string
           created_at: string
           goal_id: string
           id: string
@@ -6092,7 +5606,7 @@ export type Database = {
           sort_order: number
         }
         Insert: {
-          course_name: string
+          course_id: string
           created_at?: string
           goal_id: string
           id?: string
@@ -6100,7 +5614,7 @@ export type Database = {
           sort_order?: number
         }
         Update: {
-          course_name?: string
+          course_id?: string
           created_at?: string
           goal_id?: string
           id?: string
@@ -6108,6 +5622,13 @@ export type Database = {
           sort_order?: number
         }
         Relationships: [
+          {
+            foreignKeyName: "sitek21_career_level_goal_courses_course_id_fkey"
+            columns: ["course_id"]
+            isOneToOne: false
+            referencedRelation: "siteK21_courses"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "siteK21_career_level_goal_courses_goal_id_fkey"
             columns: ["goal_id"]
@@ -6156,6 +5677,7 @@ export type Database = {
       }
       siteK21_categories: {
         Row: {
+          color: string
           created_at: string
           id: string
           is_active: boolean | null
@@ -6164,6 +5686,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          color?: string
           created_at?: string
           id?: string
           is_active?: boolean | null
@@ -6172,6 +5695,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          color?: string
           created_at?: string
           id?: string
           is_active?: boolean | null
@@ -6247,6 +5771,7 @@ export type Database = {
           coruja_id: string | null
           coruja_type: string
           created_at: string
+          credential_validity: string | null
           description: string | null
           duration: string | null
           faq: Json | null
@@ -6256,9 +5781,13 @@ export type Database = {
           is_active: boolean
           is_combo: boolean
           is_on_demand: boolean
+          language: string | null
           modality: string | null
           original_price: string | null
+          prerequisites: string | null
           price: string | null
+          seo_description: string | null
+          seo_title: string | null
           short_description: string | null
           short_title: string | null
           slug: string
@@ -6266,9 +5795,11 @@ export type Database = {
           students: string | null
           syllabus: Json | null
           syllabus_intro: string | null
+          target_audience: string | null
           title: string
           updated_at: string
           video_url: string | null
+          whats_included: string | null
         }
         Insert: {
           category?: string | null
@@ -6277,6 +5808,7 @@ export type Database = {
           coruja_id?: string | null
           coruja_type?: string
           created_at?: string
+          credential_validity?: string | null
           description?: string | null
           duration?: string | null
           faq?: Json | null
@@ -6286,9 +5818,13 @@ export type Database = {
           is_active?: boolean
           is_combo?: boolean
           is_on_demand?: boolean
+          language?: string | null
           modality?: string | null
           original_price?: string | null
+          prerequisites?: string | null
           price?: string | null
+          seo_description?: string | null
+          seo_title?: string | null
           short_description?: string | null
           short_title?: string | null
           slug: string
@@ -6296,9 +5832,11 @@ export type Database = {
           students?: string | null
           syllabus?: Json | null
           syllabus_intro?: string | null
+          target_audience?: string | null
           title: string
           updated_at?: string
           video_url?: string | null
+          whats_included?: string | null
         }
         Update: {
           category?: string | null
@@ -6307,6 +5845,7 @@ export type Database = {
           coruja_id?: string | null
           coruja_type?: string
           created_at?: string
+          credential_validity?: string | null
           description?: string | null
           duration?: string | null
           faq?: Json | null
@@ -6316,9 +5855,13 @@ export type Database = {
           is_active?: boolean
           is_combo?: boolean
           is_on_demand?: boolean
+          language?: string | null
           modality?: string | null
           original_price?: string | null
+          prerequisites?: string | null
           price?: string | null
+          seo_description?: string | null
+          seo_title?: string | null
           short_description?: string | null
           short_title?: string | null
           slug?: string
@@ -6326,9 +5869,11 @@ export type Database = {
           students?: string | null
           syllabus?: Json | null
           syllabus_intro?: string | null
+          target_audience?: string | null
           title?: string
           updated_at?: string
           video_url?: string | null
+          whats_included?: string | null
         }
         Relationships: []
       }
@@ -6472,6 +6017,75 @@ export type Database = {
         }
         Relationships: []
       }
+      siteK21_podcast_episodes: {
+        Row: {
+          audio_length: number | null
+          audio_url: string
+          created_at: string
+          description: string | null
+          duration: string | null
+          episode_link: string | null
+          episode_number: number | null
+          episode_type: string | null
+          guid: string
+          id: string
+          image_url: string | null
+          is_published: boolean
+          pub_date: string
+          season: number | null
+          slug: string
+          summary: string | null
+          tags: string[]
+          title: string
+          transcript: string | null
+          updated_at: string
+        }
+        Insert: {
+          audio_length?: number | null
+          audio_url: string
+          created_at?: string
+          description?: string | null
+          duration?: string | null
+          episode_link?: string | null
+          episode_number?: number | null
+          episode_type?: string | null
+          guid: string
+          id?: string
+          image_url?: string | null
+          is_published?: boolean
+          pub_date: string
+          season?: number | null
+          slug: string
+          summary?: string | null
+          tags?: string[]
+          title: string
+          transcript?: string | null
+          updated_at?: string
+        }
+        Update: {
+          audio_length?: number | null
+          audio_url?: string
+          created_at?: string
+          description?: string | null
+          duration?: string | null
+          episode_link?: string | null
+          episode_number?: number | null
+          episode_type?: string | null
+          guid?: string
+          id?: string
+          image_url?: string | null
+          is_published?: boolean
+          pub_date?: string
+          season?: number | null
+          slug?: string
+          summary?: string | null
+          tags?: string[]
+          title?: string
+          transcript?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       siteK21_promo_courses: {
         Row: {
           course_title: string
@@ -6502,8 +6116,81 @@ export type Database = {
         }
         Relationships: []
       }
+      siteK21_settings: {
+        Row: {
+          setting_key: string
+          setting_value: string | null
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          setting_key: string
+          setting_value?: string | null
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          setting_key?: string
+          setting_value?: string | null
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: []
+      }
+      siteK21_tag_blog_category_map: {
+        Row: {
+          created_at: string
+          tag_name: string
+          wp_category_id: number
+          wp_category_name: string
+          wp_category_slug: string
+        }
+        Insert: {
+          created_at?: string
+          tag_name: string
+          wp_category_id: number
+          wp_category_name: string
+          wp_category_slug: string
+        }
+        Update: {
+          created_at?: string
+          tag_name?: string
+          wp_category_id?: number
+          wp_category_name?: string
+          wp_category_slug?: string
+        }
+        Relationships: []
+      }
+      siteK21_tags: {
+        Row: {
+          created_at: string
+          id: string
+          is_active: boolean
+          name: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          name: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          name?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       siteK21_testimonials: {
         Row: {
+          company: string | null
           course_slug: string | null
           created_at: string
           id: string
@@ -6514,8 +6201,10 @@ export type Database = {
           role: string | null
           sort_order: number
           text: string
+          video_url: string | null
         }
         Insert: {
+          company?: string | null
           course_slug?: string | null
           created_at?: string
           id?: string
@@ -6526,8 +6215,10 @@ export type Database = {
           role?: string | null
           sort_order?: number
           text: string
+          video_url?: string | null
         }
         Update: {
+          company?: string | null
           course_slug?: string | null
           created_at?: string
           id?: string
@@ -6538,8 +6229,48 @@ export type Database = {
           role?: string | null
           sort_order?: number
           text?: string
+          video_url?: string | null
         }
         Relationships: []
+      }
+      siteK21_trainer_testimonials: {
+        Row: {
+          created_at: string
+          id: string
+          sort_order: number
+          testimonial_id: string
+          trainer_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          sort_order?: number
+          testimonial_id: string
+          trainer_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          sort_order?: number
+          testimonial_id?: string
+          trainer_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "siteK21_trainer_testimonials_testimonial_id_fkey"
+            columns: ["testimonial_id"]
+            isOneToOne: false
+            referencedRelation: "siteK21_testimonials"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "siteK21_trainer_testimonials_trainer_id_fkey"
+            columns: ["trainer_id"]
+            isOneToOne: false
+            referencedRelation: "siteK21_trainers"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       siteK21_trainers: {
         Row: {
@@ -6550,7 +6281,10 @@ export type Database = {
           id: string
           image: string
           is_active: boolean
+          linkedin_url: string | null
           name: string
+          seo_description: string | null
+          seo_title: string | null
           slug: string
           sort_order: number
           updated_at: string
@@ -6563,7 +6297,10 @@ export type Database = {
           id?: string
           image?: string
           is_active?: boolean
+          linkedin_url?: string | null
           name: string
+          seo_description?: string | null
+          seo_title?: string | null
           slug: string
           sort_order?: number
           updated_at?: string
@@ -6576,7 +6313,10 @@ export type Database = {
           id?: string
           image?: string
           is_active?: boolean
+          linkedin_url?: string | null
           name?: string
+          seo_description?: string | null
+          seo_title?: string | null
           slug?: string
           sort_order?: number
           updated_at?: string
@@ -6628,6 +6368,878 @@ export type Database = {
           },
         ]
       }
+      siteK21_videos: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          is_published: boolean
+          published_at: string | null
+          slug: string
+          sort_order: number
+          tags: string[]
+          title: string
+          transcript: string | null
+          updated_at: string
+          youtube_id: string
+          youtube_url: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_published?: boolean
+          published_at?: string | null
+          slug: string
+          sort_order?: number
+          tags?: string[]
+          title: string
+          transcript?: string | null
+          updated_at?: string
+          youtube_id: string
+          youtube_url: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_published?: boolean
+          published_at?: string | null
+          slug?: string
+          sort_order?: number
+          tags?: string[]
+          title?: string
+          transcript?: string | null
+          updated_at?: string
+          youtube_id?: string
+          youtube_url?: string
+        }
+        Relationships: []
+      }
+      siteNower_categories: {
+        Row: {
+          applies_to_consulting: boolean
+          applies_to_training: boolean
+          created_at: string
+          description: string | null
+          hero_image: string | null
+          id: string
+          is_active: boolean
+          name: string
+          slug: string
+          sort_order: number
+          tagline: string | null
+          tags: string[]
+          updated_at: string
+        }
+        Insert: {
+          applies_to_consulting?: boolean
+          applies_to_training?: boolean
+          created_at?: string
+          description?: string | null
+          hero_image?: string | null
+          id?: string
+          is_active?: boolean
+          name: string
+          slug: string
+          sort_order?: number
+          tagline?: string | null
+          tags?: string[]
+          updated_at?: string
+        }
+        Update: {
+          applies_to_consulting?: boolean
+          applies_to_training?: boolean
+          created_at?: string
+          description?: string | null
+          hero_image?: string | null
+          id?: string
+          is_active?: boolean
+          name?: string
+          slug?: string
+          sort_order?: number
+          tagline?: string | null
+          tags?: string[]
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      siteNower_consulting_benefits: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          service_id: string
+          sort_order: number
+          title: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          service_id: string
+          sort_order?: number
+          title: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          service_id?: string
+          sort_order?: number
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "siteNower_consulting_benefits_service_id_fkey"
+            columns: ["service_id"]
+            isOneToOne: false
+            referencedRelation: "siteNower_consulting_services"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      siteNower_consulting_clients: {
+        Row: {
+          created_at: string
+          id: string
+          logo_url: string
+          name: string
+          service_id: string
+          sort_order: number
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          logo_url: string
+          name?: string
+          service_id: string
+          sort_order?: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          logo_url?: string
+          name?: string
+          service_id?: string
+          sort_order?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "siteNower_consulting_clients_service_id_fkey"
+            columns: ["service_id"]
+            isOneToOne: false
+            referencedRelation: "siteNower_consulting_services"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      siteNower_consulting_contents: {
+        Row: {
+          content_type: string
+          created_at: string
+          description: string | null
+          id: string
+          service_id: string
+          sort_order: number
+          source_label: string | null
+          thumbnail_url: string | null
+          title: string
+          updated_at: string
+          url: string
+        }
+        Insert: {
+          content_type: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          service_id: string
+          sort_order?: number
+          source_label?: string | null
+          thumbnail_url?: string | null
+          title: string
+          updated_at?: string
+          url: string
+        }
+        Update: {
+          content_type?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          service_id?: string
+          sort_order?: number
+          source_label?: string | null
+          thumbnail_url?: string | null
+          title?: string
+          updated_at?: string
+          url?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "siteNower_consulting_contents_service_id_fkey"
+            columns: ["service_id"]
+            isOneToOne: false
+            referencedRelation: "siteNower_consulting_services"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      siteNower_consulting_faqs: {
+        Row: {
+          answer: string | null
+          created_at: string
+          id: string
+          question: string
+          service_id: string
+          sort_order: number
+        }
+        Insert: {
+          answer?: string | null
+          created_at?: string
+          id?: string
+          question: string
+          service_id: string
+          sort_order?: number
+        }
+        Update: {
+          answer?: string | null
+          created_at?: string
+          id?: string
+          question?: string
+          service_id?: string
+          sort_order?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "siteNower_consulting_faqs_service_id_fkey"
+            columns: ["service_id"]
+            isOneToOne: false
+            referencedRelation: "siteNower_consulting_services"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      siteNower_consulting_formats: {
+        Row: {
+          created_at: string
+          cta_href: string | null
+          cta_label: string | null
+          description: string | null
+          features: string[]
+          id: string
+          service_id: string
+          sort_order: number
+          title: string
+        }
+        Insert: {
+          created_at?: string
+          cta_href?: string | null
+          cta_label?: string | null
+          description?: string | null
+          features?: string[]
+          id?: string
+          service_id: string
+          sort_order?: number
+          title: string
+        }
+        Update: {
+          created_at?: string
+          cta_href?: string | null
+          cta_label?: string | null
+          description?: string | null
+          features?: string[]
+          id?: string
+          service_id?: string
+          sort_order?: number
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "siteNower_consulting_formats_service_id_fkey"
+            columns: ["service_id"]
+            isOneToOne: false
+            referencedRelation: "siteNower_consulting_services"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      siteNower_consulting_pillars: {
+        Row: {
+          created_at: string
+          description: string | null
+          icon: string | null
+          id: string
+          service_id: string
+          sort_order: number
+          title: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          icon?: string | null
+          id?: string
+          service_id: string
+          sort_order?: number
+          title: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          icon?: string | null
+          id?: string
+          service_id?: string
+          sort_order?: number
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "siteNower_consulting_pillars_service_id_fkey"
+            columns: ["service_id"]
+            isOneToOne: false
+            referencedRelation: "siteNower_consulting_services"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      siteNower_consulting_service_categories: {
+        Row: {
+          category_id: string
+          created_at: string
+          service_id: string
+          sort_order: number
+        }
+        Insert: {
+          category_id: string
+          created_at?: string
+          service_id: string
+          sort_order?: number
+        }
+        Update: {
+          category_id?: string
+          created_at?: string
+          service_id?: string
+          sort_order?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "siteNower_consulting_service_categories_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "siteNower_categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "siteNower_consulting_service_categories_service_id_fkey"
+            columns: ["service_id"]
+            isOneToOne: false
+            referencedRelation: "siteNower_consulting_services"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      siteNower_consulting_services: {
+        Row: {
+          benefits_title: string | null
+          contents_title: string | null
+          created_at: string
+          cta_final_subtitle: string | null
+          cta_final_title: string | null
+          definition_body: string | null
+          definition_eyebrow: string | null
+          definition_image_url: string | null
+          definition_title: string | null
+          faq_title: string | null
+          formats_title: string | null
+          hero_cta_primary_href: string | null
+          hero_cta_primary_label: string | null
+          hero_cta_secondary_href: string | null
+          hero_cta_secondary_label: string | null
+          hero_eyebrow: string | null
+          hero_headline: string | null
+          hero_headline_highlight: string | null
+          hero_image_url: string | null
+          hero_subheadline: string | null
+          id: string
+          is_published: boolean
+          pillars_title: string | null
+          seo_description: string | null
+          seo_title: string | null
+          short_name: string | null
+          slug: string
+          sort_order: number
+          testimonials_title: string | null
+          timeline_title: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          benefits_title?: string | null
+          contents_title?: string | null
+          created_at?: string
+          cta_final_subtitle?: string | null
+          cta_final_title?: string | null
+          definition_body?: string | null
+          definition_eyebrow?: string | null
+          definition_image_url?: string | null
+          definition_title?: string | null
+          faq_title?: string | null
+          formats_title?: string | null
+          hero_cta_primary_href?: string | null
+          hero_cta_primary_label?: string | null
+          hero_cta_secondary_href?: string | null
+          hero_cta_secondary_label?: string | null
+          hero_eyebrow?: string | null
+          hero_headline?: string | null
+          hero_headline_highlight?: string | null
+          hero_image_url?: string | null
+          hero_subheadline?: string | null
+          id?: string
+          is_published?: boolean
+          pillars_title?: string | null
+          seo_description?: string | null
+          seo_title?: string | null
+          short_name?: string | null
+          slug: string
+          sort_order?: number
+          testimonials_title?: string | null
+          timeline_title?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          benefits_title?: string | null
+          contents_title?: string | null
+          created_at?: string
+          cta_final_subtitle?: string | null
+          cta_final_title?: string | null
+          definition_body?: string | null
+          definition_eyebrow?: string | null
+          definition_image_url?: string | null
+          definition_title?: string | null
+          faq_title?: string | null
+          formats_title?: string | null
+          hero_cta_primary_href?: string | null
+          hero_cta_primary_label?: string | null
+          hero_cta_secondary_href?: string | null
+          hero_cta_secondary_label?: string | null
+          hero_eyebrow?: string | null
+          hero_headline?: string | null
+          hero_headline_highlight?: string | null
+          hero_image_url?: string | null
+          hero_subheadline?: string | null
+          id?: string
+          is_published?: boolean
+          pillars_title?: string | null
+          seo_description?: string | null
+          seo_title?: string | null
+          short_name?: string | null
+          slug?: string
+          sort_order?: number
+          testimonials_title?: string | null
+          timeline_title?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      siteNower_consulting_testimonials: {
+        Row: {
+          author: string | null
+          created_at: string
+          id: string
+          quote: string
+          role: string | null
+          service_id: string
+          sort_order: number
+        }
+        Insert: {
+          author?: string | null
+          created_at?: string
+          id?: string
+          quote: string
+          role?: string | null
+          service_id: string
+          sort_order?: number
+        }
+        Update: {
+          author?: string | null
+          created_at?: string
+          id?: string
+          quote?: string
+          role?: string | null
+          service_id?: string
+          sort_order?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "siteNower_consulting_testimonials_service_id_fkey"
+            columns: ["service_id"]
+            isOneToOne: false
+            referencedRelation: "siteNower_consulting_services"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      siteNower_consulting_timeline: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          period: string | null
+          phase_label: string | null
+          service_id: string
+          sort_order: number
+          title: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          period?: string | null
+          phase_label?: string | null
+          service_id: string
+          sort_order?: number
+          title: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          period?: string | null
+          phase_label?: string | null
+          service_id?: string
+          sort_order?: number
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "siteNower_consulting_timeline_service_id_fkey"
+            columns: ["service_id"]
+            isOneToOne: false
+            referencedRelation: "siteNower_consulting_services"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      siteNower_modules: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          sort_order: number
+          title: string
+          training_id: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          sort_order?: number
+          title: string
+          training_id: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          sort_order?: number
+          title?: string
+          training_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "siteNower_modules_training_id_fkey"
+            columns: ["training_id"]
+            isOneToOne: false
+            referencedRelation: "siteNower_trainings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      siteNower_testimonials: {
+        Row: {
+          author_avatar: string | null
+          author_name: string
+          author_role: string | null
+          created_at: string
+          id: string
+          is_active: boolean
+          quote: string
+          rating: number | null
+          sort_order: number
+          training_id: string | null
+        }
+        Insert: {
+          author_avatar?: string | null
+          author_name: string
+          author_role?: string | null
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          quote: string
+          rating?: number | null
+          sort_order?: number
+          training_id?: string | null
+        }
+        Update: {
+          author_avatar?: string | null
+          author_name?: string
+          author_role?: string | null
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          quote?: string
+          rating?: number | null
+          sort_order?: number
+          training_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "siteNower_testimonials_training_id_fkey"
+            columns: ["training_id"]
+            isOneToOne: false
+            referencedRelation: "siteNower_trainings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      siteNower_trainers: {
+        Row: {
+          badges: string[] | null
+          bio: string | null
+          created_at: string
+          email: string | null
+          id: string
+          image: string | null
+          is_active: boolean
+          linkedin_url: string | null
+          name: string
+          role: string | null
+          slug: string | null
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          badges?: string[] | null
+          bio?: string | null
+          created_at?: string
+          email?: string | null
+          id?: string
+          image?: string | null
+          is_active?: boolean
+          linkedin_url?: string | null
+          name: string
+          role?: string | null
+          slug?: string | null
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          badges?: string[] | null
+          bio?: string | null
+          created_at?: string
+          email?: string | null
+          id?: string
+          image?: string | null
+          is_active?: boolean
+          linkedin_url?: string | null
+          name?: string
+          role?: string | null
+          slug?: string | null
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      siteNower_training_categories: {
+        Row: {
+          category_id: string
+          sort_order: number
+          training_id: string
+        }
+        Insert: {
+          category_id: string
+          sort_order?: number
+          training_id: string
+        }
+        Update: {
+          category_id?: string
+          sort_order?: number
+          training_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "siteNower_training_categories_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "siteNower_categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "siteNower_training_categories_training_id_fkey"
+            columns: ["training_id"]
+            isOneToOne: false
+            referencedRelation: "siteNower_trainings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      siteNower_training_trainers: {
+        Row: {
+          sort_order: number
+          trainer_id: string
+          training_id: string
+        }
+        Insert: {
+          sort_order?: number
+          trainer_id: string
+          training_id: string
+        }
+        Update: {
+          sort_order?: number
+          trainer_id?: string
+          training_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "siteNower_training_trainers_trainer_id_fkey"
+            columns: ["trainer_id"]
+            isOneToOne: false
+            referencedRelation: "siteNower_trainers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "siteNower_training_trainers_training_id_fkey"
+            columns: ["training_id"]
+            isOneToOne: false
+            referencedRelation: "siteNower_trainings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      siteNower_trainings: {
+        Row: {
+          benefits: Json
+          challenges: Json | null
+          competencias: string[] | null
+          created_at: string
+          description: string | null
+          duration_text: string | null
+          ementa_url: string | null
+          faq: Json | null
+          faqs: Json
+          format_text: string | null
+          formats: string[] | null
+          hero_badge: string | null
+          hero_image: string | null
+          id: string
+          is_published: boolean
+          objectives: string[] | null
+          seo_description: string | null
+          seo_title: string | null
+          slug: string
+          solution_text: string | null
+          sort_order: number
+          subtitle: string | null
+          tagline: string | null
+          tags: string[] | null
+          target_audience: Json | null
+          target_audience_description: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          benefits?: Json
+          challenges?: Json | null
+          competencias?: string[] | null
+          created_at?: string
+          description?: string | null
+          duration_text?: string | null
+          ementa_url?: string | null
+          faq?: Json | null
+          faqs?: Json
+          format_text?: string | null
+          formats?: string[] | null
+          hero_badge?: string | null
+          hero_image?: string | null
+          id?: string
+          is_published?: boolean
+          objectives?: string[] | null
+          seo_description?: string | null
+          seo_title?: string | null
+          slug: string
+          solution_text?: string | null
+          sort_order?: number
+          subtitle?: string | null
+          tagline?: string | null
+          tags?: string[] | null
+          target_audience?: Json | null
+          target_audience_description?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          benefits?: Json
+          challenges?: Json | null
+          competencias?: string[] | null
+          created_at?: string
+          description?: string | null
+          duration_text?: string | null
+          ementa_url?: string | null
+          faq?: Json | null
+          faqs?: Json
+          format_text?: string | null
+          formats?: string[] | null
+          hero_badge?: string | null
+          hero_image?: string | null
+          id?: string
+          is_published?: boolean
+          objectives?: string[] | null
+          seo_description?: string | null
+          seo_title?: string | null
+          slug?: string
+          solution_text?: string | null
+          sort_order?: number
+          subtitle?: string | null
+          tagline?: string | null
+          tags?: string[] | null
+          target_audience?: Json | null
+          target_audience_description?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      siteNower_user_status: {
+        Row: {
+          created_at: string
+          granted_at: string
+          granted_by: string | null
+          id: string
+          is_active: boolean
+          role: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          granted_at?: string
+          granted_by?: string | null
+          id?: string
+          is_active?: boolean
+          role?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          granted_at?: string
+          granted_by?: string | null
+          id?: string
+          is_active?: boolean
+          role?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       subscriptions: {
         Row: {
           created_at: string | null
@@ -6669,6 +7281,1797 @@ export type Database = {
             columns: ["workspace_id"]
             isOneToOne: false
             referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      Tatu_chatbot_flows: {
+        Row: {
+          created_at: string
+          created_by: string
+          description: string | null
+          entry_node_id: string | null
+          id: string
+          is_active: boolean
+          is_initial: boolean
+          name: string
+          retrigger_idle_minutes: number | null
+          retrigger_mode: string
+          updated_at: string
+          workspace_id: string
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          description?: string | null
+          entry_node_id?: string | null
+          id?: string
+          is_active?: boolean
+          is_initial?: boolean
+          name: string
+          retrigger_idle_minutes?: number | null
+          retrigger_mode?: string
+          updated_at?: string
+          workspace_id: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          description?: string | null
+          entry_node_id?: string | null
+          id?: string
+          is_active?: boolean
+          is_initial?: boolean
+          name?: string
+          retrigger_idle_minutes?: number | null
+          retrigger_mode?: string
+          updated_at?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ellie_chatbot_flows_entry_node_fk"
+            columns: ["entry_node_id"]
+            isOneToOne: false
+            referencedRelation: "Tatu_chatbot_nodes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "Ellie_chatbot_flows_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "Tatu_workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      Tatu_chatbot_nodes: {
+        Row: {
+          content: Json
+          created_at: string
+          flow_id: string
+          id: string
+          position: number
+          type: string
+          updated_at: string
+        }
+        Insert: {
+          content?: Json
+          created_at?: string
+          flow_id: string
+          id?: string
+          position?: number
+          type: string
+          updated_at?: string
+        }
+        Update: {
+          content?: Json
+          created_at?: string
+          flow_id?: string
+          id?: string
+          position?: number
+          type?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "Ellie_chatbot_nodes_flow_id_fkey"
+            columns: ["flow_id"]
+            isOneToOne: false
+            referencedRelation: "Tatu_chatbot_flows"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      Tatu_chatbot_sessions: {
+        Row: {
+          completed_at: string | null
+          context: Json
+          conversation_id: string
+          current_node_id: string | null
+          flow_id: string
+          id: string
+          started_at: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          completed_at?: string | null
+          context?: Json
+          conversation_id: string
+          current_node_id?: string | null
+          flow_id: string
+          id?: string
+          started_at?: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          completed_at?: string | null
+          context?: Json
+          conversation_id?: string
+          current_node_id?: string | null
+          flow_id?: string
+          id?: string
+          started_at?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "Ellie_chatbot_sessions_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: true
+            referencedRelation: "Tatu_conversations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "Ellie_chatbot_sessions_current_node_id_fkey"
+            columns: ["current_node_id"]
+            isOneToOne: false
+            referencedRelation: "Tatu_chatbot_nodes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "Ellie_chatbot_sessions_flow_id_fkey"
+            columns: ["flow_id"]
+            isOneToOne: false
+            referencedRelation: "Tatu_chatbot_flows"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      Tatu_conversa_operators: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["tatu_conversa_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["tatu_conversa_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["tatu_conversa_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
+      Tatu_conversations: {
+        Row: {
+          active_flow_id: string | null
+          assigned_at: string | null
+          assigned_to: string | null
+          bot_status: string
+          contact_name: string | null
+          contact_phone: string
+          created_at: string
+          id: string
+          last_message_at: string
+          lead_id: string | null
+          origin_attributed_at: string | null
+          queue_key: string | null
+          sector_id: string | null
+          status: string
+          tracking_link_id: string | null
+          updated_at: string
+          utm_campaign: string | null
+          utm_content: string | null
+          utm_medium: string | null
+          utm_source: string | null
+          utm_term: string | null
+          workspace_id: string | null
+        }
+        Insert: {
+          active_flow_id?: string | null
+          assigned_at?: string | null
+          assigned_to?: string | null
+          bot_status?: string
+          contact_name?: string | null
+          contact_phone: string
+          created_at?: string
+          id?: string
+          last_message_at?: string
+          lead_id?: string | null
+          origin_attributed_at?: string | null
+          queue_key?: string | null
+          sector_id?: string | null
+          status?: string
+          tracking_link_id?: string | null
+          updated_at?: string
+          utm_campaign?: string | null
+          utm_content?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+          utm_term?: string | null
+          workspace_id?: string | null
+        }
+        Update: {
+          active_flow_id?: string | null
+          assigned_at?: string | null
+          assigned_to?: string | null
+          bot_status?: string
+          contact_name?: string | null
+          contact_phone?: string
+          created_at?: string
+          id?: string
+          last_message_at?: string
+          lead_id?: string | null
+          origin_attributed_at?: string | null
+          queue_key?: string | null
+          sector_id?: string | null
+          status?: string
+          tracking_link_id?: string | null
+          updated_at?: string
+          utm_campaign?: string | null
+          utm_content?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+          utm_term?: string | null
+          workspace_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "Ellie_conversations_active_flow_id_fkey"
+            columns: ["active_flow_id"]
+            isOneToOne: false
+            referencedRelation: "Tatu_chatbot_flows"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "Ellie_conversations_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "Tatu_leads"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "Ellie_conversations_sector_id_fkey"
+            columns: ["sector_id"]
+            isOneToOne: false
+            referencedRelation: "Tatu_sectors"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "Ellie_conversations_tracking_link_id_fkey"
+            columns: ["tracking_link_id"]
+            isOneToOne: false
+            referencedRelation: "Tatu_tracking_links"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "Ellie_conversations_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "Tatu_workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      Tatu_courses: {
+        Row: {
+          created_at: string
+          duration: string | null
+          id: string
+          is_active: boolean
+          name: string
+          organization_id: string
+          price: number
+        }
+        Insert: {
+          created_at?: string
+          duration?: string | null
+          id?: string
+          is_active?: boolean
+          name: string
+          organization_id: string
+          price?: number
+        }
+        Update: {
+          created_at?: string
+          duration?: string | null
+          id?: string
+          is_active?: boolean
+          name?: string
+          organization_id?: string
+          price?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "Ellie_courses_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      Tatu_lead_interests: {
+        Row: {
+          course_id: string | null
+          created_at: string
+          discount: number
+          id: string
+          interest: string
+          lead_id: string
+          quantity: number
+        }
+        Insert: {
+          course_id?: string | null
+          created_at?: string
+          discount?: number
+          id?: string
+          interest: string
+          lead_id: string
+          quantity?: number
+        }
+        Update: {
+          course_id?: string | null
+          created_at?: string
+          discount?: number
+          id?: string
+          interest?: string
+          lead_id?: string
+          quantity?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "Ellie_lead_interests_course_id_fkey"
+            columns: ["course_id"]
+            isOneToOne: false
+            referencedRelation: "Tatu_courses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "Ellie_lead_interests_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "Tatu_leads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      Tatu_lead_notes: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          lead_id: string
+          user_id: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          id?: string
+          lead_id: string
+          user_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          lead_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "Ellie_lead_notes_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "Tatu_leads"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "Ellie_lead_notes_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      Tatu_lead_rd_tags: {
+        Row: {
+          created_at: string
+          id: string
+          lead_id: string
+          tag: string
+          workspace_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          lead_id: string
+          tag: string
+          workspace_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          lead_id?: string
+          tag?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "Tatu_lead_rd_tags_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "Tatu_leads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      Tatu_lead_stage_history: {
+        Row: {
+          from_stage: Database["public"]["Enums"]["tatu_lead_stage"] | null
+          id: string
+          lead_id: string
+          moved_at: string
+          moved_by: string
+          notes: string | null
+          to_stage: Database["public"]["Enums"]["tatu_lead_stage"]
+        }
+        Insert: {
+          from_stage?: Database["public"]["Enums"]["tatu_lead_stage"] | null
+          id?: string
+          lead_id: string
+          moved_at?: string
+          moved_by: string
+          notes?: string | null
+          to_stage: Database["public"]["Enums"]["tatu_lead_stage"]
+        }
+        Update: {
+          from_stage?: Database["public"]["Enums"]["tatu_lead_stage"] | null
+          id?: string
+          lead_id?: string
+          moved_at?: string
+          moved_by?: string
+          notes?: string | null
+          to_stage?: Database["public"]["Enums"]["tatu_lead_stage"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "Ellie_lead_stage_history_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "Tatu_leads"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "Ellie_lead_stage_history_moved_by_fkey"
+            columns: ["moved_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      Tatu_lead_tags: {
+        Row: {
+          created_at: string
+          id: string
+          lead_id: string
+          source: string
+          tag: string
+          tag_id: string | null
+          workspace_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          lead_id: string
+          source?: string
+          tag: string
+          tag_id?: string | null
+          workspace_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          lead_id?: string
+          source?: string
+          tag?: string
+          tag_id?: string | null
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "Ellie_lead_tags_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "Tatu_leads"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "Ellie_lead_tags_tag_id_fkey"
+            columns: ["tag_id"]
+            isOneToOne: false
+            referencedRelation: "Tatu_workspace_tags"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "Ellie_lead_tags_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "Tatu_workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      Tatu_leads: {
+        Row: {
+          bio: string | null
+          city: string | null
+          closed_outcome: string | null
+          closed_value: number | null
+          cnpj: string | null
+          company: string | null
+          country: string | null
+          cpf: string | null
+          created_at: string
+          created_by: string
+          email: string
+          email_opt_in: boolean | null
+          email_opt_in_at: string | null
+          email_opt_in_legal_basis: string | null
+          email_opt_in_source: string | null
+          estimated_value: number | null
+          facebook_url: string | null
+          id: string
+          interest: Database["public"]["Enums"]["tatu_lead_interest"] | null
+          is_archived: boolean
+          job_title: string | null
+          last_contact_at: string | null
+          lead_score_interest: number | null
+          lead_score_profile: string | null
+          lead_scoring: string | null
+          linkedin_url: string | null
+          loss_reason: string | null
+          name: string
+          notes: string | null
+          origin: Database["public"]["Enums"]["tatu_lead_origin"] | null
+          phone: string | null
+          pipeline_active: boolean
+          rd_first_conversion_at: string | null
+          rd_first_origin: string | null
+          rd_funnel_stage: string | null
+          rd_imported_at: string | null
+          rd_last_conversion_at: string | null
+          rd_last_opportunity_at: string | null
+          rd_last_origin: string | null
+          rd_last_sale_at: string | null
+          rd_last_sale_value: number | null
+          rd_public_url: string | null
+          rd_total_conversions: number | null
+          responsible_user_id: string | null
+          stage: Database["public"]["Enums"]["tatu_lead_stage"]
+          state: string | null
+          tracking_link_id: string | null
+          twitter_url: string | null
+          type: Database["public"]["Enums"]["tatu_lead_type"]
+          updated_at: string
+          utm_campaign: string | null
+          utm_content: string | null
+          utm_medium: string | null
+          utm_source: string | null
+          utm_term: string | null
+          website_url: string | null
+          whatsapp_opt_in: boolean
+          whatsapp_opt_in_at: string | null
+          whatsapp_opt_in_source: string | null
+          workspace_id: string
+        }
+        Insert: {
+          bio?: string | null
+          city?: string | null
+          closed_outcome?: string | null
+          closed_value?: number | null
+          cnpj?: string | null
+          company?: string | null
+          country?: string | null
+          cpf?: string | null
+          created_at?: string
+          created_by: string
+          email: string
+          email_opt_in?: boolean | null
+          email_opt_in_at?: string | null
+          email_opt_in_legal_basis?: string | null
+          email_opt_in_source?: string | null
+          estimated_value?: number | null
+          facebook_url?: string | null
+          id?: string
+          interest?: Database["public"]["Enums"]["tatu_lead_interest"] | null
+          is_archived?: boolean
+          job_title?: string | null
+          last_contact_at?: string | null
+          lead_score_interest?: number | null
+          lead_score_profile?: string | null
+          lead_scoring?: string | null
+          linkedin_url?: string | null
+          loss_reason?: string | null
+          name: string
+          notes?: string | null
+          origin?: Database["public"]["Enums"]["tatu_lead_origin"] | null
+          phone?: string | null
+          pipeline_active?: boolean
+          rd_first_conversion_at?: string | null
+          rd_first_origin?: string | null
+          rd_funnel_stage?: string | null
+          rd_imported_at?: string | null
+          rd_last_conversion_at?: string | null
+          rd_last_opportunity_at?: string | null
+          rd_last_origin?: string | null
+          rd_last_sale_at?: string | null
+          rd_last_sale_value?: number | null
+          rd_public_url?: string | null
+          rd_total_conversions?: number | null
+          responsible_user_id?: string | null
+          stage?: Database["public"]["Enums"]["tatu_lead_stage"]
+          state?: string | null
+          tracking_link_id?: string | null
+          twitter_url?: string | null
+          type?: Database["public"]["Enums"]["tatu_lead_type"]
+          updated_at?: string
+          utm_campaign?: string | null
+          utm_content?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+          utm_term?: string | null
+          website_url?: string | null
+          whatsapp_opt_in?: boolean
+          whatsapp_opt_in_at?: string | null
+          whatsapp_opt_in_source?: string | null
+          workspace_id: string
+        }
+        Update: {
+          bio?: string | null
+          city?: string | null
+          closed_outcome?: string | null
+          closed_value?: number | null
+          cnpj?: string | null
+          company?: string | null
+          country?: string | null
+          cpf?: string | null
+          created_at?: string
+          created_by?: string
+          email?: string
+          email_opt_in?: boolean | null
+          email_opt_in_at?: string | null
+          email_opt_in_legal_basis?: string | null
+          email_opt_in_source?: string | null
+          estimated_value?: number | null
+          facebook_url?: string | null
+          id?: string
+          interest?: Database["public"]["Enums"]["tatu_lead_interest"] | null
+          is_archived?: boolean
+          job_title?: string | null
+          last_contact_at?: string | null
+          lead_score_interest?: number | null
+          lead_score_profile?: string | null
+          lead_scoring?: string | null
+          linkedin_url?: string | null
+          loss_reason?: string | null
+          name?: string
+          notes?: string | null
+          origin?: Database["public"]["Enums"]["tatu_lead_origin"] | null
+          phone?: string | null
+          pipeline_active?: boolean
+          rd_first_conversion_at?: string | null
+          rd_first_origin?: string | null
+          rd_funnel_stage?: string | null
+          rd_imported_at?: string | null
+          rd_last_conversion_at?: string | null
+          rd_last_opportunity_at?: string | null
+          rd_last_origin?: string | null
+          rd_last_sale_at?: string | null
+          rd_last_sale_value?: number | null
+          rd_public_url?: string | null
+          rd_total_conversions?: number | null
+          responsible_user_id?: string | null
+          stage?: Database["public"]["Enums"]["tatu_lead_stage"]
+          state?: string | null
+          tracking_link_id?: string | null
+          twitter_url?: string | null
+          type?: Database["public"]["Enums"]["tatu_lead_type"]
+          updated_at?: string
+          utm_campaign?: string | null
+          utm_content?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+          utm_term?: string | null
+          website_url?: string | null
+          whatsapp_opt_in?: boolean
+          whatsapp_opt_in_at?: string | null
+          whatsapp_opt_in_source?: string | null
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "Ellie_leads_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "Ellie_leads_responsible_user_id_fkey"
+            columns: ["responsible_user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "Ellie_leads_tracking_link_id_fkey"
+            columns: ["tracking_link_id"]
+            isOneToOne: false
+            referencedRelation: "Tatu_tracking_links"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "Ellie_leads_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "Tatu_workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      Tatu_message_templates: {
+        Row: {
+          category: string | null
+          components: Json | null
+          created_at: string
+          id: string
+          language: string
+          meta_template_id: string | null
+          name: string
+          status: string
+          updated_at: string
+          variable_mappings: Json
+        }
+        Insert: {
+          category?: string | null
+          components?: Json | null
+          created_at?: string
+          id?: string
+          language?: string
+          meta_template_id?: string | null
+          name: string
+          status?: string
+          updated_at?: string
+          variable_mappings?: Json
+        }
+        Update: {
+          category?: string | null
+          components?: Json | null
+          created_at?: string
+          id?: string
+          language?: string
+          meta_template_id?: string | null
+          name?: string
+          status?: string
+          updated_at?: string
+          variable_mappings?: Json
+        }
+        Relationships: []
+      }
+      Tatu_messages: {
+        Row: {
+          bot_flow_id: string | null
+          content: string
+          conversation_id: string
+          created_at: string
+          delivery_status: string
+          direction: string
+          error_details: Json | null
+          event_type: string | null
+          id: string
+          sent_by: string | null
+          sent_by_bot: boolean
+          status_updated_at: string | null
+          wamid: string | null
+        }
+        Insert: {
+          bot_flow_id?: string | null
+          content: string
+          conversation_id: string
+          created_at?: string
+          delivery_status?: string
+          direction: string
+          error_details?: Json | null
+          event_type?: string | null
+          id?: string
+          sent_by?: string | null
+          sent_by_bot?: boolean
+          status_updated_at?: string | null
+          wamid?: string | null
+        }
+        Update: {
+          bot_flow_id?: string | null
+          content?: string
+          conversation_id?: string
+          created_at?: string
+          delivery_status?: string
+          direction?: string
+          error_details?: Json | null
+          event_type?: string | null
+          id?: string
+          sent_by?: string | null
+          sent_by_bot?: boolean
+          status_updated_at?: string | null
+          wamid?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "Ellie_messages_bot_flow_id_fkey"
+            columns: ["bot_flow_id"]
+            isOneToOne: false
+            referencedRelation: "Tatu_chatbot_flows"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "Ellie_messages_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "Tatu_conversations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      Tatu_operator_sectors: {
+        Row: {
+          created_at: string
+          id: string
+          sector_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          sector_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          sector_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "Ellie_operator_sectors_sector_id_fkey"
+            columns: ["sector_id"]
+            isOneToOne: false
+            referencedRelation: "Tatu_sectors"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      Tatu_quick_messages: {
+        Row: {
+          body: string
+          created_at: string
+          created_by: string
+          id: string
+          is_shared: boolean
+          shortcut: string | null
+          title: string
+          updated_at: string
+          workspace_id: string
+        }
+        Insert: {
+          body: string
+          created_at?: string
+          created_by: string
+          id?: string
+          is_shared?: boolean
+          shortcut?: string | null
+          title: string
+          updated_at?: string
+          workspace_id: string
+        }
+        Update: {
+          body?: string
+          created_at?: string
+          created_by?: string
+          id?: string
+          is_shared?: boolean
+          shortcut?: string | null
+          title?: string
+          updated_at?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "Ellie_quick_messages_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "Tatu_workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      Tatu_rd_event_queue: {
+        Row: {
+          attempts: number
+          enqueued_at: string
+          id: string
+          last_error: string | null
+          lead_id: string | null
+          next_attempt_at: string
+          payload: Json
+          rd_event_type: string
+          rd_event_uuid: string | null
+          sent_at: string | null
+          status: string
+          workspace_id: string
+        }
+        Insert: {
+          attempts?: number
+          enqueued_at?: string
+          id?: string
+          last_error?: string | null
+          lead_id?: string | null
+          next_attempt_at?: string
+          payload: Json
+          rd_event_type: string
+          rd_event_uuid?: string | null
+          sent_at?: string | null
+          status?: string
+          workspace_id: string
+        }
+        Update: {
+          attempts?: number
+          enqueued_at?: string
+          id?: string
+          last_error?: string | null
+          lead_id?: string | null
+          next_attempt_at?: string
+          payload?: Json
+          rd_event_type?: string
+          rd_event_uuid?: string | null
+          sent_at?: string | null
+          status?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "Tatu_rd_event_queue_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "Tatu_leads"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "Tatu_rd_event_queue_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "Tatu_workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      Tatu_rd_imports: {
+        Row: {
+          created_at: string
+          created_by: string
+          created_count: number
+          error_count: number
+          errors: Json
+          filename: string | null
+          finished_at: string | null
+          id: string
+          processed_rows: number
+          skipped_count: number
+          started_at: string | null
+          status: string
+          total_rows: number
+          updated_at: string
+          updated_count: number
+          workspace_id: string
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          created_count?: number
+          error_count?: number
+          errors?: Json
+          filename?: string | null
+          finished_at?: string | null
+          id?: string
+          processed_rows?: number
+          skipped_count?: number
+          started_at?: string | null
+          status?: string
+          total_rows?: number
+          updated_at?: string
+          updated_count?: number
+          workspace_id: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          created_count?: number
+          error_count?: number
+          errors?: Json
+          filename?: string | null
+          finished_at?: string | null
+          id?: string
+          processed_rows?: number
+          skipped_count?: number
+          started_at?: string | null
+          status?: string
+          total_rows?: number
+          updated_at?: string
+          updated_count?: number
+          workspace_id?: string
+        }
+        Relationships: []
+      }
+      Tatu_rd_settings: {
+        Row: {
+          access_token: string | null
+          connected_at: string | null
+          created_at: string
+          default_responsible_id: string | null
+          enable_conversas_events: boolean
+          enable_pipeline_events: boolean
+          enable_web_events: boolean
+          is_active: boolean
+          last_test_at: string | null
+          last_test_message: string | null
+          last_test_ok: boolean | null
+          rd_account_name: string | null
+          refresh_token: string | null
+          token_expires_at: string | null
+          updated_at: string
+          workspace_id: string
+        }
+        Insert: {
+          access_token?: string | null
+          connected_at?: string | null
+          created_at?: string
+          default_responsible_id?: string | null
+          enable_conversas_events?: boolean
+          enable_pipeline_events?: boolean
+          enable_web_events?: boolean
+          is_active?: boolean
+          last_test_at?: string | null
+          last_test_message?: string | null
+          last_test_ok?: boolean | null
+          rd_account_name?: string | null
+          refresh_token?: string | null
+          token_expires_at?: string | null
+          updated_at?: string
+          workspace_id: string
+        }
+        Update: {
+          access_token?: string | null
+          connected_at?: string | null
+          created_at?: string
+          default_responsible_id?: string | null
+          enable_conversas_events?: boolean
+          enable_pipeline_events?: boolean
+          enable_web_events?: boolean
+          is_active?: boolean
+          last_test_at?: string | null
+          last_test_message?: string | null
+          last_test_ok?: boolean | null
+          rd_account_name?: string | null
+          refresh_token?: string | null
+          token_expires_at?: string | null
+          updated_at?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "Tatu_rd_settings_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: true
+            referencedRelation: "Tatu_workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      Tatu_sectors: {
+        Row: {
+          color: string
+          created_at: string
+          description: string | null
+          id: string
+          is_active: boolean
+          name: string
+          updated_at: string
+          workspace_id: string
+        }
+        Insert: {
+          color?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          name: string
+          updated_at?: string
+          workspace_id: string
+        }
+        Update: {
+          color?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          name?: string
+          updated_at?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "Ellie_sectors_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "Tatu_workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      Tatu_template_sends: {
+        Row: {
+          conversation_id: string | null
+          created_at: string
+          delivery_status: string | null
+          error_details: Json | null
+          id: string
+          sent_by: string | null
+          template_id: string | null
+          wamid: string | null
+        }
+        Insert: {
+          conversation_id?: string | null
+          created_at?: string
+          delivery_status?: string | null
+          error_details?: Json | null
+          id?: string
+          sent_by?: string | null
+          template_id?: string | null
+          wamid?: string | null
+        }
+        Update: {
+          conversation_id?: string | null
+          created_at?: string
+          delivery_status?: string | null
+          error_details?: Json | null
+          id?: string
+          sent_by?: string | null
+          template_id?: string | null
+          wamid?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "Ellie_template_sends_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "Tatu_conversations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "Ellie_template_sends_template_id_fkey"
+            columns: ["template_id"]
+            isOneToOne: false
+            referencedRelation: "Tatu_message_templates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      Tatu_tracking_link_clicks: {
+        Row: {
+          clicked_at: string
+          id: string
+          ip_hash: string | null
+          link_id: string
+          referer: string | null
+          user_agent: string | null
+        }
+        Insert: {
+          clicked_at?: string
+          id?: string
+          ip_hash?: string | null
+          link_id: string
+          referer?: string | null
+          user_agent?: string | null
+        }
+        Update: {
+          clicked_at?: string
+          id?: string
+          ip_hash?: string | null
+          link_id?: string
+          referer?: string | null
+          user_agent?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "Ellie_tracking_link_clicks_link_id_fkey"
+            columns: ["link_id"]
+            isOneToOne: false
+            referencedRelation: "Tatu_tracking_links"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      Tatu_tracking_links: {
+        Row: {
+          auto_generated: boolean
+          click_count: number
+          conversion_count: number
+          created_at: string
+          created_by: string | null
+          destination_phone: string
+          id: string
+          initial_message: string
+          is_active: boolean
+          name: string
+          new_contact_count: number
+          slug: string
+          updated_at: string
+          utm_campaign: string | null
+          utm_content: string | null
+          utm_medium: string | null
+          utm_source: string | null
+          utm_term: string | null
+          workspace_id: string
+        }
+        Insert: {
+          auto_generated?: boolean
+          click_count?: number
+          conversion_count?: number
+          created_at?: string
+          created_by?: string | null
+          destination_phone: string
+          id?: string
+          initial_message: string
+          is_active?: boolean
+          name: string
+          new_contact_count?: number
+          slug: string
+          updated_at?: string
+          utm_campaign?: string | null
+          utm_content?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+          utm_term?: string | null
+          workspace_id: string
+        }
+        Update: {
+          auto_generated?: boolean
+          click_count?: number
+          conversion_count?: number
+          created_at?: string
+          created_by?: string | null
+          destination_phone?: string
+          id?: string
+          initial_message?: string
+          is_active?: boolean
+          name?: string
+          new_contact_count?: number
+          slug?: string
+          updated_at?: string
+          utm_campaign?: string | null
+          utm_content?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+          utm_term?: string | null
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "Ellie_tracking_links_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "Tatu_workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      Tatu_user_status: {
+        Row: {
+          created_at: string
+          id: string
+          is_admin: boolean
+          last_accessed_at: string | null
+          organization_id: string
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_admin?: boolean
+          last_accessed_at?: string | null
+          organization_id: string
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_admin?: boolean
+          last_accessed_at?: string | null
+          organization_id?: string
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "Ellie_user_status_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "Ellie_user_status_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      Tatu_web_events: {
+        Row: {
+          created_at: string
+          id: string
+          lead_id: string | null
+          name: string | null
+          occurred_at: string
+          path: string | null
+          props: Json
+          source: string
+          type: string
+          visitor_id: string
+          workspace_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          lead_id?: string | null
+          name?: string | null
+          occurred_at?: string
+          path?: string | null
+          props?: Json
+          source?: string
+          type: string
+          visitor_id: string
+          workspace_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          lead_id?: string | null
+          name?: string | null
+          occurred_at?: string
+          path?: string | null
+          props?: Json
+          source?: string
+          type?: string
+          visitor_id?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "Tatu_web_events_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "Tatu_leads"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "Tatu_web_events_visitor_id_fkey"
+            columns: ["visitor_id"]
+            isOneToOne: false
+            referencedRelation: "Tatu_web_visitors"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "Tatu_web_events_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "Tatu_workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      Tatu_web_tracking_settings: {
+        Row: {
+          auto_create_leads_from_form: boolean
+          created_at: string
+          default_responsible_id: string | null
+          default_whatsapp_phone: string | null
+          updated_at: string
+          workspace_id: string
+        }
+        Insert: {
+          auto_create_leads_from_form?: boolean
+          created_at?: string
+          default_responsible_id?: string | null
+          default_whatsapp_phone?: string | null
+          updated_at?: string
+          workspace_id: string
+        }
+        Update: {
+          auto_create_leads_from_form?: boolean
+          created_at?: string
+          default_responsible_id?: string | null
+          default_whatsapp_phone?: string | null
+          updated_at?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "Tatu_web_tracking_settings_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: true
+            referencedRelation: "Tatu_workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      Tatu_web_visitors: {
+        Row: {
+          anon_id: string
+          created_at: string
+          first_landing_path: string | null
+          first_referrer: string | null
+          first_seen_at: string
+          first_utm_campaign: string | null
+          first_utm_content: string | null
+          first_utm_medium: string | null
+          first_utm_source: string | null
+          first_utm_term: string | null
+          id: string
+          last_seen_at: string
+          lead_id: string | null
+          updated_at: string
+          user_agent: string | null
+          workspace_id: string
+        }
+        Insert: {
+          anon_id: string
+          created_at?: string
+          first_landing_path?: string | null
+          first_referrer?: string | null
+          first_seen_at?: string
+          first_utm_campaign?: string | null
+          first_utm_content?: string | null
+          first_utm_medium?: string | null
+          first_utm_source?: string | null
+          first_utm_term?: string | null
+          id?: string
+          last_seen_at?: string
+          lead_id?: string | null
+          updated_at?: string
+          user_agent?: string | null
+          workspace_id: string
+        }
+        Update: {
+          anon_id?: string
+          created_at?: string
+          first_landing_path?: string | null
+          first_referrer?: string | null
+          first_seen_at?: string
+          first_utm_campaign?: string | null
+          first_utm_content?: string | null
+          first_utm_medium?: string | null
+          first_utm_source?: string | null
+          first_utm_term?: string | null
+          id?: string
+          last_seen_at?: string
+          lead_id?: string | null
+          updated_at?: string
+          user_agent?: string | null
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "Tatu_web_visitors_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "Tatu_leads"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "Tatu_web_visitors_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "Tatu_workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      Tatu_whatsapp_api_logs: {
+        Row: {
+          created_at: string
+          direction: string
+          endpoint: string
+          error_message: string | null
+          http_method: string | null
+          http_status: number | null
+          id: string
+          related_conversation_id: string | null
+          related_wamid: string | null
+          request_payload: Json | null
+          response_payload: Json | null
+          triggered_by: string | null
+        }
+        Insert: {
+          created_at?: string
+          direction: string
+          endpoint: string
+          error_message?: string | null
+          http_method?: string | null
+          http_status?: number | null
+          id?: string
+          related_conversation_id?: string | null
+          related_wamid?: string | null
+          request_payload?: Json | null
+          response_payload?: Json | null
+          triggered_by?: string | null
+        }
+        Update: {
+          created_at?: string
+          direction?: string
+          endpoint?: string
+          error_message?: string | null
+          http_method?: string | null
+          http_status?: number | null
+          id?: string
+          related_conversation_id?: string | null
+          related_wamid?: string | null
+          request_payload?: Json | null
+          response_payload?: Json | null
+          triggered_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "Ellie_whatsapp_api_logs_related_conversation_id_fkey"
+            columns: ["related_conversation_id"]
+            isOneToOne: false
+            referencedRelation: "Tatu_conversations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      Tatu_workspace_settings: {
+        Row: {
+          created_at: string
+          default_lead_origin: string
+          default_lead_owner_id: string | null
+          updated_at: string
+          workspace_id: string
+        }
+        Insert: {
+          created_at?: string
+          default_lead_origin?: string
+          default_lead_owner_id?: string | null
+          updated_at?: string
+          workspace_id: string
+        }
+        Update: {
+          created_at?: string
+          default_lead_origin?: string
+          default_lead_owner_id?: string | null
+          updated_at?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "Ellie_workspace_settings_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: true
+            referencedRelation: "Tatu_workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      Tatu_workspace_stages: {
+        Row: {
+          created_at: string
+          id: string
+          is_custom: boolean
+          is_visible: boolean
+          label: string | null
+          position: number
+          stage: string
+          workspace_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_custom?: boolean
+          is_visible?: boolean
+          label?: string | null
+          position?: number
+          stage: string
+          workspace_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_custom?: boolean
+          is_visible?: boolean
+          label?: string | null
+          position?: number
+          stage?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "Ellie_workspace_stages_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "Tatu_workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      Tatu_workspace_tags: {
+        Row: {
+          color: string
+          created_at: string
+          created_by: string | null
+          description: string | null
+          id: string
+          label: string
+          name: string
+          updated_at: string
+          workspace_id: string
+        }
+        Insert: {
+          color?: string
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          label: string
+          name: string
+          updated_at?: string
+          workspace_id: string
+        }
+        Update: {
+          color?: string
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          label?: string
+          name?: string
+          updated_at?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "Ellie_workspace_tags_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "Tatu_workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      Tatu_workspace_users: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["tatu_workspace_role"]
+          user_id: string
+          workspace_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["tatu_workspace_role"]
+          user_id: string
+          workspace_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["tatu_workspace_role"]
+          user_id?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "Ellie_workspace_users_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "Ellie_workspace_users_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "Tatu_workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      Tatu_workspaces: {
+        Row: {
+          created_at: string
+          created_by: string
+          description: string | null
+          id: string
+          is_active: boolean
+          join_key: string | null
+          name: string
+          organization_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          join_key?: string | null
+          name: string
+          organization_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          join_key?: string | null
+          name?: string
+          organization_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "Ellie_workspaces_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "Ellie_workspaces_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
         ]
@@ -7204,6 +9607,29 @@ export type Database = {
           },
         ]
       }
+      gateway_public_jobs: {
+        Row: {
+          code: string | null
+          created_at: string | null
+          department: string | null
+          description: string | null
+          employment_type: string | null
+          id: string | null
+          location: string | null
+          organization_id: string | null
+          title: string | null
+          work_model: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "gateway_jobs_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       quiz_attempts_public: {
         Row: {
           completion_time_seconds: number | null
@@ -7244,6 +9670,28 @@ export type Database = {
             columns: ["theme_id"]
             isOneToOne: false
             referencedRelation: "quiz_themes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      Tatu_lead_attribution_summary: {
+        Row: {
+          leads_lost: number | null
+          leads_total: number | null
+          leads_won: number | null
+          pipeline_value: number | null
+          utm_campaign: string | null
+          utm_medium: string | null
+          utm_source: string | null
+          won_value: number | null
+          workspace_id: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "Ellie_leads_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "Tatu_workspaces"
             referencedColumns: ["id"]
           },
         ]
@@ -7398,6 +9846,7 @@ export type Database = {
           was_global_admin: boolean
         }[]
       }
+      gateway_generate_job_code: { Args: { _org_id: string }; Returns: string }
       generate_join_key: { Args: never; Returns: string }
       generate_survey_token: { Args: never; Returns: string }
       get_action_workspace: { Args: { action_id: string }; Returns: string }
@@ -7454,7 +9903,6 @@ export type Database = {
           tag: string
         }[]
       }
-      get_ellie_lead_workspace: { Args: { _lead_id: string }; Returns: string }
       get_engagement_multiplier_counts: {
         Args: { p_organization_id: string }
         Returns: {
@@ -7591,7 +10039,7 @@ export type Database = {
           tags: string[]
         }[]
       }
-      get_single_active_ellie_workspace_id: { Args: never; Returns: string }
+      get_single_active_tatu_workspace_id: { Args: never; Returns: string }
       get_survey_by_token: {
         Args: { p_token: string }
         Returns: {
@@ -7616,6 +10064,7 @@ export type Database = {
           workspaces_with_activity: number
         }[]
       }
+      get_tatu_lead_workspace: { Args: { _lead_id: string }; Returns: string }
       get_test_card_workspace: {
         Args: { test_card_id: string }
         Returns: string
@@ -7777,6 +10226,18 @@ export type Database = {
           questions_processed: number
         }[]
       }
+      increment_tracking_link_click: {
+        Args: { _link_id: string }
+        Returns: undefined
+      }
+      increment_tracking_link_conversion: {
+        Args: { _link_id: string }
+        Returns: undefined
+      }
+      increment_tracking_link_new_contact: {
+        Args: { _link_id: string }
+        Returns: undefined
+      }
       initialize_organization_trial: {
         Args: { org_id: string }
         Returns: undefined
@@ -7785,7 +10246,6 @@ export type Database = {
         Args: { org_id: string; user_id?: string }
         Returns: boolean
       }
-      is_active_ellie_operator: { Args: { _user_id: string }; Returns: boolean }
       is_active_gecko_user: {
         Args: { org_id: string; user_id?: string }
         Returns: boolean
@@ -7794,6 +10254,7 @@ export type Database = {
         Args: { org_id: string; user_id?: string }
         Returns: boolean
       }
+      is_active_tatu_operator: { Args: { _user_id: string }; Returns: boolean }
       is_admin: { Args: { user_id: string }; Returns: boolean }
       is_beacon_admin_simple: {
         Args: { org_id: string; user_id?: string }
@@ -7801,28 +10262,6 @@ export type Database = {
       }
       is_broadcast_creator: {
         Args: { p_broadcast_id: string; p_user_id?: string }
-        Returns: boolean
-      }
-      is_ellie_admin: {
-        Args: { _organization_id: string; _user_id: string }
-        Returns: boolean
-      }
-      is_ellie_conversa_admin: { Args: { _user_id: string }; Returns: boolean }
-      is_ellie_conversa_operator: {
-        Args: { _user_id: string }
-        Returns: boolean
-      }
-      is_ellie_operator: { Args: { _user_id: string }; Returns: boolean }
-      is_ellie_org_member: {
-        Args: { _organization_id: string; _user_id: string }
-        Returns: boolean
-      }
-      is_ellie_workspace_admin: {
-        Args: { _user_id: string; _workspace_id: string }
-        Returns: boolean
-      }
-      is_ellie_workspace_member: {
-        Args: { _user_id: string; _workspace_id: string }
         Returns: boolean
       }
       is_forge_admin_simple: {
@@ -7870,6 +10309,30 @@ export type Database = {
       is_sitek21_admin: { Args: { _user_id: string }; Returns: boolean }
       is_system_admin: { Args: { _user_id: string }; Returns: boolean }
       is_system_admin_simple: { Args: { user_id?: string }; Returns: boolean }
+      is_tatu_admin:
+        | { Args: { _user_id: string }; Returns: boolean }
+        | {
+            Args: { _organization_id: string; _user_id: string }
+            Returns: boolean
+          }
+      is_tatu_conversa_admin: { Args: { _user_id: string }; Returns: boolean }
+      is_tatu_conversa_operator: {
+        Args: { _user_id: string }
+        Returns: boolean
+      }
+      is_tatu_operator: { Args: { _user_id: string }; Returns: boolean }
+      is_tatu_org_member: {
+        Args: { _organization_id: string; _user_id: string }
+        Returns: boolean
+      }
+      is_tatu_workspace_admin: {
+        Args: { _user_id: string; _workspace_id: string }
+        Returns: boolean
+      }
+      is_tatu_workspace_member: {
+        Args: { _user_id: string; _workspace_id: string }
+        Returns: boolean
+      }
       is_test_card_member: {
         Args: { p_test_card_id: string; p_user_id?: string }
         Returns: boolean
@@ -7942,6 +10405,40 @@ export type Database = {
         }
         Returns: undefined
       }
+      orgflow_can_view_policy: {
+        Args: { _policy_id: string }
+        Returns: boolean
+      }
+      orgflow_can_view_post: {
+        Args: { _post_id: string; _user_id: string }
+        Returns: boolean
+      }
+      orgflow_comunik_highlights: {
+        Args: { _limit?: number }
+        Returns: {
+          author_id: string
+          author_name: string
+          comments_count: number
+          engagement: number
+          id: string
+          image_url: string
+          link_url: string
+          message: string
+          published_at: string
+          reactions_count: number
+          title: string
+        }[]
+      }
+      orgflow_is_admin: { Args: { _uid: string }; Returns: boolean }
+      orgflow_is_eligible: { Args: { _uid: string }; Returns: boolean }
+      orgflow_provision_access: {
+        Args: never
+        Returns: {
+          eligible: boolean
+          is_admin: boolean
+          reason: string
+        }[]
+      }
       populate_existing_gecko_users: { Args: never; Returns: number }
       rebalance_quiz_answers: {
         Args: never
@@ -8008,11 +10505,51 @@ export type Database = {
           user_name: string
         }[]
       }
+      siteNower_is_admin: { Args: { _uid: string }; Returns: boolean }
+      slugify_podcast: { Args: { txt: string }; Returns: string }
+      strip_html_to_text: { Args: { input: string }; Returns: string }
+      tatu_ensure_visitor: {
+        Args: {
+          _anon_id: string
+          _first_landing_path?: string
+          _first_referrer?: string
+          _first_utm_campaign?: string
+          _first_utm_content?: string
+          _first_utm_medium?: string
+          _first_utm_source?: string
+          _first_utm_term?: string
+          _user_agent?: string
+          _workspace_id: string
+        }
+        Returns: string
+      }
+      tatu_record_web_event: {
+        Args: {
+          _name?: string
+          _path?: string
+          _props?: Json
+          _type: string
+          _visitor_id: string
+          _workspace_id: string
+        }
+        Returns: string
+      }
+      tatu_resolve_visitor_to_lead: {
+        Args: {
+          _anon_id: string
+          _email?: string
+          _name?: string
+          _phone?: string
+          _workspace_id: string
+        }
+        Returns: string
+      }
       test_rls_recursion: { Args: never; Returns: string }
       toggle_user_active_status: {
         Args: { target_user_id: string }
         Returns: boolean
       }
+      unaccent: { Args: { "": string }; Returns: string }
       update_user_points_on_kudos: {
         Args: {
           p_from_user_id: string
@@ -8021,6 +10558,11 @@ export type Database = {
           p_to_user_id: string
         }
         Returns: undefined
+      }
+      user_has_any_sector: { Args: { _user_id: string }; Returns: boolean }
+      user_in_sector: {
+        Args: { _sector_id: string; _user_id: string }
+        Returns: boolean
       }
       user_in_workspace: {
         Args: { user_id: string; workspace_id: string }
@@ -8070,33 +10612,6 @@ export type Database = {
     Enums: {
       account_type: "free" | "pro"
       action_status: "todo" | "doing" | "done"
-      ellie_conversa_role: "operator" | "supervisor"
-      ellie_lead_interest:
-        | "CSPO"
-        | "CSM"
-        | "CAL-E"
-        | "CAL-T"
-        | "OKR"
-        | "Agile Coach"
-        | "Outro"
-      ellie_lead_origin:
-        | "landing_page"
-        | "evento"
-        | "linkedin"
-        | "indicacao"
-        | "inbound"
-        | "outbound"
-      ellie_lead_stage:
-        | "novo_lead"
-        | "primeiro_contato"
-        | "qualificacao"
-        | "proposta"
-        | "negociacao"
-        | "ganho"
-        | "perdido"
-        | "negociacao_encerrada"
-      ellie_lead_type: "PF" | "PJ"
-      ellie_workspace_role: "admin" | "member"
       error_category:
         | "api"
         | "ui"
@@ -8120,6 +10635,19 @@ export type Database = {
         | "maintain_below"
       okr_frequency: "quarterly" | "annual" | "semestral"
       okr_status: "not_started" | "in_progress" | "completed" | "paused"
+      orgflow_policy_category:
+        | "financial_admin"
+        | "people_health"
+        | "tech_regulatory"
+        | "operations_quality"
+      orgflow_post_status: "draft" | "pending" | "approved" | "rejected"
+      orgflow_reaction_type:
+        | "like"
+        | "love"
+        | "celebrate"
+        | "rocket"
+        | "eyes"
+        | "laugh"
       pulse_assignment_status: "pending" | "completed" | "expired"
       pulse_question_type: "multiple_choice" | "open_text"
       pulse_questionnaire_status: "draft" | "active" | "inactive" | "archived"
@@ -8127,6 +10655,33 @@ export type Database = {
       relationship_type: "promoter" | "neutral" | "detractor"
       stakeholder_influence_level: "high" | "medium" | "low"
       tag_relationship_type: "semantic" | "contextual" | "conceptual"
+      tatu_conversa_role: "operator" | "supervisor"
+      tatu_lead_interest:
+        | "CSPO"
+        | "CSM"
+        | "CAL-E"
+        | "CAL-T"
+        | "OKR"
+        | "Agile Coach"
+        | "Outro"
+      tatu_lead_origin:
+        | "landing_page"
+        | "evento"
+        | "linkedin"
+        | "indicacao"
+        | "inbound"
+        | "outbound"
+      tatu_lead_stage:
+        | "novo_lead"
+        | "primeiro_contato"
+        | "qualificacao"
+        | "proposta"
+        | "negociacao"
+        | "ganho"
+        | "perdido"
+        | "negociacao_encerrada"
+      tatu_lead_type: "PF" | "PJ"
+      tatu_workspace_role: "admin" | "member"
       workspace_role: "admin" | "member"
     }
     CompositeTypes: {
@@ -8257,36 +10812,6 @@ export const Constants = {
     Enums: {
       account_type: ["free", "pro"],
       action_status: ["todo", "doing", "done"],
-      ellie_conversa_role: ["operator", "supervisor"],
-      ellie_lead_interest: [
-        "CSPO",
-        "CSM",
-        "CAL-E",
-        "CAL-T",
-        "OKR",
-        "Agile Coach",
-        "Outro",
-      ],
-      ellie_lead_origin: [
-        "landing_page",
-        "evento",
-        "linkedin",
-        "indicacao",
-        "inbound",
-        "outbound",
-      ],
-      ellie_lead_stage: [
-        "novo_lead",
-        "primeiro_contato",
-        "qualificacao",
-        "proposta",
-        "negociacao",
-        "ganho",
-        "perdido",
-        "negociacao_encerrada",
-      ],
-      ellie_lead_type: ["PF", "PJ"],
-      ellie_workspace_role: ["admin", "member"],
       error_category: [
         "api",
         "ui",
@@ -8312,6 +10837,21 @@ export const Constants = {
       ],
       okr_frequency: ["quarterly", "annual", "semestral"],
       okr_status: ["not_started", "in_progress", "completed", "paused"],
+      orgflow_policy_category: [
+        "financial_admin",
+        "people_health",
+        "tech_regulatory",
+        "operations_quality",
+      ],
+      orgflow_post_status: ["draft", "pending", "approved", "rejected"],
+      orgflow_reaction_type: [
+        "like",
+        "love",
+        "celebrate",
+        "rocket",
+        "eyes",
+        "laugh",
+      ],
       pulse_assignment_status: ["pending", "completed", "expired"],
       pulse_question_type: ["multiple_choice", "open_text"],
       pulse_questionnaire_status: ["draft", "active", "inactive", "archived"],
@@ -8319,6 +10859,36 @@ export const Constants = {
       relationship_type: ["promoter", "neutral", "detractor"],
       stakeholder_influence_level: ["high", "medium", "low"],
       tag_relationship_type: ["semantic", "contextual", "conceptual"],
+      tatu_conversa_role: ["operator", "supervisor"],
+      tatu_lead_interest: [
+        "CSPO",
+        "CSM",
+        "CAL-E",
+        "CAL-T",
+        "OKR",
+        "Agile Coach",
+        "Outro",
+      ],
+      tatu_lead_origin: [
+        "landing_page",
+        "evento",
+        "linkedin",
+        "indicacao",
+        "inbound",
+        "outbound",
+      ],
+      tatu_lead_stage: [
+        "novo_lead",
+        "primeiro_contato",
+        "qualificacao",
+        "proposta",
+        "negociacao",
+        "ganho",
+        "perdido",
+        "negociacao_encerrada",
+      ],
+      tatu_lead_type: ["PF", "PJ"],
+      tatu_workspace_role: ["admin", "member"],
       workspace_role: ["admin", "member"],
     },
   },
