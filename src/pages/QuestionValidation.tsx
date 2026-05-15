@@ -19,7 +19,7 @@ import { QuizTheme } from '@/types/theme';
 import type { QuizAttempt } from '@/data/types';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-import { ArrowLeft, Settings } from 'lucide-react';
+import { ArrowLeft, Settings, LogOut } from 'lucide-react';
 
 const QuestionValidation = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
