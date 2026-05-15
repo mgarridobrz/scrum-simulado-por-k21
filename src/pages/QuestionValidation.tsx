@@ -19,7 +19,7 @@ import { QuizTheme } from '@/types/theme';
 import type { QuizAttempt } from '@/data/types';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-import { ArrowLeft, Settings } from 'lucide-react';
+import { ArrowLeft, Settings, LogOut } from 'lucide-react';
 
 const QuestionValidation = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -79,10 +79,37 @@ const QuestionValidation = () => {
   }, [selectedThemeId, setThemeId]);
 
   useEffect(() => {
-    const savedAuth = localStorage.getItem('validationPageAuthenticated');
-    if (savedAuth === 'true') {
-      setIsAuthenticated(true);
-    }
+    let mounted = true;
+
+    const verifyAdmin = async (userId: string | undefined) => {
+      if (!userId) {
+        if (mounted) setIsAuthenticated(false);
+        return;
+      }
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('is_admin')
+        .eq('id', userId)
+        .maybeSingle();
+      if (mounted) setIsAuthenticated(!!profile?.is_admin);
+    };
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      // Defer DB call to avoid auth deadlock
+      setTimeout(() => verifyAdmin(session?.user?.id), 0);
+    });
+
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      verifyAdmin(session?.user?.id);
+    });
+
+    // Clean up old localStorage flag from previous auth scheme
+    localStorage.removeItem('validationPageAuthenticated');
+
+    return () => {
+      mounted = false;
+      subscription.unsubscribe();
+    };
   }, []);
 
   const loadAttempts = async (page = 1) => {
@@ -179,7 +206,12 @@ const QuestionValidation = () => {
 
   const handleAuthSuccess = () => {
     setIsAuthenticated(true);
-    localStorage.setItem('validationPageAuthenticated', 'true');
+  };
+
+  const handleSignOut = async () => {
+    await supabase.auth.signOut();
+    setIsAuthenticated(false);
+    setSelectedThemeId(null);
   };
 
   const handleThemeSelect = (themeId: string) => {
@@ -240,7 +272,7 @@ const QuestionValidation = () => {
         ) : (
           <div className="space-y-6">
             {/* Theme Management Button */}
-            <div className="flex justify-end">
+            <div className="flex justify-end gap-2">
               <Button
                 variant="outline"
                 onClick={() => setShowThemeManager(true)}
@@ -248,6 +280,14 @@ const QuestionValidation = () => {
               >
                 <Settings className="h-4 w-4" />
                 Gerenciar Temas
+              </Button>
+              <Button
+                variant="ghost"
+                onClick={handleSignOut}
+                className="flex items-center gap-2"
+              >
+                <LogOut className="h-4 w-4" />
+                Sair
               </Button>
             </div>
 

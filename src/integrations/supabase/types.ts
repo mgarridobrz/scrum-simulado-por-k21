@@ -10306,6 +10306,7 @@ export type Database = {
         Args: { org_id: string; user_id?: string }
         Returns: boolean
       }
+      is_simulado_admin: { Args: { _uid: string }; Returns: boolean }
       is_sitek21_admin: { Args: { _user_id: string }; Returns: boolean }
       is_system_admin: { Args: { _user_id: string }; Returns: boolean }
       is_system_admin_simple: { Args: { user_id?: string }; Returns: boolean }

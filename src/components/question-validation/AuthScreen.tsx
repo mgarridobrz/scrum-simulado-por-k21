@@ -7,54 +7,67 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from '@/integrations/supabase/client';
 
 interface AuthScreenProps {
-  onAuthSuccess: (password: string) => void;
+  onAuthSuccess: () => void;
 }
 
 const AuthScreen = ({ onAuthSuccess }: AuthScreenProps) => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  const handlePasswordSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+    setLoading(true);
+
     try {
-      // Use the secure validation function from Supabase
-      const { data, error } = await supabase.rpc('validate_restricted_access', {
-        input_password: password
+      const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
+        email,
+        password,
       });
 
-      if (error) {
-        console.error('Authentication error:', error);
+      if (signInError || !signInData.user) {
         toast({
-          title: "Erro de autenticação",
-          description: "Erro interno do sistema. Tente novamente.",
-          variant: "destructive"
+          title: "Falha no login",
+          description: signInError?.message || "Credenciais inválidas.",
+          variant: "destructive",
         });
+        setLoading(false);
         return;
       }
 
-      if (data === true) {
-        localStorage.setItem('validationPageAuthenticated', 'true');
-        onAuthSuccess(password);
+      const { data: profile, error: profileError } = await supabase
+        .from('profiles')
+        .select('is_admin')
+        .eq('id', signInData.user.id)
+        .maybeSingle();
+
+      if (profileError || !profile?.is_admin) {
+        await supabase.auth.signOut();
         toast({
-          title: "Acesso autorizado",
-          description: "Bem-vindo à página de validação de questões.",
+          title: "Acesso negado",
+          description: "Sua conta não tem permissão de administrador.",
+          variant: "destructive",
         });
-      } else {
-        toast({
-          title: "Senha incorreta",
-          description: "Por favor, tente novamente.",
-          variant: "destructive"
-        });
+        setLoading(false);
+        return;
       }
+
+      toast({
+        title: "Acesso autorizado",
+        description: "Bem-vindo ao painel de administração.",
+      });
+      onAuthSuccess();
     } catch (error) {
       console.error('Authentication error:', error);
       toast({
         title: "Erro de autenticação",
         description: "Erro interno do sistema. Tente novamente.",
-        variant: "destructive"
+        variant: "destructive",
       });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -64,21 +77,30 @@ const AuthScreen = ({ onAuthSuccess }: AuthScreenProps) => {
         <CardHeader>
           <CardTitle className="text-xl text-center">Acesso Restrito</CardTitle>
           <CardDescription className="text-center">
-            Digite a senha para acessar a validação de questões
+            Faça login com sua conta de administrador
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handlePasswordSubmit} className="space-y-4">
-            <div className="space-y-2">
-              <Input
-                type="password"
-                placeholder="Digite a senha"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full"
-              />
-            </div>
-            <Button type="submit" className="w-full">Entrar</Button>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <Input
+              type="email"
+              placeholder="E-mail"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              autoComplete="email"
+              required
+            />
+            <Input
+              type="password"
+              placeholder="Senha"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              autoComplete="current-password"
+              required
+            />
+            <Button type="submit" className="w-full" disabled={loading}>
+              {loading ? 'Entrando...' : 'Entrar'}
+            </Button>
           </form>
         </CardContent>
         <CardFooter className="flex justify-center">
