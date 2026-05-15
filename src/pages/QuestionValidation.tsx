@@ -79,10 +79,37 @@ const QuestionValidation = () => {
   }, [selectedThemeId, setThemeId]);
 
   useEffect(() => {
-    const savedAuth = localStorage.getItem('validationPageAuthenticated');
-    if (savedAuth === 'true') {
-      setIsAuthenticated(true);
-    }
+    let mounted = true;
+
+    const verifyAdmin = async (userId: string | undefined) => {
+      if (!userId) {
+        if (mounted) setIsAuthenticated(false);
+        return;
+      }
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('is_admin')
+        .eq('id', userId)
+        .maybeSingle();
+      if (mounted) setIsAuthenticated(!!profile?.is_admin);
+    };
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      // Defer DB call to avoid auth deadlock
+      setTimeout(() => verifyAdmin(session?.user?.id), 0);
+    });
+
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      verifyAdmin(session?.user?.id);
+    });
+
+    // Clean up old localStorage flag from previous auth scheme
+    localStorage.removeItem('validationPageAuthenticated');
+
+    return () => {
+      mounted = false;
+      subscription.unsubscribe();
+    };
   }, []);
 
   const loadAttempts = async (page = 1) => {
