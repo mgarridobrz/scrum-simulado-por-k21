@@ -206,7 +206,12 @@ const QuestionValidation = () => {
 
   const handleAuthSuccess = () => {
     setIsAuthenticated(true);
-    localStorage.setItem('validationPageAuthenticated', 'true');
+  };
+
+  const handleSignOut = async () => {
+    await supabase.auth.signOut();
+    setIsAuthenticated(false);
+    setSelectedThemeId(null);
   };
 
   const handleThemeSelect = (themeId: string) => {
