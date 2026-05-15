@@ -272,7 +272,7 @@ const QuestionValidation = () => {
         ) : (
           <div className="space-y-6">
             {/* Theme Management Button */}
-            <div className="flex justify-end">
+            <div className="flex justify-end gap-2">
               <Button
                 variant="outline"
                 onClick={() => setShowThemeManager(true)}
@@ -280,6 +280,14 @@ const QuestionValidation = () => {
               >
                 <Settings className="h-4 w-4" />
                 Gerenciar Temas
+              </Button>
+              <Button
+                variant="ghost"
+                onClick={handleSignOut}
+                className="flex items-center gap-2"
+              >
+                <LogOut className="h-4 w-4" />
+                Sair
               </Button>
             </div>
 
