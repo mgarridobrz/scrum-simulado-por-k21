@@ -44,6 +44,9 @@ Allow: /
 
 User-agent: *
 Allow: /
+Disallow: /fimdeano
+Disallow: /oscrias
+Disallow: /validate-questions
 
 Sitemap: https://simuladocsm.com/sitemap.xml
 Sitemap: https://csmpracticeexam.com/sitemap.xml
