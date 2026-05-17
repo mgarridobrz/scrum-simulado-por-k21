@@ -2311,313 +2311,6 @@ export type Database = {
           },
         ]
       }
-      gecko_proposal_categories: {
-        Row: {
-          created_at: string
-          id: string
-          name: string
-          organization_id: string
-          pricing_type: Database["public"]["Enums"]["gecko_pricing_type"]
-          sort_order: number
-          updated_at: string
-        }
-        Insert: {
-          created_at?: string
-          id?: string
-          name: string
-          organization_id: string
-          pricing_type: Database["public"]["Enums"]["gecko_pricing_type"]
-          sort_order?: number
-          updated_at?: string
-        }
-        Update: {
-          created_at?: string
-          id?: string
-          name?: string
-          organization_id?: string
-          pricing_type?: Database["public"]["Enums"]["gecko_pricing_type"]
-          sort_order?: number
-          updated_at?: string
-        }
-        Relationships: []
-      }
-      gecko_proposal_item_slides: {
-        Row: {
-          created_at: string | null
-          id: string
-          item_id: string
-          slide_id: string
-          sort_order: number
-        }
-        Insert: {
-          created_at?: string | null
-          id?: string
-          item_id: string
-          slide_id: string
-          sort_order?: number
-        }
-        Update: {
-          created_at?: string | null
-          id?: string
-          item_id?: string
-          slide_id?: string
-          sort_order?: number
-        }
-        Relationships: [
-          {
-            foreignKeyName: "gecko_proposal_item_slides_item_id_fkey"
-            columns: ["item_id"]
-            isOneToOne: false
-            referencedRelation: "gecko_proposal_items"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "gecko_proposal_item_slides_slide_id_fkey"
-            columns: ["slide_id"]
-            isOneToOne: false
-            referencedRelation: "gecko_proposal_slides"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      gecko_proposal_items: {
-        Row: {
-          base_price: number
-          category_id: string
-          created_at: string
-          hours: number | null
-          id: string
-          is_active: boolean
-          name: string
-          organization_id: string
-          sort_order: number
-          updated_at: string
-        }
-        Insert: {
-          base_price?: number
-          category_id: string
-          created_at?: string
-          hours?: number | null
-          id?: string
-          is_active?: boolean
-          name: string
-          organization_id: string
-          sort_order?: number
-          updated_at?: string
-        }
-        Update: {
-          base_price?: number
-          category_id?: string
-          created_at?: string
-          hours?: number | null
-          id?: string
-          is_active?: boolean
-          name?: string
-          organization_id?: string
-          sort_order?: number
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "gecko_proposal_items_category_id_fkey"
-            columns: ["category_id"]
-            isOneToOne: false
-            referencedRelation: "gecko_proposal_categories"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      gecko_proposal_selected_items: {
-        Row: {
-          created_at: string
-          hours: number
-          id: string
-          item_id: string
-          proposal_id: string
-          quantity: number
-          subtotal: number
-          unit_price: number
-          updated_at: string
-        }
-        Insert: {
-          created_at?: string
-          hours?: number
-          id?: string
-          item_id: string
-          proposal_id: string
-          quantity?: number
-          subtotal: number
-          unit_price: number
-          updated_at?: string
-        }
-        Update: {
-          created_at?: string
-          hours?: number
-          id?: string
-          item_id?: string
-          proposal_id?: string
-          quantity?: number
-          subtotal?: number
-          unit_price?: number
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "gecko_proposal_selected_items_item_id_fkey"
-            columns: ["item_id"]
-            isOneToOne: false
-            referencedRelation: "gecko_proposal_items"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "gecko_proposal_selected_items_proposal_id_fkey"
-            columns: ["proposal_id"]
-            isOneToOne: false
-            referencedRelation: "gecko_proposals"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      gecko_proposal_slides: {
-        Row: {
-          created_at: string | null
-          id: string
-          organization_id: string
-          section_position: string | null
-          slide_type: Database["public"]["Enums"]["gecko_slide_type"]
-          slide_url: string
-          sort_order: number
-          updated_at: string | null
-        }
-        Insert: {
-          created_at?: string | null
-          id?: string
-          organization_id: string
-          section_position?: string | null
-          slide_type: Database["public"]["Enums"]["gecko_slide_type"]
-          slide_url: string
-          sort_order?: number
-          updated_at?: string | null
-        }
-        Update: {
-          created_at?: string | null
-          id?: string
-          organization_id?: string
-          section_position?: string | null
-          slide_type?: Database["public"]["Enums"]["gecko_slide_type"]
-          slide_url?: string
-          sort_order?: number
-          updated_at?: string | null
-        }
-        Relationships: []
-      }
-      gecko_proposals: {
-        Row: {
-          company: string
-          created_at: string
-          created_by: string | null
-          description: string | null
-          hours: number
-          id: string
-          investment: number
-          organization_id: string | null
-          public_code: string | null
-          public_link: string | null
-          security_pin: string | null
-          start_date: string
-          status: string
-          title: string
-          updated_at: string
-        }
-        Insert: {
-          company: string
-          created_at?: string
-          created_by?: string | null
-          description?: string | null
-          hours: number
-          id?: string
-          investment: number
-          organization_id?: string | null
-          public_code?: string | null
-          public_link?: string | null
-          security_pin?: string | null
-          start_date: string
-          status?: string
-          title: string
-          updated_at?: string
-        }
-        Update: {
-          company?: string
-          created_at?: string
-          created_by?: string | null
-          description?: string | null
-          hours?: number
-          id?: string
-          investment?: number
-          organization_id?: string | null
-          public_code?: string | null
-          public_link?: string | null
-          security_pin?: string | null
-          start_date?: string
-          status?: string
-          title?: string
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "gecko_proposals_created_by_fkey"
-            columns: ["created_by"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "gecko_proposals_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "organizations"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      gecko_user_status: {
-        Row: {
-          created_at: string
-          id: string
-          is_admin: boolean
-          organization_id: string
-          status: string
-          updated_at: string
-          user_id: string
-        }
-        Insert: {
-          created_at?: string
-          id?: string
-          is_admin?: boolean
-          organization_id: string
-          status?: string
-          updated_at?: string
-          user_id: string
-        }
-        Update: {
-          created_at?: string
-          id?: string
-          is_admin?: boolean
-          organization_id?: string
-          status?: string
-          updated_at?: string
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "gecko_user_status_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: true
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       global_settings: {
         Row: {
           created_at: string | null
@@ -4141,6 +3834,107 @@ export type Database = {
         }
         Relationships: []
       }
+      orgflow_content_views: {
+        Row: {
+          count: number
+          created_at: string
+          entity_id: string
+          entity_type: string
+          id: string
+          last_viewed_at: string
+          user_id: string
+          viewed_on: string
+        }
+        Insert: {
+          count?: number
+          created_at?: string
+          entity_id: string
+          entity_type: string
+          id?: string
+          last_viewed_at?: string
+          user_id: string
+          viewed_on?: string
+        }
+        Update: {
+          count?: number
+          created_at?: string
+          entity_id?: string
+          entity_type?: string
+          id?: string
+          last_viewed_at?: string
+          user_id?: string
+          viewed_on?: string
+        }
+        Relationships: []
+      }
+      orgflow_feedback: {
+        Row: {
+          author_id: string
+          created_at: string
+          id: string
+          image_path: string | null
+          kind: Database["public"]["Enums"]["orgflow_feedback_kind"]
+          message: string
+          organization_id: string
+          status: Database["public"]["Enums"]["orgflow_feedback_status"]
+          updated_at: string
+        }
+        Insert: {
+          author_id: string
+          created_at?: string
+          id?: string
+          image_path?: string | null
+          kind?: Database["public"]["Enums"]["orgflow_feedback_kind"]
+          message: string
+          organization_id: string
+          status?: Database["public"]["Enums"]["orgflow_feedback_status"]
+          updated_at?: string
+        }
+        Update: {
+          author_id?: string
+          created_at?: string
+          id?: string
+          image_path?: string | null
+          kind?: Database["public"]["Enums"]["orgflow_feedback_kind"]
+          message?: string
+          organization_id?: string
+          status?: Database["public"]["Enums"]["orgflow_feedback_status"]
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      orgflow_feedback_replies: {
+        Row: {
+          author_id: string
+          body: string
+          created_at: string
+          feedback_id: string
+          id: string
+        }
+        Insert: {
+          author_id: string
+          body: string
+          created_at?: string
+          feedback_id: string
+          id?: string
+        }
+        Update: {
+          author_id?: string
+          body?: string
+          created_at?: string
+          feedback_id?: string
+          id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "orgflow_feedback_replies_feedback_id_fkey"
+            columns: ["feedback_id"]
+            isOneToOne: false
+            referencedRelation: "orgflow_feedback"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       orgflow_notifications: {
         Row: {
           body: string | null
@@ -4174,6 +3968,39 @@ export type Database = {
           title?: string
           type?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      orgflow_page_views: {
+        Row: {
+          count: number
+          created_at: string
+          id: string
+          last_viewed_at: string
+          organization_id: string | null
+          path: string
+          user_id: string
+          viewed_on: string
+        }
+        Insert: {
+          count?: number
+          created_at?: string
+          id?: string
+          last_viewed_at?: string
+          organization_id?: string | null
+          path: string
+          user_id: string
+          viewed_on?: string
+        }
+        Update: {
+          count?: number
+          created_at?: string
+          id?: string
+          last_viewed_at?: string
+          organization_id?: string | null
+          path?: string
+          user_id?: string
+          viewed_on?: string
         }
         Relationships: []
       }
@@ -4472,6 +4299,41 @@ export type Database = {
           },
         ]
       }
+      orgflow_post_links: {
+        Row: {
+          created_at: string
+          id: string
+          position: number
+          post_id: string
+          title: string
+          url: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          position?: number
+          post_id: string
+          title: string
+          url: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          position?: number
+          post_id?: string
+          title?: string
+          url?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "orgflow_post_links_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "orgflow_posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       orgflow_post_reactions: {
         Row: {
           created_at: string
@@ -4538,7 +4400,9 @@ export type Database = {
           organization_id: string
           published_at: string | null
           rejection_reason: string | null
+          scheduled_for: string | null
           status: Database["public"]["Enums"]["orgflow_post_status"]
+          suggested_publish_at: string | null
           title: string
           updated_at: string
         }
@@ -4555,7 +4419,9 @@ export type Database = {
           organization_id: string
           published_at?: string | null
           rejection_reason?: string | null
+          scheduled_for?: string | null
           status?: Database["public"]["Enums"]["orgflow_post_status"]
+          suggested_publish_at?: string | null
           title: string
           updated_at?: string
         }
@@ -4572,7 +4438,9 @@ export type Database = {
           organization_id?: string
           published_at?: string | null
           rejection_reason?: string | null
+          scheduled_for?: string | null
           status?: Database["public"]["Enums"]["orgflow_post_status"]
+          suggested_publish_at?: string | null
           title?: string
           updated_at?: string
         }
@@ -6955,6 +6823,24 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      siteNower_settings: {
+        Row: {
+          key: string
+          updated_at: string
+          value: string
+        }
+        Insert: {
+          key: string
+          updated_at?: string
+          value: string
+        }
+        Update: {
+          key?: string
+          updated_at?: string
+          value?: string
+        }
+        Relationships: []
       }
       siteNower_testimonials: {
         Row: {
@@ -9803,7 +9689,7 @@ export type Database = {
       }
       create_user_with_apps: {
         Args: {
-          p_apps?: Json
+          p_apps: Json
           p_email: string
           p_name: string
           p_organization_id: string
@@ -10246,10 +10132,6 @@ export type Database = {
         Args: { org_id: string; user_id?: string }
         Returns: boolean
       }
-      is_active_gecko_user: {
-        Args: { org_id: string; user_id?: string }
-        Returns: boolean
-      }
       is_active_pulse_user: {
         Args: { org_id: string; user_id?: string }
         Returns: boolean
@@ -10276,11 +10158,6 @@ export type Database = {
         Args: { check_user_id?: string; org_id: string }
         Returns: boolean
       }
-      is_gecko_admin_simple: {
-        Args: { org_id: string; user_id?: string }
-        Returns: boolean
-      }
-      is_gecko_user_active: { Args: { user_id?: string }; Returns: boolean }
       is_hawk_admin_simple: {
         Args: { org_id: string; user_id?: string }
         Returns: boolean
@@ -10406,6 +10283,93 @@ export type Database = {
         }
         Returns: undefined
       }
+      orgflow_analytics_access_timeseries: {
+        Args: { range_days?: number }
+        Returns: {
+          day: string
+          total_views: number
+          unique_users: number
+        }[]
+      }
+      orgflow_analytics_active_users: {
+        Args: { _limit?: number; range_days?: number }
+        Returns: {
+          active_days: number
+          email: string
+          last_sign_in_at: string
+          last_visit: string
+          name: string
+          user_id: string
+          visits: number
+        }[]
+      }
+      orgflow_analytics_authors_leaderboard: {
+        Args: { _limit?: number; range_days?: number }
+        Returns: {
+          author_id: string
+          comments_received: number
+          posts_count: number
+          reactions_received: number
+        }[]
+      }
+      orgflow_analytics_engagement_timeseries: {
+        Args: { range_days?: number }
+        Returns: {
+          comments: number
+          day: string
+          posts: number
+          reactions: number
+        }[]
+      }
+      orgflow_analytics_feedback_breakdown: {
+        Args: { range_days?: number }
+        Returns: {
+          kind: string
+          status: string
+          total: number
+        }[]
+      }
+      orgflow_analytics_overview: {
+        Args: { range_days?: number }
+        Returns: Json
+      }
+      orgflow_analytics_reactions_breakdown: {
+        Args: { range_days?: number }
+        Returns: {
+          reaction: string
+          total: number
+        }[]
+      }
+      orgflow_analytics_top_pages: {
+        Args: { range_days?: number }
+        Returns: {
+          path: string
+          unique_users: number
+          views: number
+        }[]
+      }
+      orgflow_analytics_top_policies: {
+        Args: { _limit?: number; range_days?: number }
+        Returns: {
+          category: string
+          policy_id: string
+          title: string
+          unique_users: number
+          views: number
+        }[]
+      }
+      orgflow_analytics_top_posts: {
+        Args: { _limit?: number; range_days?: number }
+        Returns: {
+          author_id: string
+          comments: number
+          post_id: string
+          published_at: string
+          reactions: number
+          title: string
+          views: number
+        }[]
+      }
       orgflow_can_view_policy: {
         Args: { _policy_id: string }
         Returns: boolean
@@ -10440,7 +10404,6 @@ export type Database = {
           reason: string
         }[]
       }
-      populate_existing_gecko_users: { Args: never; Returns: number }
       rebalance_quiz_answers: {
         Args: never
         Returns: {
@@ -10636,6 +10599,8 @@ export type Database = {
         | "maintain_below"
       okr_frequency: "quarterly" | "annual" | "semestral"
       okr_status: "not_started" | "in_progress" | "completed" | "paused"
+      orgflow_feedback_kind: "feedback" | "suggestion" | "bug"
+      orgflow_feedback_status: "open" | "in_progress" | "resolved"
       orgflow_policy_category:
         | "financial_admin"
         | "people_health"
@@ -10838,6 +10803,8 @@ export const Constants = {
       ],
       okr_frequency: ["quarterly", "annual", "semestral"],
       okr_status: ["not_started", "in_progress", "completed", "paused"],
+      orgflow_feedback_kind: ["feedback", "suggestion", "bug"],
+      orgflow_feedback_status: ["open", "in_progress", "resolved"],
       orgflow_policy_category: [
         "financial_admin",
         "people_health",
