@@ -6,6 +6,7 @@ import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useMetaTags } from '@/hooks/useMetaTags';
 import { getTranslation } from '@/utils/translations';
 import { getGameRanking, getGameStats } from '@/utils/gameTracking';
 import { GameRanking as GameRankingType } from '@/types/game';
@@ -20,6 +21,7 @@ interface GameRankingProps {
 const GameRanking: React.FC<GameRankingProps> = ({ themeSlug, basePath = '' }) => {
   const navigate = useNavigate();
   const { language } = useLanguage();
+  useMetaTags();
   
   const [ranking, setRanking] = useState<GameRankingType[]>([]);
   const [loading, setLoading] = useState(true);

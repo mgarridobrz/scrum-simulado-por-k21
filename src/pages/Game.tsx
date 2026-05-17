@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useMetaTags } from '@/hooks/useMetaTags';
 import { getTranslation } from '@/utils/translations';
 import { getRandomQuestions } from '@/data/quizData';
 import { saveGameAttempt } from '@/utils/gameTracking';
@@ -28,6 +29,7 @@ interface GameProps {
 const Game: React.FC<GameProps> = ({ themeSlug, themeId, themeName, basePath = '', forceAllQuestions = false }) => {
   const navigate = useNavigate();
   const { language } = useLanguage();
+  useMetaTags();
   
   const [gameConfig, setGameConfig] = useState<GameConfig | null>(null);
   const [gameState, setGameState] = useState<GameState | null>(null);

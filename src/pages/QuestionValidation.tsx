@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useMetaTags } from '@/hooks/useMetaTags';
 import { useQuestionValidation } from '@/hooks/useQuestionValidation';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -22,6 +23,7 @@ import { useToast } from '@/hooks/use-toast';
 import { ArrowLeft, Settings, LogOut } from 'lucide-react';
 
 const QuestionValidation = () => {
+  useMetaTags();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [activeTab, setActiveTab] = useState('editor');
   const [attempts, setAttempts] = useState<QuizAttempt[]>([]);
