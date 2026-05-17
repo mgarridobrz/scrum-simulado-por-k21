@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useMetaTags } from '@/hooks/useMetaTags';
 import { useQuestionValidation } from '@/hooks/useQuestionValidation';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
