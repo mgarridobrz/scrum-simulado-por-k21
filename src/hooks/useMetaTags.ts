@@ -127,33 +127,14 @@ const getPageMetaTags = (pathname: string, language: 'pt' | 'en'): MetaTagsConfi
   const homeUrl = canonicalFor('/');
   const homeCrumb = { name: 'Home', item: homeUrl };
 
-  // Themed routes: /fimdeano, /oscrias and their /game, /ranking, /game/ranking variants
+  // Themed routes (/fimdeano, /oscrias) — internal/promotional, never indexed
   const themedMatch = cleanPath.match(/^\/(fimdeano|oscrias)(\/game\/ranking|\/game|\/ranking)?$/);
   if (themedMatch) {
-    const slug = themedMatch[1];
-    const sub = themedMatch[2] || '';
-    const meta = THEME_META[slug];
-    const subLabel = sub === '/game' ? (isEnglish ? 'Speed Game' : 'Jogo Rápido')
-      : sub === '/ranking' ? 'Ranking'
-      : sub === '/game/ranking' ? (isEnglish ? 'Game Ranking' : 'Ranking do Jogo')
-      : '';
-    const title = `${meta.name}${subLabel ? ' — ' + subLabel : ''} | K21`;
-    const desc = isEnglish ? meta.descEn : meta.descPt;
-    const canonical = canonicalFor(`/${slug}${sub}`);
-    const crumbs: { name: string; item: string }[] = [homeCrumb, { name: meta.name, item: canonicalFor(`/${slug}`) }];
-    if (sub === '/game') crumbs.push({ name: subLabel, item: canonical });
-    if (sub === '/ranking') crumbs.push({ name: subLabel, item: canonical });
-    if (sub === '/game/ranking') {
-      crumbs.push({ name: isEnglish ? 'Speed Game' : 'Jogo Rápido', item: canonicalFor(`/${slug}/game`) });
-      crumbs.push({ name: 'Ranking', item: canonical });
-    }
     return {
-      title, description: desc, ogImage, ogImageAlt,
-      canonical, lang,
-      structuredData: {
-        "@context": "https://schema.org",
-        "@graph": [orgSchema, breadcrumb(crumbs)]
-      }
+      title: 'K21',
+      description: '',
+      lang,
+      noindex: true
     };
   }
 
