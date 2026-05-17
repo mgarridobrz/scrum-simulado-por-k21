@@ -23,6 +23,7 @@ import { useToast } from '@/hooks/use-toast';
 import { ArrowLeft, Settings, LogOut } from 'lucide-react';
 
 const QuestionValidation = () => {
+  useMetaTags();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [activeTab, setActiveTab] = useState('editor');
   const [attempts, setAttempts] = useState<QuizAttempt[]>([]);
